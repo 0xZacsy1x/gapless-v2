@@ -5,7 +5,26 @@ import { motion, AnimatePresence } from 'motion/react';
 import { TrendingUp, ArrowRight, Sparkles, AlertCircle, Zap } from 'lucide-react';
 import { TRAIT_META } from '@/data/gaplessData';
 import { useGaplessContext } from '@/contexts/CareerContext';
-import { ArchetypeReasoningBlock } from './ArchetypeReasoningBlock';
+import dynamic from 'next/dynamic';
+
+const ArchetypeReasoningBlock = dynamic(
+  () => import('./ArchetypeReasoningBlock').then((mod) => mod.ArchetypeReasoningBlock),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="w-full bg-white rounded-3xl p-6 md:p-8 border border-slate-200/80 shadow-sm animate-pulse min-h-[260px] flex flex-col justify-between">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-10 h-10 rounded-xl bg-slate-200" />
+          <div className="space-y-2">
+            <div className="h-5 w-48 bg-slate-200 rounded-md" />
+            <div className="h-3 w-32 bg-slate-100 rounded-md" />
+          </div>
+        </div>
+        <div className="h-40 w-full bg-slate-100/70 rounded-2xl flex items-center justify-center" />
+      </div>
+    ),
+  }
+);
 
 export function ResultsView() {
   const {

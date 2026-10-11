@@ -5,7 +5,12 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { ChevronRight, ArrowLeft, Target, Play, Book, Lock, Unlock, CheckCircle2, Sparkles } from 'lucide-react';
 import type { CareerProfile, CurriculumPhase, ModuleDetail } from '@/data/gaplessData';
-import { LoginModal } from '@/components/LoginModal';
+import dynamic from 'next/dynamic';
+
+const LoginModal = dynamic(
+  () => import('@/components/LoginModal').then((m) => m.LoginModal),
+  { ssr: false }
+);
 import { useGaplessContext } from '@/contexts/CareerContext';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 
