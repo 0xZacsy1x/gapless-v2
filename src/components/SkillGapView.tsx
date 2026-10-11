@@ -23,7 +23,9 @@ const getQuizKey = (title: string) => {
         'digital-marketing-specialist': 'digital-marketing',
         'business-development-account-executive': 'business-development',
         'graphic-designer-digital-creative-product-designer': 'graphic-designer',
+        'graphic-designer-visual-designer': 'graphic-designer',
         'e-commerce-dropship-specialist': 'ecommerce-specialist',
+        'e-commerce-specialist-dropshipper': 'ecommerce-specialist',
     };
     return aliases[slug] || slug;
 };

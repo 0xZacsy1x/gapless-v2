@@ -1,0 +1,6215 @@
+[
+  {
+    "fileSource": "ai_ml_engineer_hasil_ekstraksi_skill.xlsx",
+    "careerProfileId": "ai-ml-engineer",
+    "careerTitle": "AI/ML Engineer / Machine Learning Engineer",
+    "totalPostings": 55,
+    "hardSkills": [
+      {
+        "skill": "Large Language Models",
+        "count": 33,
+        "percentage": 60
+      },
+      {
+        "skill": "Agentic AI",
+        "count": 25,
+        "percentage": 45.5
+      },
+      {
+        "skill": "Machine Learning",
+        "count": 25,
+        "percentage": 45.5
+      },
+      {
+        "skill": "Python",
+        "count": 23,
+        "percentage": 41.8
+      },
+      {
+        "skill": "Retrieval-Augmented Generation",
+        "count": 23,
+        "percentage": 41.8
+      },
+      {
+        "skill": "Generative AI",
+        "count": 19,
+        "percentage": 34.5
+      },
+      {
+        "skill": "PyTorch",
+        "count": 18,
+        "percentage": 32.7
+      },
+      {
+        "skill": "MLOps",
+        "count": 17,
+        "percentage": 30.9
+      },
+      {
+        "skill": "Prompt Engineering",
+        "count": 16,
+        "percentage": 29.1
+      },
+      {
+        "skill": "TensorFlow",
+        "count": 15,
+        "percentage": 27.3
+      },
+      {
+        "skill": "Vector Databases",
+        "count": 13,
+        "percentage": 23.6
+      },
+      {
+        "skill": "LangChain",
+        "count": 12,
+        "percentage": 21.8
+      },
+      {
+        "skill": "Deep Learning",
+        "count": 11,
+        "percentage": 20
+      },
+      {
+        "skill": "Model Evaluation",
+        "count": 11,
+        "percentage": 20
+      },
+      {
+        "skill": "Scikit-learn",
+        "count": 10,
+        "percentage": 18.2
+      },
+      {
+        "skill": "Computer Vision",
+        "count": 9,
+        "percentage": 16.4
+      },
+      {
+        "skill": "Data Pipeline",
+        "count": 9,
+        "percentage": 16.4
+      },
+      {
+        "skill": "Natural Language Processing",
+        "count": 8,
+        "percentage": 14.5
+      },
+      {
+        "skill": "Fine-Tuning Models",
+        "count": 7,
+        "percentage": 12.7
+      },
+      {
+        "skill": "Scalable Systems",
+        "count": 6,
+        "percentage": 10.9
+      },
+      {
+        "skill": "Time-Series Forecasting",
+        "count": 6,
+        "percentage": 10.9
+      },
+      {
+        "skill": "Google Cloud Platform",
+        "count": 5,
+        "percentage": 9.1
+      },
+      {
+        "skill": "Microsoft Azure",
+        "count": 5,
+        "percentage": 9.1
+      },
+      {
+        "skill": "AWS",
+        "count": 4,
+        "percentage": 7.3
+      },
+      {
+        "skill": "Docker",
+        "count": 4,
+        "percentage": 7.3
+      },
+      {
+        "skill": "Feature Engineering",
+        "count": 4,
+        "percentage": 7.3
+      },
+      {
+        "skill": "Hugging Face",
+        "count": 4,
+        "percentage": 7.3
+      },
+      {
+        "skill": "Recommender Systems",
+        "count": 4,
+        "percentage": 7.3
+      },
+      {
+        "skill": "SQL",
+        "count": 4,
+        "percentage": 7.3
+      },
+      {
+        "skill": "Software Engineering Practices",
+        "count": 4,
+        "percentage": 7.3
+      },
+      {
+        "skill": "Statistical Analysis",
+        "count": 4,
+        "percentage": 7.3
+      },
+      {
+        "skill": "Data Governance & Security",
+        "count": 3,
+        "percentage": 5.5
+      },
+      {
+        "skill": "Git",
+        "count": 3,
+        "percentage": 5.5
+      },
+      {
+        "skill": "Model Optimization",
+        "count": 3,
+        "percentage": 5.5
+      },
+      {
+        "skill": "REST API",
+        "count": 3,
+        "percentage": 5.5
+      },
+      {
+        "skill": "AI-Assisted Development",
+        "count": 1,
+        "percentage": 1.8
+      },
+      {
+        "skill": "Airflow",
+        "count": 1,
+        "percentage": 1.8
+      },
+      {
+        "skill": "Apache Spark",
+        "count": 1,
+        "percentage": 1.8
+      },
+      {
+        "skill": "Kubernetes",
+        "count": 1,
+        "percentage": 1.8
+      },
+      {
+        "skill": "Pandas & NumPy",
+        "count": 1,
+        "percentage": 1.8
+      },
+      {
+        "skill": "Reinforcement Learning",
+        "count": 1,
+        "percentage": 1.8
+      }
+    ],
+    "softSkills": [
+      {
+        "skill": "Cross-Functional Collaboration",
+        "count": 38,
+        "percentage": 69.1
+      },
+      {
+        "skill": "Communication Skills",
+        "count": 29,
+        "percentage": 52.7
+      },
+      {
+        "skill": "Stakeholder Management",
+        "count": 24,
+        "percentage": 43.6
+      },
+      {
+        "skill": "Problem Solving",
+        "count": 22,
+        "percentage": 40
+      },
+      {
+        "skill": "Analytical Thinking",
+        "count": 20,
+        "percentage": 36.4
+      },
+      {
+        "skill": "Research Curiosity",
+        "count": 16,
+        "percentage": 29.1
+      },
+      {
+        "skill": "Ownership Mindset",
+        "count": 14,
+        "percentage": 25.5
+      },
+      {
+        "skill": "Learning Agility",
+        "count": 12,
+        "percentage": 21.8
+      },
+      {
+        "skill": "Adaptability to Change",
+        "count": 11,
+        "percentage": 20
+      },
+      {
+        "skill": "Product Mindset",
+        "count": 9,
+        "percentage": 16.4
+      },
+      {
+        "skill": "Proactive Initiative",
+        "count": 8,
+        "percentage": 14.5
+      },
+      {
+        "skill": "Team Leadership",
+        "count": 8,
+        "percentage": 14.5
+      },
+      {
+        "skill": "Responsible AI Awareness",
+        "count": 5,
+        "percentage": 9.1
+      },
+      {
+        "skill": "Independent Work",
+        "count": 3,
+        "percentage": 5.5
+      },
+      {
+        "skill": "Time Management",
+        "count": 3,
+        "percentage": 5.5
+      },
+      {
+        "skill": "Creative Thinking",
+        "count": 2,
+        "percentage": 3.6
+      },
+      {
+        "skill": "Team Collaboration",
+        "count": 2,
+        "percentage": 3.6
+      }
+    ],
+    "jobPostings": [
+      {
+        "company": "CLaaS2SaaS",
+        "title": "Azure AI Engineer - Indonesia",
+        "hardSkills": [
+          "Large Language Models",
+          "Retrieval-Augmented Generation",
+          "Vector Databases",
+          "MLOps",
+          "Prompt Engineering",
+          "Fine-Tuning Models",
+          "Microsoft Azure"
+        ],
+        "softSkills": [
+          "Stakeholder Management",
+          "Cross-Functional Collaboration",
+          "Learning Agility",
+          "Product Mindset"
+        ]
+      },
+      {
+        "company": "DOKU, PT NUSA SATU INTI ARTHA",
+        "title": "AI Expert (Future Opening)",
+        "hardSkills": [
+          "Fine-Tuning Models",
+          "LangChain",
+          "Large Language Models",
+          "Natural Language Processing",
+          "Hugging Face",
+          "Vector Databases",
+          "PyTorch"
+        ],
+        "softSkills": [
+          "Problem Solving",
+          "Analytical Thinking",
+          "Communication Skills",
+          "Stakeholder Management",
+          "Cross-Functional Collaboration"
+        ]
+      },
+      {
+        "company": "ICS Compute",
+        "title": "Generative AI Engineer",
+        "hardSkills": [
+          "Generative AI",
+          "Deep Learning",
+          "TensorFlow",
+          "PyTorch",
+          "Python",
+          "Scalable Systems"
+        ],
+        "softSkills": [
+          "Communication Skills",
+          "Stakeholder Management",
+          "Cross-Functional Collaboration",
+          "Learning Agility",
+          "Creative Thinking"
+        ]
+      },
+      {
+        "company": "Bukalapak",
+        "title": "Artificial Intelligence Engineer",
+        "hardSkills": [
+          "Large Language Models",
+          "Recommender Systems",
+          "LangChain",
+          "Retrieval-Augmented Generation",
+          "Prompt Engineering",
+          "Agentic AI",
+          "REST API"
+        ],
+        "softSkills": [
+          "Problem Solving",
+          "Analytical Thinking",
+          "Cross-Functional Collaboration",
+          "Product Mindset",
+          "Adaptability to Change"
+        ]
+      },
+      {
+        "company": "Pinhome",
+        "title": "Artificial Intelligence Engineer",
+        "hardSkills": [
+          "Large Language Models",
+          "Generative AI",
+          "PyTorch",
+          "TensorFlow",
+          "Scikit-learn",
+          "LangChain",
+          "Natural Language Processing"
+        ],
+        "softSkills": [
+          "Problem Solving",
+          "Communication Skills",
+          "Cross-Functional Collaboration",
+          "Learning Agility",
+          "Research Curiosity"
+        ]
+      }
+    ],
+    "skillRequirements": [
+      {
+        "name": "Large Language Models",
+        "required": 3,
+        "marketPercentage": 60,
+        "isHardSkill": true
+      },
+      {
+        "name": "Agentic AI",
+        "required": 2,
+        "marketPercentage": 45.5,
+        "isHardSkill": true
+      },
+      {
+        "name": "Machine Learning",
+        "required": 2,
+        "marketPercentage": 45.5,
+        "isHardSkill": true
+      },
+      {
+        "name": "Python",
+        "required": 2,
+        "marketPercentage": 41.8,
+        "isHardSkill": true
+      },
+      {
+        "name": "Retrieval-Augmented Generation",
+        "required": 2,
+        "marketPercentage": 41.8,
+        "isHardSkill": true
+      },
+      {
+        "name": "Generative AI",
+        "required": 2,
+        "marketPercentage": 34.5,
+        "isHardSkill": true
+      },
+      {
+        "name": "Cross-Functional Collaboration",
+        "required": 3,
+        "marketPercentage": 69.1,
+        "isHardSkill": false
+      },
+      {
+        "name": "Communication Skills",
+        "required": 3,
+        "marketPercentage": 52.7,
+        "isHardSkill": false
+      }
+    ]
+  },
+  {
+    "fileSource": "bd_account_executive_hasil_ekstraksi.xlsx",
+    "careerProfileId": "hr-business-partner",
+    "careerTitle": "Business Development / Account Executive",
+    "totalPostings": 53,
+    "hardSkills": [
+      {
+        "skill": "Sales Pipeline Management",
+        "count": 37,
+        "percentage": 69.8
+      },
+      {
+        "skill": "Lead Generation",
+        "count": 35,
+        "percentage": 66
+      },
+      {
+        "skill": "B2B Sales",
+        "count": 35,
+        "percentage": 66
+      },
+      {
+        "skill": "Sales Target Achievement",
+        "count": 35,
+        "percentage": 66
+      },
+      {
+        "skill": "Account Management",
+        "count": 34,
+        "percentage": 64.2
+      },
+      {
+        "skill": "Business Development",
+        "count": 33,
+        "percentage": 62.3
+      },
+      {
+        "skill": "Microsoft Excel",
+        "count": 24,
+        "percentage": 45.3
+      },
+      {
+        "skill": "Proposal & Tender Management",
+        "count": 24,
+        "percentage": 45.3
+      },
+      {
+        "skill": "Product Demonstration",
+        "count": 20,
+        "percentage": 37.7
+      },
+      {
+        "skill": "Cold Calling",
+        "count": 19,
+        "percentage": 35.8
+      },
+      {
+        "skill": "Market Research",
+        "count": 17,
+        "percentage": 32.1
+      },
+      {
+        "skill": "Consultative Selling",
+        "count": 17,
+        "percentage": 32.1
+      },
+      {
+        "skill": "SaaS & Technology Knowledge",
+        "count": 17,
+        "percentage": 32.1
+      },
+      {
+        "skill": "Sales Forecasting",
+        "count": 17,
+        "percentage": 32.1
+      },
+      {
+        "skill": "CRM Software",
+        "count": 16,
+        "percentage": 30.2
+      },
+      {
+        "skill": "Customer Onboarding",
+        "count": 16,
+        "percentage": 30.2
+      },
+      {
+        "skill": "Partnership Development",
+        "count": 15,
+        "percentage": 28.3
+      },
+      {
+        "skill": "Language Proficiency",
+        "count": 15,
+        "percentage": 28.3
+      },
+      {
+        "skill": "Upselling & Cross-Selling",
+        "count": 10,
+        "percentage": 18.9
+      },
+      {
+        "skill": "Google Workspace",
+        "count": 8,
+        "percentage": 15.1
+      },
+      {
+        "skill": "Microsoft PowerPoint",
+        "count": 8,
+        "percentage": 15.1
+      },
+      {
+        "skill": "Salesforce",
+        "count": 5,
+        "percentage": 9.4
+      },
+      {
+        "skill": "Contract Negotiation",
+        "count": 5,
+        "percentage": 9.4
+      },
+      {
+        "skill": "HubSpot",
+        "count": 4,
+        "percentage": 7.5
+      },
+      {
+        "skill": "Zoho CRM",
+        "count": 4,
+        "percentage": 7.5
+      },
+      {
+        "skill": "Sales Administration",
+        "count": 4,
+        "percentage": 7.5
+      },
+      {
+        "skill": "E-commerce Platforms",
+        "count": 3,
+        "percentage": 5.7
+      },
+      {
+        "skill": "WhatsApp Business",
+        "count": 2,
+        "percentage": 3.8
+      },
+      {
+        "skill": "LinkedIn Sales Navigator",
+        "count": 1,
+        "percentage": 1.9
+      }
+    ],
+    "softSkills": [
+      {
+        "skill": "Relationship Building",
+        "count": 44,
+        "percentage": 83
+      },
+      {
+        "skill": "Communication Skills",
+        "count": 44,
+        "percentage": 83
+      },
+      {
+        "skill": "Negotiation Skills",
+        "count": 40,
+        "percentage": 75.5
+      },
+      {
+        "skill": "Results Orientation",
+        "count": 30,
+        "percentage": 56.6
+      },
+      {
+        "skill": "Self-Motivation",
+        "count": 29,
+        "percentage": 54.7
+      },
+      {
+        "skill": "Persuasion & Influence",
+        "count": 21,
+        "percentage": 39.6
+      },
+      {
+        "skill": "Independence",
+        "count": 18,
+        "percentage": 34
+      },
+      {
+        "skill": "Stakeholder Management",
+        "count": 17,
+        "percentage": 32.1
+      },
+      {
+        "skill": "Problem Solving",
+        "count": 16,
+        "percentage": 30.2
+      },
+      {
+        "skill": "Cross-Functional Collaboration",
+        "count": 14,
+        "percentage": 26.4
+      },
+      {
+        "skill": "Stress Tolerance",
+        "count": 12,
+        "percentage": 22.6
+      },
+      {
+        "skill": "Resilience & Persistence",
+        "count": 12,
+        "percentage": 22.6
+      },
+      {
+        "skill": "Adaptability",
+        "count": 12,
+        "percentage": 22.6
+      },
+      {
+        "skill": "Presentation Skills",
+        "count": 12,
+        "percentage": 22.6
+      },
+      {
+        "skill": "Active Listening",
+        "count": 11,
+        "percentage": 20.8
+      },
+      {
+        "skill": "Analytical Thinking",
+        "count": 10,
+        "percentage": 18.9
+      },
+      {
+        "skill": "Attention to Detail",
+        "count": 10,
+        "percentage": 18.9
+      },
+      {
+        "skill": "Teamwork",
+        "count": 10,
+        "percentage": 18.9
+      },
+      {
+        "skill": "Continuous Learning",
+        "count": 8,
+        "percentage": 15.1
+      },
+      {
+        "skill": "Ownership & Accountability",
+        "count": 7,
+        "percentage": 13.2
+      },
+      {
+        "skill": "Business Acumen",
+        "count": 7,
+        "percentage": 13.2
+      },
+      {
+        "skill": "Time Management",
+        "count": 7,
+        "percentage": 13.2
+      },
+      {
+        "skill": "Customer Orientation",
+        "count": 6,
+        "percentage": 11.3
+      },
+      {
+        "skill": "Integrity",
+        "count": 6,
+        "percentage": 11.3
+      },
+      {
+        "skill": "Decision Making",
+        "count": 2,
+        "percentage": 3.8
+      },
+      {
+        "skill": "Strategic Thinking",
+        "count": 2,
+        "percentage": 3.8
+      }
+    ],
+    "jobPostings": [
+      {
+        "company": "Mekari",
+        "title": "Business Development (Mekari POS) - Makassar",
+        "hardSkills": [
+          "Cold Calling",
+          "Lead Generation",
+          "CRM Software",
+          "B2B Sales",
+          "Microsoft Excel",
+          "Salesforce",
+          "HubSpot"
+        ],
+        "softSkills": [
+          "Stress Tolerance",
+          "Relationship Building",
+          "Persuasion & Influence",
+          "Self-Motivation",
+          "Problem Solving"
+        ]
+      },
+      {
+        "company": "Mbiz.co.id",
+        "title": "Account Manager Bali",
+        "hardSkills": [
+          "Lead Generation",
+          "Cold Calling",
+          "Microsoft Excel",
+          "Business Development",
+          "Sales Pipeline Management"
+        ],
+        "softSkills": [
+          "Relationship Building",
+          "Communication Skills",
+          "Results Orientation",
+          "Persuasion & Influence",
+          "Self-Motivation"
+        ]
+      },
+      {
+        "company": "RedDoorz",
+        "title": "Business Development - Surabaya",
+        "hardSkills": [
+          "Account Management",
+          "Microsoft Excel",
+          "Business Development",
+          "Sales Target Achievement"
+        ],
+        "softSkills": [
+          "Communication Skills",
+          "Relationship Building",
+          "Self-Motivation"
+        ]
+      },
+      {
+        "company": "HashMicro",
+        "title": "Business Development Executive (Fresh Graduate)",
+        "hardSkills": [
+          "Microsoft Excel",
+          "CRM Software",
+          "Lead Generation",
+          "Google Workspace",
+          "Sales Target Achievement",
+          "Business Development",
+          "Sales Pipeline Management"
+        ],
+        "softSkills": [
+          "Results Orientation",
+          "Communication Skills",
+          "Self-Motivation",
+          "Negotiation Skills",
+          "Analytical Thinking"
+        ]
+      },
+      {
+        "company": "Glodon Company Limited",
+        "title": "Account Manager",
+        "hardSkills": [
+          "Microsoft Excel",
+          "Lead Generation",
+          "B2B Sales",
+          "Product Demonstration",
+          "Sales Forecasting",
+          "Sales Pipeline Management",
+          "Customer Onboarding"
+        ],
+        "softSkills": [
+          "Problem Solving",
+          "Communication Skills",
+          "Independence",
+          "Relationship Building",
+          "Persuasion & Influence"
+        ]
+      }
+    ],
+    "skillRequirements": [
+      {
+        "name": "Sales Pipeline Management",
+        "required": 3,
+        "marketPercentage": 69.8,
+        "isHardSkill": true
+      },
+      {
+        "name": "Lead Generation",
+        "required": 3,
+        "marketPercentage": 66,
+        "isHardSkill": true
+      },
+      {
+        "name": "B2B Sales",
+        "required": 3,
+        "marketPercentage": 66,
+        "isHardSkill": true
+      },
+      {
+        "name": "Sales Target Achievement",
+        "required": 3,
+        "marketPercentage": 66,
+        "isHardSkill": true
+      },
+      {
+        "name": "Account Management",
+        "required": 3,
+        "marketPercentage": 64.2,
+        "isHardSkill": true
+      },
+      {
+        "name": "Business Development",
+        "required": 3,
+        "marketPercentage": 62.3,
+        "isHardSkill": true
+      },
+      {
+        "name": "Relationship Building",
+        "required": 3,
+        "marketPercentage": 83,
+        "isHardSkill": false
+      },
+      {
+        "name": "Communication Skills",
+        "required": 3,
+        "marketPercentage": 83,
+        "isHardSkill": false
+      }
+    ]
+  },
+  {
+    "fileSource": "contentcreator_hasil_ekstraksi_skill.xlsx",
+    "careerProfileId": "content-strategist",
+    "careerTitle": "Content Creator / Social Media Specialist",
+    "totalPostings": 78,
+    "hardSkills": [
+      {
+        "skill": "TikTok",
+        "count": 0,
+        "percentage": 65.4
+      },
+      {
+        "skill": "Copywriting",
+        "count": 0,
+        "percentage": 41
+      },
+      {
+        "skill": "Content Calendar",
+        "count": 0,
+        "percentage": 30.8
+      },
+      {
+        "skill": "Content Performance Analysis",
+        "count": 0,
+        "percentage": 30.8
+      },
+      {
+        "skill": "Community Management",
+        "count": 0,
+        "percentage": 28.2
+      },
+      {
+        "skill": "Content Ideation",
+        "count": 0,
+        "percentage": 24.4
+      },
+      {
+        "skill": "Content Planning",
+        "count": 0,
+        "percentage": 23.1
+      },
+      {
+        "skill": "Canva",
+        "count": 0,
+        "percentage": 20.5
+      },
+      {
+        "skill": "CapCut",
+        "count": 0,
+        "percentage": 20.5
+      },
+      {
+        "skill": "Influencer & KOL Management",
+        "count": 0,
+        "percentage": 20.5
+      },
+      {
+        "skill": "Video Editing",
+        "count": 0,
+        "percentage": 17.9
+      },
+      {
+        "skill": "Instagram Reels",
+        "count": 0,
+        "percentage": 16.7
+      },
+      {
+        "skill": "Social Media Analytics",
+        "count": 0,
+        "percentage": 16.7
+      },
+      {
+        "skill": "Instagram",
+        "count": 0,
+        "percentage": 14.1
+      },
+      {
+        "skill": "Script Writing",
+        "count": 0,
+        "percentage": 14.1
+      },
+      {
+        "skill": "YouTube",
+        "count": 0,
+        "percentage": 14.1
+      },
+      {
+        "skill": "Content Writing",
+        "count": 0,
+        "percentage": 12.8
+      },
+      {
+        "skill": "Social Media Management",
+        "count": 0,
+        "percentage": 12.8
+      },
+      {
+        "skill": "Content Strategy",
+        "count": 0,
+        "percentage": 11.5
+      },
+      {
+        "skill": "Content Optimization",
+        "count": 0,
+        "percentage": 10.3
+      },
+      {
+        "skill": "Facebook",
+        "count": 0,
+        "percentage": 10.3
+      },
+      {
+        "skill": "Adobe Creative Suite",
+        "count": 0,
+        "percentage": 9
+      },
+      {
+        "skill": "Audience Insights",
+        "count": 0,
+        "percentage": 9
+      },
+      {
+        "skill": "Short-Form Video",
+        "count": 0,
+        "percentage": 9
+      },
+      {
+        "skill": "Videography",
+        "count": 0,
+        "percentage": 9
+      },
+      {
+        "skill": "Adobe Premiere",
+        "count": 0,
+        "percentage": 7.7
+      },
+      {
+        "skill": "UGC Content Creation",
+        "count": 0,
+        "percentage": 7.7
+      },
+      {
+        "skill": "Competitor Analysis",
+        "count": 0,
+        "percentage": 6.4
+      },
+      {
+        "skill": "Graphic Design",
+        "count": 0,
+        "percentage": 6.4
+      },
+      {
+        "skill": "On-Camera Presenting",
+        "count": 0,
+        "percentage": 6.4
+      },
+      {
+        "skill": "Paid Social Advertising",
+        "count": 0,
+        "percentage": 6.4
+      },
+      {
+        "skill": "Photography",
+        "count": 0,
+        "percentage": 6.4
+      },
+      {
+        "skill": "Tone of Voice",
+        "count": 0,
+        "percentage": 6.4
+      },
+      {
+        "skill": "Trend Research",
+        "count": 0,
+        "percentage": 6.4
+      },
+      {
+        "skill": "AI Content Tools",
+        "count": 0,
+        "percentage": 5.1
+      },
+      {
+        "skill": "Adobe Photoshop",
+        "count": 0,
+        "percentage": 5.1
+      },
+      {
+        "skill": "Caption Writing",
+        "count": 0,
+        "percentage": 5.1
+      },
+      {
+        "skill": "Content Pillars",
+        "count": 0,
+        "percentage": 5.1
+      },
+      {
+        "skill": "Hook Creation",
+        "count": 0,
+        "percentage": 5.1
+      },
+      {
+        "skill": "Meta Business Suite",
+        "count": 0,
+        "percentage": 5.1
+      },
+      {
+        "skill": "VN Editor",
+        "count": 0,
+        "percentage": 5.1
+      },
+      {
+        "skill": "YouTube Shorts",
+        "count": 0,
+        "percentage": 5.1
+      },
+      {
+        "skill": "Article Writing",
+        "count": 0,
+        "percentage": 3.8
+      },
+      {
+        "skill": "Campaign Management",
+        "count": 0,
+        "percentage": 3.8
+      },
+      {
+        "skill": "Creative Brief Writing",
+        "count": 0,
+        "percentage": 3.8
+      },
+      {
+        "skill": "Google Analytics",
+        "count": 0,
+        "percentage": 3.8
+      },
+      {
+        "skill": "Performance Reporting",
+        "count": 0,
+        "percentage": 3.8
+      },
+      {
+        "skill": "SEO",
+        "count": 0,
+        "percentage": 3.8
+      },
+      {
+        "skill": "Storyboarding",
+        "count": 0,
+        "percentage": 3.8
+      },
+      {
+        "skill": "Adobe Lightroom",
+        "count": 0,
+        "percentage": 2.6
+      },
+      {
+        "skill": "Instagram Stories",
+        "count": 0,
+        "percentage": 2.6
+      },
+      {
+        "skill": "LinkedIn",
+        "count": 0,
+        "percentage": 2.6
+      },
+      {
+        "skill": "Live Streaming",
+        "count": 0,
+        "percentage": 2.6
+      },
+      {
+        "skill": "Meta Ads",
+        "count": 0,
+        "percentage": 2.6
+      },
+      {
+        "skill": "Social Listening",
+        "count": 0,
+        "percentage": 2.6
+      },
+      {
+        "skill": "TikTok Ads",
+        "count": 0,
+        "percentage": 2.6
+      },
+      {
+        "skill": "TikTok Analytics",
+        "count": 0,
+        "percentage": 2.6
+      },
+      {
+        "skill": "Adobe Illustrator",
+        "count": 0,
+        "percentage": 1.3
+      },
+      {
+        "skill": "Content Production",
+        "count": 0,
+        "percentage": 1.3
+      },
+      {
+        "skill": "Content Scheduling",
+        "count": 0,
+        "percentage": 1.3
+      },
+      {
+        "skill": "CorelDRAW",
+        "count": 0,
+        "percentage": 1.3
+      },
+      {
+        "skill": "Data Pivoting",
+        "count": 0,
+        "percentage": 1.3
+      },
+      {
+        "skill": "InShot",
+        "count": 0,
+        "percentage": 1.3
+      },
+      {
+        "skill": "KPI Tracking",
+        "count": 0,
+        "percentage": 1.3
+      },
+      {
+        "skill": "Media Relations",
+        "count": 0,
+        "percentage": 1.3
+      },
+      {
+        "skill": "Pinterest",
+        "count": 0,
+        "percentage": 1.3
+      },
+      {
+        "skill": "Pitch Deck Creation",
+        "count": 0,
+        "percentage": 1.3
+      },
+      {
+        "skill": "Platform Algorithm Knowledge",
+        "count": 0,
+        "percentage": 1.3
+      },
+      {
+        "skill": "Threads",
+        "count": 0,
+        "percentage": 1.3
+      },
+      {
+        "skill": "Twitter (X)",
+        "count": 0,
+        "percentage": 1.3
+      },
+      {
+        "skill": "Visual Curation",
+        "count": 0,
+        "percentage": 1.3
+      }
+    ],
+    "softSkills": [
+      {
+        "skill": "Creative Thinking",
+        "count": 0,
+        "percentage": 62.8
+      },
+      {
+        "skill": "Cross-Functional Collaboration",
+        "count": 0,
+        "percentage": 59
+      },
+      {
+        "skill": "Trend Awareness",
+        "count": 0,
+        "percentage": 56.4
+      },
+      {
+        "skill": "Storytelling Ability",
+        "count": 0,
+        "percentage": 29.5
+      },
+      {
+        "skill": "Time Management",
+        "count": 0,
+        "percentage": 20.5
+      },
+      {
+        "skill": "Attention to Detail",
+        "count": 0,
+        "percentage": 17.9
+      },
+      {
+        "skill": "Communication Skills",
+        "count": 0,
+        "percentage": 15.4
+      },
+      {
+        "skill": "Adaptability to Change",
+        "count": 0,
+        "percentage": 14.1
+      },
+      {
+        "skill": "Team Collaboration",
+        "count": 0,
+        "percentage": 11.5
+      },
+      {
+        "skill": "Audience Empathy",
+        "count": 0,
+        "percentage": 10.3
+      },
+      {
+        "skill": "Trend Agility",
+        "count": 0,
+        "percentage": 10.3
+      },
+      {
+        "skill": "Analytical Thinking",
+        "count": 0,
+        "percentage": 7.7
+      },
+      {
+        "skill": "Cultural Awareness",
+        "count": 0,
+        "percentage": 7.7
+      },
+      {
+        "skill": "Learning Agility",
+        "count": 0,
+        "percentage": 7.7
+      },
+      {
+        "skill": "Proactive Initiative",
+        "count": 0,
+        "percentage": 7.7
+      },
+      {
+        "skill": "Working Under Pressure",
+        "count": 0,
+        "percentage": 7.7
+      },
+      {
+        "skill": "Ownership Mindset",
+        "count": 0,
+        "percentage": 5.1
+      },
+      {
+        "skill": "Relationship Building",
+        "count": 0,
+        "percentage": 5.1
+      },
+      {
+        "skill": "Team Leadership",
+        "count": 0,
+        "percentage": 5.1
+      },
+      {
+        "skill": "Reputation Management",
+        "count": 0,
+        "percentage": 3.8
+      },
+      {
+        "skill": "Handling Creative Criticism",
+        "count": 0,
+        "percentage": 2.6
+      },
+      {
+        "skill": "Strategic Thinking",
+        "count": 0,
+        "percentage": 2.6
+      },
+      {
+        "skill": "Independent Work",
+        "count": 0,
+        "percentage": 1.3
+      },
+      {
+        "skill": "Results Orientation",
+        "count": 0,
+        "percentage": 1.3
+      }
+    ],
+    "jobPostings": [
+      {
+        "company": "PT Sukses Corp International",
+        "title": "Social Media Specialist",
+        "hardSkills": [
+          "Content Calendar",
+          "Social Media Analytics",
+          "Content Writing",
+          "Content Optimization",
+          "Paid Social Advertising",
+          "Video Editing",
+          "On-Camera Presenting"
+        ],
+        "softSkills": [
+          "Cross-Functional Collaboration",
+          "Trend Awareness",
+          "Team Collaboration",
+          "Communication Skills",
+          "Working Under Pressure"
+        ]
+      },
+      {
+        "company": "Tirta Go",
+        "title": "Konten Kreator / Social Media Specialist",
+        "hardSkills": [
+          "Instagram Reels",
+          "Community Management",
+          "CapCut",
+          "Canva",
+          "Short-Form Video",
+          "Instagram",
+          "TikTok"
+        ],
+        "softSkills": [
+          "Cross-Functional Collaboration",
+          "Trend Awareness",
+          "Audience Empathy"
+        ]
+      },
+      {
+        "company": "BookCabin",
+        "title": "Social Media Specialist",
+        "hardSkills": [
+          "Community Management",
+          "Influencer & KOL Management",
+          "Copywriting",
+          "Content Ideation",
+          "Content Performance Analysis",
+          "Content Writing",
+          "TikTok"
+        ],
+        "softSkills": [
+          "Creative Thinking",
+          "Cross-Functional Collaboration",
+          "Trend Awareness",
+          "Communication Skills"
+        ]
+      },
+      {
+        "company": "Rocketindo",
+        "title": "Social Media Specialist",
+        "hardSkills": [
+          "CapCut",
+          "Content Optimization",
+          "Content Performance Analysis",
+          "On-Camera Presenting",
+          "Video Editing",
+          "Content Production",
+          "TikTok"
+        ],
+        "softSkills": [
+          "Creative Thinking",
+          "Trend Awareness",
+          "Audience Empathy",
+          "Strategic Thinking",
+          "Independent Work"
+        ]
+      },
+      {
+        "company": "United Creative",
+        "title": "Social Media & Content Specialist [Rahasia Gadis]",
+        "hardSkills": [
+          "Script Writing",
+          "Video Editing",
+          "Article Writing",
+          "Caption Writing",
+          "Tone of Voice",
+          "TikTok",
+          "YouTube"
+        ],
+        "softSkills": [
+          "Trend Agility",
+          "Storytelling Ability",
+          "Creative Thinking",
+          "Cross-Functional Collaboration",
+          "Time Management"
+        ]
+      }
+    ],
+    "skillRequirements": [
+      {
+        "name": "TikTok",
+        "required": 3,
+        "marketPercentage": 65.4,
+        "isHardSkill": true
+      },
+      {
+        "name": "Copywriting",
+        "required": 2,
+        "marketPercentage": 41,
+        "isHardSkill": true
+      },
+      {
+        "name": "Content Calendar",
+        "required": 2,
+        "marketPercentage": 30.8,
+        "isHardSkill": true
+      },
+      {
+        "name": "Content Performance Analysis",
+        "required": 2,
+        "marketPercentage": 30.8,
+        "isHardSkill": true
+      },
+      {
+        "name": "Community Management",
+        "required": 2,
+        "marketPercentage": 28.2,
+        "isHardSkill": true
+      },
+      {
+        "name": "Content Ideation",
+        "required": 1,
+        "marketPercentage": 24.4,
+        "isHardSkill": true
+      },
+      {
+        "name": "Creative Thinking",
+        "required": 3,
+        "marketPercentage": 62.8,
+        "isHardSkill": false
+      },
+      {
+        "name": "Cross-Functional Collaboration",
+        "required": 3,
+        "marketPercentage": 59,
+        "isHardSkill": false
+      }
+    ]
+  },
+  {
+    "fileSource": "data_analyst_bi_hasil_ekstraksi_skill.xlsx",
+    "careerProfileId": "data-scientist",
+    "careerTitle": "Data Analyst / Business Intelligence",
+    "totalPostings": 57,
+    "hardSkills": [
+      {
+        "skill": "SQL",
+        "count": 42,
+        "percentage": 73.7
+      },
+      {
+        "skill": "Dashboard Development",
+        "count": 37,
+        "percentage": 64.9
+      },
+      {
+        "skill": "Microsoft Excel",
+        "count": 34,
+        "percentage": 59.6
+      },
+      {
+        "skill": "Python",
+        "count": 33,
+        "percentage": 57.9
+      },
+      {
+        "skill": "Power BI",
+        "count": 32,
+        "percentage": 56.1
+      },
+      {
+        "skill": "Tableau",
+        "count": 26,
+        "percentage": 45.6
+      },
+      {
+        "skill": "Data Cleaning & Quality",
+        "count": 21,
+        "percentage": 36.8
+      },
+      {
+        "skill": "Looker Studio",
+        "count": 21,
+        "percentage": 36.8
+      },
+      {
+        "skill": "Data Visualization",
+        "count": 18,
+        "percentage": 31.6
+      },
+      {
+        "skill": "Business Reporting",
+        "count": 13,
+        "percentage": 22.8
+      },
+      {
+        "skill": "Business Insights",
+        "count": 12,
+        "percentage": 21.1
+      },
+      {
+        "skill": "Predictive Modeling",
+        "count": 9,
+        "percentage": 15.8
+      },
+      {
+        "skill": "Statistical Analysis",
+        "count": 9,
+        "percentage": 15.8
+      },
+      {
+        "skill": "R Programming",
+        "count": 8,
+        "percentage": 14
+      },
+      {
+        "skill": "Data Modeling",
+        "count": 7,
+        "percentage": 12.3
+      },
+      {
+        "skill": "ETL & Data Pipeline",
+        "count": 6,
+        "percentage": 10.5
+      },
+      {
+        "skill": "Financial Analysis",
+        "count": 6,
+        "percentage": 10.5
+      },
+      {
+        "skill": "Data Warehouse",
+        "count": 5,
+        "percentage": 8.8
+      },
+      {
+        "skill": "KPI & Metrics Tracking",
+        "count": 5,
+        "percentage": 8.8
+      },
+      {
+        "skill": "Funnel & Cohort Analysis",
+        "count": 4,
+        "percentage": 7
+      },
+      {
+        "skill": "Process Automation",
+        "count": 4,
+        "percentage": 7
+      },
+      {
+        "skill": "Supply Chain Analytics",
+        "count": 4,
+        "percentage": 7
+      },
+      {
+        "skill": "A/B Testing",
+        "count": 3,
+        "percentage": 5.3
+      },
+      {
+        "skill": "Exploratory Data Analysis",
+        "count": 3,
+        "percentage": 5.3
+      },
+      {
+        "skill": "Metabase & Superset",
+        "count": 3,
+        "percentage": 5.3
+      },
+      {
+        "skill": "SAP & ERP",
+        "count": 3,
+        "percentage": 5.3
+      },
+      {
+        "skill": "API Integration",
+        "count": 2,
+        "percentage": 3.5
+      },
+      {
+        "skill": "Marketing Analytics",
+        "count": 2,
+        "percentage": 3.5
+      },
+      {
+        "skill": "Product & Web Analytics",
+        "count": 2,
+        "percentage": 3.5
+      },
+      {
+        "skill": "dbt & Airflow",
+        "count": 2,
+        "percentage": 3.5
+      },
+      {
+        "skill": "Cloud Data Platform",
+        "count": 1,
+        "percentage": 1.8
+      },
+      {
+        "skill": "Google Apps Script",
+        "count": 1,
+        "percentage": 1.8
+      },
+      {
+        "skill": "Pricing & Sales Analysis",
+        "count": 1,
+        "percentage": 1.8
+      },
+      {
+        "skill": "Technical Documentation",
+        "count": 1,
+        "percentage": 1.8
+      }
+    ],
+    "softSkills": [
+      {
+        "skill": "Analytical Thinking",
+        "count": 40,
+        "percentage": 70.2
+      },
+      {
+        "skill": "Cross-Functional Collaboration",
+        "count": 33,
+        "percentage": 57.9
+      },
+      {
+        "skill": "Stakeholder Management",
+        "count": 31,
+        "percentage": 54.4
+      },
+      {
+        "skill": "Communication Skills",
+        "count": 25,
+        "percentage": 43.9
+      },
+      {
+        "skill": "Problem Solving",
+        "count": 22,
+        "percentage": 38.6
+      },
+      {
+        "skill": "Data Storytelling",
+        "count": 19,
+        "percentage": 33.3
+      },
+      {
+        "skill": "Attention to Detail",
+        "count": 9,
+        "percentage": 15.8
+      },
+      {
+        "skill": "Business Acumen",
+        "count": 8,
+        "percentage": 14
+      },
+      {
+        "skill": "Learning Agility",
+        "count": 5,
+        "percentage": 8.8
+      },
+      {
+        "skill": "Proactive Initiative",
+        "count": 4,
+        "percentage": 7
+      },
+      {
+        "skill": "Continuous Improvement Mindset",
+        "count": 3,
+        "percentage": 5.3
+      },
+      {
+        "skill": "Independent Work",
+        "count": 3,
+        "percentage": 5.3
+      },
+      {
+        "skill": "Integrity & Discipline",
+        "count": 3,
+        "percentage": 5.3
+      },
+      {
+        "skill": "Team Leadership",
+        "count": 3,
+        "percentage": 5.3
+      },
+      {
+        "skill": "Time Management",
+        "count": 3,
+        "percentage": 5.3
+      },
+      {
+        "skill": "Curiosity & Inquisitiveness",
+        "count": 2,
+        "percentage": 3.5
+      },
+      {
+        "skill": "Working Under Pressure",
+        "count": 2,
+        "percentage": 3.5
+      },
+      {
+        "skill": "Adaptability to Change",
+        "count": 1,
+        "percentage": 1.8
+      },
+      {
+        "skill": "Critical Thinking",
+        "count": 1,
+        "percentage": 1.8
+      },
+      {
+        "skill": "Team Collaboration",
+        "count": 1,
+        "percentage": 1.8
+      }
+    ],
+    "jobPostings": [
+      {
+        "company": "MOVA",
+        "title": "Data Analyst",
+        "hardSkills": [
+          "SQL",
+          "Python",
+          "Looker Studio",
+          "Power BI",
+          "Tableau",
+          "Microsoft Excel",
+          "Dashboard Development"
+        ],
+        "softSkills": [
+          "Analytical Thinking",
+          "Data Storytelling",
+          "Communication Skills",
+          "Stakeholder Management",
+          "Continuous Improvement Mindset"
+        ]
+      },
+      {
+        "company": "PT Astra International Tbk",
+        "title": "Data Analyst - MODA",
+        "hardSkills": [
+          "Power BI",
+          "Microsoft Excel",
+          "SQL",
+          "Dashboard Development",
+          "Data Modeling",
+          "SAP & ERP",
+          "Business Reporting"
+        ],
+        "softSkills": [
+          "Analytical Thinking",
+          "Communication Skills",
+          "Stakeholder Management",
+          "Attention to Detail",
+          "Time Management"
+        ]
+      },
+      {
+        "company": "Facetology",
+        "title": "E-Commerce Data Analyst",
+        "hardSkills": [
+          "SQL",
+          "Power BI",
+          "Tableau",
+          "Looker Studio",
+          "Python",
+          "Dashboard Development",
+          "Data Cleaning & Quality"
+        ],
+        "softSkills": [
+          "Integrity & Discipline"
+        ]
+      },
+      {
+        "company": "AUTOPEDIA",
+        "title": "Data Analyst",
+        "hardSkills": [
+          "SQL",
+          "Python",
+          "Looker Studio",
+          "Tableau",
+          "Power BI",
+          "Microsoft Excel",
+          "ETL & Data Pipeline"
+        ],
+        "softSkills": [
+          "Analytical Thinking",
+          "Problem Solving",
+          "Cross-Functional Collaboration"
+        ]
+      },
+      {
+        "company": "tiket.com",
+        "title": "Associate Business Intelligence",
+        "hardSkills": [
+          "SQL",
+          "Tableau",
+          "Power BI",
+          "Python",
+          "Data Warehouse",
+          "Dashboard Development",
+          "Statistical Analysis"
+        ],
+        "softSkills": [
+          "-"
+        ]
+      }
+    ],
+    "skillRequirements": [
+      {
+        "name": "SQL",
+        "required": 3,
+        "marketPercentage": 73.7,
+        "isHardSkill": true
+      },
+      {
+        "name": "Dashboard Development",
+        "required": 3,
+        "marketPercentage": 64.9,
+        "isHardSkill": true
+      },
+      {
+        "name": "Microsoft Excel",
+        "required": 3,
+        "marketPercentage": 59.6,
+        "isHardSkill": true
+      },
+      {
+        "name": "Python",
+        "required": 3,
+        "marketPercentage": 57.9,
+        "isHardSkill": true
+      },
+      {
+        "name": "Power BI",
+        "required": 3,
+        "marketPercentage": 56.1,
+        "isHardSkill": true
+      },
+      {
+        "name": "Tableau",
+        "required": 2,
+        "marketPercentage": 45.6,
+        "isHardSkill": true
+      },
+      {
+        "name": "Analytical Thinking",
+        "required": 3,
+        "marketPercentage": 70.2,
+        "isHardSkill": false
+      },
+      {
+        "name": "Cross-Functional Collaboration",
+        "required": 3,
+        "marketPercentage": 57.9,
+        "isHardSkill": false
+      }
+    ]
+  },
+  {
+    "fileSource": "devops_qa_hasil_ekstraksi.xlsx",
+    "careerProfileId": "product-manager",
+    "careerTitle": "DevOps Engineer / QA Automation Engineer",
+    "totalPostings": 43,
+    "hardSkills": [
+      {
+        "skill": "CI/CD Pipeline",
+        "count": 36,
+        "percentage": 83.7
+      },
+      {
+        "skill": "AWS",
+        "count": 29,
+        "percentage": 67.4
+      },
+      {
+        "skill": "Docker",
+        "count": 28,
+        "percentage": 65.1
+      },
+      {
+        "skill": "Kubernetes",
+        "count": 24,
+        "percentage": 55.8
+      },
+      {
+        "skill": "Google Cloud Platform",
+        "count": 23,
+        "percentage": 53.5
+      },
+      {
+        "skill": "Infrastructure as Code",
+        "count": 20,
+        "percentage": 46.5
+      },
+      {
+        "skill": "Terraform",
+        "count": 17,
+        "percentage": 39.5
+      },
+      {
+        "skill": "Microsoft Azure",
+        "count": 15,
+        "percentage": 34.9
+      },
+      {
+        "skill": "Jenkins",
+        "count": 14,
+        "percentage": 32.6
+      },
+      {
+        "skill": "Linux Administration",
+        "count": 12,
+        "percentage": 27.9
+      },
+      {
+        "skill": "Bash Scripting",
+        "count": 11,
+        "percentage": 25.6
+      },
+      {
+        "skill": "Ansible",
+        "count": 10,
+        "percentage": 23.3
+      },
+      {
+        "skill": "Python",
+        "count": 10,
+        "percentage": 23.3
+      },
+      {
+        "skill": "GitHub Actions",
+        "count": 8,
+        "percentage": 18.6
+      },
+      {
+        "skill": "GitLab CI",
+        "count": 8,
+        "percentage": 18.6
+      },
+      {
+        "skill": "Prometheus & Grafana",
+        "count": 8,
+        "percentage": 18.6
+      },
+      {
+        "skill": "ArgoCD & GitOps",
+        "count": 6,
+        "percentage": 14
+      },
+      {
+        "skill": "Test Automation Framework",
+        "count": 6,
+        "percentage": 14
+      },
+      {
+        "skill": "Cloud Security & IAM",
+        "count": 3,
+        "percentage": 7
+      },
+      {
+        "skill": "Git",
+        "count": 3,
+        "percentage": 7
+      },
+      {
+        "skill": "Virtualization",
+        "count": 2,
+        "percentage": 4.7
+      },
+      {
+        "skill": "API Testing",
+        "count": 1,
+        "percentage": 2.3
+      },
+      {
+        "skill": "Appium",
+        "count": 1,
+        "percentage": 2.3
+      },
+      {
+        "skill": "Cloud Cost Optimization",
+        "count": 1,
+        "percentage": 2.3
+      },
+      {
+        "skill": "Playwright & Cypress",
+        "count": 1,
+        "percentage": 2.3
+      },
+      {
+        "skill": "Postman",
+        "count": 1,
+        "percentage": 2.3
+      },
+      {
+        "skill": "Process Automation",
+        "count": 1,
+        "percentage": 2.3
+      },
+      {
+        "skill": "Selenium",
+        "count": 1,
+        "percentage": 2.3
+      },
+      {
+        "skill": "Windows Server",
+        "count": 1,
+        "percentage": 2.3
+      }
+    ],
+    "softSkills": [
+      {
+        "skill": "Cross-Functional Collaboration",
+        "count": 20,
+        "percentage": 46.5
+      },
+      {
+        "skill": "Communication Skills",
+        "count": 14,
+        "percentage": 32.6
+      },
+      {
+        "skill": "Problem Solving",
+        "count": 14,
+        "percentage": 32.6
+      },
+      {
+        "skill": "Proactive Initiative",
+        "count": 12,
+        "percentage": 27.9
+      },
+      {
+        "skill": "Ownership Mindset",
+        "count": 9,
+        "percentage": 20.9
+      },
+      {
+        "skill": "Learning Agility",
+        "count": 8,
+        "percentage": 18.6
+      },
+      {
+        "skill": "Working Under Pressure",
+        "count": 7,
+        "percentage": 16.3
+      },
+      {
+        "skill": "Adaptability to Change",
+        "count": 6,
+        "percentage": 14
+      },
+      {
+        "skill": "Team Leadership",
+        "count": 5,
+        "percentage": 11.6
+      },
+      {
+        "skill": "Attention to Detail",
+        "count": 4,
+        "percentage": 9.3
+      },
+      {
+        "skill": "Continuous Improvement Mindset",
+        "count": 4,
+        "percentage": 9.3
+      },
+      {
+        "skill": "Stakeholder Management",
+        "count": 4,
+        "percentage": 9.3
+      },
+      {
+        "skill": "Team Collaboration",
+        "count": 4,
+        "percentage": 9.3
+      },
+      {
+        "skill": "Analytical Thinking",
+        "count": 3,
+        "percentage": 7
+      },
+      {
+        "skill": "Independent Work",
+        "count": 3,
+        "percentage": 7
+      },
+      {
+        "skill": "Creative Thinking",
+        "count": 2,
+        "percentage": 4.7
+      },
+      {
+        "skill": "Integrity & Discipline",
+        "count": 2,
+        "percentage": 4.7
+      },
+      {
+        "skill": "Time Management",
+        "count": 1,
+        "percentage": 2.3
+      }
+    ],
+    "jobPostings": [
+      {
+        "company": "tiket.com",
+        "title": "DevOps Engineer I",
+        "hardSkills": [
+          "Google Cloud Platform",
+          "Jenkins",
+          "Ansible",
+          "Bash Scripting",
+          "Python",
+          "Test Automation Framework",
+          "ArgoCD & GitOps"
+        ],
+        "softSkills": [
+          "Communication Skills",
+          "Continuous Improvement Mindset"
+        ]
+      },
+      {
+        "company": "Cube",
+        "title": "DevOps Engineer / Cloud Engineer",
+        "hardSkills": [
+          "CI/CD Pipeline",
+          "Docker",
+          "Kubernetes",
+          "Linux Administration",
+          "Bash Scripting",
+          "Python",
+          "Infrastructure as Code"
+        ],
+        "softSkills": [
+          "Problem Solving",
+          "Cross-Functional Collaboration",
+          "Learning Agility"
+        ]
+      },
+      {
+        "company": "Roketin - PT Roketin Kreatif Teknologi",
+        "title": "Junior DevOps Engineer",
+        "hardSkills": [
+          "Linux Administration",
+          "AWS",
+          "Google Cloud Platform",
+          "Microsoft Azure",
+          "Docker",
+          "CI/CD Pipeline",
+          "Jenkins"
+        ],
+        "softSkills": [
+          "Problem Solving",
+          "Ownership Mindset",
+          "Team Collaboration",
+          "Independent Work",
+          "Adaptability to Change"
+        ]
+      },
+      {
+        "company": "Firerock Indonesia",
+        "title": "DevOps Engineer",
+        "hardSkills": [
+          "Kubernetes",
+          "CI/CD Pipeline",
+          "GitHub Actions",
+          "Jenkins",
+          "Prometheus & Grafana",
+          "Linux Administration",
+          "Docker"
+        ],
+        "softSkills": [
+          "Problem Solving",
+          "Working Under Pressure",
+          "Creative Thinking"
+        ]
+      },
+      {
+        "company": "Kredivo Group",
+        "title": "Senior InfraOps Engineer (SDE 3)",
+        "hardSkills": [
+          "CI/CD Pipeline",
+          "Infrastructure as Code",
+          "AWS",
+          "Google Cloud Platform",
+          "Kubernetes",
+          "Docker",
+          "ArgoCD & GitOps"
+        ],
+        "softSkills": [
+          "Problem Solving",
+          "Communication Skills",
+          "Cross-Functional Collaboration",
+          "Ownership Mindset",
+          "Proactive Initiative"
+        ]
+      }
+    ],
+    "skillRequirements": [
+      {
+        "name": "CI/CD Pipeline",
+        "required": 3,
+        "marketPercentage": 83.7,
+        "isHardSkill": true
+      },
+      {
+        "name": "AWS",
+        "required": 3,
+        "marketPercentage": 67.4,
+        "isHardSkill": true
+      },
+      {
+        "name": "Docker",
+        "required": 3,
+        "marketPercentage": 65.1,
+        "isHardSkill": true
+      },
+      {
+        "name": "Kubernetes",
+        "required": 3,
+        "marketPercentage": 55.8,
+        "isHardSkill": true
+      },
+      {
+        "name": "Google Cloud Platform",
+        "required": 3,
+        "marketPercentage": 53.5,
+        "isHardSkill": true
+      },
+      {
+        "name": "Infrastructure as Code",
+        "required": 2,
+        "marketPercentage": 46.5,
+        "isHardSkill": true
+      },
+      {
+        "name": "Cross-Functional Collaboration",
+        "required": 2,
+        "marketPercentage": 46.5,
+        "isHardSkill": false
+      },
+      {
+        "name": "Communication Skills",
+        "required": 2,
+        "marketPercentage": 32.6,
+        "isHardSkill": false
+      }
+    ]
+  },
+  {
+    "fileSource": "digitalmarketing_hasil_ekstraksi_skills.xlsx",
+    "careerProfileId": "community-manager",
+    "careerTitle": "Digital Marketing Specialist",
+    "totalPostings": 100,
+    "hardSkills": [
+      {
+        "skill": "Google Ads",
+        "count": 50,
+        "percentage": 50
+      },
+      {
+        "skill": "Meta Ads",
+        "count": 42,
+        "percentage": 42
+      },
+      {
+        "skill": "A/B Testing",
+        "count": 36,
+        "percentage": 36
+      },
+      {
+        "skill": "SEO",
+        "count": 36,
+        "percentage": 36
+      },
+      {
+        "skill": "ROAS",
+        "count": 35,
+        "percentage": 35
+      },
+      {
+        "skill": "Conversion Rate",
+        "count": 35,
+        "percentage": 35
+      },
+      {
+        "skill": "TikTok Ads",
+        "count": 27,
+        "percentage": 27
+      },
+      {
+        "skill": "Audience Targeting",
+        "count": 26,
+        "percentage": 26
+      },
+      {
+        "skill": "Google Analytics",
+        "count": 26,
+        "percentage": 26
+      },
+      {
+        "skill": "CTR",
+        "count": 25,
+        "percentage": 25
+      },
+      {
+        "skill": "ROI",
+        "count": 24,
+        "percentage": 24
+      },
+      {
+        "skill": "Marketing Funnel",
+        "count": 23,
+        "percentage": 23
+      },
+      {
+        "skill": "Customer Acquisition Cost",
+        "count": 23,
+        "percentage": 23
+      },
+      {
+        "skill": "Bid Optimization",
+        "count": 20,
+        "percentage": 20
+      },
+      {
+        "skill": "Keyword Research",
+        "count": 20,
+        "percentage": 20
+      },
+      {
+        "skill": "Campaign Budget Management",
+        "count": 20,
+        "percentage": 20
+      },
+      {
+        "skill": "Attribution Modeling",
+        "count": 19,
+        "percentage": 19
+      },
+      {
+        "skill": "Search Engine Marketing",
+        "count": 18,
+        "percentage": 18
+      },
+      {
+        "skill": "Ad Copywriting",
+        "count": 18,
+        "percentage": 18
+      },
+      {
+        "skill": "Google Analytics 4",
+        "count": 17,
+        "percentage": 17
+      },
+      {
+        "skill": "Microsoft Excel",
+        "count": 16,
+        "percentage": 16
+      },
+      {
+        "skill": "Cost Per Acquisition",
+        "count": 16,
+        "percentage": 16
+      },
+      {
+        "skill": "Technical SEO",
+        "count": 16,
+        "percentage": 16
+      },
+      {
+        "skill": "Programmatic Advertising",
+        "count": 13,
+        "percentage": 13
+      },
+      {
+        "skill": "Google Search Console",
+        "count": 13,
+        "percentage": 13
+      },
+      {
+        "skill": "CRM",
+        "count": 13,
+        "percentage": 13
+      },
+      {
+        "skill": "Customer Lifetime Value",
+        "count": 13,
+        "percentage": 13
+      },
+      {
+        "skill": "Paid Media",
+        "count": 13,
+        "percentage": 13
+      },
+      {
+        "skill": "Email Marketing",
+        "count": 12,
+        "percentage": 12
+      },
+      {
+        "skill": "Google Tag Manager",
+        "count": 12,
+        "percentage": 12
+      },
+      {
+        "skill": "Cost Per Click",
+        "count": 11,
+        "percentage": 11
+      },
+      {
+        "skill": "Conversion Tracking",
+        "count": 11,
+        "percentage": 11
+      },
+      {
+        "skill": "Retargeting",
+        "count": 11,
+        "percentage": 11
+      },
+      {
+        "skill": "Media Planning",
+        "count": 11,
+        "percentage": 11
+      },
+      {
+        "skill": "Marketplace Ads",
+        "count": 10,
+        "percentage": 10
+      },
+      {
+        "skill": "Link Building",
+        "count": 10,
+        "percentage": 10
+      },
+      {
+        "skill": "Growth Marketing",
+        "count": 10,
+        "percentage": 10
+      },
+      {
+        "skill": "Data Visualization",
+        "count": 10,
+        "percentage": 10
+      },
+      {
+        "skill": "Google Sheets",
+        "count": 10,
+        "percentage": 10
+      },
+      {
+        "skill": "SQL",
+        "count": 10,
+        "percentage": 10
+      },
+      {
+        "skill": "Ahrefs",
+        "count": 9,
+        "percentage": 9
+      },
+      {
+        "skill": "Content Marketing",
+        "count": 9,
+        "percentage": 9
+      },
+      {
+        "skill": "Looker Studio",
+        "count": 8,
+        "percentage": 8
+      },
+      {
+        "skill": "HTML",
+        "count": 8,
+        "percentage": 8
+      },
+      {
+        "skill": "SEMrush",
+        "count": 8,
+        "percentage": 8
+      },
+      {
+        "skill": "Conversion Rate Optimization",
+        "count": 8,
+        "percentage": 8
+      },
+      {
+        "skill": "Cost Per Lead",
+        "count": 8,
+        "percentage": 8
+      },
+      {
+        "skill": "E-commerce Advertising",
+        "count": 8,
+        "percentage": 8
+      },
+      {
+        "skill": "Performance Max",
+        "count": 6,
+        "percentage": 6
+      },
+      {
+        "skill": "WordPress",
+        "count": 6,
+        "percentage": 6
+      },
+      {
+        "skill": "Marketing Automation",
+        "count": 5,
+        "percentage": 5
+      },
+      {
+        "skill": "Generative Engine Optimization",
+        "count": 5,
+        "percentage": 5
+      },
+      {
+        "skill": "Cost Per Mille",
+        "count": 5,
+        "percentage": 5
+      },
+      {
+        "skill": "Meta Pixel",
+        "count": 5,
+        "percentage": 5
+      },
+      {
+        "skill": "Pay-Per-Click Advertising",
+        "count": 4,
+        "percentage": 4
+      },
+      {
+        "skill": "LinkedIn Ads",
+        "count": 4,
+        "percentage": 4
+      },
+      {
+        "skill": "Mailchimp",
+        "count": 4,
+        "percentage": 4
+      },
+      {
+        "skill": "Conversion API",
+        "count": 4,
+        "percentage": 4
+      },
+      {
+        "skill": "App Install Campaigns",
+        "count": 4,
+        "percentage": 4
+      },
+      {
+        "skill": "AppsFlyer",
+        "count": 4,
+        "percentage": 4
+      },
+      {
+        "skill": "Marketing Efficiency Ratio",
+        "count": 4,
+        "percentage": 4
+      },
+      {
+        "skill": "Average Order Value",
+        "count": 4,
+        "percentage": 4
+      },
+      {
+        "skill": "Power BI",
+        "count": 4,
+        "percentage": 4
+      },
+      {
+        "skill": "Canva",
+        "count": 4,
+        "percentage": 4
+      },
+      {
+        "skill": "Adobe Creative Suite",
+        "count": 4,
+        "percentage": 4
+      },
+      {
+        "skill": "Paid Search",
+        "count": 4,
+        "percentage": 4
+      },
+      {
+        "skill": "Cohort Analysis",
+        "count": 4,
+        "percentage": 4
+      },
+      {
+        "skill": "Social Media Marketing",
+        "count": 4,
+        "percentage": 4
+      },
+      {
+        "skill": "HubSpot",
+        "count": 3,
+        "percentage": 3
+      },
+      {
+        "skill": "Shopify",
+        "count": 3,
+        "percentage": 3
+      },
+      {
+        "skill": "Answer Engine Optimization",
+        "count": 3,
+        "percentage": 3
+      },
+      {
+        "skill": "Demand-Side Platform",
+        "count": 3,
+        "percentage": 3
+      },
+      {
+        "skill": "UTM Tracking",
+        "count": 3,
+        "percentage": 3
+      },
+      {
+        "skill": "Screaming Frog",
+        "count": 3,
+        "percentage": 3
+      },
+      {
+        "skill": "Influencer Marketing",
+        "count": 3,
+        "percentage": 3
+      },
+      {
+        "skill": "Affiliate Marketing",
+        "count": 3,
+        "percentage": 3
+      },
+      {
+        "skill": "Tableau",
+        "count": 3,
+        "percentage": 3
+      },
+      {
+        "skill": "Python",
+        "count": 3,
+        "percentage": 3
+      },
+      {
+        "skill": "Paid Social",
+        "count": 2,
+        "percentage": 2
+      },
+      {
+        "skill": "Landing Page Optimization",
+        "count": 2,
+        "percentage": 2
+      },
+      {
+        "skill": "Moz",
+        "count": 2,
+        "percentage": 2
+      },
+      {
+        "skill": "Google Keyword Planner",
+        "count": 2,
+        "percentage": 2
+      },
+      {
+        "skill": "Microsoft Advertising",
+        "count": 2,
+        "percentage": 2
+      },
+      {
+        "skill": "YouTube Ads",
+        "count": 1,
+        "percentage": 1
+      },
+      {
+        "skill": "Mobile Measurement Partner",
+        "count": 1,
+        "percentage": 1
+      },
+      {
+        "skill": "Quality Score",
+        "count": 1,
+        "percentage": 1
+      },
+      {
+        "skill": "Google Shopping",
+        "count": 1,
+        "percentage": 1
+      },
+      {
+        "skill": "Display Advertising",
+        "count": 1,
+        "percentage": 1
+      }
+    ],
+    "softSkills": [
+      {
+        "skill": "Cross-Functional Collaboration",
+        "count": 66,
+        "percentage": 66
+      },
+      {
+        "skill": "Analytical Thinking",
+        "count": 59,
+        "percentage": 59
+      },
+      {
+        "skill": "Communication Skills",
+        "count": 41,
+        "percentage": 41
+      },
+      {
+        "skill": "Continuous Learning",
+        "count": 35,
+        "percentage": 35
+      },
+      {
+        "skill": "Data-Driven Decision Making",
+        "count": 35,
+        "percentage": 35
+      },
+      {
+        "skill": "Stakeholder Management",
+        "count": 24,
+        "percentage": 24
+      },
+      {
+        "skill": "Ownership & Accountability",
+        "count": 23,
+        "percentage": 23
+      },
+      {
+        "skill": "Independence",
+        "count": 22,
+        "percentage": 22
+      },
+      {
+        "skill": "Attention to Detail",
+        "count": 20,
+        "percentage": 20
+      },
+      {
+        "skill": "Leadership",
+        "count": 18,
+        "percentage": 18
+      },
+      {
+        "skill": "Stress Tolerance",
+        "count": 17,
+        "percentage": 17
+      },
+      {
+        "skill": "Problem Solving",
+        "count": 16,
+        "percentage": 16
+      },
+      {
+        "skill": "Time Management",
+        "count": 15,
+        "percentage": 15
+      },
+      {
+        "skill": "Adaptability",
+        "count": 14,
+        "percentage": 14
+      },
+      {
+        "skill": "Initiative",
+        "count": 14,
+        "percentage": 14
+      },
+      {
+        "skill": "Creative Thinking",
+        "count": 13,
+        "percentage": 13
+      },
+      {
+        "skill": "Teamwork",
+        "count": 10,
+        "percentage": 10
+      },
+      {
+        "skill": "Presentation Skills",
+        "count": 9,
+        "percentage": 9
+      },
+      {
+        "skill": "Decision Making",
+        "count": 8,
+        "percentage": 8
+      },
+      {
+        "skill": "Results Orientation",
+        "count": 8,
+        "percentage": 8
+      },
+      {
+        "skill": "Strategic Thinking",
+        "count": 7,
+        "percentage": 7
+      },
+      {
+        "skill": "Business Acumen",
+        "count": 6,
+        "percentage": 6
+      },
+      {
+        "skill": "Curiosity",
+        "count": 5,
+        "percentage": 5
+      },
+      {
+        "skill": "Negotiation Skills",
+        "count": 4,
+        "percentage": 4
+      },
+      {
+        "skill": "Integrity",
+        "count": 3,
+        "percentage": 3
+      },
+      {
+        "skill": "Experimentation Mindset",
+        "count": 3,
+        "percentage": 3
+      },
+      {
+        "skill": "Critical Thinking",
+        "count": 1,
+        "percentage": 1
+      }
+    ],
+    "jobPostings": [
+      {
+        "company": "Mekari",
+        "title": "SEM, Search Engine Marketing Specialist",
+        "hardSkills": [
+          "Search Engine Marketing",
+          "Bid Optimization",
+          "Ad Copywriting",
+          "Keyword Research",
+          "A/B Testing"
+        ],
+        "softSkills": [
+          "Continuous Learning",
+          "Cross-Functional Collaboration"
+        ]
+      },
+      {
+        "company": "1O1 Urban Jakarta Pemuda",
+        "title": "Digital Marketing Specialist",
+        "hardSkills": [
+          "SEO",
+          "Google Ads",
+          "Search Engine Marketing",
+          "ROI",
+          "Ad Copywriting",
+          "Email Marketing"
+        ],
+        "softSkills": [
+          "Data-Driven Decision Making",
+          "Decision Making",
+          "Creative Thinking",
+          "Cross-Functional Collaboration"
+        ]
+      },
+      {
+        "company": "Vorta Beauty Clinic",
+        "title": "Ads Specialist",
+        "hardSkills": [
+          "Meta Ads",
+          "Google Ads",
+          "TikTok Ads",
+          "Marketplace Ads",
+          "Google Analytics 4",
+          "Looker Studio",
+          "Microsoft Excel"
+        ],
+        "softSkills": [
+          "Analytical Thinking",
+          "Problem Solving",
+          "Adaptability",
+          "Results Orientation",
+          "Cross-Functional Collaboration"
+        ]
+      },
+      {
+        "company": "bitbybit Studio",
+        "title": "Digital Marketing Specialist (Growth & AI) HOT ROLE",
+        "hardSkills": [
+          "Google Ads",
+          "Meta Ads",
+          "SEO",
+          "Performance Max",
+          "Search Engine Marketing",
+          "Pay-Per-Click Advertising",
+          "LinkedIn Ads"
+        ],
+        "softSkills": [
+          "Data-Driven Decision Making",
+          "Analytical Thinking",
+          "Communication Skills",
+          "Continuous Learning",
+          "Initiative"
+        ]
+      },
+      {
+        "company": "MOVA",
+        "title": "Digital Marketing Specialist",
+        "hardSkills": [
+          "SEO",
+          "Google Ads",
+          "TikTok Ads",
+          "Meta Ads",
+          "Search Engine Marketing",
+          "HTML",
+          "Google Analytics 4"
+        ],
+        "softSkills": [
+          "Data-Driven Decision Making",
+          "Analytical Thinking",
+          "Communication Skills",
+          "Continuous Learning",
+          "Cross-Functional Collaboration"
+        ]
+      }
+    ],
+    "skillRequirements": [
+      {
+        "name": "Google Ads",
+        "required": 3,
+        "marketPercentage": 50,
+        "isHardSkill": true
+      },
+      {
+        "name": "Meta Ads",
+        "required": 2,
+        "marketPercentage": 42,
+        "isHardSkill": true
+      },
+      {
+        "name": "A/B Testing",
+        "required": 2,
+        "marketPercentage": 36,
+        "isHardSkill": true
+      },
+      {
+        "name": "SEO",
+        "required": 2,
+        "marketPercentage": 36,
+        "isHardSkill": true
+      },
+      {
+        "name": "ROAS",
+        "required": 2,
+        "marketPercentage": 35,
+        "isHardSkill": true
+      },
+      {
+        "name": "Conversion Rate",
+        "required": 2,
+        "marketPercentage": 35,
+        "isHardSkill": true
+      },
+      {
+        "name": "Cross-Functional Collaboration",
+        "required": 3,
+        "marketPercentage": 66,
+        "isHardSkill": false
+      },
+      {
+        "name": "Analytical Thinking",
+        "required": 3,
+        "marketPercentage": 59,
+        "isHardSkill": false
+      }
+    ]
+  },
+  {
+    "fileSource": "ecommerce_dropship_hasil_ekstraksi.xlsx",
+    "careerProfileId": "ecommerce-specialist",
+    "careerTitle": "E-Commerce Specialist / Dropshipper",
+    "totalPostings": 32,
+    "hardSkills": [
+      {
+        "skill": "TikTok Shop Operations",
+        "count": 10,
+        "percentage": 31.3
+      },
+      {
+        "skill": "Shopee Operations",
+        "count": 9,
+        "percentage": 28.1
+      },
+      {
+        "skill": "Lazada Operations",
+        "count": 6,
+        "percentage": 18.8
+      },
+      {
+        "skill": "Conversion Rate Optimization",
+        "count": 5,
+        "percentage": 15.6
+      },
+      {
+        "skill": "Inventory Management",
+        "count": 5,
+        "percentage": 15.6
+      },
+      {
+        "skill": "Tokopedia Operations",
+        "count": 5,
+        "percentage": 15.6
+      },
+      {
+        "skill": "Marketplace Operations",
+        "count": 4,
+        "percentage": 12.5
+      },
+      {
+        "skill": "Product Listing Management",
+        "count": 4,
+        "percentage": 12.5
+      },
+      {
+        "skill": "Campaign & Flash Sale Management",
+        "count": 3,
+        "percentage": 9.4
+      },
+      {
+        "skill": "Competitor Analysis",
+        "count": 3,
+        "percentage": 9.4
+      },
+      {
+        "skill": "Online Merchandising",
+        "count": 3,
+        "percentage": 9.4
+      },
+      {
+        "skill": "A/B Testing",
+        "count": 2,
+        "percentage": 6.3
+      },
+      {
+        "skill": "Assortment Planning",
+        "count": 2,
+        "percentage": 6.3
+      },
+      {
+        "skill": "Campaign Execution",
+        "count": 2,
+        "percentage": 6.3
+      },
+      {
+        "skill": "Campaign Planning",
+        "count": 2,
+        "percentage": 6.3
+      },
+      {
+        "skill": "Category Management",
+        "count": 2,
+        "percentage": 6.3
+      },
+      {
+        "skill": "Excel & Google Sheets Reporting",
+        "count": 2,
+        "percentage": 6.3
+      },
+      {
+        "skill": "Live Streaming Coordination",
+        "count": 2,
+        "percentage": 6.3
+      },
+      {
+        "skill": "Marketplace Account Management",
+        "count": 2,
+        "percentage": 6.3
+      },
+      {
+        "skill": "Marketplace Ads Management",
+        "count": 2,
+        "percentage": 6.3
+      },
+      {
+        "skill": "Marketplace SEO",
+        "count": 2,
+        "percentage": 6.3
+      },
+      {
+        "skill": "Merchandising Strategy",
+        "count": 2,
+        "percentage": 6.3
+      },
+      {
+        "skill": "Order Fulfillment Coordination",
+        "count": 2,
+        "percentage": 6.3
+      },
+      {
+        "skill": "Product Catalog Management",
+        "count": 2,
+        "percentage": 6.3
+      },
+      {
+        "skill": "Product Listing Optimization",
+        "count": 2,
+        "percentage": 6.3
+      },
+      {
+        "skill": "Promotional Campaign Management",
+        "count": 2,
+        "percentage": 6.3
+      },
+      {
+        "skill": "Sales Performance Analysis",
+        "count": 2,
+        "percentage": 6.3
+      },
+      {
+        "skill": "Sell-Through Analysis",
+        "count": 2,
+        "percentage": 6.3
+      },
+      {
+        "skill": "A+ Content",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "AI Livestream Support",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "AOV Optimization",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Advertising Subsidy (WKZ) Management",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Affiliate Program Coordination",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Amazon Listing Optimization",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Amazon SEO",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Banner & Campaign Content Creation",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Banner & Store Layout Optimization",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Blibli Operations",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Business Forecasting",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "CRM & Email Marketing",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Campaign Management",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Campaign Performance Analysis",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Campaign Performance Reporting",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Campaign Planning & Optimization",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Campaign Planning Support",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Campaign Submission",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Catalog Performance Reporting",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Channel Operations",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Clearance & Liquidation Planning",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Commercial Negotiation",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Content Management",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Content Planning",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Conversion Optimization",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Data Analysis",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Data Governance",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Demand Forecasting",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Documentation Management",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "E-Commerce KPI Reporting",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "E-Commerce Merchandising",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "E-Commerce Order Fulfillment",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "E-Store Setup & Launch",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Excel Data Validation & Pivot Table",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Excel Pivot Table & Lookup Analysis",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Flash Sale & Voucher Management",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Funnel Analysis",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "GMV & Conversion Analytics",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "GMV Growth Management",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "GMV Max Optimization",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "GTIN/UPC/ISBN Product Standards",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Google Ads & Meta Ads",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Inventory Coordination",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Inventory Monitoring",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "KOL & Affiliate Campaign Management",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "KOL Collaboration",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Klaviyo CRM",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Landing Page Creation",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Listing Health & Compliance",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Live Streaming Operations",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Live Streaming Production",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Live Streaming Strategy",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Marketplace Account Administration",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Marketplace Analytics Dashboard",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Marketplace Campaign Support",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Marketplace Listing Management",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Marketplace Management",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Marketplace SEO/SEM",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Marketplace Store Operations",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Media Commerce Advertising",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Media Planning",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Merchandise Assortment & Pricing Strategy",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Microsoft Excel & PowerPoint",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Microsoft Excel Reporting",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Multi-Channel Marketplace Operations",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "O2O E-Commerce Strategy",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Omnichannel Platform Management",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Online Sales Coordination",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Online Sales Transaction Accuracy",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Online Store Management",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Online-Offline Stock Synchronization",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Operational KPI Reporting",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Operational SOP Development",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Order Fulfillment Monitoring",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Order Fulfillment Operations",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Order Issue Troubleshooting",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Order Processing",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Price & Promotion Updates",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Process Improvement",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Product Data Cleansing",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Product Data Publishing",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Product Image Upload & Organization",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Product Launch Coordination",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Product Launch Execution",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Product Lifecycle Management",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Product Master Data Management",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Product Nomination Management",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Product Page Optimization",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Product Registration",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Product Selection",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Promotion Management",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Promotional Campaign Execution",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Promotional Planning",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Purchase Order Processing",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Quick Commerce Platform Management",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Returns Management",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "SAP",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "SEO/SEM",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "SKU & Product Creation",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "SKU Management",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "SKU Setup & Categorization",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Sales & Conversion Analytics",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Sales & Conversion Reporting",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Sales Performance Reporting",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Search Keyword Optimization",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Shopee Administration",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Shopee Seller Center",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Shopify Operations",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Shopify Store Management",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Shopware 6 CMS",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Shortage Management",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Stock Allocation",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Stock Availability Management",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Stock Replenishment Planning",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Store Banner Management",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Store Health Monitoring",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Store Operations Management",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Store Visual & Product Description Enhancement",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Supplier Coordination",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Tableau",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "TikTok Shop Administration",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "TikTok Shop Seller Center",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Traffic & Conversion Analytics",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Vendor Agreement Management",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Vendor Performance Tracking",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Website Merchandising",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Website UX Analytics",
+        "count": 1,
+        "percentage": 3.1
+      }
+    ],
+    "softSkills": [
+      {
+        "skill": "Analytical Thinking",
+        "count": 21,
+        "percentage": 65.6
+      },
+      {
+        "skill": "Cross-Functional Collaboration",
+        "count": 20,
+        "percentage": 62.5
+      },
+      {
+        "skill": "Attention to Detail",
+        "count": 15,
+        "percentage": 46.9
+      },
+      {
+        "skill": "Adaptability in Fast-Paced Environment",
+        "count": 11,
+        "percentage": 34.4
+      },
+      {
+        "skill": "Interpersonal Communication",
+        "count": 10,
+        "percentage": 31.3
+      },
+      {
+        "skill": "Problem Solving",
+        "count": 9,
+        "percentage": 28.1
+      },
+      {
+        "skill": "Customer Service Orientation",
+        "count": 6,
+        "percentage": 18.8
+      },
+      {
+        "skill": "Ownership & Accountability",
+        "count": 5,
+        "percentage": 15.6
+      },
+      {
+        "skill": "Time Management",
+        "count": 5,
+        "percentage": 15.6
+      },
+      {
+        "skill": "Proactiveness",
+        "count": 4,
+        "percentage": 12.5
+      },
+      {
+        "skill": "Learning Agility",
+        "count": 3,
+        "percentage": 9.4
+      },
+      {
+        "skill": "Multitasking",
+        "count": 3,
+        "percentage": 9.4
+      },
+      {
+        "skill": "Stakeholder Management",
+        "count": 3,
+        "percentage": 9.4
+      },
+      {
+        "skill": "Teamwork",
+        "count": 3,
+        "percentage": 9.4
+      },
+      {
+        "skill": "Data-Driven Decision Making",
+        "count": 2,
+        "percentage": 6.3
+      },
+      {
+        "skill": "Follow-Up Discipline",
+        "count": 2,
+        "percentage": 6.3
+      },
+      {
+        "skill": "Independent Work Ethic",
+        "count": 2,
+        "percentage": 6.3
+      },
+      {
+        "skill": "Relationship Building",
+        "count": 2,
+        "percentage": 6.3
+      },
+      {
+        "skill": "Adaptability",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Commercial Mindset",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Continuous Improvement Mindset",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Creative Thinking",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Critical Thinking",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Decision Making",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Self-Directed Work",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Strategic Thinking",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Target & KPI Orientation",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Target Orientation",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Task Prioritization",
+        "count": 1,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Team Supervision",
+        "count": 1,
+        "percentage": 3.1
+      }
+    ],
+    "jobPostings": [
+      {
+        "company": "That Ecommerce Guy",
+        "title": "Ecommerce Specialist (Remote)",
+        "hardSkills": [
+          "Shopify Operations",
+          "Shopee Operations",
+          "Tokopedia Operations",
+          "Lazada Operations",
+          "Product Listing Management",
+          "Marketplace SEO",
+          "Klaviyo CRM"
+        ],
+        "softSkills": [
+          "Analytical Thinking",
+          "Problem Solving",
+          "Multitasking",
+          "Proactiveness",
+          "Cross-Functional Collaboration"
+        ]
+      },
+      {
+        "company": "Madame Gie Cosmetics",
+        "title": "E-Commerce Specialist (TikTok)",
+        "hardSkills": [
+          "TikTok Shop Operations",
+          "Product Listing Management",
+          "Promotion Management",
+          "Inventory Coordination",
+          "Live Streaming Coordination",
+          "Sales Performance Analysis",
+          "KOL Collaboration"
+        ],
+        "softSkills": [
+          "Analytical Thinking",
+          "Interpersonal Communication",
+          "Customer Service Orientation",
+          "Multitasking",
+          "Cross-Functional Collaboration"
+        ]
+      },
+      {
+        "company": "SIRCLO",
+        "title": "Merchandiser",
+        "hardSkills": [
+          "Merchandising Strategy",
+          "Inventory Management",
+          "Assortment Planning",
+          "Multi-Channel Marketplace Operations",
+          "Sell-Through Analysis",
+          "Stock Allocation",
+          "Category Management"
+        ],
+        "softSkills": [
+          "Analytical Thinking",
+          "Problem Solving",
+          "Stakeholder Management",
+          "Adaptability in Fast-Paced Environment",
+          "Cross-Functional Collaboration"
+        ]
+      },
+      {
+        "company": "PT. Aaron Innovation Indonesia",
+        "title": "STAFF MARKETPLACE SPECIALIST - AARON",
+        "hardSkills": [
+          "Shopee Operations",
+          "Tokopedia Operations",
+          "Lazada Operations",
+          "Product Listing Optimization",
+          "Campaign & Flash Sale Management",
+          "Marketplace SEO/SEM",
+          "Competitor Analysis"
+        ],
+        "softSkills": [
+          "Customer Service Orientation",
+          "Analytical Thinking",
+          "Cross-Functional Collaboration",
+          "Interpersonal Communication"
+        ]
+      },
+      {
+        "company": "PT Sen Karya Cemerlang",
+        "title": "Marketplace Specialist",
+        "hardSkills": [
+          "Shopee Operations",
+          "TikTok Shop Operations",
+          "Marketplace SEO",
+          "Campaign & Flash Sale Management",
+          "Order Fulfillment Coordination",
+          "Store Health Monitoring",
+          "GMV & Conversion Analytics"
+        ],
+        "softSkills": [
+          "Analytical Thinking",
+          "Team Supervision",
+          "Customer Service Orientation",
+          "Adaptability in Fast-Paced Environment",
+          "Problem Solving"
+        ]
+      }
+    ],
+    "skillRequirements": [
+      {
+        "name": "TikTok Shop Operations",
+        "required": 2,
+        "marketPercentage": 31.3,
+        "isHardSkill": true
+      },
+      {
+        "name": "Shopee Operations",
+        "required": 2,
+        "marketPercentage": 28.1,
+        "isHardSkill": true
+      },
+      {
+        "name": "Lazada Operations",
+        "required": 1,
+        "marketPercentage": 18.8,
+        "isHardSkill": true
+      },
+      {
+        "name": "Conversion Rate Optimization",
+        "required": 1,
+        "marketPercentage": 15.6,
+        "isHardSkill": true
+      },
+      {
+        "name": "Inventory Management",
+        "required": 1,
+        "marketPercentage": 15.6,
+        "isHardSkill": true
+      },
+      {
+        "name": "Tokopedia Operations",
+        "required": 1,
+        "marketPercentage": 15.6,
+        "isHardSkill": true
+      },
+      {
+        "name": "Analytical Thinking",
+        "required": 3,
+        "marketPercentage": 65.6,
+        "isHardSkill": false
+      },
+      {
+        "name": "Cross-Functional Collaboration",
+        "required": 3,
+        "marketPercentage": 62.5,
+        "isHardSkill": false
+      }
+    ]
+  },
+  {
+    "fileSource": "graphicdesign_hasil_ekstraksi.xlsx",
+    "careerProfileId": "graphic-designer",
+    "careerTitle": "Graphic Designer / Visual Designer",
+    "totalPostings": 86,
+    "hardSkills": [
+      {
+        "skill": "Adobe Photoshop",
+        "count": 57,
+        "percentage": 66.3
+      },
+      {
+        "skill": "Adobe Illustrator",
+        "count": 56,
+        "percentage": 65.1
+      },
+      {
+        "skill": "Branding",
+        "count": 54,
+        "percentage": 62.8
+      },
+      {
+        "skill": "Ad Creative Design",
+        "count": 43,
+        "percentage": 50
+      },
+      {
+        "skill": "Art Direction",
+        "count": 37,
+        "percentage": 43
+      },
+      {
+        "skill": "Adobe Creative Suite",
+        "count": 33,
+        "percentage": 38.4
+      },
+      {
+        "skill": "Layout Design",
+        "count": 32,
+        "percentage": 37.2
+      },
+      {
+        "skill": "Visual Storytelling",
+        "count": 29,
+        "percentage": 33.7
+      },
+      {
+        "skill": "Typography",
+        "count": 29,
+        "percentage": 33.7
+      },
+      {
+        "skill": "Motion Graphics",
+        "count": 28,
+        "percentage": 32.6
+      },
+      {
+        "skill": "Adobe Premiere Pro",
+        "count": 28,
+        "percentage": 32.6
+      },
+      {
+        "skill": "Print Design",
+        "count": 27,
+        "percentage": 31.4
+      },
+      {
+        "skill": "Adobe After Effects",
+        "count": 26,
+        "percentage": 30.2
+      },
+      {
+        "skill": "Video Production",
+        "count": 25,
+        "percentage": 29.1
+      },
+      {
+        "skill": "Brand Consistency",
+        "count": 24,
+        "percentage": 27.9
+      },
+      {
+        "skill": "Figma",
+        "count": 20,
+        "percentage": 23.3
+      },
+      {
+        "skill": "Social Media Design",
+        "count": 17,
+        "percentage": 19.8
+      },
+      {
+        "skill": "Illustration",
+        "count": 16,
+        "percentage": 18.6
+      },
+      {
+        "skill": "AI Design Tools",
+        "count": 16,
+        "percentage": 18.6
+      },
+      {
+        "skill": "Adobe InDesign",
+        "count": 15,
+        "percentage": 17.4
+      },
+      {
+        "skill": "Color Theory",
+        "count": 15,
+        "percentage": 17.4
+      },
+      {
+        "skill": "Canva",
+        "count": 14,
+        "percentage": 16.3
+      },
+      {
+        "skill": "Photography",
+        "count": 12,
+        "percentage": 14
+      },
+      {
+        "skill": "Packaging Design",
+        "count": 11,
+        "percentage": 12.8
+      },
+      {
+        "skill": "Mockups & Artwork Production",
+        "count": 11,
+        "percentage": 12.8
+      },
+      {
+        "skill": "Photo Editing",
+        "count": 9,
+        "percentage": 10.5
+      },
+      {
+        "skill": "Web/UI Design",
+        "count": 9,
+        "percentage": 10.5
+      },
+      {
+        "skill": "3D Software",
+        "count": 7,
+        "percentage": 8.1
+      },
+      {
+        "skill": "Copywriting",
+        "count": 5,
+        "percentage": 5.8
+      },
+      {
+        "skill": "CorelDRAW",
+        "count": 4,
+        "percentage": 4.7
+      },
+      {
+        "skill": "E-commerce Design Assets",
+        "count": 4,
+        "percentage": 4.7
+      },
+      {
+        "skill": "Project Management Tools",
+        "count": 4,
+        "percentage": 4.7
+      },
+      {
+        "skill": "Presentation Design",
+        "count": 3,
+        "percentage": 3.5
+      },
+      {
+        "skill": "Microsoft PowerPoint",
+        "count": 2,
+        "percentage": 2.3
+      },
+      {
+        "skill": "Adobe Lightroom",
+        "count": 1,
+        "percentage": 1.2
+      }
+    ],
+    "softSkills": [
+      {
+        "skill": "Creative Thinking",
+        "count": 47,
+        "percentage": 54.7
+      },
+      {
+        "skill": "Time Management",
+        "count": 47,
+        "percentage": 54.7
+      },
+      {
+        "skill": "Communication Skills",
+        "count": 45,
+        "percentage": 52.3
+      },
+      {
+        "skill": "Attention to Detail",
+        "count": 38,
+        "percentage": 44.2
+      },
+      {
+        "skill": "Conceptual Thinking",
+        "count": 34,
+        "percentage": 39.5
+      },
+      {
+        "skill": "Teamwork",
+        "count": 27,
+        "percentage": 31.4
+      },
+      {
+        "skill": "Aesthetic Sense",
+        "count": 26,
+        "percentage": 30.2
+      },
+      {
+        "skill": "Multitasking",
+        "count": 25,
+        "percentage": 29.1
+      },
+      {
+        "skill": "Trend Awareness",
+        "count": 24,
+        "percentage": 27.9
+      },
+      {
+        "skill": "Stress Tolerance",
+        "count": 24,
+        "percentage": 27.9
+      },
+      {
+        "skill": "Cross-Functional Collaboration",
+        "count": 22,
+        "percentage": 25.6
+      },
+      {
+        "skill": "Adaptability",
+        "count": 19,
+        "percentage": 22.1
+      },
+      {
+        "skill": "Initiative",
+        "count": 16,
+        "percentage": 18.6
+      },
+      {
+        "skill": "Receptiveness to Feedback",
+        "count": 15,
+        "percentage": 17.4
+      },
+      {
+        "skill": "Problem Solving",
+        "count": 14,
+        "percentage": 16.3
+      },
+      {
+        "skill": "Independence",
+        "count": 13,
+        "percentage": 15.1
+      },
+      {
+        "skill": "Stakeholder Management",
+        "count": 13,
+        "percentage": 15.1
+      },
+      {
+        "skill": "Ownership & Accountability",
+        "count": 9,
+        "percentage": 10.5
+      },
+      {
+        "skill": "Curiosity",
+        "count": 8,
+        "percentage": 9.3
+      },
+      {
+        "skill": "Continuous Learning",
+        "count": 6,
+        "percentage": 7
+      },
+      {
+        "skill": "Leadership",
+        "count": 6,
+        "percentage": 7
+      },
+      {
+        "skill": "Analytical Thinking",
+        "count": 3,
+        "percentage": 3.5
+      },
+      {
+        "skill": "Results Orientation",
+        "count": 2,
+        "percentage": 2.3
+      },
+      {
+        "skill": "Presentation Skills",
+        "count": 2,
+        "percentage": 2.3
+      },
+      {
+        "skill": "Critical Thinking",
+        "count": 1,
+        "percentage": 1.2
+      },
+      {
+        "skill": "Decision Making",
+        "count": 1,
+        "percentage": 1.2
+      },
+      {
+        "skill": "Strategic Thinking",
+        "count": 1,
+        "percentage": 1.2
+      }
+    ],
+    "jobPostings": [
+      {
+        "company": "VML",
+        "title": "Graphic Designer",
+        "hardSkills": [
+          "Motion Graphics",
+          "Art Direction",
+          "Layout Design",
+          "Illustration",
+          "Ad Creative Design",
+          "Adobe Creative Suite"
+        ],
+        "softSkills": [
+          "Creative Thinking",
+          "Conceptual Thinking",
+          "Aesthetic Sense",
+          "Attention to Detail",
+          "Communication Skills"
+        ]
+      },
+      {
+        "company": "Bibit.id",
+        "title": "Graphic Designer for Stockbit",
+        "hardSkills": [
+          "Adobe Photoshop",
+          "Adobe Illustrator",
+          "Adobe InDesign",
+          "Adobe After Effects",
+          "Figma",
+          "Visual Storytelling",
+          "Branding"
+        ],
+        "softSkills": [
+          "Creative Thinking",
+          "Conceptual Thinking",
+          "Attention to Detail",
+          "Time Management",
+          "Trend Awareness"
+        ]
+      },
+      {
+        "company": "Sabda Creative",
+        "title": "Graphic Designer (Work From Office)",
+        "hardSkills": [
+          "Adobe Photoshop",
+          "Adobe Illustrator",
+          "Adobe Lightroom",
+          "Adobe InDesign",
+          "Branding",
+          "Ad Creative Design",
+          "Print Design"
+        ],
+        "softSkills": [
+          "Creative Thinking",
+          "Time Management",
+          "Multitasking",
+          "Problem Solving",
+          "Attention to Detail"
+        ]
+      },
+      {
+        "company": "Madame Gie Cosmetics",
+        "title": "Graphic Designer",
+        "hardSkills": [
+          "Layout Design",
+          "Motion Graphics",
+          "Color Theory",
+          "Art Direction",
+          "Visual Storytelling",
+          "Typography",
+          "Video Production"
+        ],
+        "softSkills": [
+          "Creative Thinking",
+          "Conceptual Thinking",
+          "Trend Awareness",
+          "Time Management",
+          "Results Orientation"
+        ]
+      },
+      {
+        "company": "PT. Akasha Wira International, Tbk.",
+        "title": "Graphic Design - F&B",
+        "hardSkills": [
+          "Adobe Photoshop",
+          "Adobe Illustrator",
+          "Adobe Premiere Pro",
+          "Social Media Design",
+          "Ad Creative Design",
+          "Branding",
+          "Packaging Design"
+        ],
+        "softSkills": [
+          "Time Management",
+          "Multitasking",
+          "Stress Tolerance"
+        ]
+      }
+    ],
+    "skillRequirements": [
+      {
+        "name": "Adobe Photoshop",
+        "required": 3,
+        "marketPercentage": 66.3,
+        "isHardSkill": true
+      },
+      {
+        "name": "Adobe Illustrator",
+        "required": 3,
+        "marketPercentage": 65.1,
+        "isHardSkill": true
+      },
+      {
+        "name": "Branding",
+        "required": 3,
+        "marketPercentage": 62.8,
+        "isHardSkill": true
+      },
+      {
+        "name": "Ad Creative Design",
+        "required": 3,
+        "marketPercentage": 50,
+        "isHardSkill": true
+      },
+      {
+        "name": "Art Direction",
+        "required": 2,
+        "marketPercentage": 43,
+        "isHardSkill": true
+      },
+      {
+        "name": "Adobe Creative Suite",
+        "required": 2,
+        "marketPercentage": 38.4,
+        "isHardSkill": true
+      },
+      {
+        "name": "Creative Thinking",
+        "required": 3,
+        "marketPercentage": 54.7,
+        "isHardSkill": false
+      },
+      {
+        "name": "Time Management",
+        "required": 3,
+        "marketPercentage": 54.7,
+        "isHardSkill": false
+      }
+    ]
+  },
+  {
+    "fileSource": "researcher_strategy_hasil_ekstraksi.xlsx",
+    "careerProfileId": "research-scientist",
+    "careerTitle": "Data Researcher / Strategy Analyst",
+    "totalPostings": 50,
+    "hardSkills": [
+      {
+        "skill": "Microsoft Excel",
+        "count": 35,
+        "percentage": 70
+      },
+      {
+        "skill": "Data Analysis",
+        "count": 29,
+        "percentage": 58
+      },
+      {
+        "skill": "Corporate Strategy",
+        "count": 28,
+        "percentage": 56
+      },
+      {
+        "skill": "Process Improvement",
+        "count": 22,
+        "percentage": 44
+      },
+      {
+        "skill": "Competitive Analysis",
+        "count": 20,
+        "percentage": 40
+      },
+      {
+        "skill": "Market Research",
+        "count": 19,
+        "percentage": 38
+      },
+      {
+        "skill": "Performance Reporting",
+        "count": 18,
+        "percentage": 36
+      },
+      {
+        "skill": "Market Intelligence",
+        "count": 17,
+        "percentage": 34
+      },
+      {
+        "skill": "Data Visualization",
+        "count": 16,
+        "percentage": 32
+      },
+      {
+        "skill": "Financial Modeling",
+        "count": 15,
+        "percentage": 30
+      },
+      {
+        "skill": "Business Planning",
+        "count": 14,
+        "percentage": 28
+      },
+      {
+        "skill": "Business Development",
+        "count": 13,
+        "percentage": 26
+      },
+      {
+        "skill": "Quantitative Research",
+        "count": 13,
+        "percentage": 26
+      },
+      {
+        "skill": "Report Writing",
+        "count": 12,
+        "percentage": 24
+      },
+      {
+        "skill": "Language Proficiency",
+        "count": 12,
+        "percentage": 24
+      },
+      {
+        "skill": "Financial Analysis",
+        "count": 12,
+        "percentage": 24
+      },
+      {
+        "skill": "Go-to-Market Strategy",
+        "count": 11,
+        "percentage": 22
+      },
+      {
+        "skill": "SQL",
+        "count": 11,
+        "percentage": 22
+      },
+      {
+        "skill": "SPSS",
+        "count": 9,
+        "percentage": 18
+      },
+      {
+        "skill": "Qualitative Research",
+        "count": 9,
+        "percentage": 18
+      },
+      {
+        "skill": "Project Management",
+        "count": 9,
+        "percentage": 18
+      },
+      {
+        "skill": "Forecasting",
+        "count": 8,
+        "percentage": 16
+      },
+      {
+        "skill": "Consumer Insights",
+        "count": 8,
+        "percentage": 16
+      },
+      {
+        "skill": "Microsoft PowerPoint",
+        "count": 7,
+        "percentage": 14
+      },
+      {
+        "skill": "Power BI",
+        "count": 6,
+        "percentage": 12
+      },
+      {
+        "skill": "AI Tools",
+        "count": 6,
+        "percentage": 12
+      },
+      {
+        "skill": "Python",
+        "count": 5,
+        "percentage": 10
+      },
+      {
+        "skill": "R Programming",
+        "count": 5,
+        "percentage": 10
+      },
+      {
+        "skill": "CRM & ERP Systems",
+        "count": 5,
+        "percentage": 10
+      },
+      {
+        "skill": "Tableau",
+        "count": 5,
+        "percentage": 10
+      },
+      {
+        "skill": "Looker Studio",
+        "count": 4,
+        "percentage": 8
+      },
+      {
+        "skill": "A/B Testing",
+        "count": 4,
+        "percentage": 8
+      },
+      {
+        "skill": "Customer Segmentation",
+        "count": 3,
+        "percentage": 6
+      },
+      {
+        "skill": "Market Sizing",
+        "count": 2,
+        "percentage": 4
+      },
+      {
+        "skill": "Social Listening",
+        "count": 2,
+        "percentage": 4
+      },
+      {
+        "skill": "SWOT Analysis",
+        "count": 2,
+        "percentage": 4
+      },
+      {
+        "skill": "Due Diligence",
+        "count": 1,
+        "percentage": 2
+      },
+      {
+        "skill": "Project Management Tools",
+        "count": 1,
+        "percentage": 2
+      },
+      {
+        "skill": "Market Data Sources",
+        "count": 1,
+        "percentage": 2
+      },
+      {
+        "skill": "Digital Analytics Tools",
+        "count": 1,
+        "percentage": 2
+      }
+    ],
+    "softSkills": [
+      {
+        "skill": "Analytical Thinking",
+        "count": 37,
+        "percentage": 74
+      },
+      {
+        "skill": "Communication Skills",
+        "count": 36,
+        "percentage": 72
+      },
+      {
+        "skill": "Problem Solving",
+        "count": 27,
+        "percentage": 54
+      },
+      {
+        "skill": "Stakeholder Management",
+        "count": 27,
+        "percentage": 54
+      },
+      {
+        "skill": "Cross-Functional Collaboration",
+        "count": 22,
+        "percentage": 44
+      },
+      {
+        "skill": "Attention to Detail",
+        "count": 17,
+        "percentage": 34
+      },
+      {
+        "skill": "Decision Making",
+        "count": 17,
+        "percentage": 34
+      },
+      {
+        "skill": "Data Storytelling",
+        "count": 15,
+        "percentage": 30
+      },
+      {
+        "skill": "Business Acumen",
+        "count": 15,
+        "percentage": 30
+      },
+      {
+        "skill": "Stress Tolerance",
+        "count": 14,
+        "percentage": 28
+      },
+      {
+        "skill": "Initiative",
+        "count": 13,
+        "percentage": 26
+      },
+      {
+        "skill": "Continuous Learning",
+        "count": 12,
+        "percentage": 24
+      },
+      {
+        "skill": "Multitasking",
+        "count": 11,
+        "percentage": 22
+      },
+      {
+        "skill": "Teamwork",
+        "count": 10,
+        "percentage": 20
+      },
+      {
+        "skill": "Presentation Skills",
+        "count": 10,
+        "percentage": 20
+      },
+      {
+        "skill": "Intellectual Curiosity",
+        "count": 10,
+        "percentage": 20
+      },
+      {
+        "skill": "Ownership & Accountability",
+        "count": 8,
+        "percentage": 16
+      },
+      {
+        "skill": "Time Management",
+        "count": 8,
+        "percentage": 16
+      },
+      {
+        "skill": "Structured Thinking",
+        "count": 7,
+        "percentage": 14
+      },
+      {
+        "skill": "Adaptability",
+        "count": 6,
+        "percentage": 12
+      },
+      {
+        "skill": "Strategic Thinking",
+        "count": 6,
+        "percentage": 12
+      },
+      {
+        "skill": "Independence",
+        "count": 5,
+        "percentage": 10
+      },
+      {
+        "skill": "Integrity & Confidentiality",
+        "count": 5,
+        "percentage": 10
+      },
+      {
+        "skill": "Leadership",
+        "count": 5,
+        "percentage": 10
+      },
+      {
+        "skill": "Results Orientation",
+        "count": 4,
+        "percentage": 8
+      },
+      {
+        "skill": "Conceptual Thinking",
+        "count": 3,
+        "percentage": 6
+      },
+      {
+        "skill": "Critical Thinking",
+        "count": 3,
+        "percentage": 6
+      },
+      {
+        "skill": "Receptiveness to Feedback",
+        "count": 2,
+        "percentage": 4
+      }
+    ],
+    "jobPostings": [
+      {
+        "company": "PT. Permodalan Nasional Madani (Persero)",
+        "title": "Business Analyst – Business Development & Research",
+        "hardSkills": [
+          "SPSS",
+          "Microsoft Excel",
+          "Microsoft PowerPoint",
+          "Python",
+          "R Programming",
+          "Business Development",
+          "Data Analysis"
+        ],
+        "softSkills": [
+          "Analytical Thinking",
+          "Communication Skills",
+          "Problem Solving",
+          "Attention to Detail",
+          "Initiative"
+        ]
+      },
+      {
+        "company": "Cinch",
+        "title": "GTM Research & Strategy Analyst",
+        "hardSkills": [
+          "SPSS",
+          "Go-to-Market Strategy",
+          "Market Research",
+          "Competitive Analysis",
+          "Corporate Strategy",
+          "Market Intelligence",
+          "Data Analysis"
+        ],
+        "softSkills": [
+          "Analytical Thinking",
+          "Ownership & Accountability",
+          "Decision Making",
+          "Communication Skills",
+          "Time Management"
+        ]
+      },
+      {
+        "company": "Seven Retail",
+        "title": "Corporate Strategy - Group Service",
+        "hardSkills": [
+          "Microsoft Excel",
+          "Corporate Strategy",
+          "Market Research",
+          "Financial Modeling",
+          "Competitive Analysis",
+          "Market Intelligence",
+          "Forecasting"
+        ],
+        "softSkills": [
+          "Attention to Detail",
+          "Analytical Thinking",
+          "Problem Solving",
+          "Decision Making",
+          "Cross-Functional Collaboration"
+        ]
+      },
+      {
+        "company": "PT Astra International Tbk",
+        "title": "Business Development Associate - UTPE",
+        "hardSkills": [
+          "Financial Modeling",
+          "Business Development",
+          "Market Research",
+          "Corporate Strategy",
+          "Language Proficiency"
+        ],
+        "softSkills": [
+          "Communication Skills",
+          "Analytical Thinking",
+          "Decision Making",
+          "Business Acumen",
+          "Cross-Functional Collaboration"
+        ]
+      },
+      {
+        "company": "Seven Retail",
+        "title": "Business Strategy Associate (Consulting & Strategy Professionals)",
+        "hardSkills": [
+          "Microsoft Excel",
+          "Microsoft PowerPoint",
+          "Corporate Strategy",
+          "Financial Modeling",
+          "Go-to-Market Strategy",
+          "Business Planning",
+          "Financial Analysis"
+        ],
+        "softSkills": [
+          "Analytical Thinking",
+          "Structured Thinking",
+          "Ownership & Accountability",
+          "Business Acumen",
+          "Problem Solving"
+        ]
+      }
+    ],
+    "skillRequirements": [
+      {
+        "name": "Microsoft Excel",
+        "required": 3,
+        "marketPercentage": 70,
+        "isHardSkill": true
+      },
+      {
+        "name": "Data Analysis",
+        "required": 3,
+        "marketPercentage": 58,
+        "isHardSkill": true
+      },
+      {
+        "name": "Corporate Strategy",
+        "required": 3,
+        "marketPercentage": 56,
+        "isHardSkill": true
+      },
+      {
+        "name": "Process Improvement",
+        "required": 2,
+        "marketPercentage": 44,
+        "isHardSkill": true
+      },
+      {
+        "name": "Competitive Analysis",
+        "required": 2,
+        "marketPercentage": 40,
+        "isHardSkill": true
+      },
+      {
+        "name": "Market Research",
+        "required": 2,
+        "marketPercentage": 38,
+        "isHardSkill": true
+      },
+      {
+        "name": "Analytical Thinking",
+        "required": 3,
+        "marketPercentage": 74,
+        "isHardSkill": false
+      },
+      {
+        "name": "Communication Skills",
+        "required": 3,
+        "marketPercentage": 72,
+        "isHardSkill": false
+      }
+    ]
+  },
+  {
+    "fileSource": "software_engineer_hasil_ekstraksi_skill.xlsx",
+    "careerProfileId": "startup-founder",
+    "careerTitle": "Software Engineer (Front/Back/Full-Stack)",
+    "totalPostings": 83,
+    "hardSkills": [
+      {
+        "skill": "Golang",
+        "count": 42,
+        "percentage": 50.6
+      },
+      {
+        "skill": "REST API",
+        "count": 34,
+        "percentage": 41
+      },
+      {
+        "skill": "Java",
+        "count": 25,
+        "percentage": 30.1
+      },
+      {
+        "skill": "Python",
+        "count": 24,
+        "percentage": 28.9
+      },
+      {
+        "skill": "PostgreSQL",
+        "count": 23,
+        "percentage": 27.7
+      },
+      {
+        "skill": "SQL",
+        "count": 23,
+        "percentage": 27.7
+      },
+      {
+        "skill": "Git",
+        "count": 22,
+        "percentage": 26.5
+      },
+      {
+        "skill": "MySQL",
+        "count": 22,
+        "percentage": 26.5
+      },
+      {
+        "skill": "Node.js",
+        "count": 20,
+        "percentage": 24.1
+      },
+      {
+        "skill": "API Development",
+        "count": 18,
+        "percentage": 21.7
+      },
+      {
+        "skill": "Java Spring Boot",
+        "count": 17,
+        "percentage": 20.5
+      },
+      {
+        "skill": "CI/CD Pipeline",
+        "count": 15,
+        "percentage": 18.1
+      },
+      {
+        "skill": "PHP",
+        "count": 15,
+        "percentage": 18.1
+      },
+      {
+        "skill": "Software Testing",
+        "count": 14,
+        "percentage": 16.9
+      },
+      {
+        "skill": ".NET Core",
+        "count": 13,
+        "percentage": 15.7
+      },
+      {
+        "skill": "Scalable Systems",
+        "count": 13,
+        "percentage": 15.7
+      },
+      {
+        "skill": "C#",
+        "count": 10,
+        "percentage": 12
+      },
+      {
+        "skill": "Kafka",
+        "count": 10,
+        "percentage": 12
+      },
+      {
+        "skill": "Debugging & Troubleshooting",
+        "count": 9,
+        "percentage": 10.8
+      },
+      {
+        "skill": "SQL Server",
+        "count": 9,
+        "percentage": 10.8
+      },
+      {
+        "skill": "AWS",
+        "count": 8,
+        "percentage": 9.6
+      },
+      {
+        "skill": "Docker",
+        "count": 8,
+        "percentage": 9.6
+      },
+      {
+        "skill": "Google Cloud Platform",
+        "count": 8,
+        "percentage": 9.6
+      },
+      {
+        "skill": "Kubernetes",
+        "count": 8,
+        "percentage": 9.6
+      },
+      {
+        "skill": "Laravel",
+        "count": 8,
+        "percentage": 9.6
+      },
+      {
+        "skill": "NoSQL Database",
+        "count": 8,
+        "percentage": 9.6
+      },
+      {
+        "skill": "React.js",
+        "count": 8,
+        "percentage": 9.6
+      },
+      {
+        "skill": "Redis",
+        "count": 7,
+        "percentage": 8.4
+      },
+      {
+        "skill": "Angular",
+        "count": 6,
+        "percentage": 7.2
+      },
+      {
+        "skill": "Prometheus & Grafana",
+        "count": 6,
+        "percentage": 7.2
+      },
+      {
+        "skill": "Security Best Practices",
+        "count": 6,
+        "percentage": 7.2
+      },
+      {
+        "skill": "gRPC",
+        "count": 6,
+        "percentage": 7.2
+      },
+      {
+        "skill": "C++",
+        "count": 5,
+        "percentage": 6
+      },
+      {
+        "skill": "HTML & CSS",
+        "count": 5,
+        "percentage": 6
+      },
+      {
+        "skill": "Linux",
+        "count": 5,
+        "percentage": 6
+      },
+      {
+        "skill": "Message Queue",
+        "count": 5,
+        "percentage": 6
+      },
+      {
+        "skill": "Performance Optimization",
+        "count": 5,
+        "percentage": 6
+      },
+      {
+        "skill": "System Design",
+        "count": 5,
+        "percentage": 6
+      },
+      {
+        "skill": "TypeScript",
+        "count": 5,
+        "percentage": 6
+      },
+      {
+        "skill": "AI-Assisted Development",
+        "count": 4,
+        "percentage": 4.8
+      },
+      {
+        "skill": "MongoDB",
+        "count": 4,
+        "percentage": 4.8
+      },
+      {
+        "skill": "Data Structures & Algorithms",
+        "count": 3,
+        "percentage": 3.6
+      },
+      {
+        "skill": "GraphQL",
+        "count": 3,
+        "percentage": 3.6
+      },
+      {
+        "skill": "Microservices Architecture",
+        "count": 3,
+        "percentage": 3.6
+      },
+      {
+        "skill": "Object-Oriented Programming",
+        "count": 3,
+        "percentage": 3.6
+      },
+      {
+        "skill": "Oracle Database",
+        "count": 3,
+        "percentage": 3.6
+      },
+      {
+        "skill": "Payment Integration",
+        "count": 3,
+        "percentage": 3.6
+      },
+      {
+        "skill": "RabbitMQ",
+        "count": 3,
+        "percentage": 3.6
+      },
+      {
+        "skill": "Vue.js",
+        "count": 3,
+        "percentage": 3.6
+      },
+      {
+        "skill": "Code Review",
+        "count": 2,
+        "percentage": 2.4
+      },
+      {
+        "skill": "Database Design",
+        "count": 2,
+        "percentage": 2.4
+      },
+      {
+        "skill": "JavaScript",
+        "count": 2,
+        "percentage": 2.4
+      },
+      {
+        "skill": "Microsoft Azure",
+        "count": 2,
+        "percentage": 2.4
+      },
+      {
+        "skill": "Ruby on Rails",
+        "count": 2,
+        "percentage": 2.4
+      },
+      {
+        "skill": "Technical Documentation",
+        "count": 2,
+        "percentage": 2.4
+      },
+      {
+        "skill": "Agile & Scrum",
+        "count": 1,
+        "percentage": 1.2
+      },
+      {
+        "skill": "ERP Integration",
+        "count": 1,
+        "percentage": 1.2
+      },
+      {
+        "skill": "Elasticsearch",
+        "count": 1,
+        "percentage": 1.2
+      },
+      {
+        "skill": "Odoo",
+        "count": 1,
+        "percentage": 1.2
+      }
+    ],
+    "softSkills": [
+      {
+        "skill": "Cross-Functional Collaboration",
+        "count": 42,
+        "percentage": 50.6
+      },
+      {
+        "skill": "Problem Solving",
+        "count": 32,
+        "percentage": 38.6
+      },
+      {
+        "skill": "Learning Agility",
+        "count": 31,
+        "percentage": 37.3
+      },
+      {
+        "skill": "Communication Skills",
+        "count": 26,
+        "percentage": 31.3
+      },
+      {
+        "skill": "Analytical Thinking",
+        "count": 23,
+        "percentage": 27.7
+      },
+      {
+        "skill": "Ownership Mindset",
+        "count": 18,
+        "percentage": 21.7
+      },
+      {
+        "skill": "Proactive Initiative",
+        "count": 14,
+        "percentage": 16.9
+      },
+      {
+        "skill": "Attention to Detail",
+        "count": 13,
+        "percentage": 15.7
+      },
+      {
+        "skill": "Team Leadership",
+        "count": 12,
+        "percentage": 14.5
+      },
+      {
+        "skill": "Team Collaboration",
+        "count": 10,
+        "percentage": 12
+      },
+      {
+        "skill": "Independent Work",
+        "count": 7,
+        "percentage": 8.4
+      },
+      {
+        "skill": "Product Mindset",
+        "count": 7,
+        "percentage": 8.4
+      },
+      {
+        "skill": "Adaptability to Change",
+        "count": 4,
+        "percentage": 4.8
+      },
+      {
+        "skill": "Integrity & Discipline",
+        "count": 4,
+        "percentage": 4.8
+      },
+      {
+        "skill": "Time Management",
+        "count": 4,
+        "percentage": 4.8
+      },
+      {
+        "skill": "Creative Thinking",
+        "count": 3,
+        "percentage": 3.6
+      },
+      {
+        "skill": "Results Orientation",
+        "count": 1,
+        "percentage": 1.2
+      }
+    ],
+    "jobPostings": [
+      {
+        "company": "tiket.com",
+        "title": "Software Engineer I (Things To Do & Events)",
+        "hardSkills": [
+          "Golang",
+          "API Development",
+          "NoSQL Database",
+          "Redis",
+          "CI/CD Pipeline",
+          "Kafka",
+          "RabbitMQ"
+        ],
+        "softSkills": [
+          "Analytical Thinking",
+          "Ownership Mindset",
+          "Communication Skills",
+          "Learning Agility",
+          "Time Management"
+        ]
+      },
+      {
+        "company": "PT DAYA CIPTA MANDIRI SOLUSI",
+        "title": "Java Spring Boot developer",
+        "hardSkills": [
+          "Java Spring Boot",
+          "SQL",
+          "Oracle Database",
+          "CI/CD Pipeline",
+          "Technical Documentation"
+        ],
+        "softSkills": [
+          "Analytical Thinking",
+          "Learning Agility",
+          "Integrity & Discipline"
+        ]
+      },
+      {
+        "company": "Kredivo Group",
+        "title": "Backend Engineer - Golang (SDE 1)",
+        "hardSkills": [
+          "Golang",
+          "Node.js",
+          "C++",
+          "REST API",
+          "Linux",
+          "AWS",
+          "Google Cloud Platform"
+        ],
+        "softSkills": [
+          "Problem Solving",
+          "Communication Skills",
+          "Attention to Detail",
+          "Team Collaboration",
+          "Creative Thinking"
+        ]
+      },
+      {
+        "company": "Dealls – Jobs, CV & Mentoring",
+        "title": "Senior Backend Engineer",
+        "hardSkills": [
+          "Golang",
+          "PostgreSQL",
+          "REST API",
+          "GraphQL",
+          "Message Queue",
+          "Kafka",
+          "RabbitMQ"
+        ],
+        "softSkills": [
+          "Ownership Mindset",
+          "Cross-Functional Collaboration",
+          "Integrity & Discipline"
+        ]
+      },
+      {
+        "company": "Qoala",
+        "title": "Senior Software Engineer (Backend)",
+        "hardSkills": [
+          "Golang",
+          "REST API",
+          "SQL",
+          "NoSQL Database",
+          "Elasticsearch",
+          "Docker",
+          "Kubernetes"
+        ],
+        "softSkills": [
+          "Problem Solving",
+          "Ownership Mindset",
+          "Cross-Functional Collaboration",
+          "Learning Agility",
+          "Proactive Initiative"
+        ]
+      }
+    ],
+    "skillRequirements": [
+      {
+        "name": "Golang",
+        "required": 3,
+        "marketPercentage": 50.6,
+        "isHardSkill": true
+      },
+      {
+        "name": "REST API",
+        "required": 2,
+        "marketPercentage": 41,
+        "isHardSkill": true
+      },
+      {
+        "name": "Java",
+        "required": 2,
+        "marketPercentage": 30.1,
+        "isHardSkill": true
+      },
+      {
+        "name": "Python",
+        "required": 2,
+        "marketPercentage": 28.9,
+        "isHardSkill": true
+      },
+      {
+        "name": "PostgreSQL",
+        "required": 2,
+        "marketPercentage": 27.7,
+        "isHardSkill": true
+      },
+      {
+        "name": "SQL",
+        "required": 2,
+        "marketPercentage": 27.7,
+        "isHardSkill": true
+      },
+      {
+        "name": "Cross-Functional Collaboration",
+        "required": 3,
+        "marketPercentage": 50.6,
+        "isHardSkill": false
+      },
+      {
+        "name": "Problem Solving",
+        "required": 2,
+        "marketPercentage": 38.6,
+        "isHardSkill": false
+      }
+    ]
+  },
+  {
+    "fileSource": "uiux_hasil_ekstraksi.xlsx",
+    "careerProfileId": "ux-designer",
+    "careerTitle": "UI/UX Designer",
+    "totalPostings": 65,
+    "hardSkills": [
+      {
+        "skill": "Figma",
+        "count": 47,
+        "percentage": 72.3
+      },
+      {
+        "skill": "Prototyping",
+        "count": 35,
+        "percentage": 53.8
+      },
+      {
+        "skill": "User Research",
+        "count": 24,
+        "percentage": 36.9
+      },
+      {
+        "skill": "Wireframing",
+        "count": 23,
+        "percentage": 35.4
+      },
+      {
+        "skill": "Design System",
+        "count": 23,
+        "percentage": 35.4
+      },
+      {
+        "skill": "Visual Design",
+        "count": 22,
+        "percentage": 33.8
+      },
+      {
+        "skill": "User Flow",
+        "count": 19,
+        "percentage": 29.2
+      },
+      {
+        "skill": "Interaction Design",
+        "count": 17,
+        "percentage": 26.2
+      },
+      {
+        "skill": "User Journey Mapping",
+        "count": 17,
+        "percentage": 26.2
+      },
+      {
+        "skill": "Usability Testing",
+        "count": 16,
+        "percentage": 24.6
+      },
+      {
+        "skill": "HTML/CSS",
+        "count": 16,
+        "percentage": 24.6
+      },
+      {
+        "skill": "Adobe Photoshop",
+        "count": 16,
+        "percentage": 24.6
+      },
+      {
+        "skill": "Information Architecture",
+        "count": 15,
+        "percentage": 23.1
+      },
+      {
+        "skill": "Responsive Design",
+        "count": 14,
+        "percentage": 21.5
+      },
+      {
+        "skill": "Adobe Illustrator",
+        "count": 14,
+        "percentage": 21.5
+      },
+      {
+        "skill": "Adobe XD",
+        "count": 13,
+        "percentage": 20
+      },
+      {
+        "skill": "Sketch",
+        "count": 12,
+        "percentage": 18.5
+      },
+      {
+        "skill": "Design Handoff",
+        "count": 12,
+        "percentage": 18.5
+      },
+      {
+        "skill": "Web Design",
+        "count": 11,
+        "percentage": 16.9
+      },
+      {
+        "skill": "Mobile App Design",
+        "count": 11,
+        "percentage": 16.9
+      },
+      {
+        "skill": "Accessibility (WCAG)",
+        "count": 9,
+        "percentage": 13.8
+      },
+      {
+        "skill": "Motion Design",
+        "count": 9,
+        "percentage": 13.8
+      },
+      {
+        "skill": "Design Thinking",
+        "count": 9,
+        "percentage": 13.8
+      },
+      {
+        "skill": "JavaScript",
+        "count": 9,
+        "percentage": 13.8
+      },
+      {
+        "skill": "UX Writing",
+        "count": 8,
+        "percentage": 12.3
+      },
+      {
+        "skill": "Qualitative & Quantitative Research",
+        "count": 7,
+        "percentage": 10.8
+      },
+      {
+        "skill": "Agile/Scrum",
+        "count": 7,
+        "percentage": 10.8
+      },
+      {
+        "skill": "Design Operations",
+        "count": 5,
+        "percentage": 7.7
+      },
+      {
+        "skill": "InVision",
+        "count": 5,
+        "percentage": 7.7
+      },
+      {
+        "skill": "Illustration",
+        "count": 4,
+        "percentage": 6.2
+      },
+      {
+        "skill": "AI Design Tools",
+        "count": 4,
+        "percentage": 6.2
+      },
+      {
+        "skill": "Product Analytics",
+        "count": 4,
+        "percentage": 6.2
+      },
+      {
+        "skill": "Adobe After Effects",
+        "count": 4,
+        "percentage": 6.2
+      },
+      {
+        "skill": "WordPress",
+        "count": 4,
+        "percentage": 6.2
+      },
+      {
+        "skill": "Material Design",
+        "count": 3,
+        "percentage": 4.6
+      },
+      {
+        "skill": "Notion",
+        "count": 3,
+        "percentage": 4.6
+      },
+      {
+        "skill": "Competitive Analysis",
+        "count": 3,
+        "percentage": 4.6
+      },
+      {
+        "skill": "A/B Testing",
+        "count": 3,
+        "percentage": 4.6
+      },
+      {
+        "skill": "Gamification",
+        "count": 2,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Zeplin",
+        "count": 2,
+        "percentage": 3.1
+      },
+      {
+        "skill": "User Persona",
+        "count": 2,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Dashboard Design",
+        "count": 2,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Design Critique",
+        "count": 2,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Lottie",
+        "count": 1,
+        "percentage": 1.5
+      },
+      {
+        "skill": "Axure RP",
+        "count": 1,
+        "percentage": 1.5
+      },
+      {
+        "skill": "Mixpanel",
+        "count": 1,
+        "percentage": 1.5
+      },
+      {
+        "skill": "Google Analytics",
+        "count": 1,
+        "percentage": 1.5
+      },
+      {
+        "skill": "ProtoPie",
+        "count": 1,
+        "percentage": 1.5
+      },
+      {
+        "skill": "Miro",
+        "count": 1,
+        "percentage": 1.5
+      },
+      {
+        "skill": "Webflow",
+        "count": 1,
+        "percentage": 1.5
+      },
+      {
+        "skill": "Jira",
+        "count": 1,
+        "percentage": 1.5
+      }
+    ],
+    "softSkills": [
+      {
+        "skill": "Cross-Functional Collaboration",
+        "count": 43,
+        "percentage": 66.2
+      },
+      {
+        "skill": "Communication Skills",
+        "count": 39,
+        "percentage": 60
+      },
+      {
+        "skill": "Collaboration with Developers",
+        "count": 25,
+        "percentage": 38.5
+      },
+      {
+        "skill": "User-Centered Mindset",
+        "count": 22,
+        "percentage": 33.8
+      },
+      {
+        "skill": "Problem Solving",
+        "count": 21,
+        "percentage": 32.3
+      },
+      {
+        "skill": "Attention to Detail",
+        "count": 20,
+        "percentage": 30.8
+      },
+      {
+        "skill": "Stakeholder Management",
+        "count": 20,
+        "percentage": 30.8
+      },
+      {
+        "skill": "Continuous Learning",
+        "count": 18,
+        "percentage": 27.7
+      },
+      {
+        "skill": "Creative Thinking",
+        "count": 18,
+        "percentage": 27.7
+      },
+      {
+        "skill": "Ownership & Accountability",
+        "count": 15,
+        "percentage": 23.1
+      },
+      {
+        "skill": "Design Storytelling",
+        "count": 15,
+        "percentage": 23.1
+      },
+      {
+        "skill": "Initiative",
+        "count": 12,
+        "percentage": 18.5
+      },
+      {
+        "skill": "Teamwork",
+        "count": 12,
+        "percentage": 18.5
+      },
+      {
+        "skill": "Product Thinking",
+        "count": 12,
+        "percentage": 18.5
+      },
+      {
+        "skill": "Receptiveness to Feedback",
+        "count": 10,
+        "percentage": 15.4
+      },
+      {
+        "skill": "Stress Tolerance",
+        "count": 9,
+        "percentage": 13.8
+      },
+      {
+        "skill": "Leadership",
+        "count": 8,
+        "percentage": 12.3
+      },
+      {
+        "skill": "Independence",
+        "count": 8,
+        "percentage": 12.3
+      },
+      {
+        "skill": "Adaptability",
+        "count": 6,
+        "percentage": 9.2
+      },
+      {
+        "skill": "Analytical Thinking",
+        "count": 6,
+        "percentage": 9.2
+      },
+      {
+        "skill": "Time Management",
+        "count": 6,
+        "percentage": 9.2
+      },
+      {
+        "skill": "Curiosity",
+        "count": 5,
+        "percentage": 7.7
+      },
+      {
+        "skill": "Data-Driven Decision Making",
+        "count": 5,
+        "percentage": 7.7
+      },
+      {
+        "skill": "Decision Making",
+        "count": 4,
+        "percentage": 6.2
+      },
+      {
+        "skill": "Critical Thinking",
+        "count": 2,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Business Acumen",
+        "count": 2,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Presentation Skills",
+        "count": 2,
+        "percentage": 3.1
+      },
+      {
+        "skill": "Results Orientation",
+        "count": 1,
+        "percentage": 1.5
+      },
+      {
+        "skill": "Negotiation Skills",
+        "count": 1,
+        "percentage": 1.5
+      },
+      {
+        "skill": "Empathy",
+        "count": 1,
+        "percentage": 1.5
+      }
+    ],
+    "jobPostings": [
+      {
+        "company": "SCG",
+        "title": "UX/UI Designer – SCG Indonesia",
+        "hardSkills": [
+          "Figma",
+          "Adobe XD",
+          "Prototyping",
+          "Wireframing",
+          "User Research",
+          "Usability Testing",
+          "Visual Design"
+        ],
+        "softSkills": [
+          "User-Centered Mindset",
+          "Communication Skills",
+          "Continuous Learning",
+          "Collaboration with Developers",
+          "Cross-Functional Collaboration"
+        ]
+      },
+      {
+        "company": "EDTS",
+        "title": "Associate Product Design",
+        "hardSkills": [
+          "Figma",
+          "Sketch",
+          "Adobe XD",
+          "Prototyping",
+          "Usability Testing",
+          "Design System",
+          "Accessibility (WCAG)"
+        ],
+        "softSkills": [
+          "Problem Solving",
+          "Critical Thinking",
+          "Attention to Detail",
+          "Communication Skills",
+          "Stress Tolerance"
+        ]
+      },
+      {
+        "company": "Gump",
+        "title": "UI UX Designer",
+        "hardSkills": [
+          "Figma",
+          "Sketch",
+          "Prototyping",
+          "Wireframing",
+          "Design Thinking",
+          "Interaction Design"
+        ],
+        "softSkills": [
+          "Curiosity",
+          "User-Centered Mindset",
+          "Problem Solving",
+          "Communication Skills",
+          "Creative Thinking"
+        ]
+      },
+      {
+        "company": "DOKU, PT NUSA SATU INTI ARTHA",
+        "title": "UI/UX Designer",
+        "hardSkills": [
+          "Figma",
+          "Qualitative & Quantitative Research",
+          "Prototyping",
+          "Usability Testing",
+          "User Research",
+          "Design System",
+          "Wireframing"
+        ],
+        "softSkills": [
+          "Receptiveness to Feedback",
+          "Continuous Learning",
+          "User-Centered Mindset",
+          "Attention to Detail",
+          "Communication Skills"
+        ]
+      },
+      {
+        "company": "Integrasia Innovation Center (Innocent)",
+        "title": "UI/UX Designer",
+        "hardSkills": [
+          "Figma",
+          "Adobe XD",
+          "Sketch",
+          "Prototyping",
+          "Wireframing",
+          "User Flow",
+          "Design System"
+        ],
+        "softSkills": [
+          "User-Centered Mindset",
+          "Receptiveness to Feedback",
+          "Communication Skills",
+          "Stakeholder Management",
+          "Cross-Functional Collaboration"
+        ]
+      }
+    ],
+    "skillRequirements": [
+      {
+        "name": "Figma",
+        "required": 3,
+        "marketPercentage": 72.3,
+        "isHardSkill": true
+      },
+      {
+        "name": "Prototyping",
+        "required": 3,
+        "marketPercentage": 53.8,
+        "isHardSkill": true
+      },
+      {
+        "name": "User Research",
+        "required": 2,
+        "marketPercentage": 36.9,
+        "isHardSkill": true
+      },
+      {
+        "name": "Wireframing",
+        "required": 2,
+        "marketPercentage": 35.4,
+        "isHardSkill": true
+      },
+      {
+        "name": "Design System",
+        "required": 2,
+        "marketPercentage": 35.4,
+        "isHardSkill": true
+      },
+      {
+        "name": "Visual Design",
+        "required": 2,
+        "marketPercentage": 33.8,
+        "isHardSkill": true
+      },
+      {
+        "name": "Cross-Functional Collaboration",
+        "required": 3,
+        "marketPercentage": 66.2,
+        "isHardSkill": false
+      },
+      {
+        "name": "Communication Skills",
+        "required": 3,
+        "marketPercentage": 60,
+        "isHardSkill": false
+      }
+    ]
+  }
+]

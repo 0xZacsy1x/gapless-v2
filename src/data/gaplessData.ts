@@ -332,12 +332,14 @@ export const CAREER_PROFILES: CareerProfile[] = [
     salaryRange: 'Rp 10.000.000 - Rp 25.000.000/bulan',
     growthOutlook: '40%',
     skills: [
-      { name: 'Pemrograman Python & R', required: 3 },
-      { name: 'Matematika & Statistik (Aljabar Linear, Kalkulus)', required: 3 },
-      { name: 'Machine Learning Frameworks (TensorFlow, PyTorch)', required: 3 },
-      { name: 'Data Preprocessing & Feature Engineering', required: 3 },
-      { name: 'Natural Language Processing (NLP)', required: 2 },
-      { name: 'Model Deployment (Docker, FastAPI)', required: 2 },
+      { name: 'Large Language Models', required: 3 }, // 60% market demand
+      { name: 'Agentic AI', required: 2 }, // 45.5% market demand
+      { name: 'Machine Learning', required: 2 }, // 45.5% market demand
+      { name: 'Python', required: 2 }, // 41.8% market demand
+      { name: 'Retrieval-Augmented Generation', required: 2 }, // 41.8% market demand
+      { name: 'Generative AI', required: 2 }, // 34.5% market demand
+      { name: 'Cross-Functional Collaboration', required: 3 }, // 69.1% market demand
+      { name: 'Communication Skills', required: 3 }, // 52.7% market demand
     ],
     roadmap: [
       {
@@ -384,12 +386,14 @@ export const CAREER_PROFILES: CareerProfile[] = [
     salaryRange: 'Rp 6.000.000 - Rp 15.000.000/bulan',
     growthOutlook: '36%',
     skills: [
-      { name: 'Pengolahan Basis Data (SQL)', required: 3 },
-      { name: 'Pemrograman Python', required: 2 },
-      { name: 'Data Cleansing', required: 3 },
-      { name: 'Alat Visualisasi Data', required: 3 },
-      { name: 'Keterampilan Bercerita dengan Data', required: 2 },
-      { name: 'Business Acumen', required: 2 },
+      { name: 'SQL', required: 3 }, // 73.7% market demand
+      { name: 'Dashboard Development', required: 3 }, // 64.9% market demand
+      { name: 'Microsoft Excel', required: 3 }, // 59.6% market demand
+      { name: 'Python', required: 3 }, // 57.9% market demand
+      { name: 'Power BI', required: 3 }, // 56.1% market demand
+      { name: 'Tableau', required: 2 }, // 45.6% market demand
+      { name: 'Analytical Thinking', required: 3 }, // 70.2% market demand
+      { name: 'Cross-Functional Collaboration', required: 3 }, // 57.9% market demand
     ],
     roadmap: [
       {
@@ -435,12 +439,14 @@ export const CAREER_PROFILES: CareerProfile[] = [
     salaryRange: 'Negotiable / Kompensasi Magang',
     growthOutlook: '8%',
     skills: [
-      { name: 'Riset Kualitatif/Kuantitatif', required: 3 },
-      { name: 'Data Mining', required: 3 },
-      { name: 'Pemodelan Prediktif', required: 2 },
-      { name: 'Penyusunan Laporan Manajerial', required: 3 },
-      { name: 'Sintesis Informasi', required: 3 },
-      { name: 'Eksplorasi Data Lanjut', required: 2 },
+      { name: 'Microsoft Excel', required: 3 }, // 70% market demand
+      { name: 'Data Analysis', required: 3 }, // 58% market demand
+      { name: 'Corporate Strategy', required: 3 }, // 56% market demand
+      { name: 'Process Improvement', required: 2 }, // 44% market demand
+      { name: 'Competitive Analysis', required: 2 }, // 40% market demand
+      { name: 'Market Research', required: 2 }, // 38% market demand
+      { name: 'Analytical Thinking', required: 3 }, // 74% market demand
+      { name: 'Communication Skills', required: 3 }, // 72% market demand
     ],
     roadmap: [
       {
@@ -488,12 +494,14 @@ export const CAREER_PROFILES: CareerProfile[] = [
     salaryRange: 'Rp 5.000.000 - Rp 9.000.000/bulan',
     growthOutlook: '13%',
     skills: [
-      { name: 'Wireframing & Prototyping', required: 3 },
-      { name: 'Penguasaan Figma / Adobe XD', required: 3 },
-      { name: 'Empati Pengguna (User-Centered)', required: 3 },
-      { name: 'Usability Testing & CRO', required: 2 },
-      { name: 'HTML/CSS Dasar', required: 1 },
-      { name: 'Kemampuan Presentasi Ide', required: 2 },
+      { name: 'Figma', required: 3 }, // 72.3% market demand
+      { name: 'Prototyping', required: 3 }, // 53.8% market demand
+      { name: 'User Research', required: 2 }, // 36.9% market demand
+      { name: 'Wireframing', required: 2 }, // 35.4% market demand
+      { name: 'Design System', required: 2 }, // 35.4% market demand
+      { name: 'Visual Design', required: 2 }, // 33.8% market demand
+      { name: 'Cross-Functional Collaboration', required: 3 }, // 66.2% market demand
+      { name: 'Communication Skills', required: 3 }, // 60% market demand
     ],
     roadmap: [
       {
@@ -539,12 +547,14 @@ export const CAREER_PROFILES: CareerProfile[] = [
     salaryRange: 'Negotiable / Uang Saku Magang',
     growthOutlook: '12%',
     skills: [
-      { name: 'Copywriting & Persuasi Teks', required: 3 },
-      { name: 'Video Editing Seluler', required: 2 },
-      { name: 'Social Media Analytics', required: 2 },
-      { name: 'SEO Content Writing', required: 2 },
-      { name: 'Kelincahan Adaptasi Tren', required: 3 },
-      { name: 'Pemahaman Narasi', required: 2 },
+      { name: 'TikTok', required: 3 }, // 65.4% market demand
+      { name: 'Copywriting', required: 2 }, // 41% market demand
+      { name: 'Content Calendar', required: 2 }, // 30.8% market demand
+      { name: 'Content Performance Analysis', required: 2 }, // 30.8% market demand
+      { name: 'Community Management', required: 2 }, // 28.2% market demand
+      { name: 'Content Ideation', required: 1 }, // 24.4% market demand
+      { name: 'Creative Thinking', required: 3 }, // 62.8% market demand
+      { name: 'Cross-Functional Collaboration', required: 3 }, // 59% market demand
     ],
     roadmap: [
       {
@@ -592,12 +602,14 @@ export const CAREER_PROFILES: CareerProfile[] = [
     salaryRange: 'Rp 5.000.000 - Rp 15.000.000/bulan',
     growthOutlook: '10%',
     skills: [
-      { name: 'SEO & SEM', required: 3 },
-      { name: 'Manajemen Iklan Berbayar', required: 3 },
-      { name: 'Pelacakan Konversi & Analitik', required: 3 },
-      { name: 'Pemikiran Berorientasi Pertumbuhan', required: 2 },
-      { name: 'Kemampuan Adaptasi Kampanye Cepat', required: 2 },
-      { name: 'Keterampilan Persuasi', required: 2 },
+      { name: 'Google Ads', required: 3 }, // 50% market demand
+      { name: 'Meta Ads', required: 2 }, // 42% market demand
+      { name: 'A/B Testing', required: 2 }, // 36% market demand
+      { name: 'SEO', required: 2 }, // 36% market demand
+      { name: 'ROAS', required: 2 }, // 35% market demand
+      { name: 'Conversion Rate', required: 2 }, // 35% market demand
+      { name: 'Cross-Functional Collaboration', required: 3 }, // 66% market demand
+      { name: 'Analytical Thinking', required: 3 }, // 59% market demand
     ],
     roadmap: [
       {
@@ -643,12 +655,14 @@ export const CAREER_PROFILES: CareerProfile[] = [
     salaryRange: 'Rp 6.000.000 - Rp 14.000.000/bulan',
     growthOutlook: '9%',
     skills: [
-      { name: 'Cold Calling & Prospecting', required: 3 },
-      { name: 'Manajemen CRM', required: 2 },
-      { name: 'Analisis Metrik ROI', required: 2 },
-      { name: 'Keterampilan Membangun Relasi', required: 3 },
-      { name: 'Komunikasi Bisnis Persuasif', required: 3 },
-      { name: 'Negosiasi', required: 3 },
+      { name: 'Sales Pipeline Management', required: 3 }, // 69.8% market demand
+      { name: 'Lead Generation', required: 3 }, // 66% market demand
+      { name: 'B2B Sales', required: 3 }, // 66% market demand
+      { name: 'Sales Target Achievement', required: 3 }, // 66% market demand
+      { name: 'Account Management', required: 3 }, // 64.2% market demand
+      { name: 'Business Development', required: 3 }, // 62.3% market demand
+      { name: 'Relationship Building', required: 3 }, // 83% market demand
+      { name: 'Communication Skills', required: 3 }, // 83% market demand
     ],
     roadmap: [
       {
@@ -696,12 +710,14 @@ export const CAREER_PROFILES: CareerProfile[] = [
     salaryRange: 'Rp 8.000.000 - Rp 15.000.000/bulan',
     growthOutlook: '22%',
     skills: [
-      { name: 'Pemrograman Web (JS/Python)', required: 3 },
-      { name: 'Desain Database (SQL/NoSQL)', required: 2 },
-      { name: 'Kerja Sama Tim (Agile/Scrum)', required: 2 },
-      { name: 'Pengujian Unit', required: 1 },
-      { name: 'Integrasi API', required: 3 },
-      { name: 'Pemecahan Masalah Kritis', required: 3 },
+      { name: 'Golang', required: 3 }, // 50.6% market demand
+      { name: 'REST API', required: 2 }, // 41% market demand
+      { name: 'Java', required: 2 }, // 30.1% market demand
+      { name: 'Python', required: 2 }, // 28.9% market demand
+      { name: 'PostgreSQL', required: 2 }, // 27.7% market demand
+      { name: 'SQL', required: 2 }, // 27.7% market demand
+      { name: 'Cross-Functional Collaboration', required: 3 }, // 50.6% market demand
+      { name: 'Problem Solving', required: 2 }, // 38.6% market demand
     ],
     roadmap: [
       {
@@ -747,12 +763,14 @@ export const CAREER_PROFILES: CareerProfile[] = [
     salaryRange: 'Rp 7.500.000 - Rp 14.000.000/bulan',
     growthOutlook: '21%',
     skills: [
-      { name: 'Otomatisasi CI/CD', required: 3 },
-      { name: 'Infrastruktur Cloud (AWS)', required: 3 },
-      { name: 'Docker / Kubernetes', required: 3 },
-      { name: 'Skrip Otomatisasi (Selenium/Appium)', required: 2 },
-      { name: 'Ketelitian dan Analisis Defect', required: 3 },
-      { name: 'Validasi Data SQL', required: 2 },
+      { name: 'CI/CD Pipeline', required: 3 }, // 83.7% market demand
+      { name: 'AWS', required: 3 }, // 67.4% market demand
+      { name: 'Docker', required: 3 }, // 65.1% market demand
+      { name: 'Kubernetes', required: 3 }, // 55.8% market demand
+      { name: 'Google Cloud Platform', required: 3 }, // 53.5% market demand
+      { name: 'Infrastructure as Code', required: 2 }, // 46.5% market demand
+      { name: 'Cross-Functional Collaboration', required: 2 }, // 46.5% market demand
+      { name: 'Communication Skills', required: 2 }, // 32.6% market demand
     ],
     roadmap: [
       {
@@ -785,6 +803,114 @@ export const CAREER_PROFILES: CareerProfile[] = [
         subtitle: 'Bentuk keandalan sistem',
         description: 'Pimpin rekayasa keandalan situs (SRE) dan arsitektur awan enterprise.',
         modules: ['Arsitektur Cloud Enterprise Tingkat Lanjut', 'Chaos Engineering', 'Otomatisasi Keamanan (DevSecOps)', 'Strategi Rilis Lanjutan (Canary/Blue-Green)', 'Kultur Keandalan & Mentoring'],
+        duration: '12–16 minggu',
+      },
+    ],
+  },
+  // ── Karier Desain Grafis (Visual Creative) ──
+  {
+    id: 'graphic-designer',
+    title: 'Graphic Designer / Visual Designer',
+    trait: 'The Creator',
+    icon: '🎨',
+    description: 'Merancang identitas visual, materi promosi kreatif, dan aset branding yang memikat untuk berbagai media digital maupun cetak.',
+    salaryRange: 'Rp 4.500.000 - Rp 9.000.000/bulan',
+    growthOutlook: '15%',
+    skills: [
+      { name: 'Adobe Photoshop', required: 3 }, // 66.3% market demand
+      { name: 'Adobe Illustrator', required: 3 }, // 65.1% market demand
+      { name: 'Branding', required: 3 }, // 62.8% market demand
+      { name: 'Ad Creative Design', required: 3 }, // 50% market demand
+      { name: 'Art Direction', required: 2 }, // 43% market demand
+      { name: 'Adobe Creative Suite', required: 2 }, // 38.4% market demand
+      { name: 'Creative Thinking', required: 3 }, // 54.7% market demand
+      { name: 'Time Management', required: 3 }, // 54.7% market demand
+    ],
+    roadmap: [
+      {
+        phase: 1,
+        title: 'Dasar',
+        subtitle: 'Prinsip desain visual dan software inti',
+        description: 'Kuasai teori warna, tipografi, komposisi grid, serta tools standar industri (Adobe Photoshop & Illustrator).',
+        modules: ['Teori Warna, Tipografi & Komposisi Grid', 'Mastering Adobe Illustrator (Vector Artwork)', 'Mastering Adobe Photoshop (Photo Manipulation)', 'Dasar Layout Desain Grafis', 'Eksplorasi Asset & Resource Desain'],
+        duration: '6–8 minggu',
+      },
+      {
+        phase: 2,
+        title: 'Menengah',
+        subtitle: 'Desain promosi & creative ads',
+        description: 'Terapkan visual design untuk kampanye pemasaran digital, media sosial, dan materi iklan berkinerja tinggi.',
+        modules: ['Ad Creative Design (Meta & TikTok Ads)', 'Social Media Feed & Carousel System', 'Branding Kit & Visual Identity', 'Digital Banner & Display Ads', 'Persiapan File Cetak & Pre-press'],
+        duration: '8–10 minggu',
+      },
+      {
+        phase: 3,
+        title: 'Lanjutan',
+        subtitle: 'Motion graphic & brand storytelling',
+        description: 'Tingkatkan daya tarik visual dengan animasi gerak dasar dan perancangan brand guidelines komprehensif.',
+        modules: ['Dasar Motion Graphic (After Effects)', 'Penyusunan Brand Guidelines Lengkap', 'Art Direction & Moodboarding', 'Visual Storytelling untuk Kampanye Terpadu', 'Desain Kemasan (Packaging Design)'],
+        duration: '10–12 minggu',
+      },
+      {
+        phase: 4,
+        title: 'Mahir',
+        subtitle: 'Kepemimpinan kreatif & portofolio global',
+        description: 'Kelola tim kreatif, arahkan strategi artistik visual brand, dan bangun portofolio profesional berstandar internasional.',
+        modules: ['Art Direction & Creative Strategy', 'Manajemen Proyek Desain & Klien', 'Pitching Ide & Presentasi Kreatif', 'Portofolio Profesional (Behance/Dribbble)', 'Manajemen Hak Cipta & Aset Kreatif'],
+        duration: '12–16 minggu',
+      },
+    ],
+  },
+  // ── Karier E-Commerce & Dropship ──
+  {
+    id: 'ecommerce-specialist',
+    title: 'E-Commerce Specialist / Dropshipper',
+    trait: 'The Builder',
+    icon: '🛒',
+    description: 'Mengelola operasional toko online di berbagai marketplace, optimasi konversi penjualan, manajemen katalog dan inventaris, serta strategi promosi multi-channel.',
+    salaryRange: 'Rp 5.000.000 - Rp 12.000.000/bulan',
+    growthOutlook: '25%',
+    skills: [
+      { name: 'TikTok Shop Operations', required: 2 }, // 31.3% market demand
+      { name: 'Shopee Operations', required: 2 }, // 28.1% market demand
+      { name: 'Lazada Operations', required: 1 }, // 18.8% market demand
+      { name: 'Conversion Rate Optimization', required: 1 }, // 15.6% market demand
+      { name: 'Inventory Management', required: 1 }, // 15.6% market demand
+      { name: 'Tokopedia Operations', required: 1 }, // 15.6% market demand
+      { name: 'Analytical Thinking', required: 3 }, // 65.6% market demand
+      { name: 'Cross-Functional Collaboration', required: 3 }, // 62.5% market demand
+    ],
+    roadmap: [
+      {
+        phase: 1,
+        title: 'Dasar',
+        subtitle: 'Setup & operasional marketplace',
+        description: 'Pelajari dasar-dasar ekosistem e-commerce Indonesia, setup akun toko, dan optimasi listing produk.',
+        modules: ['Ekosistem Marketplace (Shopee, Tokopedia, TikTok Shop)', 'Product Listing & SEO Judul Produk', 'Manajemen Stok & Logistik Dasar', 'Customer Service & Chat Broadcast', 'Tools Dekorasi Toko Online'],
+        duration: '6–8 minggu',
+      },
+      {
+        phase: 2,
+        title: 'Menengah',
+        subtitle: 'Iklan marketplace & promosi campaign',
+        description: 'Kuasai fitur promosi internal marketplace, iklan berbayar (Shopee Ads / TikTok Ads), dan partisipasi mega campaign.',
+        modules: ['Shopee Ads & Tokopedia TopAds', 'TikTok Shop Affiliate & Creator Collaboration', 'Strategi Kampanye Flash Sale & Tanggal Kembar', 'Optimasi Conversion Rate (CRO) Produk', 'Analisis Dashboard Penjualan'],
+        duration: '8–10 minggu',
+      },
+      {
+        phase: 3,
+        title: 'Lanjutan',
+        subtitle: 'Manajemen dropship & multi-channel inventory',
+        description: 'Kelola rantai pasok dropship, integrasi order multi-channel, dan strategi penetapan harga yang kompetitif.',
+        modules: ['Sistem Dropship & Sourcing Supplier Tepercaya', 'Integrasi Multi-Channel (Omnichannel Tools)', 'Inventory & Cashflow Forecasting', 'Live Streaming Selling Tactics', 'Manajemen Retur & Penanganan Komplain Lanjutan'],
+        duration: '10–12 minggu',
+      },
+      {
+        phase: 4,
+        title: 'Mahir',
+        subtitle: 'Skalabilitas brand & private label',
+        description: 'Kembangkan toko online menjadi private label brand yang berkelanjutan dengan unit economics yang sehat.',
+        modules: ['Membangun Brand Toko Mandiri (Private Label)', 'Unit Economics & Profit Margin Optimization', 'Otomatisasi Operasional & SOP Tim Gudang/Admin', 'Ekspansi Cross-Border E-Commerce', 'Retensi Pelanggan & Program Loyalitas'],
         duration: '12–16 minggu',
       },
     ],
@@ -898,6 +1024,12 @@ export function findCareerProfile(identifier?: string | null): CareerProfile | u
   if (byTitle) return byTitle;
 
   // 3. Keyword / partial matching
+  if (clean.includes('graphic design') || clean.includes('visual designer') || clean.includes('desainer grafis') || clean.includes('digital creative product designer')) {
+    return CAREER_PROFILES.find((c) => c.id === 'graphic-designer');
+  }
+  if (clean.includes('ecommerce') || clean.includes('e-commerce') || clean.includes('dropship') || clean.includes('dropshipper') || clean.includes('shopee') || clean.includes('tokopedia')) {
+    return CAREER_PROFILES.find((c) => c.id === 'ecommerce-specialist');
+  }
   if (clean.includes('devops') || clean.includes('qa automation') || clean.includes('quality assurance')) {
     return CAREER_PROFILES.find((c) => c.id === 'product-manager');
   }
@@ -908,7 +1040,7 @@ export function findCareerProfile(identifier?: string | null): CareerProfile | u
     return CAREER_PROFILES.find((c) => c.id === 'ux-designer');
   }
   if (clean.includes('data analyst') || clean.includes('business intelligence') || clean.includes('bi analyst')) {
-    return CAREER_PROFILES.find((c) => c.id === 'data-analyst');
+    return CAREER_PROFILES.find((c) => c.id === 'data-scientist');
   }
   if (clean.includes('ai/ml') || clean.includes('machine learning') || clean.includes('ai engineer')) {
     return CAREER_PROFILES.find((c) => c.id === 'ai-ml-engineer');
@@ -923,7 +1055,7 @@ export function findCareerProfile(identifier?: string | null): CareerProfile | u
     return CAREER_PROFILES.find((c) => c.id === 'hr-business-partner');
   }
   if (clean.includes('data researcher') || clean.includes('strategy analyst') || clean.includes('researcher')) {
-    return CAREER_PROFILES.find((c) => c.id === 'data-researcher');
+    return CAREER_PROFILES.find((c) => c.id === 'research-scientist');
   }
 
   // 4. Fuzzy includes
@@ -944,3 +1076,8 @@ export function formatShortCareer(title?: string | null): string {
 }
 
 
+
+
+// Re-export market data enrichment
+export { CAREER_MARKET_DATA, getCareerMarketData } from './careerMarketData';
+export type { CareerMarketInsight, MarketSkillData } from './careerMarketData';

@@ -66,7 +66,8 @@ export function CareerSelectionWrapper({ roles }: WrapperProps) {
                                     
                                     const PROFILE_ALIASES: Record<string, string> = {
                                         'ui/ux designer': 'ui/ux designer',
-                                        'graphic designer / digital creative product designer': 'ui/ux designer', 
+                                        'graphic designer / digital creative product designer': 'graphic designer / visual designer',
+                                        'graphic designer / visual designer': 'graphic designer / visual designer', 
                                         'content creator / social media strategist': 'content creator / social media specialist', 
                                         'content creator / social media specialist': 'content creator / social media specialist',
                                         'software engineer (front/back/full-stack)': 'software engineer (front/back/full-stack)', 
@@ -76,7 +77,8 @@ export function CareerSelectionWrapper({ roles }: WrapperProps) {
                                         'data researcher / strategy analyst': 'data researcher / strategy analyst',
                                         'digital marketing specialist': 'digital marketing specialist', 
                                         'business development / account executive': 'business development / account executive', 
-                                        'e-commerce / dropship specialist': 'business development / account executive', 
+                                        'e-commerce / dropship specialist': 'e-commerce specialist / dropshipper',
+                                        'e-commerce specialist / dropshipper': 'e-commerce specialist / dropshipper', 
                                     };
 
                                     const dbRoleLower = role.roleName.toLowerCase();

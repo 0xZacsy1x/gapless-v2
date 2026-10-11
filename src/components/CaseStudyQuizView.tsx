@@ -29,6 +29,7 @@ export function CaseStudyQuizView() {
     // Map DB role slugs to quizBank keys if they don't match exactly
     const ROLE_ALIASES: Record<string, string> = {
         'graphic-designer-digital-creative-product-designer': 'graphic-designer',
+        'graphic-designer-visual-designer': 'graphic-designer',
         'content-creator-social-media-specialist': 'content-creator',
         'software-engineer-front-back-full-stack': 'software-engineer',
         'ai-ml-engineer-machine-learning-engineer': 'ai-ml-engineer',
@@ -38,6 +39,7 @@ export function CaseStudyQuizView() {
         'digital-marketing-specialist': 'digital-marketing',
         'business-development-account-executive': 'business-development',
         'e-commerce-dropship-specialist': 'ecommerce-specialist',
+        'e-commerce-specialist-dropshipper': 'ecommerce-specialist',
     };
 
     // Attempt to get the quiz questions
