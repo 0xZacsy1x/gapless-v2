@@ -28,6 +28,9 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: 'Gapless', url: 'https://www.gapless.id' }],
   creator: 'Gapless',
+  verification: {
+    google: 'CTmPgwiATIZCFAv4IK6gy_Q_jqc08V1Utm2o-RABNFg',
+  },
   openGraph: {
     type: 'website',
     locale: 'id_ID',
