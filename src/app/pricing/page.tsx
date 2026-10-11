@@ -1,10 +1,16 @@
+import type { Metadata } from 'next';
 import { auth } from '@/auth';
 import { Navbar } from '@/components/Navbar';
 import { getProSubscription } from '@/lib/payment_service';
 import { PricingClient } from './PricingClient';
 
-export const metadata = {
-  title: 'Pricing & Paket Langganan | Gapless',
+export const metadata: Metadata = {
+  title: 'Harga & Paket Gapless',
+  description:
+    'Mulai gratis atau upgrade ke Gapless Pro Rp29.000/bulan untuk analisis skill gap mendalam, roadmap lengkap 4 fase, dan misi soft skill bulanan dengan feedback AI.',
+  alternates: {
+    canonical: 'https://www.gapless.id/pricing',
+  },
 };
 
 export default async function PricingPage() {

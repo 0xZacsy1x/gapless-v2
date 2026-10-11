@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import { auth } from '@/auth';
 import { redirect } from 'next/navigation';
 import { AssessmentPageClient } from './AssessmentPageClient';
@@ -6,6 +7,14 @@ import { getRemainingAttempts } from '@/lib/assessmentLimit';
 import Link from 'next/link';
 import { Lock } from 'lucide-react';
 
+export const metadata: Metadata = {
+  title: 'Mulai Tes Karier Gratis — Gapless',
+  description:
+    'Ikuti tes minat karier gratis di Gapless. Hanya 5-7 menit untuk mendapat rekomendasi karier personal dan analisis skill gap berbasis AI.',
+  alternates: {
+    canonical: 'https://www.gapless.id/assessment',
+  },
+};
 
 export default async function AssessmentPage() {
   const session = await auth();
