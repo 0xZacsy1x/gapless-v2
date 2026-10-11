@@ -9,7 +9,19 @@ import { softSkillMissions, userMissionProgress, missionFeedbacks } from '@/db/s
 import { eq, asc } from 'drizzle-orm';
 import { MisiClient } from './MisiClient';
 
-export const metadata = { title: 'Misi Soft Skill | Gapless' };
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Misi Soft Skill | Gapless',
+  robots: {
+    index: false,
+    follow: false,
+    googleBot: {
+      index: false,
+      follow: false,
+    },
+  },
+};
 
 export default async function MisiPage() {
   const session = await auth();

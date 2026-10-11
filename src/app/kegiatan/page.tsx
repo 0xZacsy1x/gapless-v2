@@ -10,7 +10,19 @@ import { eq, asc, desc } from 'drizzle-orm';
 import { KegiatanClient, ActivityItem } from './KegiatanClient';
 import { findCareerProfile, formatShortCareer } from '@/data/gaplessData';
 
-export const metadata = { title: 'Rekomendasi Kegiatan | Gapless' };
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Rekomendasi Kegiatan | Gapless',
+  robots: {
+    index: false,
+    follow: false,
+    googleBot: {
+      index: false,
+      follow: false,
+    },
+  },
+};
 
 export default async function KegiatanPage() {
   const session = await auth();

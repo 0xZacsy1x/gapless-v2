@@ -15,9 +15,18 @@ import Link from 'next/link';
 import { CAREER_PROFILES, TRAIT_META, Trait } from '@/data/gaplessData';
 import { hasActivePro } from '@/lib/payment_service';
 
-export const metadata = {
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
   title: 'Skill Passport Publik | Gapless',
-  robots: { index: false, follow: false },
+  robots: {
+    index: false,
+    follow: false,
+    googleBot: {
+      index: false,
+      follow: false,
+    },
+  },
 };
 
 export default async function PublicPassportPage({

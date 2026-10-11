@@ -7,7 +7,19 @@ import { Navbar } from '@/components/Navbar';
 import { isUserAdmin } from '@/lib/admin';
 import { AdminCertificatesClient } from './AdminCertificatesClient';
 
-export const metadata = { title: 'Admin Review Sertifikat | Gapless' };
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Admin Review Sertifikat | Gapless',
+  robots: {
+    index: false,
+    follow: false,
+    googleBot: {
+      index: false,
+      follow: false,
+    },
+  },
+};
 
 export default async function AdminCertificatesPage() {
   const session = await auth();

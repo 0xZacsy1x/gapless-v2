@@ -10,8 +10,18 @@ import { ReportDocumentClient } from './ReportDocumentClient';
 import Link from 'next/link';
 import { Lock, ArrowLeft } from 'lucide-react';
 
-export const metadata = {
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
   title: 'Laporan Analisis Kesiapan Karier | Gapless Advisory',
+  robots: {
+    index: false,
+    follow: false,
+    googleBot: {
+      index: false,
+      follow: false,
+    },
+  },
 };
 
 export default async function ReportPage({

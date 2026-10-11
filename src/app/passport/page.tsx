@@ -19,7 +19,19 @@ import { eq, desc } from 'drizzle-orm';
 import { PassportClient } from './PassportClient';
 import { CAREER_PROFILES } from '@/data/gaplessData';
 
-export const metadata = { title: 'Skill Passport | Gapless' };
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Skill Passport | Gapless',
+  robots: {
+    index: false,
+    follow: false,
+    googleBot: {
+      index: false,
+      follow: false,
+    },
+  },
+};
 
 export default async function PassportPage() {
   const session = await auth();

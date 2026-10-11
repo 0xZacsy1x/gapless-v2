@@ -1,3 +1,17 @@
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Riwayat Hasil Asesmen | Gapless',
+  robots: {
+    index: false,
+    follow: false,
+    googleBot: {
+      index: false,
+      follow: false,
+    },
+  },
+};
+
 import { redirect } from 'next/navigation';
 import { auth } from '@/auth';
 import { db } from '@/db';

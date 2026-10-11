@@ -1,3 +1,16 @@
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  robots: {
+    index: false,
+    follow: false,
+    googleBot: {
+      index: false,
+      follow: false,
+    },
+  },
+};
+
 import { hasActivePro } from '@/lib/payment_service';
 import { redirect } from 'next/navigation';
 import { auth } from '@/auth';
