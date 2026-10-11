@@ -184,17 +184,15 @@ export function ResultDetailClient({
           
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div className="flex items-start sm:items-center gap-4">
-              {careerProfile.icon && (
-                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-slate-50 border border-slate-100 p-2 flex items-center justify-center shrink-0 shadow-xs">
-                  <Image
-                    src={careerProfile.icon}
-                    alt={careerProfile.title}
-                    width={72}
-                    height={72}
-                    className="object-contain"
-                  />
-                </div>
-              )}
+              <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-br from-slate-50 to-slate-100 border border-slate-200/80 p-1 flex items-center justify-center shrink-0 shadow-xs relative">
+                <Image
+                  src={`/${careerProfile.trait}.png`}
+                  alt={careerProfile.trait}
+                  width={72}
+                  height={72}
+                  className="object-contain drop-shadow-sm"
+                />
+              </div>
               <div>
                 <div className="flex flex-wrap items-center gap-2 mb-2">
                   <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200/60">
@@ -213,8 +211,9 @@ export function ResultDetailClient({
                     <span>Archetype: {careerProfile.trait}</span>
                   </span>
                 </div>
-                <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-                  {careerProfile.title}
+                <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
+                  {careerProfile.icon && <span className="text-2xl">{careerProfile.icon}</span>}
+                  <span>{careerProfile.title}</span>
                 </h1>
                 <p className="text-slate-500 text-xs sm:text-sm mt-1 max-w-2xl leading-relaxed">
                   Evaluasi kompetensi berbasis kuis studi kasus industri. Grafik radar dan analisis di bawah mengukur kesiapan skill kamu terhadap standar bursa kerja terkini.

@@ -98,8 +98,15 @@ export async function hasGapReport(
   userId?: string | null,
   careerSlug?: string | null
 ): Promise<boolean> {
-  if (!userId || !careerSlug) return false;
+  if (!userId) return false;
 
+  // 1. User dengan akun Gapless Pro aktif otomatis berhak mengakses semua Laporan Gap & Radar Chart!
+  const isPro = await hasActivePro(userId);
+  if (isPro) return true;
+
+  if (!careerSlug) return false;
+
+  // 2. Cek pembelian one-time a la carte per career_slug
   const result = await db
     .select({ id: userPurchases.id })
     .from(userPurchases)
