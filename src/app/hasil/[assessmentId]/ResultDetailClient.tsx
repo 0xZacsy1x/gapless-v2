@@ -3,8 +3,53 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { CAREER_PROFILES, getSkillGapData, TRAIT_META, Trait } from '@/data/gaplessData';
-import { AnalysisResultBlock } from '@/components/AnalysisResultBlock';
-import { ArchetypeReasoningBlock } from '@/components/ArchetypeReasoningBlock';
+import dynamic from 'next/dynamic';
+
+const ArchetypeReasoningBlock = dynamic(
+  () => import('@/components/ArchetypeReasoningBlock').then((mod) => mod.ArchetypeReasoningBlock),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="w-full bg-white rounded-3xl p-6 md:p-8 border border-slate-200/80 shadow-sm animate-pulse min-h-[260px] flex flex-col justify-between">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-10 h-10 rounded-xl bg-slate-200" />
+          <div className="space-y-2">
+            <div className="h-5 w-48 bg-slate-200 rounded-md" />
+            <div className="h-3 w-32 bg-slate-100 rounded-md" />
+          </div>
+        </div>
+        <div className="h-40 w-full bg-slate-100/70 rounded-2xl flex items-center justify-center" />
+      </div>
+    ),
+  }
+);
+
+const AnalysisResultBlock = dynamic(
+  () => import('@/components/AnalysisResultBlock').then((mod) => mod.AnalysisResultBlock),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="w-full bg-white rounded-3xl p-6 md:p-8 border border-slate-200/80 shadow-sm animate-pulse min-h-[420px] space-y-6">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="space-y-2">
+            <div className="h-6 w-56 bg-slate-200 rounded-md" />
+            <div className="h-4 w-72 bg-slate-100 rounded-md" />
+          </div>
+          <div className="h-8 w-28 bg-slate-200 rounded-lg" />
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+          <div className="h-72 w-full bg-slate-100/70 rounded-2xl flex items-center justify-center" />
+          <div className="space-y-4">
+            <div className="h-4 w-full bg-slate-200 rounded" />
+            <div className="h-4 w-5/6 bg-slate-200 rounded" />
+            <div className="h-4 w-4/6 bg-slate-200 rounded" />
+            <div className="h-10 w-40 bg-slate-200 rounded-xl mt-6" />
+          </div>
+        </div>
+      </div>
+    ),
+  }
+);
 import { GapInsight } from '@/contexts/CareerContext';
 
 interface Props {
