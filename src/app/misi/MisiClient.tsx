@@ -8,7 +8,15 @@ import {
   TrendingUp, Star, AlertCircle, Sparkles
 } from 'lucide-react';
 import Link from 'next/link';
-import ReactMarkdown from 'react-markdown';
+import dynamic from 'next/dynamic';
+
+const FeedbackMarkdown = dynamic(
+  () => import('./FeedbackMarkdown').then((m) => m.FeedbackMarkdown),
+  {
+    loading: () => <div className="h-16 animate-pulse bg-indigo-100/50 rounded-xl" />,
+    ssr: false,
+  }
+);
 
 const COMPETENCY_CONFIG: Record<string, {
   label: string;
@@ -373,18 +381,7 @@ export function MisiClient({
                                     <span>Evaluasi & Feedback Career Coach AI</span>
                                   </div>
                                   <div className="text-xs text-slate-700 leading-relaxed">
-                                    <ReactMarkdown
-                                      components={{
-                                        p: ({ children }) => <p className="mb-2 leading-relaxed text-slate-700 last:mb-0">{children}</p>,
-                                        strong: ({ children }) => <strong className="font-bold text-slate-900">{children}</strong>,
-                                        em: ({ children }) => <em className="italic text-slate-800">{children}</em>,
-                                        ul: ({ children }) => <ul className="list-disc pl-4 space-y-1 mb-2 text-slate-700">{children}</ul>,
-                                        ol: ({ children }) => <ol className="list-decimal pl-4 space-y-1 mb-2 text-slate-700">{children}</ol>,
-                                        li: ({ children }) => <li className="leading-relaxed">{children}</li>,
-                                      }}
-                                    >
-                                      {feedbacks[mission.id]}
-                                    </ReactMarkdown>
+                                    <FeedbackMarkdown content={feedbacks[mission.id]} />
                                   </div>
                                 </div>
                               ) : isPro ? (
