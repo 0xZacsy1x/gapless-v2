@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { HomePageClient } from './HomePageClient';
+import { JsonLd } from '@/components/seo/JsonLd';
 
 export const metadata: Metadata = {
   title: 'Gapless — Tes Minat Karier & Analisis Skill Gap Mahasiswa',
@@ -11,5 +12,10 @@ export const metadata: Metadata = {
 };
 
 export default function HomePage() {
-  return <HomePageClient />;
+  return (
+    <>
+      <JsonLd />
+      <HomePageClient />
+    </>
+  );
 }
