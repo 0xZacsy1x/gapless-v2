@@ -203,7 +203,7 @@ export function KegiatanClient({
 
       {/* Filter Bar & Search */}
       <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between">
-        <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0 text-xs">
+        <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-thin text-xs">
           {[
             { id: 'all', label: 'Semua' },
             ...(userCareerTitle && roleMatchCount > 0
