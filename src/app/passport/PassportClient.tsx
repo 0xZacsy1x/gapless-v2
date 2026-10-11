@@ -16,10 +16,15 @@ import {
   ActivityEvidenceItem,
   SnapshotItem
 } from './types';
+import dynamic from 'next/dynamic';
 import { SoftSkillCompetencies } from './components/SoftSkillCompetencies';
 import { CertificatesSection } from './components/CertificatesSection';
 import { ActivityTrackSection } from './components/ActivityTrackSection';
-import { CertificateUploadModal } from './components/CertificateUploadModal';
+
+const CertificateUploadModal = dynamic(
+  () => import('./components/CertificateUploadModal').then((m) => m.CertificateUploadModal),
+  { ssr: false }
+);
 
 export type {
   PassportProps,

@@ -5,7 +5,12 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { Sparkles, Target, Zap, Users } from 'lucide-react';
 import { motion, type Variants } from 'motion/react';
-import { RouteSelectionModal } from './RouteSelectionModal';
+import dynamic from 'next/dynamic';
+
+const RouteSelectionModal = dynamic(
+  () => import('./RouteSelectionModal').then((m) => m.RouteSelectionModal),
+  { ssr: false }
+);
 
 const archetypes = [
   { image: '/The Creator.png', name: 'The Creator', desc: 'Kamu yang membangun visual, narasi, dan estetika.', color: 'from-violet-500 to-pink-500', roles: ['UI/UX Designer', 'Content Creator', 'Product Designer'], icon: Sparkles },
