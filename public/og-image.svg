@@ -1,0 +1,103 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <!-- Background Gradient -->
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#090D1A"/>
+      <stop offset="50%" stop-color="#0F172A"/>
+      <stop offset="100%" stop-color="#1E3A8A"/>
+    </linearGradient>
+
+    <!-- Vibrant Accent Gradient -->
+    <linearGradient id="primaryGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#38BDF8"/>
+      <stop offset="50%" stop-color="#60A5FA"/>
+      <stop offset="100%" stop-color="#818CF8"/>
+    </linearGradient>
+
+    <!-- Glow Effect -->
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="60" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Background Canvas -->
+  <rect width="1200" height="630" fill="url(#bg)"/>
+
+  <!-- Glowing Ambient Orbs -->
+  <circle cx="150" cy="120" r="180" fill="#3B82F6" opacity="0.25" filter="url(#glow)"/>
+  <circle cx="1050" cy="500" r="220" fill="#6366F1" opacity="0.2" filter="url(#glow)"/>
+  <circle cx="950" cy="150" r="140" fill="#06B6D4" opacity="0.15" filter="url(#glow)"/>
+
+  <!-- Modern Grid Texture -->
+  <g opacity="0.07" stroke="#FFFFFF" stroke-width="1">
+    <line x1="100" y1="0" x2="100" y2="630" />
+    <line x1="300" y1="0" x2="300" y2="630" />
+    <line x1="500" y1="0" x2="500" y2="630" />
+    <line x1="700" y1="0" x2="700" y2="630" />
+    <line x1="900" y1="0" x2="900" y2="630" />
+    <line x1="1100" y1="0" x2="1100" y2="630" />
+    <line x1="0" y1="120" x2="1200" y2="120" />
+    <line x1="0" y1="270" x2="1200" y2="270" />
+    <line x1="0" y1="420" x2="1200" y2="420" />
+    <line x1="0" y1="570" x2="1200" y2="570" />
+  </g>
+
+  <!-- Content Container (Card Frame) -->
+  <rect x="70" y="55" width="1060" height="520" rx="28" fill="#1E293B" fill-opacity="0.5" stroke="#334155" stroke-width="2"/>
+
+  <!-- Top Category Badge -->
+  <g transform="translate(120, 110)">
+    <rect width="320" height="42" rx="21" fill="#1E3A8A" fill-opacity="0.8" stroke="#3B82F6" stroke-width="1.5"/>
+    <circle cx="24" cy="21" r="6" fill="#38BDF8"/>
+    <text x="42" y="27" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="15" font-weight="700" fill="#93C5FD" letter-spacing="1">
+      AI CAREER DISCOVERY &amp; GAP ANALYSIS
+    </text>
+  </g>
+
+  <!-- Brand Wordmark "Gapless" -->
+  <g transform="translate(120, 240)">
+    <text font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="82" font-weight="900" fill="#FFFFFF" letter-spacing="-1.5">
+      Gapless
+    </text>
+    <circle cx="340" cy="-28" r="8" fill="#38BDF8"/>
+  </g>
+
+  <!-- Tagline Main Heading -->
+  <text x="120" y="325" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="38" font-weight="800" fill="url(#primaryGrad)">
+    Temukan Karier Terbaikmu dengan AI
+  </text>
+
+  <!-- Subtitle Description -->
+  <text x="120" y="380" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="22" font-weight="400" fill="#94A3B8">
+    Asesmen Kepribadian RIASEC • Analisis Skill Gap Real-Time • Roadmap Belajar Personal
+  </text>
+
+  <!-- Archetype Badges -->
+  <g transform="translate(120, 440)">
+    <!-- Badge 1: The Thinker -->
+    <rect x="0" y="0" width="170" height="42" rx="12" fill="#0F172A" stroke="#334155" stroke-width="1"/>
+    <text x="85" y="26" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="600" fill="#E2E8F0">💡 The Thinker</text>
+
+    <!-- Badge 2: The Creator -->
+    <rect x="185" y="0" width="170" height="42" rx="12" fill="#0F172A" stroke="#334155" stroke-width="1"/>
+    <text x="270" y="26" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="600" fill="#E2E8F0">🎨 The Creator</text>
+
+    <!-- Badge 3: The Connector -->
+    <rect x="370" y="0" width="180" height="42" rx="12" fill="#0F172A" stroke="#334155" stroke-width="1"/>
+    <text x="460" y="26" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="600" fill="#E2E8F0">🤝 The Connector</text>
+
+    <!-- Badge 4: The Builder -->
+    <rect x="565" y="0" width="170" height="42" rx="12" fill="#0F172A" stroke="#334155" stroke-width="1"/>
+    <text x="650" y="26" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="600" fill="#E2E8F0">⚙️ The Builder</text>
+  </g>
+
+  <!-- Bottom Right Domain Pill -->
+  <g transform="translate(930, 495)">
+    <rect width="160" height="44" rx="22" fill="#2563EB" opacity="0.9"/>
+    <circle cx="28" cy="22" r="5" fill="#4ADE80"/>
+    <text x="44" y="28" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="18" font-weight="700" fill="#FFFFFF">
+      gapless.id
+    </text>
+  </g>
+</svg>
