@@ -5,21 +5,27 @@ import { motion } from 'motion/react';
 import {
   Calendar, Award, Bookmark, ExternalLink, Filter,
   CheckCircle2, Clock, Sparkles, Lock, ArrowUpRight,
-  Search, Users, Trophy, HeartHandshake
+  Search, Users, Trophy, HeartHandshake, Building2, MapPin, Tag, GraduationCap
 } from 'lucide-react';
 import Link from 'next/link';
 
-interface ActivityItem {
+export interface ActivityItem {
   id: string;
   title: string;
   type: string;
+  organizer?: string | null;
   description: string | null;
   competencyTags: string[] | null;
   skillTags: string[] | null;
+  relevantRoles?: string[] | null;
+  fee?: string | null;
+  semester?: string | null;
+  location?: string | null;
   deadline: Date | string | null;
   registrationUrl: string | null;
   matchPercent: number | null;
   isSample: boolean;
+  isRoleMatch?: boolean;
 }
 
 interface EvidenceItem {
@@ -38,6 +44,7 @@ interface Props {
   isPro: boolean;
   lockedCount: number;
   monthlyQuota: number;
+  userCareerTitle?: string | null;
 }
 
 export function KegiatanClient({
@@ -47,6 +54,7 @@ export function KegiatanClient({
   isPro,
   lockedCount,
   monthlyQuota,
+  userCareerTitle,
 }: Props) {
   const [selectedType, setSelectedType] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
@@ -81,22 +89,35 @@ export function KegiatanClient({
   // Filter list
   const filtered = activities.filter((act) => {
     if (selectedType === 'saved' && !savedIds.has(act.id)) return false;
-    if (selectedType !== 'all' && selectedType !== 'saved' && act.type !== selectedType) {
+    if (selectedType === 'role_match' && !act.isRoleMatch) return false;
+    if (
+      selectedType !== 'all' &&
+      selectedType !== 'saved' &&
+      selectedType !== 'role_match' &&
+      act.type !== selectedType
+    ) {
       return false;
     }
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase();
       const matchTitle = act.title.toLowerCase().includes(q);
       const matchDesc = act.description?.toLowerCase().includes(q) || false;
-      const matchTags = act.competencyTags?.some((t) => t.toLowerCase().includes(q)) ||
-                        act.skillTags?.some((t) => t.toLowerCase().includes(q));
-      return matchTitle || matchDesc || matchTags;
+      const matchOrganizer = act.organizer?.toLowerCase().includes(q) || false;
+      const matchLocation = act.location?.toLowerCase().includes(q) || false;
+      const matchTags =
+        act.competencyTags?.some((t) => t.toLowerCase().includes(q)) ||
+        act.skillTags?.some((t) => t.toLowerCase().includes(q)) ||
+        act.relevantRoles?.some((r) => r.toLowerCase().includes(q));
+      return matchTitle || matchDesc || matchOrganizer || matchLocation || matchTags;
     }
     return true;
   });
 
   const getTypeIcon = (type: string) => {
     switch (type) {
+      case 'development_program':
+      case 'program':
+        return <Sparkles className="w-4 h-4 text-purple-600" />;
       case 'organisasi':
         return <Users className="w-4 h-4 text-blue-600" />;
       case 'lomba':
@@ -110,6 +131,9 @@ export function KegiatanClient({
 
   const getTypeBadge = (type: string) => {
     switch (type) {
+      case 'development_program':
+      case 'program':
+        return 'bg-purple-50 text-purple-700 border-purple-200';
       case 'organisasi':
         return 'bg-blue-50 text-blue-700 border-blue-200';
       case 'lomba':
@@ -121,8 +145,24 @@ export function KegiatanClient({
     }
   };
 
+  const getTypeLabel = (type: string) => {
+    switch (type) {
+      case 'development_program':
+      case 'program':
+        return 'Development Program';
+      case 'organisasi':
+        return 'Organisasi';
+      case 'lomba':
+        return 'Lomba / Kompetisi';
+      case 'volunteer':
+        return 'Volunteer';
+      default:
+        return type;
+    }
+  };
+
   const formatDeadline = (d: Date | string | null) => {
-    if (!d) return 'Terbuka';
+    if (!d) return 'Pantau Berkala';
     const date = new Date(d);
     return date.toLocaleDateString('id-ID', {
       day: 'numeric',
@@ -130,6 +170,9 @@ export function KegiatanClient({
       year: 'numeric',
     });
   };
+
+  // Jumlah kegiatan yang cocok role
+  const roleMatchCount = activities.filter((a) => a.isRoleMatch).length;
 
   return (
     <div className="space-y-6">
@@ -143,9 +186,19 @@ export function KegiatanClient({
             <h1 className="text-xl font-bold text-slate-900">Rekomendasi Kegiatan</h1>
           </div>
           <p className="text-sm text-slate-600">
-            Katalog kegiatan terkurasi (organisasi, lomba, dan volunteer) untuk mengasah kepemimpinan, kerja tim, dan portofolio nyata.
+            Katalog kegiatan terkurasi (Development Program, Lomba, dan Volunteer) untuk mengasah kepemimpinan, kompetensi industri, dan portofolio nyata.
           </p>
         </div>
+
+        {isPro && userCareerTitle ? (
+          <div className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-amber-50 to-indigo-50 border border-amber-200/80 text-xs text-amber-900 flex items-center gap-2">
+            <Sparkles className="w-4 h-4 text-amber-600 shrink-0" />
+            <div>
+              <span className="font-bold text-slate-900">Pro Rekomendasi Aktif:</span> Dikalibrasi untuk{' '}
+              <span className="font-semibold text-indigo-700">{userCareerTitle.split(' / ')[0]}</span>
+            </div>
+          </div>
+        ) : null}
       </div>
 
       {/* Filter Bar & Search */}
@@ -153,9 +206,13 @@ export function KegiatanClient({
         <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0 text-xs">
           {[
             { id: 'all', label: 'Semua' },
-            { id: 'organisasi', label: 'Organisasi' },
+            ...(userCareerTitle && roleMatchCount > 0
+              ? [{ id: 'role_match', label: `⭐ Sesuai Karier (${roleMatchCount})` }]
+              : []),
+            { id: 'development_program', label: 'Development Program' },
             { id: 'lomba', label: 'Lomba / Kompetisi' },
             { id: 'volunteer', label: 'Volunteer' },
+            { id: 'organisasi', label: 'Organisasi' },
             { id: 'saved', label: `Tersimpan (${savedIds.size})` },
           ].map((tab) => (
             <button
@@ -176,7 +233,7 @@ export function KegiatanClient({
           <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
           <input
             type="text"
-            placeholder="Cari kegiatan atau skill..."
+            placeholder="Cari kegiatan, role, skill, atau kota..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full pl-9 pr-3 py-2 text-xs rounded-xl bg-white border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 text-slate-800"
@@ -194,26 +251,42 @@ export function KegiatanClient({
             <motion.div
               key={act.id}
               layout
-              className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm flex flex-col justify-between hover:border-slate-300 transition-all group"
+              className={`bg-white rounded-2xl p-5 border shadow-sm flex flex-col justify-between transition-all group ${
+                act.isRoleMatch
+                  ? 'border-indigo-200 hover:border-indigo-300 ring-1 ring-indigo-100'
+                  : 'border-slate-200 hover:border-slate-300'
+              }`}
             >
               <div>
                 <div className="flex items-start justify-between gap-3 mb-2.5">
-                  <div className="flex items-center gap-2 flex-wrap">
+                  <div className="flex items-center gap-1.5 flex-wrap">
                     <span
                       className={`inline-flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1 rounded-lg border ${getTypeBadge(
                         act.type
                       )}`}
                     >
                       {getTypeIcon(act.type)}
-                      <span className="capitalize">{act.type}</span>
+                      <span>{getTypeLabel(act.type)}</span>
                     </span>
+
+                    {act.isRoleMatch ? (
+                      <span className="text-[11px] font-semibold px-2 py-0.5 rounded-md bg-amber-50 text-amber-700 border border-amber-200 flex items-center gap-1">
+                        <Sparkles className="w-3 h-3 text-amber-600" />
+                        Rekomendasi Role
+                      </span>
+                    ) : null}
 
                     {act.matchPercent && act.matchPercent > 0 ? (
                       <span className="text-[11px] font-medium px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-700 border border-indigo-100 flex items-center gap-1">
-                        <Sparkles className="w-3 h-3" />
                         {act.matchPercent}% Cocok
                       </span>
                     ) : null}
+
+                    {act.fee && (
+                      <span className="text-[11px] font-medium px-2 py-0.5 rounded-md bg-slate-50 text-slate-600 border border-slate-200">
+                        {act.fee}
+                      </span>
+                    )}
 
                     {evidence && (
                       <span
@@ -251,19 +324,44 @@ export function KegiatanClient({
                   </button>
                 </div>
 
-                <h3 className="font-bold text-slate-900 text-base mb-1.5 group-hover:text-blue-600 transition">
+                <h3 className="font-bold text-slate-900 text-base mb-1 group-hover:text-blue-600 transition">
                   {act.title}
                 </h3>
+
+                {act.organizer && (
+                  <div className="flex items-center gap-1.5 text-xs text-slate-500 font-medium mb-2.5">
+                    <Building2 className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                    <span>{act.organizer}</span>
+                    {act.location ? (
+                      <>
+                        <span className="text-slate-300">•</span>
+                        <span className="flex items-center gap-1 text-slate-500">
+                          <MapPin className="w-3 h-3 text-slate-400" />
+                          {act.location}
+                        </span>
+                      </>
+                    ) : null}
+                  </div>
+                )}
+
                 <p className="text-xs text-slate-600 leading-relaxed mb-3 line-clamp-2">
                   {act.description}
                 </p>
+
+                {/* Info Kualifikasi Semester */}
+                {act.semester && (
+                  <div className="flex items-center gap-1.5 text-[11px] text-slate-500 mb-3 bg-slate-50 px-2.5 py-1 rounded-lg border border-slate-100">
+                    <GraduationCap className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                    <span>{act.semester}</span>
+                  </div>
+                )}
 
                 {/* Skill & Competency Tags */}
                 <div className="flex flex-wrap gap-1.5 mb-3.5">
                   {act.competencyTags?.map((tag) => (
                     <span
                       key={tag}
-                      className="text-[10px] font-medium px-2 py-0.5 rounded-md bg-slate-100 text-slate-700"
+                      className="text-[10px] font-medium px-2 py-0.5 rounded-md bg-purple-50 text-purple-700 border border-purple-100/60"
                     >
                       {tag}
                     </span>
@@ -325,8 +423,6 @@ export function KegiatanClient({
         </div>
       )}
 
-
-
       {/* Locked Teaser for Free Users */}
       {!isPro && lockedCount > 0 && (
         <div className="relative rounded-3xl p-6 md:p-8 bg-gradient-to-r from-slate-900 via-slate-900 to-indigo-950 text-white overflow-hidden shadow-xl border border-indigo-900/50">
@@ -338,7 +434,7 @@ export function KegiatanClient({
               </div>
               <h3 className="text-xl font-bold">Buka Seluruh Rekomendasi Kegiatan & Urutan Gap</h3>
               <p className="text-xs text-indigo-200/80 max-w-xl mt-1.5 leading-relaxed">
-                Di paket Gapless Pro, kamu bisa melihat seluruh katalog kegiatan aktif, diurutkan berdasarkan kecocokan terbesar terhadap skill gap kariermu beserta filter lengkap.
+                Di paket Gapless Pro, kamu bisa melihat seluruh katalog kegiatan aktif, diurutkan berdasarkan kecocokan terbesar terhadap target kariermu beserta filter lengkap.
               </p>
             </div>
             <Link
@@ -350,7 +446,6 @@ export function KegiatanClient({
           </div>
         </div>
       )}
-
     </div>
   );
 }

@@ -340,10 +340,15 @@ export const softSkillMissionsRelations = relations(softSkillMissions, ({ many }
 export const activities = pgTable("activities", {
   id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
   title: text("title").notNull(),
-  type: text("type").notNull(),              // "organisasi"|"lomba"|"volunteer"
+  type: text("type").notNull(),              // "development_program"|"lomba"|"volunteer"|"organisasi"
+  organizer: text("organizer"),              // Nama institusi/penyelenggara
   description: text("description"),
   competencyTags: text("competency_tags").array().default([]),
   skillTags: text("skill_tags").array().default([]),
+  relevantRoles: text("relevant_roles").array().default([]),
+  fee: text("fee"),                          // "Gratis" | "Berbayar"
+  semester: text("semester"),                // Kualifikasi semester
+  location: text("location"),                // Cakupan / lokasi kegiatan
   deadline: timestamp("deadline", { mode: "date" }),
   registrationUrl: text("registration_url"),
   matchPercent: integer("match_percent").default(0),
