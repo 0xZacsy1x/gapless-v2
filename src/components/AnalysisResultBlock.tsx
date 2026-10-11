@@ -161,31 +161,24 @@ export function AnalysisResultBlock({
 
       {/* Grid: Radar Chart + Narasi AI */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full mb-8">
-        {/* Kolom Kiri: Radar Chart */}
+        {/* Kolom Kiri: Radar Chart (Selalu Terbuka & Jelas untuk Semua Pengguna) */}
         <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm flex flex-col items-center h-full relative overflow-hidden">
           <div className="flex items-center justify-between w-full mb-2">
             <h2 className="text-xl font-bold text-slate-900">Radar Perbandingan</h2>
-            {!isPurchased && (
-              <span className="inline-flex items-center gap-1 text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200">
-                <Lock className="w-3 h-3" /> Terkunci
-              </span>
-            )}
           </div>
           <p className="text-xs text-slate-500 mb-6 self-start">
             Diperlukan (garis putus) vs. Level Kamu Saat Ini (isi)
           </p>
 
           <div className="relative w-full flex items-center justify-center min-h-[320px]">
-            {/* Chart Area (Blurred if not purchased) */}
+            {/* Chart Area */}
             <motion.div
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{
                 opacity: chartReady ? 1 : 0,
                 scale: chartReady ? 1 : 0.8,
               }}
-              className={`w-full transition-all duration-500 ${
-                !isPurchased ? 'blur-md opacity-40 select-none pointer-events-none' : ''
-              }`}
+              className="w-full transition-all duration-500"
               style={{ maxWidth: 450, aspectRatio: '1' }}
             >
               <ResponsiveContainer width="100%" height="100%" minWidth={1} minHeight={1}>
@@ -229,28 +222,6 @@ export function AnalysisResultBlock({
                 </RadarChart>
               </ResponsiveContainer>
             </motion.div>
-
-            {/* Overlay CTA if locked */}
-            {!isPurchased && (
-              <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center z-20">
-                <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center shadow-lg mb-3">
-                  <Lock className="w-6 h-6" />
-                </div>
-                <h3 className="font-bold text-slate-900 text-base mb-1">
-                  Buka Radar & Analisis Lengkap
-                </h3>
-                <p className="text-xs text-slate-600 max-w-xs mb-4 leading-relaxed">
-                  Lihat rincian grafik radar interaktif, narasi AI, dan unduh dokumen laporan resmi.
-                </p>
-                <button
-                  onClick={() => setShowPaymentModal(true)}
-                  className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-xs font-semibold shadow-md transition flex items-center gap-1.5"
-                >
-                  <Sparkles className="w-3.5 h-3.5" />
-                  Beli Laporan — Rp9.900
-                </button>
-              </div>
-            )}
           </div>
         </div>
 
