@@ -1,6 +1,8 @@
 'use client';
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
+import Image from 'next/image';
+import { Target } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { CAREER_PROFILES, getSkillGapData, TRAIT_META, Trait } from '@/data/gaplessData';
 import dynamic from 'next/dynamic';
@@ -10,7 +12,7 @@ const ArchetypeReasoningBlock = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="w-full bg-white rounded-3xl p-6 md:p-8 border border-slate-200/80 shadow-sm animate-pulse min-h-[260px] flex flex-col justify-between">
+      <div className="w-full bg-white rounded-3xl p-6 md:p-8 border border-slate-200/80 shadow-sm animate-pulse min-h-65 flex flex-col justify-between">
         <div className="flex items-center gap-3 mb-4">
           <div className="w-10 h-10 rounded-xl bg-slate-200" />
           <div className="space-y-2">
@@ -29,7 +31,7 @@ const AnalysisResultBlock = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="w-full bg-white rounded-3xl p-6 md:p-8 border border-slate-200/80 shadow-sm animate-pulse min-h-[420px] space-y-6">
+      <div className="w-full bg-white rounded-3xl p-6 md:p-8 border border-slate-200/80 shadow-sm animate-pulse min-h-105 space-y-6">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="space-y-2">
             <div className="h-6 w-56 bg-slate-200 rounded-md" />
@@ -147,6 +149,13 @@ export function ResultDetailClient({
     fetchInsight();
   }, [fetchInsight]);
 
+  const hasTraitScores = useMemo(() => {
+    if (!traitScores) return false;
+    return Object.values(traitScores).some((val) => typeof val === "number" && val > 0);
+  }, [traitScores]);
+
+  const isValidationPath = quizType === "sudah_tahu_minat" || !hasTraitScores;
+
   if (!careerProfile) {
     return (
       <div className="container mx-auto px-4 py-12 max-w-4xl flex justify-center">
@@ -168,13 +177,70 @@ export function ResultDetailClient({
 
   return (
     <div className="container mx-auto px-4 sm:px-6 py-8 max-w-6xl">
-      {/* Archetype Reasoning Section */}
-      <div className="mb-8">
-        <ArchetypeReasoningBlock
-          dominantTrait={dominantTrait}
-          traitScores={traitScores}
-        />
-      </div>
+      {/* Header Validasi Karier (Khusus Jalur Sudah Tahu Minat / Studi Kasus) */}
+      {isValidationPath ? (
+        <div className="mb-8 bg-white/90 backdrop-blur-md rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-sm relative overflow-hidden">
+          <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-blue-600 via-indigo-500 to-cyan-400" />
+          
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div className="flex items-start sm:items-center gap-4">
+              {careerProfile.icon && (
+                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-slate-50 border border-slate-100 p-2 flex items-center justify-center shrink-0 shadow-xs">
+                  <Image
+                    src={careerProfile.icon}
+                    alt={careerProfile.title}
+                    width={72}
+                    height={72}
+                    className="object-contain"
+                  />
+                </div>
+              )}
+              <div>
+                <div className="flex flex-wrap items-center gap-2 mb-2">
+                  <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200/60">
+                    <Target className="w-3.5 h-3.5" />
+                    Validasi Kompetensi Karier
+                  </span>
+                  <span
+                    className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1 rounded-full"
+                    style={{
+                      background: `${traitMetaColor}12`,
+                      color: traitMetaColor,
+                      border: `1px solid ${traitMetaColor}30`,
+                    }}
+                  >
+                    <span>{TRAIT_META[careerProfile.trait as Trait]?.emoji || "🎯"}</span>
+                    <span>Archetype: {careerProfile.trait}</span>
+                  </span>
+                </div>
+                <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+                  {careerProfile.title}
+                </h1>
+                <p className="text-slate-500 text-xs sm:text-sm mt-1 max-w-2xl leading-relaxed">
+                  Evaluasi kompetensi berbasis kuis studi kasus industri. Grafik radar dan analisis di bawah mengukur kesiapan skill kamu terhadap standar bursa kerja terkini.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex flex-row md:flex-col items-center md:items-end justify-between border-t md:border-t-0 pt-4 md:pt-0 border-slate-100 gap-2 shrink-0">
+              <span className="text-[11px] font-medium text-slate-400 uppercase tracking-wider">
+                Estimasi Gaji Industri
+              </span>
+              <span className="text-sm sm:text-base font-bold text-slate-900 bg-slate-50 md:bg-transparent px-3 py-1 md:p-0 rounded-lg">
+                {careerProfile.salaryRange}
+              </span>
+            </div>
+          </div>
+        </div>
+      ) : (
+        /* Archetype Reasoning Section (Khusus Jalur Belum Tahu Minat) */
+        <div className="mb-8">
+          <ArchetypeReasoningBlock
+            dominantTrait={dominantTrait}
+            traitScores={traitScores}
+          />
+        </div>
+      )}
 
       {/* Analysis Result (Radar + Gap Insight) */}
       <AnalysisResultBlock
