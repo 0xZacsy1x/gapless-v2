@@ -46,26 +46,46 @@ export default function ModuleDetailClient({
   const [detailData, setDetailData] = useState<ModuleDetail | null>(initialDetailData);
   const [isGenerating, setIsGenerating] = useState(!initialDetailData);
 
-  const storageKey = `gapless_res_done_${assessmentId || 'guest'}_${moduleSlug}`;
+  const storageOpenedKey = `gapless_res_opened_${assessmentId || 'guest'}_${moduleSlug}`;
+  const storageCheckedKey = `gapless_res_done_${assessmentId || 'guest'}_${moduleSlug}`;
+  const [openedResources, setOpenedResources] = useState<number[]>([]);
   const [checkedResources, setCheckedResources] = useState<number[]>([]);
 
   useEffect(() => {
     if (isCompleted && detailData?.resources) {
-      setCheckedResources(detailData.resources.map((_, i) => i));
+      const allIndices = detailData.resources.map((_, i) => i);
+      setOpenedResources(allIndices);
+      setCheckedResources(allIndices);
       return;
     }
     try {
-      const saved = localStorage.getItem(storageKey);
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed)) {
-          setCheckedResources(parsed);
-        }
+      const savedOpened = localStorage.getItem(storageOpenedKey);
+      if (savedOpened) {
+        const parsed = JSON.parse(savedOpened);
+        if (Array.isArray(parsed)) setOpenedResources(parsed);
+      }
+      const savedChecked = localStorage.getItem(storageCheckedKey);
+      if (savedChecked) {
+        const parsed = JSON.parse(savedChecked);
+        if (Array.isArray(parsed)) setCheckedResources(parsed);
       }
     } catch (e) {
       console.error(e);
     }
-  }, [storageKey, isCompleted, detailData]);
+  }, [storageOpenedKey, storageCheckedKey, isCompleted, detailData]);
+
+  const markResourceOpened = (index: number) => {
+    setOpenedResources((prev) => {
+      if (prev.includes(index)) return prev;
+      const next = [...prev, index];
+      try {
+        localStorage.setItem(storageOpenedKey, JSON.stringify(next));
+      } catch (e) {
+        console.error(e);
+      }
+      return next;
+    });
+  };
 
   const toggleResource = (index: number) => {
     if (isCompleted) return;
@@ -74,7 +94,7 @@ export default function ModuleDetailClient({
         ? prev.filter((i) => i !== index)
         : [...prev, index];
       try {
-        localStorage.setItem(storageKey, JSON.stringify(next));
+        localStorage.setItem(storageCheckedKey, JSON.stringify(next));
       } catch (e) {
         console.error(e);
       }
@@ -351,6 +371,7 @@ export default function ModuleDetailClient({
                 const Icon = isVideo ? Play : res.isFree ? Book : Lock;
                 const isValidUrl = res.url && res.url !== '#';
                 const isChecked = isCompleted || checkedResources.includes(idx);
+                const hasOpened = isCompleted || openedResources.includes(idx) || !isValidUrl;
                 
                 return (
                   <div 
@@ -358,18 +379,28 @@ export default function ModuleDetailClient({
                     className={`flex items-center p-4 rounded-xl border bg-white shadow-xs transition-all gap-4 ${
                       isChecked
                         ? 'border-emerald-200 bg-emerald-50/20'
-                        : isValidUrl 
-                          ? 'border-blue-200 hover:border-blue-400' 
-                          : 'border-slate-200 opacity-70'
+                        : hasOpened
+                          ? 'border-blue-300 bg-blue-50/10'
+                          : isValidUrl 
+                            ? 'border-slate-200 hover:border-blue-300' 
+                            : 'border-slate-200 opacity-70'
                     }`}
                   >
-                    <div className={`${isChecked ? 'bg-emerald-600' : isValidUrl ? 'bg-blue-600' : 'bg-slate-400'} text-white p-3 rounded-lg shrink-0 transition-colors`}>
+                    <div className={`${isChecked ? 'bg-emerald-600' : hasOpened ? 'bg-blue-600' : 'bg-slate-500'} text-white p-3 rounded-lg shrink-0 transition-colors`}>
                       <Icon size={20} fill={isVideo ? "currentColor" : "none"} />
                     </div>
                     <div className="flex flex-col flex-1 min-w-0">
                       {isValidUrl ? (
-                        <a href={res.url} target="_blank" rel="noreferrer" className="font-bold text-blue-700 text-sm truncate hover:underline">
-                          {res.title}
+                        <a 
+                          href={res.url} 
+                          target="_blank" 
+                          rel="noreferrer" 
+                          onClick={() => markResourceOpened(idx)}
+                          className="font-bold text-blue-700 text-sm truncate hover:underline flex items-center gap-1.5"
+                          title="Klik untuk membuka materi di tab baru"
+                        >
+                          <span className="truncate">{res.title}</span>
+                          <span className="text-blue-400 text-xs shrink-0 font-normal">↗</span>
                         </a>
                       ) : (
                         <span className="font-bold text-slate-500 text-sm truncate cursor-not-allowed" title="Link referensi belum tersedia">
@@ -384,31 +415,61 @@ export default function ModuleDetailClient({
                           <span className="bg-rose-100 text-rose-700 px-2 py-0.5 rounded text-[10px] font-bold">{res.price}</span>
                         )}
                         <span className="bg-white border border-slate-200 text-blue-600 px-2 py-0.5 rounded text-[10px] font-bold">{res.type}</span>
+                        {!hasOpened && (
+                          <span className="text-[10px] text-amber-600 bg-amber-50 border border-amber-200 px-1.5 py-0.5 rounded font-medium">
+                            Perlu dibuka
+                          </span>
+                        )}
                       </div>
                     </div>
 
-                    {/* Tombol Validasi Centang Selesai Tonton/Pelajari */}
+                    {/* Tombol Validasi: Buka Link Dulu -> Baru Bisa Centang */}
                     <button
                       type="button"
                       onClick={(e) => {
                         e.stopPropagation();
-                        toggleResource(idx);
+                        if (!hasOpened) {
+                          if (isValidUrl) {
+                            window.open(res.url, '_blank', 'noopener,noreferrer');
+                          }
+                          markResourceOpened(idx);
+                        } else {
+                          toggleResource(idx);
+                        }
                       }}
                       disabled={isCompleted}
                       className={`shrink-0 flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-bold transition-all border cursor-pointer ${
                         isChecked
                           ? 'bg-emerald-500 text-white border-emerald-600 shadow-xs hover:bg-emerald-600'
-                          : 'bg-slate-50 border-slate-200 text-slate-500 hover:bg-blue-50 hover:border-blue-300 hover:text-blue-600'
+                          : hasOpened
+                            ? 'bg-blue-50 border-blue-300 text-blue-700 hover:bg-blue-100 shadow-xs'
+                            : 'bg-slate-100 border-slate-200 text-slate-500 hover:bg-slate-200 hover:text-slate-700'
                       } ${isCompleted ? 'cursor-default opacity-90' : ''}`}
-                      title={isChecked ? (isCompleted ? 'Materi selesai' : 'Klik untuk batal centang') : 'Klik untuk menandai materi ini sudah selesai ditonton/dipelajari'}
+                      title={
+                        isChecked
+                          ? (isCompleted ? 'Materi selesai' : 'Klik untuk batal centang')
+                          : hasOpened
+                            ? 'Materi sudah dibuka. Klik untuk mencentang selesai'
+                            : 'Buka link materi terlebih dahulu sebelum mencentang'
+                      }
                     >
                       <div className={`w-4 h-4 rounded flex items-center justify-center border transition-colors ${
-                        isChecked ? 'bg-white text-emerald-600 border-white' : 'border-slate-300 bg-white'
+                        isChecked 
+                          ? 'bg-white text-emerald-600 border-white' 
+                          : hasOpened
+                            ? 'border-blue-400 bg-white text-blue-600'
+                            : 'border-slate-300 bg-white text-slate-400'
                       }`}>
-                        {isChecked && <Check size={12} strokeWidth={3} />}
+                        {isChecked ? (
+                          <Check size={12} strokeWidth={3} />
+                        ) : hasOpened ? (
+                          <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
+                        ) : (
+                          <Lock size={10} />
+                        )}
                       </div>
                       <span className="hidden sm:inline">
-                        {isChecked ? 'Selesai' : 'Centang'}
+                        {isChecked ? 'Selesai' : hasOpened ? 'Centang' : 'Buka Dulu'}
                       </span>
                     </button>
                   </div>
@@ -419,7 +480,7 @@ export default function ModuleDetailClient({
             {!isCompleted && !allResourcesChecked && (
               <div className="bg-amber-50 border border-amber-200/80 rounded-xl p-3 text-xs text-amber-800 flex items-center gap-2.5 mt-3 shadow-xs">
                 <span className="text-base">💡</span>
-                <span>Centang semua sumber belajar di atas setelah selesai dipelajari untuk mengaktifkan tombol <strong>Tandai Selesai</strong> di bawah.</span>
+                <span>Buka setiap materi di atas terlebih dahulu, lalu centang setelah selesai ditonton/dipelajari untuk mengaktifkan tombol <strong>Tandai Selesai</strong> di bawah.</span>
               </div>
             )}
           </div>
