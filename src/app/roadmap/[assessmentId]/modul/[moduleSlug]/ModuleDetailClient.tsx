@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ChevronRight, ArrowLeft, Target, Play, Book, Lock, Unlock, CheckCircle2, Sparkles } from 'lucide-react';
+import { ChevronRight, ArrowLeft, Target, Play, Book, Lock, Unlock, CheckCircle2, Sparkles, Check } from 'lucide-react';
 import type { CareerProfile, CurriculumPhase, ModuleDetail } from '@/data/gaplessData';
 import dynamic from 'next/dynamic';
 
@@ -45,6 +45,45 @@ export default function ModuleDetailClient({
 
   const [detailData, setDetailData] = useState<ModuleDetail | null>(initialDetailData);
   const [isGenerating, setIsGenerating] = useState(!initialDetailData);
+
+  const storageKey = `gapless_res_done_${assessmentId || 'guest'}_${moduleSlug}`;
+  const [checkedResources, setCheckedResources] = useState<number[]>([]);
+
+  useEffect(() => {
+    if (isCompleted && detailData?.resources) {
+      setCheckedResources(detailData.resources.map((_, i) => i));
+      return;
+    }
+    try {
+      const saved = localStorage.getItem(storageKey);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) {
+          setCheckedResources(parsed);
+        }
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }, [storageKey, isCompleted, detailData]);
+
+  const toggleResource = (index: number) => {
+    if (isCompleted) return;
+    setCheckedResources((prev) => {
+      const next = prev.includes(index)
+        ? prev.filter((i) => i !== index)
+        : [...prev, index];
+      try {
+        localStorage.setItem(storageKey, JSON.stringify(next));
+      } catch (e) {
+        console.error(e);
+      }
+      return next;
+    });
+  };
+
+  const totalResources = detailData?.resources?.length || 0;
+  const allResourcesChecked = totalResources === 0 || checkedResources.length >= totalResources;
 
   useEffect(() => {
     if (!initialDetailData && !detailData) {
@@ -290,9 +329,20 @@ export default function ModuleDetailClient({
 
           {/* Kolom Kanan: Sumber Belajar */}
           <div>
-            <div className="flex items-center gap-3 mb-6">
-              <Unlock className="text-blue-600" size={24} />
-              <h3 className="text-xl font-bold text-blue-700">Sumber Belajar Rekomendasi</h3>
+            <div className="flex items-center justify-between gap-3 mb-6">
+              <div className="flex items-center gap-3">
+                <Unlock className="text-blue-600" size={24} />
+                <h3 className="text-xl font-bold text-blue-700">Sumber Belajar Rekomendasi</h3>
+              </div>
+              {totalResources > 0 && (
+                <span className={`text-xs font-bold px-3 py-1 rounded-full border transition-all ${
+                  allResourcesChecked
+                    ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                    : 'bg-slate-100 text-slate-600 border-slate-200'
+                }`}>
+                  {isCompleted ? totalResources : checkedResources.length}/{totalResources} Selesai
+                </span>
+              )}
             </div>
 
             <div className="space-y-4">
@@ -300,10 +350,20 @@ export default function ModuleDetailClient({
                 const isVideo = res.type === 'Video';
                 const Icon = isVideo ? Play : res.isFree ? Book : Lock;
                 const isValidUrl = res.url && res.url !== '#';
+                const isChecked = isCompleted || checkedResources.includes(idx);
                 
                 return (
-                  <div key={idx} className={`flex items-center p-4 rounded-xl border bg-white shadow-sm transition-colors gap-4 ${isValidUrl ? 'border-blue-200 hover:border-blue-400' : 'border-slate-200 opacity-70'}`}>
-                    <div className={`${isValidUrl ? 'bg-blue-600' : 'bg-slate-400'} text-white p-3 rounded-lg shrink-0`}>
+                  <div 
+                    key={idx} 
+                    className={`flex items-center p-4 rounded-xl border bg-white shadow-xs transition-all gap-4 ${
+                      isChecked
+                        ? 'border-emerald-200 bg-emerald-50/20'
+                        : isValidUrl 
+                          ? 'border-blue-200 hover:border-blue-400' 
+                          : 'border-slate-200 opacity-70'
+                    }`}
+                  >
+                    <div className={`${isChecked ? 'bg-emerald-600' : isValidUrl ? 'bg-blue-600' : 'bg-slate-400'} text-white p-3 rounded-lg shrink-0 transition-colors`}>
                       <Icon size={20} fill={isVideo ? "currentColor" : "none"} />
                     </div>
                     <div className="flex flex-col flex-1 min-w-0">
@@ -326,10 +386,42 @@ export default function ModuleDetailClient({
                         <span className="bg-white border border-slate-200 text-blue-600 px-2 py-0.5 rounded text-[10px] font-bold">{res.type}</span>
                       </div>
                     </div>
+
+                    {/* Tombol Validasi Centang Selesai Tonton/Pelajari */}
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleResource(idx);
+                      }}
+                      disabled={isCompleted}
+                      className={`shrink-0 flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-bold transition-all border cursor-pointer ${
+                        isChecked
+                          ? 'bg-emerald-500 text-white border-emerald-600 shadow-xs hover:bg-emerald-600'
+                          : 'bg-slate-50 border-slate-200 text-slate-500 hover:bg-blue-50 hover:border-blue-300 hover:text-blue-600'
+                      } ${isCompleted ? 'cursor-default opacity-90' : ''}`}
+                      title={isChecked ? (isCompleted ? 'Materi selesai' : 'Klik untuk batal centang') : 'Klik untuk menandai materi ini sudah selesai ditonton/dipelajari'}
+                    >
+                      <div className={`w-4 h-4 rounded flex items-center justify-center border transition-colors ${
+                        isChecked ? 'bg-white text-emerald-600 border-white' : 'border-slate-300 bg-white'
+                      }`}>
+                        {isChecked && <Check size={12} strokeWidth={3} />}
+                      </div>
+                      <span className="hidden sm:inline">
+                        {isChecked ? 'Selesai' : 'Centang'}
+                      </span>
+                    </button>
                   </div>
                 )
               })}
             </div>
+
+            {!isCompleted && !allResourcesChecked && (
+              <div className="bg-amber-50 border border-amber-200/80 rounded-xl p-3 text-xs text-amber-800 flex items-center gap-2.5 mt-3 shadow-xs">
+                <span className="text-base">💡</span>
+                <span>Centang semua sumber belajar di atas setelah selesai dipelajari untuk mengaktifkan tombol <strong>Tandai Selesai</strong> di bawah.</span>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -350,11 +442,20 @@ export default function ModuleDetailClient({
           >
             <CheckCircle2 size={18} /> Sudah Selesai
           </button>
+        ) : !allResourcesChecked ? (
+          <button 
+            disabled
+            className="flex-1 flex items-center justify-center gap-2 px-8 py-3 rounded-full bg-slate-200 text-slate-400 font-bold border border-slate-300 cursor-not-allowed opacity-80 select-none transition-all"
+            title={`Centang semua ${totalResources} materi (${checkedResources.length}/${totalResources}) untuk membuka tombol ini`}
+          >
+            <Lock size={18} className="text-slate-400" />
+            <span>Tandai Selesai ({checkedResources.length}/{totalResources})</span>
+          </button>
         ) : (
           <button 
             onClick={handleMarkAsComplete}
             disabled={isLoading}
-            className="flex-1 flex items-center justify-center gap-2 px-8 py-3 rounded-full bg-blue-600 text-white font-bold hover:bg-blue-700 transition-colors disabled:opacity-50 relative"
+            className="flex-1 flex items-center justify-center gap-2 px-8 py-3 rounded-full bg-blue-600 text-white font-bold hover:bg-blue-700 transition-colors disabled:opacity-50 relative shadow-md hover:shadow-lg cursor-pointer"
           >
             {isLoading ? "Memproses..." : "Tandai Selesai"}
             
