@@ -79,7 +79,7 @@ export function PricingClient({ isLoggedIn, isPro: initialIsPro, periodEnd: init
   const faqs = [
     {
       q: 'Apa perbedaan Gapless Pro dan Laporan Gap Mendalam?',
-      a: 'Gapless Pro adalah paket langganan bulanan (Rp29.000/bulan) untuk membuka fitur akselerasi seperti re-assessment unlimited, kurikulum 4 fase lengkap, seluruh rekomendasi kegiatan & filter, serta misi berkala. Sedangkan Laporan Gap Mendalam (Rp9.900) adalah produk satu kali bayar per target karier untuk membuka radar chart dan narasi analisis kesenjangan AI lengkap beserta dokumen PDF resmi.',
+      a: 'Gapless Pro adalah paket langganan bulanan (Rp29.000/bulan) untuk membuka fitur akselerasi seperti re-assessment unlimited, kurikulum 4 fase lengkap, seluruh rekomendasi kegiatan & filter, serta misi berkala. Sedangkan Laporan Gap Mendalam (Rp9.900) adalah produk satu kali bayar per target karier untuk membuka analisis narasi kesenjangan AI personal mendalam, rekomendasi aksi 30/60/90 hari, beserta dokumen PDF laporan resmi 9 halaman (grafik radar perbandingan tetap dapat diakses gratis oleh semua pengguna).',
     },
     {
       q: 'Apakah pengguna Gapless Pro otomatis mendapat Laporan Gap Mendalam?',
@@ -271,7 +271,7 @@ export function PricingClient({ isLoggedIn, isPro: initialIsPro, periodEnd: init
               Laporan Gap Mendalam — {PRODUCTS.gap_report.priceWithCurrency}
             </h3>
             <p className="text-xs text-slate-600 leading-relaxed">
-              Produk one-time per <em>career path</em> untuk membuka grafik radar interaktif, narasi kesenjangan AI lengkap, detail per kompetensi, dan dokumen PDF resmi.
+              Produk one-time per <em>career path</em> untuk membuka analisis narasi kesenjangan AI personal mendalam, rekomendasi aksi 30/60/90 hari, dan dokumen laporan resmi PDF 9 halaman.
             </p>
             <p className="text-[11px] text-slate-500 italic">
               *Dibeli terpisah dan berlaku selamanya untuk karier yang dipilih (user Gapless Pro maupun Free dapat membeli langsung dari halaman hasil asesmen).

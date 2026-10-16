@@ -35,6 +35,16 @@ const ArchetypeReasoningBlock = dynamic(
   }
 );
 
+const SkillReadinessCard = dynamic(
+  () => import("@/components/SkillReadinessCard").then((mod) => mod.SkillReadinessCard),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="w-full bg-white rounded-3xl p-6 md:p-8 border border-slate-200/80 shadow-sm animate-pulse min-h-60" />
+    ),
+  }
+);
+
 const AnalysisResultBlock = dynamic(
   () => import("@/components/AnalysisResultBlock").then((mod) => mod.AnalysisResultBlock),
   {
@@ -142,6 +152,7 @@ export function ResultDetailClient({
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          assessmentId: resultId,
           skillGapData,
           roleName: careerProfile.title,
           careerSlug,
@@ -162,7 +173,7 @@ export function ResultDetailClient({
     } finally {
       setIsLoadingGapAi(false);
     }
-  }, [careerProfile, skillGapData, careerSlug]);
+  }, [careerProfile, skillGapData, careerSlug, resultId]);
 
   useEffect(() => {
     fetchInsight();
@@ -408,6 +419,19 @@ export function ResultDetailClient({
           />
         </div>
       )}
+
+      {/* Skill Readiness Card (Terbuka untuk semua user) */}
+      <div className="mb-8">
+        <SkillReadinessCard
+          career={careerProfile}
+          skillRatings={skillRatings || {}}
+          completedModulesCount={0}
+          totalModulesCount={
+            careerProfile.roadmap?.reduce((acc, p) => acc + (p.modules?.length || 0), 0) || 12
+          }
+          assessmentId={resultId}
+        />
+      </div>
 
       {/* Analysis Result (Radar + Gap Insight) */}
       <AnalysisResultBlock

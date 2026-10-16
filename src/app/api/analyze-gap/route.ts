@@ -1,4 +1,3 @@
-import { createGroq } from '@ai-sdk/groq';
 import { createGoogleGenerativeAI } from '@ai-sdk/google';
 import { generateObject } from 'ai';
 import { NextResponse } from 'next/server';
@@ -6,10 +5,15 @@ import { z } from 'zod';
 import { auth } from '@/auth';
 import { checkRateLimit } from '@/lib/rateLimit';
 import { hasGapReport } from '@/lib/payment_service';
+import { db } from '@/db';
+import { reportContents } from '@/db/schema';
+import { eq, and } from 'drizzle-orm';
+import { generateReportNumber } from '@/lib/report_generator';
 
 const google = createGoogleGenerativeAI({ apiKey: process.env.GEMINI_API_KEY || '' });
 
 const RequestSchema = z.object({
+  assessmentId: z.string().optional(),
   roleName: z.string().min(1, "Role name tidak boleh kosong"),
   careerSlug: z.string().optional(),
   skillGapData: z.array(z.object({
@@ -52,13 +56,13 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Bad Request', details: validationResult.error.format() }, { status: 400 });
     }
 
-    const { skillGapData, roleName, careerSlug: rawSlug } = validationResult.data;
+    const { assessmentId, skillGapData, roleName, careerSlug: rawSlug } = validationResult.data;
     const careerSlug = rawSlug || roleName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
 
     // Cek apakah user telah membeli Laporan Gap untuk career path ini
     const isPurchased = await hasGapReport(session.user.id, careerSlug);
 
-    // 🔒 GATING: Jika belum bayar, return 402 + Ringkasan Teks Gratis Saja (Tanpa Nilai Skor & Tanpa Radar Data)
+    // 🔒 GATING: Jika belum bayar, return 402 + Ringkasan Teks Gratis Saja (Tanpa Analisis AI Narasi & Dokumen PDF)
     if (!isPurchased) {
       const summaryMatching = skillGapData
         .filter((s) => s.current >= s.required)
@@ -72,7 +76,7 @@ export async function POST(request: Request) {
         {
           isPurchased: false,
           error: 'Payment Required',
-          message: 'Laporan analisis kesenjangan mendalam & grafik radar terkunci. Beli seharga Rp9.900 untuk membuka akses permanen.',
+          message: 'Analisis narasi AI mendalam & dokumen laporan resmi PDF terkunci. Beli seharga Rp9.900 untuk membuka akses permanen.',
           productKey: 'gap_report',
           careerSlug,
           price: 9900,
@@ -84,6 +88,33 @@ export async function POST(request: Request) {
         },
         { status: 402 }
       );
+    }
+
+    // 0. Cek Cache di DB (report_contents) jika assessmentId disertakan & user sudah membeli
+    let existingReport: any = null;
+    if (assessmentId) {
+      try {
+        existingReport = await db.query.reportContents.findFirst({
+          where: and(
+            eq(reportContents.assessmentResultId, assessmentId),
+            eq(reportContents.userId, session.user.id)
+          ),
+        });
+
+        if (existingReport && !existingReport.isStale) {
+          const cachedInsight = (existingReport.aiSkillInterpretations as any)?._cachedGapInsight;
+          if (cachedInsight && cachedInsight.basis_penilaian) {
+            return NextResponse.json({
+              isPurchased: true,
+              careerSlug,
+              ai_engine_used: 'cache-report-contents',
+              ...cachedInsight,
+            });
+          }
+        }
+      } catch (cacheLookupErr) {
+        console.warn('Gagal membaca cache report_contents:', cacheLookupErr);
+      }
     }
 
     // Rate Limit Check untuk AI Call
@@ -142,6 +173,38 @@ Berikan analisis terstruktur menggunakan Bahasa Indonesia yang profesional dan m
         catatan_singkat: `Tingkatkan kompetensimu secara terarah melalui modul-modul roadmap ${roleName} yang telah dirancang.`
       };
       engineUsed = 'structured-heuristic';
+    }
+
+    // Simpan ke Cache DB (report_contents) jika assessmentId ada
+    if (assessmentId) {
+      try {
+        if (existingReport) {
+          const currentInterpretations = (existingReport.aiSkillInterpretations as Record<string, any>) || {};
+          await db
+            .update(reportContents)
+            .set({
+              aiSkillInterpretations: {
+                ...currentInterpretations,
+                _cachedGapInsight: object,
+              },
+            })
+            .where(eq(reportContents.id, existingReport.id));
+        } else {
+          await db.insert(reportContents).values({
+            assessmentResultId: assessmentId,
+            userId: session.user.id,
+            careerSlug,
+            reportNumber: generateReportNumber(),
+            aiSkillInterpretations: {
+              _cachedGapInsight: object,
+            },
+            aiActionPlan306090: {},
+            isStale: false,
+          });
+        }
+      } catch (cacheSaveErr) {
+        console.warn('Gagal menyimpan cache gap insight ke DB:', cacheSaveErr);
+      }
     }
 
     return NextResponse.json({
