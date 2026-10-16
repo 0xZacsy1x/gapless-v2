@@ -94,6 +94,7 @@ export interface GaplessContextValue {
 
   // ── Assessment ──
   answers: Record<number, number>;
+  setAnswers: (answers: Record<number, number> | ((prev: Record<number, number>) => Record<number, number>)) => void;
   setAnswer: (questionId: number, optionIndex: number) => void;
   completedQuestions: number;
   isAssessmentComplete: boolean;
@@ -535,6 +536,7 @@ export function GaplessProvider({ children }: { children: ReactNode }) {
       setSelectedRole,
       skillRatings,
       setSkillRating,
+      setAnswers,
       currentAssessmentId,
       setCurrentAssessmentId,
       selectedModuleSlug,
@@ -581,6 +583,7 @@ export function GaplessProvider({ children }: { children: ReactNode }) {
       resetProgress,
       saveResultToServerOrLocal,
       selectedModuleSlug,
+      setAnswers,
       setAnswer,
       setView,
     ]
