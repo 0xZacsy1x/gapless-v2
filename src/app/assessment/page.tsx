@@ -39,14 +39,14 @@ export default async function AssessmentPage() {
           </div>
           <h2 className="text-2xl font-black text-slate-900 mb-2">Batas Percobaan Tercapai</h2>
           <p className="text-slate-600 mb-6 text-sm">
-            Kamu telah menggunakan kuota {limit} kali asesmen untuk jalur ini. Kamu dapat terus melanjutkan belajar di Learning Roadmap dan mengakses hasil asesmenmu kapan saja.
+            Kamu telah menggunakan kuota {limit} kali asesmen untuk jalur ini. Kamu dapat terus melanjutkan belajar di Roadmap Belajar dan mengakses hasil asesmenmu kapan saja.
           </p>
           <div className="flex flex-col gap-3">
             <Link 
               href="/roadmap"
               className="w-full py-3 px-6 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition-colors shadow-md"
             >
-              Buka Learning Roadmap
+              Buka Roadmap Belajar
             </Link>
             <Link 
               href="/results"

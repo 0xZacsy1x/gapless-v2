@@ -80,7 +80,7 @@ export function HomePageClient() {
           }}
           className="text-gray-400 text-sm mt-6"
         >
-          Tanpa login · Hanya 5-7 menit · Dapatkan rekomendasi karier personal.
+          Mulai tes tanpa perlu masuk · 5-7 menit · Masuk dengan Google untuk menyimpan hasilmu.
         </motion.p>
       </motion.section>
 

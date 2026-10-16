@@ -336,7 +336,7 @@ export function ResultDetailClient({
             <Lock className="w-5 h-5 text-slate-500" />
           </div>
           <h3 className="text-base font-bold text-slate-800 mb-1">
-            Analisis Radar Kompetensi &amp; Learning Roadmap
+            Analisis Radar Kompetensi &amp; Roadmap Belajar
           </h3>
           <p className="text-xs sm:text-sm text-slate-500 max-w-md mx-auto leading-relaxed mb-4">
             Grafik radar skill gap, evaluasi kesiapan kerja, dan kurikulum roadmap akan otomatis terbuka setelah kamu memilih salah satu rekomendasi karier di atas dan menyelesaikan 10 soal studi kasus industri.

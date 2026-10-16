@@ -179,7 +179,7 @@ export function PricingClient({ isLoggedIn, isPro: initialIsPro, periodEnd: init
                 href="/roadmap"
                 className="w-full py-3 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-semibold flex items-center justify-center gap-2 transition"
               >
-                Buka Learning Roadmap
+                Buka Roadmap Belajar
               </Link>
             )}
           </div>
