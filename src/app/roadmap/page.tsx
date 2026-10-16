@@ -78,7 +78,7 @@ export default async function RoadmapPage({ searchParams }: RoadmapPageProps) {
             </div>
             <h2 className="text-2xl font-bold text-slate-900 mb-3">Belum Ada Roadmap</h2>
             <p className="text-slate-600 mb-8">
-              Kamu belum memiliki Learning Roadmap. Selesaikan asesmen karier dan pilih tujuanmu untuk membuka roadmap yang dipersonalisasi.
+              Kamu belum memiliki Roadmap Belajar. Selesaikan asesmen karier dan pilih tujuanmu untuk membuka roadmap yang dipersonalisasi.
             </p>
             <RouteSelectionCards />
           </div>

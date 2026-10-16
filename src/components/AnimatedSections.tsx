@@ -154,7 +154,7 @@ export function FooterSection() {
           {/* Copyright */}
           <motion.div variants={itemFadeBlur} className="mt-20 md:mt-28 w-full flex justify-center">
             <p className="text-blue-200/80 text-xs md:text-sm font-medium">
-              © 2026 - Gapless. All rights reserved
+              © 2026 Gapless. Seluruh hak cipta dilindungi.
             </p>
           </motion.div>
         </motion.div>

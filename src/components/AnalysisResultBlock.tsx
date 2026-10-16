@@ -408,7 +408,7 @@ export function AnalysisResultBlock({
                 href={roadmapHref}
                 className="w-full py-3 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold flex items-center justify-center gap-1.5 shadow-sm transition"
               >
-                Buka Learning Roadmap
+                Buka Roadmap Belajar
                 <ArrowRight className="w-3.5 h-3.5" />
               </Link>
             ) : onNext ? (

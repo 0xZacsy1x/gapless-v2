@@ -4,24 +4,17 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "motion/react";
+import { NAV_ITEMS } from "@/config/navigation";
 
 interface NavLinksProps {
   authButton: React.ReactNode;
   variant?: 'light' | 'dark';
 }
 
-
 export function NavLinks({ authButton, variant = 'light' }: NavLinksProps) {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
   const isDark = variant === 'dark';
-
-  const links = [
-    { href: "/", label: "Home" },
-    { href: "/roadmap", label: "Learning Roadmap" },
-    { href: "/results", label: "Hasil Saya" },
-    { href: "/pricing", label: "Pricing" },
-  ];
 
   return (
     <nav className="flex items-center justify-between px-4 md:px-6 py-4 max-w-7xl mx-auto w-full relative">
@@ -37,7 +30,7 @@ export function NavLinks({ authButton, variant = 'light' }: NavLinksProps) {
           href="/"
           className="flex items-center gap-2 transition-transform hover:scale-105"
         >
-          <img src="/Asset 1.png" alt="Gapless Explorer Logo" className="h-8 md:h-10 w-auto" />
+          <img src="/Asset 1.png" alt="Logo Gapless" className="h-8 md:h-10 w-auto" />
           <span className={`font-bold text-xl md:text-2xl transition-colors ${
             isDark ? "text-white" : "text-slate-900"
           }`}>
@@ -62,7 +55,7 @@ export function NavLinks({ authButton, variant = 'light' }: NavLinksProps) {
           }
         }}
       >
-        {links.map((link) => (
+        {NAV_ITEMS.map((link) => (
           <motion.div
             key={link.href}
             variants={{
@@ -103,7 +96,7 @@ export function NavLinks({ authButton, variant = 'light' }: NavLinksProps) {
           className={`md:hidden p-2 focus:outline-none transition-colors ${
             isDark ? "text-slate-200 hover:text-white" : "text-slate-800 hover:text-slate-900"
           }`}
-          aria-label="Toggle menu"
+          aria-label="Buka menu navigasi"
         >
           <svg
             className="w-6 h-6"
@@ -149,7 +142,7 @@ export function NavLinks({ authButton, variant = 'light' }: NavLinksProps) {
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.2, ease: "easeOut" }}
           >
-            {links.map((link) => (
+            {NAV_ITEMS.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
