@@ -37,10 +37,6 @@ export default async function ResultDetailPage({ params }: { params: Promise<{ a
     redirect('/results');
   }
 
-  if (!result.selectedCareer) {
-    redirect('/results');
-  }
-
   // ⚠️ OWNERSHIP CHECK ⚠️
   if (result.userId !== session.user.id) {
     return (
@@ -68,10 +64,10 @@ export default async function ResultDetailPage({ params }: { params: Promise<{ a
         <ResultDetailClient 
             resultId={result.id} 
             quizType={result.quizType as string}
-            selectedCareer={result.selectedCareer as string} 
-            skillRatings={result.skillRatings as Record<string, number>} 
+            selectedCareer={result.selectedCareer ?? null} 
+            skillRatings={(result.skillRatings as Record<string, number>) ?? {}} 
             dominantTrait={result.dominantTrait as string} 
-            traitScores={result.traitScores as Record<string, number>}
+            traitScores={(result.traitScores as Record<string, number>) ?? {}}
         />
       </main>
     </div>

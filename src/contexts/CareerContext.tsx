@@ -130,6 +130,7 @@ export interface GaplessContextValue {
   selectedModuleSlug: string | null;
   setSelectedModuleSlug: (slug: string | null) => void;
   currentAssessmentId: string | null;
+  setCurrentAssessmentId: (id: string | null) => void;
   quizType: string;
   setQuizType: (type: string) => void;
   resetProgress: () => Promise<void>;
@@ -535,6 +536,7 @@ export function GaplessProvider({ children }: { children: ReactNode }) {
       skillRatings,
       setSkillRating,
       currentAssessmentId,
+      setCurrentAssessmentId,
       selectedModuleSlug,
       setSelectedModuleSlug,
       quizType,
@@ -573,6 +575,7 @@ export function GaplessProvider({ children }: { children: ReactNode }) {
       answers,
       completedQuestions,
       currentAssessmentId,
+      setCurrentAssessmentId,
       isAssessmentComplete,
       quizType,
       resetProgress,
