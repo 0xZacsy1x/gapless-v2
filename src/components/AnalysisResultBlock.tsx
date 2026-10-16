@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Tooltip, Radar, Legend } from 'recharts';
-import { Sparkles, CheckCircle2, AlertTriangle, Lock, FileDown, Check, ShieldCheck, ArrowRight, X, Printer, FileText, Download, Loader2, ExternalLink } from 'lucide-react';
+import { Sparkles, CheckCircle2, AlertTriangle, Lock, Check, ShieldCheck, ArrowRight, X, FileText, Download, Loader2, ExternalLink } from 'lucide-react';
 import { GapInsight } from '@/contexts/CareerContext';
 import Link from 'next/link';
 import { downloadBlobFile } from '@/lib/download-helper';
@@ -89,6 +89,11 @@ export function AnalysisResultBlock({
   const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
 
   const handleDownloadPdf = async () => {
+    if (!isPurchased) {
+      setShowPaymentModal(true);
+      return;
+    }
+
     if (!assessmentId) {
       window.print();
       return;
@@ -105,7 +110,6 @@ export function AnalysisResultBlock({
       downloadBlobFile(blob, filename);
     } catch (err) {
       console.error(err);
-      // Fallback: buka dokumen langsung di tab baru
       window.open(`/report/${assessmentId}`, '_blank');
     } finally {
       setIsDownloadingPdf(false);
@@ -115,7 +119,7 @@ export function AnalysisResultBlock({
   return (
     <div className="w-full flex flex-col print:p-0">
       {/* Top Banner when purchased */}
-      {isPurchased && (
+      {isPurchased ? (
         <div className="mb-6 p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-emerald-500/10 via-teal-500/10 to-blue-500/10 border border-emerald-200/80 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 print:hidden">
           <div className="flex items-center gap-2.5">
             <span className="p-2 rounded-xl bg-emerald-100 text-emerald-700">
@@ -141,7 +145,7 @@ export function AnalysisResultBlock({
             <button
               onClick={handleDownloadPdf}
               disabled={isDownloadingPdf}
-              className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 disabled:bg-slate-700 text-white text-xs font-semibold flex items-center justify-center gap-1.5 shadow-sm transition shrink-0"
+              className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 disabled:bg-slate-700 text-white text-xs font-semibold flex items-center justify-center gap-1.5 shadow-sm transition shrink-0 cursor-pointer"
             >
               {isDownloadingPdf ? (
                 <>
@@ -157,35 +161,58 @@ export function AnalysisResultBlock({
             </button>
           </div>
         </div>
+      ) : (
+        /* Top Banner when NOT purchased */
+        <div className="mb-6 p-4 sm:p-5 rounded-2xl bg-slate-50 border border-slate-200 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 print:hidden">
+          <div className="flex items-center gap-2.5">
+            <span className="p-2 rounded-xl bg-slate-200/80 text-slate-700">
+              <FileText className="w-5 h-5 text-blue-600" />
+            </span>
+            <div>
+              <div className="flex items-center gap-2">
+                <h4 className="font-bold text-slate-900 text-sm">Dokumen Laporan Konsultasi 9 Halaman</h4>
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 border border-amber-200">
+                  Rp 9.900
+                </span>
+              </div>
+              <p className="text-xs text-slate-500">
+                Akses dokumen PDF formal lengkap dengan analisis gap mendalam berbasis AI untuk target karier {careerName}.
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={() => setShowPaymentModal(true)}
+            className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold flex items-center justify-center gap-1.5 shadow-sm transition shrink-0 cursor-pointer"
+          >
+            <Lock className="w-3.5 h-3.5 text-amber-400" />
+            <span>Buka Laporan &amp; Unduh PDF</span>
+          </button>
+        </div>
       )}
 
-      {/* Grid: Radar Chart + Narasi AI */}
+      {/* Grid: Radar Chart (Terbuka) + Narasi AI (Terkunci jika belum beli) */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full mb-8">
-        {/* Kolom Kiri: Radar Chart */}
+        {/* Kolom Kiri: Radar Chart (TERBUKA UNTUK SEMUA USER) */}
         <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm flex flex-col items-center h-full relative overflow-hidden">
           <div className="flex items-center justify-between w-full mb-2">
             <h2 className="text-xl font-bold text-slate-900">Radar Perbandingan</h2>
-            {!isPurchased && (
-              <span className="inline-flex items-center gap-1 text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200">
-                <Lock className="w-3 h-3" /> Terkunci
-              </span>
-            )}
+            <span className="inline-flex items-center gap-1 text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+              <Check className="w-3 h-3 text-emerald-600" /> Terbuka
+            </span>
           </div>
           <p className="text-xs text-slate-500 mb-6 self-start">
             Diperlukan (garis putus) vs. Level Kamu Saat Ini (isi)
           </p>
 
           <div className="relative w-full flex items-center justify-center min-h-[320px]">
-            {/* Chart Area (Blurred if not purchased) */}
+            {/* Chart Area: Selalu Jelas Tanpa Blur */}
             <motion.div
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{
                 opacity: chartReady ? 1 : 0,
                 scale: chartReady ? 1 : 0.8,
               }}
-              className={`w-full transition-all duration-500 ${
-                !isPurchased ? 'blur-md opacity-40 select-none pointer-events-none' : ''
-              }`}
+              className="w-full transition-all duration-500"
               style={{ maxWidth: 450, aspectRatio: '1' }}
             >
               <ResponsiveContainer width="100%" height="100%" minWidth={1} minHeight={1}>
@@ -229,28 +256,6 @@ export function AnalysisResultBlock({
                 </RadarChart>
               </ResponsiveContainer>
             </motion.div>
-
-            {/* Overlay CTA if locked */}
-            {!isPurchased && (
-              <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center z-20">
-                <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center shadow-lg mb-3">
-                  <Lock className="w-6 h-6" />
-                </div>
-                <h3 className="font-bold text-slate-900 text-base mb-1">
-                  Buka Radar & Analisis Lengkap
-                </h3>
-                <p className="text-xs text-slate-600 max-w-xs mb-4 leading-relaxed">
-                  Lihat rincian grafik radar interaktif, narasi AI, dan unduh dokumen laporan resmi.
-                </p>
-                <button
-                  onClick={() => setShowPaymentModal(true)}
-                  className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-xs font-semibold shadow-md transition flex items-center gap-1.5"
-                >
-                  <Sparkles className="w-3.5 h-3.5" />
-                  Beli Laporan — Rp9.900
-                </button>
-              </div>
-            )}
           </div>
         </div>
 
@@ -264,14 +269,18 @@ export function AnalysisResultBlock({
                 </span>
                 <h2 className="text-xl font-bold text-slate-900">Analisis Kesenjangan AI</h2>
               </div>
-              {isPurchased && (
+              {isPurchased ? (
                 <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
                   Resmi Terbuka
+                </span>
+              ) : (
+                <span className="inline-flex items-center gap-1 text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200">
+                  <Lock className="w-3 h-3 text-amber-600" /> Terkunci
                 </span>
               )}
             </div>
 
-            {/* Jika Terkunci: Tampilkan Ringkasan Teks Gratis */}
+            {/* Jika Terkunci: Tampilkan Ringkasan Teks Gratis & Callout Pembelian */}
             {!isPurchased && (
               <div className="space-y-4">
                 <p className="text-xs text-slate-600 leading-relaxed">
@@ -316,15 +325,23 @@ export function AnalysisResultBlock({
                   </div>
                 )}
 
-                <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 text-center">
-                  <p className="text-xs text-slate-600 mb-3">
-                    Ingin melihat analisis narasi mendalam AI, skor numerik detail, dan strategi 30/60/90 hari?
+                {/* Callout Locked AI Narrative */}
+                <div className="p-5 rounded-2xl bg-gradient-to-br from-slate-50 to-blue-50/30 border border-slate-200 text-center relative overflow-hidden shadow-xs">
+                  <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center mx-auto mb-2 border border-blue-100 shadow-xs">
+                    <Lock className="w-5 h-5" />
+                  </div>
+                  <h4 className="font-bold text-slate-900 text-sm mb-1">
+                    Analisis Narasi AI &amp; PDF Terkunci
+                  </h4>
+                  <p className="text-xs text-slate-500 mb-4 max-w-sm mx-auto leading-relaxed">
+                    Dapatkan analisis naratif personal AI, diagnosis mendalam per skill, rekomendasi langkah akselerasi terarah, dan dokumen laporan resmi 9 halaman.
                   </p>
                   <button
                     onClick={() => setShowPaymentModal(true)}
-                    className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold transition"
+                    className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-xs font-semibold shadow-md transition flex items-center justify-center gap-1.5 mx-auto cursor-pointer"
                   >
-                    Buka Laporan Lengkap (Rp9.900)
+                    <Sparkles className="w-3.5 h-3.5" />
+                    Buka Laporan Lengkap — Rp9.900
                   </button>
                 </div>
               </div>
@@ -344,7 +361,7 @@ export function AnalysisResultBlock({
                     <div className="p-4 rounded-2xl bg-emerald-50/80 border border-emerald-200/80">
                       <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-900 mb-2">
                         <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                        Kompetensi Unggul & Sesuai:
+                        Kompetensi Unggul &amp; Sesuai:
                       </div>
                       <ul className="space-y-1.5 text-emerald-950">
                         {gapInsight.kesesuaian.map((item, idx) => (
@@ -419,7 +436,7 @@ export function AnalysisResultBlock({
             >
               <button
                 onClick={() => setShowPaymentModal(false)}
-                className="absolute top-5 right-5 p-1 rounded-lg hover:bg-slate-100 text-slate-400"
+                className="absolute top-5 right-5 p-1 rounded-lg hover:bg-slate-100 text-slate-400 cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -437,7 +454,7 @@ export function AnalysisResultBlock({
               <div className="bg-slate-50 rounded-2xl p-4 border border-slate-200 mb-6 text-xs space-y-2">
                 <div className="flex justify-between text-slate-600">
                   <span>Produk:</span>
-                  <span className="font-semibold text-slate-900">Laporan Gap & PDF</span>
+                  <span className="font-semibold text-slate-900">Laporan Gap &amp; PDF</span>
                 </div>
                 <div className="flex justify-between text-slate-600">
                   <span>Masa Berlaku:</span>
@@ -464,14 +481,14 @@ export function AnalysisResultBlock({
                 <div className="flex gap-3">
                   <button
                     onClick={() => setShowPaymentModal(false)}
-                    className="flex-1 py-2.5 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 text-xs font-semibold"
+                    className="flex-1 py-2.5 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 text-xs font-semibold cursor-pointer"
                   >
                     Batal
                   </button>
                   <button
                     onClick={handleMockPayment}
                     disabled={isProcessingPayment}
-                    className="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-xs font-semibold shadow-md transition disabled:opacity-50"
+                    className="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-xs font-semibold shadow-md transition disabled:opacity-50 cursor-pointer"
                   >
                     {isProcessingPayment ? 'Memproses...' : 'Konfirmasi Bayar'}
                   </button>

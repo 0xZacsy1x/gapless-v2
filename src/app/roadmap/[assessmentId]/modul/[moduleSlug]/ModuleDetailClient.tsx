@@ -1,18 +1,25 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ChevronRight, ArrowLeft, Target, Play, Book, Lock, Unlock, CheckCircle2, Sparkles, Check } from 'lucide-react';
+import {
+  ChevronRight,
+  ArrowLeft,
+  Target,
+  Play,
+  Book,
+  Lock,
+  Unlock,
+  CheckCircle2,
+  Sparkles,
+  Loader2,
+  ExternalLink,
+  Clock,
+  Check
+} from 'lucide-react';
 import type { CareerProfile, CurriculumPhase, ModuleDetail } from '@/data/gaplessData';
-import dynamic from 'next/dynamic';
-
-const LoginModal = dynamic(
-  () => import('@/components/LoginModal').then((m) => m.LoginModal),
-  { ssr: false }
-);
 import { useGaplessContext } from '@/contexts/CareerContext';
-import { useAuthGuard } from '@/hooks/useAuthGuard';
 
 interface Props {
   assessmentId?: string;
@@ -37,74 +44,106 @@ export default function ModuleDetailClient({
 }: Props) {
   const router = useRouter();
   const context = useGaplessContext();
-  const { checkIsAuthenticated } = useAuthGuard();
+
   const [isCompleted, setIsCompleted] = useState(initialCompleted);
-  const [isLoading, setIsLoading] = useState(false);
-  const [showLoginModal, setShowLoginModal] = useState(false);
+  const [isStudying, setIsStudying] = useState(false);
+  const [studyNotice, setStudyNotice] = useState<string | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [openedResources, setOpenedResources] = useState<number[]>([]);
 
   const [detailData, setDetailData] = useState<ModuleDetail | null>(initialDetailData);
   const [isGenerating, setIsGenerating] = useState(!initialDetailData);
+  const isCheckingRef = useRef(false);
 
-  const storageOpenedKey = `gapless_res_opened_${assessmentId || 'guest'}_${moduleSlug}`;
-  const storageCheckedKey = `gapless_res_done_${assessmentId || 'guest'}_${moduleSlug}`;
-  const [openedResources, setOpenedResources] = useState<number[]>([]);
-  const [checkedResources, setCheckedResources] = useState<number[]>([]);
+  // Fungsi pengecekan durasi belajar ke server (Idempotent)
+  const checkStudyProgress = useCallback(async (showNoticeOnIncomplete = true) => {
+    if (isCompleted || !assessmentId || isCheckingRef.current) return;
 
-  useEffect(() => {
-    if (isCompleted && detailData?.resources) {
-      const allIndices = detailData.resources.map((_, i) => i);
-      setOpenedResources(allIndices);
-      setCheckedResources(allIndices);
-      return;
-    }
     try {
-      const savedOpened = localStorage.getItem(storageOpenedKey);
-      if (savedOpened) {
-        const parsed = JSON.parse(savedOpened);
-        if (Array.isArray(parsed)) setOpenedResources(parsed);
+      isCheckingRef.current = true;
+      const res = await fetch('/api/roadmap/check-study', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ assessmentId, moduleSlug }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        if (data.completed) {
+          setIsCompleted(true);
+          setIsStudying(false);
+          setStudyNotice(null);
+          setToastMessage('Modul selesai! Modul berikutnya terbuka ✓');
+          router.refresh();
+        } else if (data.remainingSeconds !== undefined) {
+          setIsStudying(true);
+          if (showNoticeOnIncomplete) {
+            setStudyNotice(
+              `Sedang dipelajari — Pelajari dulu sebentar (sisa ${data.remainingSeconds} detik), centang hijau akan otomatis muncul setelah kamu kembali.`
+            );
+          }
+        }
       }
-      const savedChecked = localStorage.getItem(storageCheckedKey);
-      if (savedChecked) {
-        const parsed = JSON.parse(savedChecked);
-        if (Array.isArray(parsed)) setCheckedResources(parsed);
-      }
-    } catch (e) {
-      console.error(e);
+    } catch (err) {
+      console.error('Failed to check study status', err);
+    } finally {
+      isCheckingRef.current = false;
     }
-  }, [storageOpenedKey, storageCheckedKey, isCompleted, detailData]);
+  }, [assessmentId, moduleSlug, isCompleted, router]);
 
-  const markResourceOpened = (index: number) => {
-    setOpenedResources((prev) => {
-      if (prev.includes(index)) return prev;
-      const next = [...prev, index];
-      try {
-        localStorage.setItem(storageOpenedKey, JSON.stringify(next));
-      } catch (e) {
-        console.error(e);
-      }
-      return next;
-    });
-  };
-
-  const toggleResource = (index: number) => {
+  // Event listener saat user kembali ke tab (visibilitychange / focus / pageshow)
+  useEffect(() => {
     if (isCompleted) return;
-    setCheckedResources((prev) => {
-      const next = prev.includes(index)
-        ? prev.filter((i) => i !== index)
-        : [...prev, index];
-      try {
-        localStorage.setItem(storageCheckedKey, JSON.stringify(next));
-      } catch (e) {
-        console.error(e);
+
+    const handleReturnToTab = () => {
+      if (document.visibilityState === 'visible') {
+        checkStudyProgress(true);
       }
-      return next;
-    });
+    };
+
+    const handleFocus = () => {
+      checkStudyProgress(true);
+    };
+
+    document.addEventListener('visibilitychange', handleReturnToTab);
+    window.addEventListener('focus', handleFocus);
+    window.addEventListener('pageshow', handleFocus);
+
+    // Cek status saat pertama kali load halaman
+    checkStudyProgress(false);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleReturnToTab);
+      window.removeEventListener('focus', handleFocus);
+      window.removeEventListener('pageshow', handleFocus);
+    };
+  }, [isCompleted, checkStudyProgress]);
+
+  // Handler saat user mengklik sumber belajar eksternal
+  const handleOpenResource = async (index: number, url?: string) => {
+    setOpenedResources((prev) => (prev.includes(index) ? prev : [...prev, index]));
+
+    if (isCompleted || !assessmentId) return;
+
+    setIsStudying(true);
+    setStudyNotice('Sesi belajar aktif. Pelajari materi di tab baru, modul akan selesai otomatis saat kamu kembali.');
+
+    try {
+      await fetch('/api/roadmap/start-study', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          assessmentId,
+          moduleSlug,
+          resourceIndex: index,
+        }),
+      });
+    } catch (err) {
+      console.error('Failed to start study session', err);
+    }
   };
 
-  const totalResources = detailData?.resources?.length || 0;
-  const allResourcesChecked = totalResources === 0 || checkedResources.length >= totalResources;
-
+  // Fallback AI dynamic generation jika silabus belum terisi
   useEffect(() => {
     if (!initialDetailData && !detailData) {
       const fetchInsight = async () => {
@@ -113,59 +152,51 @@ export default function ModuleDetailClient({
           const res = await fetch('/api/module-insight', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ 
-              moduleName: moduleTitle, 
+            body: JSON.stringify({
+              moduleName: moduleTitle,
               roleName: profile.title,
               moduleSlug: moduleSlug,
-              careerSlug: profile.id
-            })
+              careerSlug: profile.id,
+            }),
           });
-          
+
           if (res.ok) {
             const fetched = await res.json();
             setDetailData({
               slug: moduleSlug,
               title: moduleTitle,
-              ...fetched
+              ...fetched,
             });
           } else {
-            // Fallback if API fails
             setDetailData({
               slug: moduleSlug,
               title: moduleTitle,
               duration: 'Estimasi 1-2 Jam',
-              target: 'Menguasai konsep dasar.',
-              breakdown: [{ title: 'Dasar', description: 'Pengenalan' }],
+              target: 'Menguasai konsep dasar materi ini dalam proyek industri nyata.',
+              breakdown: [{ title: 'Dasar Pemahaman', description: 'Pengenalan dan terminologi esensial' }],
               resources: [
                 {
                   title: `Tutorial "${moduleTitle}" di YouTube`,
                   type: 'Video',
                   url: `https://www.youtube.com/results?search_query=${encodeURIComponent(moduleTitle)}`,
                   isFree: true,
-                  provider: 'YouTube'
+                  provider: 'YouTube',
                 },
                 {
                   title: `Panduan & Artikel "${moduleTitle}"`,
                   type: 'Artikel',
                   url: `https://www.freecodecamp.org/news/search/?query=${encodeURIComponent(moduleTitle)}`,
                   isFree: true,
-                  provider: 'freeCodeCamp'
+                  provider: 'freeCodeCamp',
                 },
                 {
-                  title: `Dokumentasi Resmi "${moduleTitle}" (MDN)`,
+                  title: `Dokumentasi Teknis "${moduleTitle}"`,
                   type: 'Dokumentasi',
                   url: `https://developer.mozilla.org/en-US/search?q=${encodeURIComponent(moduleTitle)}`,
                   isFree: true,
-                  provider: 'MDN Web Docs'
+                  provider: 'MDN Web Docs',
                 },
-                {
-                  title: `Kursus Profesional "${moduleTitle}"`,
-                  type: 'Course',
-                  url: `https://www.coursera.org/search?query=${encodeURIComponent(moduleTitle)}`,
-                  isFree: false,
-                  provider: 'Coursera'
-                }
-              ]
+              ],
             });
           }
         } catch (e) {
@@ -174,10 +205,10 @@ export default function ModuleDetailClient({
           setIsGenerating(false);
         }
       };
-      
+
       fetchInsight();
     }
-  }, [initialDetailData, detailData, moduleTitle, moduleSlug, profile.title]);
+  }, [initialDetailData, detailData, moduleTitle, moduleSlug, profile.title, profile.id]);
 
   const handleBack = () => {
     if (!assessmentId) {
@@ -187,58 +218,18 @@ export default function ModuleDetailClient({
     }
   };
 
-  const handleMarkAsComplete = async () => {
-    if (isCompleted) return; // do nothing if already complete
-    
-    setIsLoading(true);
-    
-    // Verifikasi Auth via Hook terpusat yang mengecek ke DB (mencegah ghost user)
-    const isAuthenticated = await checkIsAuthenticated();
-    
-    if (!isAuthenticated) {
-      setIsLoading(false);
-      setShowLoginModal(true);
-      return;
-    }
-
-    if (!assessmentId) {
-      setIsLoading(false);
-      alert('Data roadmap tidak ditemukan. Silakan refresh halaman atau mulai tes ulang.');
-      return;
-    }
-    
-    try {
-      const res = await fetch('/api/roadmap/complete-module', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ assessmentId, moduleSlug })
-      });
-      if (res.ok) {
-        setIsCompleted(true);
-        setToastMessage("Tersimpan ✓");
-        
-        // Sembunyikan toast setelah 2 detik
-        setTimeout(() => setToastMessage(null), 2000);
-        
-        // Refresh context roadmap supaya state di background terupdate
-        router.refresh();
-      } else {
-        alert('Gagal menandai modul selesai.');
-      }
-    } catch (e) {
-      console.error(e);
-      alert('Terjadi kesalahan jaringan.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   const badgeStatus = isCompleted ? (
-    <span className="bg-emerald-500 text-white px-3 py-1 rounded-full text-sm font-semibold shadow-sm">
-      Skill Terpenuhi
+    <span className="inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-700 border border-emerald-200 px-3 py-1 rounded-full text-xs font-bold shadow-xs">
+      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+      Selesai
+    </span>
+  ) : isStudying ? (
+    <span className="inline-flex items-center gap-1.5 bg-blue-50 text-blue-700 border border-blue-200 px-3 py-1 rounded-full text-xs font-bold shadow-xs animate-pulse">
+      <Clock className="w-3.5 h-3.5 text-blue-600" />
+      Sedang Dipelajari
     </span>
   ) : (
-    <span className="bg-slate-200 text-slate-600 px-3 py-1 rounded-full text-sm font-semibold shadow-sm">
+    <span className="bg-slate-100 text-slate-600 border border-slate-200 px-3 py-1 rounded-full text-xs font-bold shadow-xs">
       Belum Selesai
     </span>
   );
@@ -249,7 +240,9 @@ export default function ModuleDetailClient({
         <div className="flex flex-col items-center gap-4 text-center">
           <Book className="w-12 h-12 text-blue-500 animate-pulse" />
           <h2 className="text-2xl font-bold text-slate-800">Memuat Silabus Modul...</h2>
-          <p className="text-slate-500 max-w-md">Menyiapkan materi terstruktur dan sumber belajar terverifikasi untuk modul &quot;{moduleTitle}&quot;.</p>
+          <p className="text-slate-500 max-w-md text-sm">
+            Menyiapkan materi terstruktur dan sumber belajar terverifikasi untuk modul &quot;{moduleTitle}&quot;.
+          </p>
         </div>
       </div>
     );
@@ -257,283 +250,250 @@ export default function ModuleDetailClient({
 
   return (
     <div className="flex flex-col gap-8 pb-20">
+      {/* Toast Notification */}
+      {toastMessage && (
+        <div className="fixed top-6 right-6 z-50 bg-emerald-600 text-white px-5 py-3 rounded-2xl shadow-xl flex items-center gap-2.5 text-sm font-semibold animate-in fade-in slide-in-from-top-4 duration-300">
+          <Sparkles className="w-4 h-4 text-amber-300" />
+          <span>{toastMessage}</span>
+        </div>
+      )}
+
       {/* Breadcrumb */}
-      <div className="flex items-center text-sm text-slate-500 gap-1.5 font-medium mb-4 flex-wrap">
-        <button onClick={handleBack} className="hover:text-blue-600 hover:underline transition-colors">
-          Roadmap {profile.title}
+      <div className="flex items-center text-xs sm:text-sm text-slate-500 gap-1.5 font-medium mb-2 flex-wrap">
+        <button onClick={handleBack} className="hover:text-blue-600 hover:underline transition-colors cursor-pointer">
+          Roadmap Belajar {profile.title}
         </button>
         <ChevronRight size={14} className="opacity-50" />
-        <button onClick={handleBack} className="hover:text-blue-600 hover:underline transition-colors">
+        <button onClick={handleBack} className="hover:text-blue-600 hover:underline transition-colors cursor-pointer">
           Fase {phaseIndex + 1}: {phaseData.title}
         </button>
         <ChevronRight size={14} className="opacity-50" />
-        <span className="text-slate-800 underline decoration-slate-300 underline-offset-4">
+        <span className="text-slate-900 font-bold underline decoration-slate-300 underline-offset-4">
           {detailData.title}
         </span>
       </div>
 
       {/* Header */}
-      <div className="flex flex-col gap-4">
-        <div className="w-max bg-slate-200/60 text-slate-700 px-4 py-1.5 rounded-full text-sm font-bold border border-slate-300/50">
-          Modul Fase {phaseIndex + 1}: {phaseData.title}
+      <div className="flex flex-col gap-3">
+        <div className="w-max bg-slate-100 text-slate-700 px-3.5 py-1 rounded-full text-xs font-bold border border-slate-200">
+          Fase {phaseIndex + 1}: {phaseData.title}
         </div>
-        <h1 className="text-3xl sm:text-5xl font-black text-slate-900 tracking-tight leading-tight">
+        <h1 className="text-2xl sm:text-4xl font-extrabold text-slate-900 tracking-tight leading-tight">
           {detailData.title}
         </h1>
-        <p className="text-slate-600 text-lg max-w-2xl leading-relaxed">
-          Pahami konsep ini dan cara menerapkannya untuk memecahkan masalah nyata dari sudut pandang profesional.
+        <p className="text-slate-600 text-sm sm:text-base max-w-2xl leading-relaxed">
+          Pahami konsep ini dan pelajari sumber referensi pilihan untuk meningkatkan kesiapan kariermu.
         </p>
-        <div className="flex items-center gap-3 mt-2">
-          <span className="bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-semibold shadow-sm">
+        <div className="flex items-center gap-3 mt-1">
+          <span className="bg-blue-50 text-blue-700 border border-blue-200 px-3 py-1 rounded-full text-xs font-semibold">
             {detailData.duration}
           </span>
           {badgeStatus}
         </div>
       </div>
 
+      {/* Study Notice Banner */}
+      {studyNotice && !isCompleted && (
+        <div className="p-4 rounded-2xl bg-blue-50 border border-blue-200 text-blue-900 text-xs sm:text-sm flex items-start gap-3 shadow-xs">
+          <Clock className="w-5 h-5 text-blue-600 shrink-0 mt-0.5" />
+          <div className="flex-1 leading-relaxed">
+            <span className="font-bold">Proses Belajar Berlangsung: </span>
+            {studyNotice}
+          </div>
+        </div>
+      )}
+
       {/* Target Modul */}
-      <div className="bg-white border-2 border-blue-100 rounded-xl p-5 shadow-sm flex items-start gap-4">
-        <div className="bg-blue-600 text-white p-2.5 rounded-lg shrink-0 shadow-md">
-          <Target size={24} />
+      <div className="bg-white border border-blue-100 rounded-2xl p-5 shadow-xs flex items-start gap-4">
+        <div className="bg-gradient-to-br from-blue-600 to-indigo-600 text-white p-2.5 rounded-xl shrink-0 shadow-xs">
+          <Target size={22} />
         </div>
         <div className="flex flex-col">
-          <h3 className="font-bold text-slate-900 text-lg">Target Modul</h3>
-          <p className="text-slate-600 font-medium leading-relaxed mt-1 border-b border-dashed border-slate-400 inline-block">
+          <h3 className="font-bold text-slate-900 text-sm sm:text-base">Target Kompetensi</h3>
+          <p className="text-slate-600 text-xs sm:text-sm leading-relaxed mt-1">
             {detailData.target}
           </p>
         </div>
       </div>
 
-      {/* Konten 2 Kolom (Card Fase ditarik sedikit sbg container) */}
-      <div className="bg-white border border-slate-200 rounded-3xl overflow-hidden shadow-sm">
+      {/* Konten 2 Kolom */}
+      <div className="bg-white border border-slate-200 rounded-3xl overflow-hidden shadow-xs">
         {/* Header Card Fase */}
         <div className="p-6 sm:p-8 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center gap-6">
-          <div className="flex flex-col items-center justify-center bg-blue-700 text-white rounded-2xl w-28 h-24 shrink-0 shadow-lg relative overflow-hidden px-2">
+          <div className="flex flex-col items-center justify-center bg-gradient-to-br from-blue-600 to-indigo-700 text-white rounded-2xl w-28 h-24 shrink-0 shadow-md relative overflow-hidden px-2">
             <div className="absolute top-0 right-0 w-16 h-16 bg-white/10 rounded-bl-full blur-md"></div>
-            <span className="text-sm font-semibold opacity-90">Fase {phaseIndex + 1}</span>
-            <span className="text-lg md:text-xl font-black text-center truncate w-full" title={['Dasar', 'Menengah', 'Lanjutan', 'Expert'][phaseIndex] || 'Expert'}>
-              {['Dasar', 'Menengah', 'Lanjutan', 'Expert'][phaseIndex] || 'Expert'}
+            <span className="text-xs font-semibold opacity-90">Fase {phaseIndex + 1}</span>
+            <span className="text-base sm:text-lg font-black text-center truncate w-full">
+              {['Dasar', 'Menengah', 'Lanjutan', 'Ekspert'][phaseIndex] || 'Ekspert'}
             </span>
           </div>
           <div className="flex-1">
-            <div className="text-sm text-slate-500 font-bold mb-1 tracking-wider uppercase">{phaseData.duration}</div>
-            <h2 className="text-2xl font-black text-slate-900 mb-2 tracking-tight">{phaseData.subtitle}</h2>
-            <p className="text-slate-600 font-medium leading-relaxed text-sm sm:text-base">{phaseData.description}</p>
+            <div className="text-xs text-slate-400 font-bold mb-1 tracking-wider uppercase">{phaseData.duration}</div>
+            <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mb-1 tracking-tight">{phaseData.subtitle}</h2>
+            <p className="text-slate-600 text-xs sm:text-sm leading-relaxed">{phaseData.description}</p>
           </div>
         </div>
 
         {/* 2 Kolom Konten */}
-        <div className="p-6 sm:p-8 grid grid-cols-1 lg:grid-cols-2 gap-10">
-          
+        <div className="p-6 sm:p-8 grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Kolom Kiri: Breakdown Materi */}
-          <div className="bg-slate-50 rounded-2xl p-6 sm:p-8 border border-slate-100">
-            <div className="flex items-center gap-3 mb-8">
-              <Book className="text-blue-600" size={24} />
-              <h3 className="text-xl font-bold text-blue-700">Breakdown Materi</h3>
+          <div className="bg-slate-50/70 rounded-2xl p-6 border border-slate-100">
+            <div className="flex items-center gap-2.5 mb-6">
+              <Book className="text-blue-600 w-5 h-5" />
+              <h3 className="text-base font-bold text-slate-900">Silabus &amp; Pokok Bahasan</h3>
             </div>
             
-            <div className="space-y-6">
+            <div className="space-y-4">
               {detailData.breakdown.map((item, idx) => (
-                <div key={idx} className="flex gap-4">
-                  <div className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-sm shrink-0 shadow-sm mt-0.5">
+                <div key={idx} className="flex gap-3.5">
+                  <div className="w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-xs mt-0.5">
                     {idx + 1}
                   </div>
                   <div className="flex flex-col">
-                    <span className="font-bold text-slate-900 text-base">{item.title}</span>
-                    <span className="text-slate-500 text-sm mt-0.5">{item.description}</span>
+                    <span className="font-bold text-slate-900 text-sm">{item.title}</span>
+                    <span className="text-slate-500 text-xs mt-0.5 leading-relaxed">{item.description}</span>
                   </div>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Kolom Kanan: Sumber Belajar */}
+          {/* Kolom Kanan: Sumber Belajar Rekomendasi */}
           <div>
-            <div className="flex items-center justify-between gap-3 mb-6">
-              <div className="flex items-center gap-3">
-                <Unlock className="text-blue-600" size={24} />
-                <h3 className="text-xl font-bold text-blue-700">Sumber Belajar Rekomendasi</h3>
+            <div className="flex items-center justify-between gap-3 mb-4">
+              <div className="flex items-center gap-2.5">
+                <Unlock className="text-blue-600 w-5 h-5" />
+                <h3 className="text-base font-bold text-slate-900">Sumber Belajar Rekomendasi</h3>
               </div>
-              {totalResources > 0 && (
-                <span className={`text-xs font-bold px-3 py-1 rounded-full border transition-all ${
-                  allResourcesChecked
-                    ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                    : 'bg-slate-100 text-slate-600 border-slate-200'
-                }`}>
-                  {isCompleted ? totalResources : checkedResources.length}/{totalResources} Selesai
-                </span>
-              )}
+              <span className="text-[11px] font-semibold text-slate-400">
+                Otomatis tercatat
+              </span>
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-3">
               {detailData.resources.map((res, idx) => {
                 const isVideo = res.type === 'Video';
                 const Icon = isVideo ? Play : res.isFree ? Book : Lock;
                 const isValidUrl = res.url && res.url !== '#';
-                const isChecked = isCompleted || checkedResources.includes(idx);
-                const hasOpened = isCompleted || openedResources.includes(idx) || !isValidUrl;
+                const hasOpened = openedResources.includes(idx);
                 
                 return (
                   <div 
                     key={idx} 
-                    className={`flex items-center p-4 rounded-xl border bg-white shadow-xs transition-all gap-4 ${
-                      isChecked
+                    className={`flex items-center p-4 rounded-2xl border bg-white shadow-xs transition-all gap-4 ${
+                      isCompleted
                         ? 'border-emerald-200 bg-emerald-50/20'
                         : hasOpened
                           ? 'border-blue-300 bg-blue-50/10'
-                          : isValidUrl 
-                            ? 'border-slate-200 hover:border-blue-300' 
-                            : 'border-slate-200 opacity-70'
+                          : 'border-slate-200 hover:border-blue-300'
                     }`}
                   >
-                    <div className={`${isChecked ? 'bg-emerald-600' : hasOpened ? 'bg-blue-600' : 'bg-slate-500'} text-white p-3 rounded-lg shrink-0 transition-colors`}>
-                      <Icon size={20} fill={isVideo ? "currentColor" : "none"} />
+                    <div className={`${isCompleted ? 'bg-emerald-600' : hasOpened ? 'bg-blue-600' : 'bg-slate-700'} text-white p-3 rounded-xl shrink-0 transition-colors`}>
+                      <Icon size={18} fill={isVideo ? "currentColor" : "none"} />
                     </div>
                     <div className="flex flex-col flex-1 min-w-0">
                       {isValidUrl ? (
                         <a 
                           href={res.url} 
                           target="_blank" 
-                          rel="noreferrer" 
-                          onClick={() => markResourceOpened(idx)}
+                          rel="noopener noreferrer" 
+                          onClick={() => handleOpenResource(idx, res.url)}
                           className="font-bold text-blue-700 text-sm truncate hover:underline flex items-center gap-1.5"
-                          title="Klik untuk membuka materi di tab baru"
+                          title="Buka link materi di tab baru"
                         >
                           <span className="truncate">{res.title}</span>
-                          <span className="text-blue-400 text-xs shrink-0 font-normal">↗</span>
+                          <ExternalLink className="w-3.5 h-3.5 text-blue-500 shrink-0" />
                         </a>
                       ) : (
-                        <span className="font-bold text-slate-500 text-sm truncate cursor-not-allowed" title="Link referensi belum tersedia">
+                        <span className="font-bold text-slate-500 text-sm truncate">
                           {res.title}
                         </span>
                       )}
-                      <span className="text-xs text-slate-500">{res.provider}</span>
+                      <span className="text-xs text-slate-400 mt-0.5">{res.provider}</span>
                       <div className="flex items-center gap-2 mt-2">
                         {res.isFree ? (
-                          <span className="bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded text-[10px] font-bold">Free</span>
+                          <span className="bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-0.5 rounded text-[10px] font-bold">Free</span>
                         ) : (
-                          <span className="bg-rose-100 text-rose-700 px-2 py-0.5 rounded text-[10px] font-bold">{res.price}</span>
+                          <span className="bg-rose-50 text-rose-700 border border-rose-200 px-2 py-0.5 rounded text-[10px] font-bold">{res.price || 'Berbayar'}</span>
                         )}
-                        <span className="bg-white border border-slate-200 text-blue-600 px-2 py-0.5 rounded text-[10px] font-bold">{res.type}</span>
-                        {!hasOpened && (
-                          <span className="text-[10px] text-amber-600 bg-amber-50 border border-amber-200 px-1.5 py-0.5 rounded font-medium">
-                            Perlu dibuka
-                          </span>
-                        )}
+                        <span className="bg-slate-50 border border-slate-200 text-slate-600 px-2 py-0.5 rounded text-[10px] font-bold">{res.type}</span>
                       </div>
                     </div>
 
-                    {/* Tombol Validasi: Buka Link Dulu -> Baru Bisa Centang */}
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        if (!hasOpened) {
-                          if (isValidUrl) {
-                            window.open(res.url, '_blank', 'noopener,noreferrer');
-                          }
-                          markResourceOpened(idx);
-                        } else {
-                          toggleResource(idx);
-                        }
-                      }}
-                      disabled={isCompleted}
-                      className={`shrink-0 flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-bold transition-all border cursor-pointer ${
-                        isChecked
-                          ? 'bg-emerald-500 text-white border-emerald-600 shadow-xs hover:bg-emerald-600'
-                          : hasOpened
-                            ? 'bg-blue-50 border-blue-300 text-blue-700 hover:bg-blue-100 shadow-xs'
-                            : 'bg-slate-100 border-slate-200 text-slate-500 hover:bg-slate-200 hover:text-slate-700'
-                      } ${isCompleted ? 'cursor-default opacity-90' : ''}`}
-                      title={
-                        isChecked
-                          ? (isCompleted ? 'Materi selesai' : 'Klik untuk batal centang')
-                          : hasOpened
-                            ? 'Materi sudah dibuka. Klik untuk mencentang selesai'
-                            : 'Buka link materi terlebih dahulu sebelum mencentang'
-                      }
-                    >
-                      <div className={`w-4 h-4 rounded flex items-center justify-center border transition-colors ${
-                        isChecked 
-                          ? 'bg-white text-emerald-600 border-white' 
-                          : hasOpened
-                            ? 'border-blue-400 bg-white text-blue-600'
-                            : 'border-slate-300 bg-white text-slate-400'
-                      }`}>
-                        {isChecked ? (
-                          <Check size={12} strokeWidth={3} />
+                    {/* Status Tombol Buka */}
+                    {isValidUrl && (
+                      <a
+                        href={res.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={() => handleOpenResource(idx, res.url)}
+                        className={`shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold transition-all border cursor-pointer ${
+                          isCompleted
+                            ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                            : hasOpened
+                              ? 'bg-blue-50 text-blue-700 border-blue-200'
+                              : 'bg-slate-900 text-white hover:bg-slate-800 border-slate-900'
+                        }`}
+                      >
+                        {isCompleted ? (
+                          <>
+                            <Check className="w-3.5 h-3.5 text-emerald-600" />
+                            <span className="hidden sm:inline">Selesai</span>
+                          </>
                         ) : hasOpened ? (
-                          <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
+                          <>
+                            <ExternalLink className="w-3.5 h-3.5" />
+                            <span className="hidden sm:inline">Buka Lagi</span>
+                          </>
                         ) : (
-                          <Lock size={10} />
+                          <>
+                            <ExternalLink className="w-3.5 h-3.5" />
+                            <span className="hidden sm:inline">Buka Materi</span>
+                          </>
                         )}
-                      </div>
-                      <span className="hidden sm:inline">
-                        {isChecked ? 'Selesai' : hasOpened ? 'Centang' : 'Buka Dulu'}
-                      </span>
-                    </button>
+                      </a>
+                    )}
                   </div>
-                )
+                );
               })}
             </div>
 
-            {!isCompleted && !allResourcesChecked && (
-              <div className="bg-amber-50 border border-amber-200/80 rounded-xl p-3 text-xs text-amber-800 flex items-center gap-2.5 mt-3 shadow-xs">
-                <span className="text-base">💡</span>
-                <span>Buka setiap materi di atas terlebih dahulu, lalu centang setelah selesai ditonton/dipelajari untuk mengaktifkan tombol <strong>Tandai Selesai</strong> di bawah.</span>
-              </div>
-            )}
+            {/* Info Box Alur Belajar Otomatis */}
+            <div className="bg-slate-50 border border-slate-200/80 rounded-2xl p-4 text-xs text-slate-600 flex items-start gap-2.5 mt-4 leading-relaxed">
+              <span className="text-base shrink-0">💡</span>
+              <span>
+                <strong>Cara menyelesaikan modul:</strong> Klik salah satu link materi di atas untuk belajar di tab baru. Saat kamu kembali ke tab Gapless ini setelah minimal <strong>2 menit</strong>, modul akan otomatis tercentang dan modul berikutnya akan terbuka.
+              </span>
+            </div>
           </div>
         </div>
       </div>
 
       {/* Footer Navigasi */}
-      <div className="flex flex-col sm:flex-row items-center gap-4 mt-4">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-2">
         <Link 
           href={assessmentId ? `/roadmap?assessmentId=${assessmentId}` : "/roadmap"}
-          className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-slate-200 text-slate-700 font-bold hover:bg-slate-300 transition-colors"
+          className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-white border border-slate-200 text-slate-700 font-semibold hover:bg-slate-50 transition-colors shadow-xs text-xs sm:text-sm cursor-pointer"
         >
-          <ArrowLeft size={18} /> Kembali ke Roadmap
+          <ArrowLeft size={16} /> Kembali ke Roadmap Belajar
         </Link>
 
         {isCompleted ? (
-          <button 
-            disabled
-            className="flex-1 flex items-center justify-center gap-2 px-8 py-3 rounded-full bg-emerald-100 text-emerald-700 font-bold border border-emerald-200 opacity-80 cursor-not-allowed"
-          >
-            <CheckCircle2 size={18} /> Sudah Selesai
-          </button>
-        ) : !allResourcesChecked ? (
-          <button 
-            disabled
-            className="flex-1 flex items-center justify-center gap-2 px-8 py-3 rounded-full bg-slate-200 text-slate-400 font-bold border border-slate-300 cursor-not-allowed opacity-80 select-none transition-all"
-            title={`Centang semua ${totalResources} materi (${checkedResources.length}/${totalResources}) untuk membuka tombol ini`}
-          >
-            <Lock size={18} className="text-slate-400" />
-            <span>Tandai Selesai ({checkedResources.length}/{totalResources})</span>
-          </button>
+          <div className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-emerald-50 text-emerald-800 font-bold border border-emerald-200 text-xs sm:text-sm">
+            <CheckCircle2 size={16} className="text-emerald-600" />
+            <span>Modul Ini Telah Selesai ✓</span>
+          </div>
+        ) : isStudying ? (
+          <div className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-blue-50 text-blue-800 font-bold border border-blue-200 text-xs sm:text-sm">
+            <Loader2 size={16} className="text-blue-600 animate-spin" />
+            <span>Sedang Dipelajari — Kembali ke tab ini setelah 2 menit</span>
+          </div>
         ) : (
-          <button 
-            onClick={handleMarkAsComplete}
-            disabled={isLoading}
-            className="flex-1 flex items-center justify-center gap-2 px-8 py-3 rounded-full bg-blue-600 text-white font-bold hover:bg-blue-700 transition-colors disabled:opacity-50 relative shadow-md hover:shadow-lg cursor-pointer"
-          >
-            {isLoading ? "Memproses..." : "Tandai Selesai"}
-            
-            {/* Toast Visual Feedback */}
-            {toastMessage && (
-              <span className="absolute -top-12 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-sm px-4 py-2 rounded-lg shadow-lg whitespace-nowrap animate-in fade-in slide-in-from-bottom-4">
-                {toastMessage}
-              </span>
-            )}
-          </button>
+          <div className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-slate-100 text-slate-500 font-medium border border-slate-200 text-xs sm:text-sm">
+            <span>Buka materi di atas untuk memulai sesi belajar</span>
+          </div>
         )}
       </div>
-      
-      <LoginModal 
-        isOpen={showLoginModal} 
-        onClose={() => setShowLoginModal(false)} 
-      />
     </div>
   );
 }

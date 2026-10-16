@@ -1,11 +1,16 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Brain, ChevronRight, ChevronLeft, BarChart3 } from 'lucide-react';
+import { Brain, ChevronRight, ChevronLeft, BarChart3, Loader2, RotateCcw } from 'lucide-react';
 import { ASSESSMENT_QUESTIONS, type AssessmentOption } from '@/data/gaplessData';
 import { useGaplessContext } from '@/contexts/CareerContext';
-import { useRouter } from 'next/navigation';
+import { useAuthGuard } from '@/hooks/useAuthGuard';
+import {
+  saveAssessmentDraft,
+  loadAssessmentDraft,
+  clearAssessmentDraft,
+} from '@/lib/assessmentDraft';
 
 import { Navbar } from '@/components/Navbar';
 
@@ -20,32 +25,98 @@ function shuffleArray<T>(arr: T[]): T[] {
 }
 
 export function AssessmentFlow() {
-  const { answers, setAnswer, isAssessmentComplete, setView, quizType, syncResultNow } =
+  const { answers, setAnswers, setAnswer, setView, quizType, syncResultNow } =
     useGaplessContext();
-  const router = useRouter();
+  const { session } = useAuthGuard();
+  
   const [currentIdx, setCurrentIdx] = useState(0);
   const [started, setStarted] = useState(false);
   const [showRetakeModal, setShowRetakeModal] = useState(false);
   const [isCheckingActive, setIsCheckingActive] = useState(false);
   const [isSyncing, setIsSyncing] = useState(false);
+  const [syncError, setSyncError] = useState<string | null>(null);
+  const [isRestoredFromDraft, setIsRestoredFromDraft] = useState(false);
 
   const question = ASSESSMENT_QUESTIONS[currentIdx];
   const total = ASSESSMENT_QUESTIONS.length;
   const progress = ((currentIdx + 1) / total) * 100;
 
-  // Shuffle options once on mount — stable per session, different across sessions
-  // Each question gets its own shuffled order, stored as an array of
-  // { originalIndex, option } so we can map back to the original index for scoring
-  const shuffledOptionsMap = useMemo(() => {
+  // Shuffle options once on mount — stable per session, restored if draft exists
+  const [shuffledOptionsMap, setShuffledOptionsMap] = useState<
+    Record<number, { originalIndex: number; option: AssessmentOption }[]>
+  >(() => {
     const map: Record<number, { originalIndex: number; option: AssessmentOption }[]> = {};
     for (const q of ASSESSMENT_QUESTIONS) {
       const indexed = q.options.map((opt, idx) => ({ originalIndex: idx, option: opt }));
       map[q.id] = shuffleArray(indexed);
     }
     return map;
-  }, []); // Empty deps = computed once on mount
+  });
 
-  const currentShuffledOptions = shuffledOptionsMap[question.id] || question.options.map((opt, idx) => ({ originalIndex: idx, option: opt }));
+  // ── Restore Draft on Mount (useEffect to prevent hydration mismatch) ──
+  useEffect(() => {
+    const draft = loadAssessmentDraft(quizType || 'belum_tahu_minat', session?.user?.id);
+    if (draft && Object.keys(draft.answers).length > 0) {
+      const numericAnswers: Record<number, number> = {};
+      Object.entries(draft.answers).forEach(([k, v]) => {
+        numericAnswers[Number(k)] = v;
+      });
+      setAnswers(numericAnswers);
+      setCurrentIdx(Math.min(draft.currentIndex, total - 1));
+      setStarted(true);
+      setIsRestoredFromDraft(true);
+
+      if (draft.shuffledOptionsOrder) {
+        const restoredMap: Record<number, { originalIndex: number; option: AssessmentOption }[]> = {};
+        for (const q of ASSESSMENT_QUESTIONS) {
+          const order = draft.shuffledOptionsOrder[q.id.toString()] || draft.shuffledOptionsOrder[q.id];
+          if (order && Array.isArray(order) && order.length === q.options.length) {
+            restoredMap[q.id] = order.map((origIdx) => ({
+              originalIndex: origIdx,
+              option: q.options[origIdx],
+            }));
+          }
+        }
+        if (Object.keys(restoredMap).length > 0) {
+          setShuffledOptionsMap((prev) => ({ ...prev, ...restoredMap }));
+        }
+      }
+    }
+  }, [quizType, session?.user?.id, setAnswers, total]);
+
+  // ── Auto-Save Draft on Change ──
+  useEffect(() => {
+    if (!started || Object.keys(answers).length === 0) return;
+    const stringAnswers: Record<string, number> = {};
+    Object.entries(answers).forEach(([k, v]) => {
+      stringAnswers[k] = v;
+    });
+
+    const orderMap: Record<string, number[]> = {};
+    Object.entries(shuffledOptionsMap).forEach(([qid, list]) => {
+      orderMap[qid] = list.map((item) => item.originalIndex);
+    });
+
+    saveAssessmentDraft({
+      quizType: quizType || 'belum_tahu_minat',
+      userId: session?.user?.id,
+      currentIndex: currentIdx,
+      answers: stringAnswers,
+      shuffledOptionsOrder: orderMap,
+    });
+  }, [answers, currentIdx, started, quizType, session?.user?.id, shuffledOptionsMap]);
+
+  const handleResetDraft = () => {
+    clearAssessmentDraft(quizType || 'belum_tahu_minat', session?.user?.id);
+    setAnswers({});
+    setCurrentIdx(0);
+    setIsRestoredFromDraft(false);
+    setSyncError(null);
+  };
+
+  const currentShuffledOptions =
+    shuffledOptionsMap[question.id] ||
+    question.options.map((opt, idx) => ({ originalIndex: idx, option: opt }));
 
   const handleSelect = (optionIndex: number) => {
     setAnswer(question.id, optionIndex);
@@ -64,14 +135,18 @@ export function AssessmentFlow() {
   };
 
   const handleFinish = async () => {
+    if (isSyncing) return;
     setIsSyncing(true);
+    setSyncError(null);
     try {
       await syncResultNow();
+      clearAssessmentDraft(quizType || 'belum_tahu_minat', session?.user?.id);
+      setView('results');
     } catch (e) {
       console.warn('Background sync failed, continuing to results view', e);
+      setSyncError('Gagal menyimpan hasil asesmen. Silakan coba klik Lihat Hasil lagi.');
     } finally {
       setIsSyncing(false);
-      setView('results');
     }
   };
 
@@ -127,7 +202,6 @@ export function AssessmentFlow() {
             onClick={async () => {
               setIsCheckingActive(true);
               try {
-                // Use quizType from context
                 const res = await fetch(`/api/assessment/has-active?quizType=${quizType}`);
                 const data = await res.json();
                 if (data.hasActive) {
@@ -136,7 +210,7 @@ export function AssessmentFlow() {
                   setStarted(true);
                 }
               } catch (e) {
-                setStarted(true); // Fallback to start if API fails
+                setStarted(true);
               } finally {
                 setIsCheckingActive(false);
               }
@@ -194,47 +268,10 @@ export function AssessmentFlow() {
     );
   }
 
-
-  // ── Completion Screen ──
-  if (isAssessmentComplete && currentIdx === total - 1 && answers[question.id] !== undefined) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-space px-6">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5 }}
-          className="text-center max-w-md"
-        >
-          <div
-            className="w-20 h-20 rounded-full mx-auto mb-6 flex items-center justify-center"
-            style={{
-              background: 'linear-gradient(135deg, #10b981, #06b6d4)',
-              boxShadow: '0 0 40px rgba(16,185,129,0.3)',
-            }}
-          >
-            <BarChart3 size={36} className="text-white" />
-          </div>
-          <h2 className="text-3xl font-bold text-slate-900 mb-3">Assesmen Selesai!</h2>
-          <p className="text-gray-500 text-lg mb-8">
-            Semua {total} pertanyaan telah dijawab. Siap melihat hasilmu.
-          </p>
-          <button
-            onClick={handleFinish}
-            disabled={isSyncing}
-            className="btn-primary flex items-center gap-2 mx-auto text-base disabled:opacity-40"
-          >
-            {isSyncing ? 'Menyimpan...' : 'Lihat Hasil'}
-            {!isSyncing && <ChevronRight size={18} />}
-          </button>
-        </motion.div>
-      </div>
-    );
-  }
-
-  // ── Question Flow ──
+  // ── Question Flow (No completion screen interception on question 15) ──
   return (
-    <div className="min-h-screen bg-space px-6 py-12">
-      <div className="max-w-2xl mx-auto">
+    <div className="min-h-screen bg-space px-4 sm:px-6 py-12 flex flex-col justify-between">
+      <div className="max-w-2xl mx-auto w-full">
         {/* Header */}
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
@@ -249,9 +286,26 @@ export function AssessmentFlow() {
         </div>
 
         {/* Progress Bar */}
-        <div className="progress-track mb-8">
+        <div className="progress-track mb-6">
           <div className="progress-fill" style={{ width: `${progress}%` }} />
         </div>
+
+        {/* Restored from Draft Banner */}
+        {isRestoredFromDraft && (
+          <div className="mb-4 p-3 rounded-xl bg-blue-50 border border-blue-200/80 flex items-center justify-between text-xs text-blue-900 shadow-xs">
+            <div className="flex items-center gap-2">
+              <RotateCcw size={14} className="text-blue-600 shrink-0" />
+              <span>Dilanjutkan dari pertanyaan {currentIdx + 1}</span>
+            </div>
+            <button
+              type="button"
+              onClick={handleResetDraft}
+              className="text-xs font-bold text-blue-700 hover:text-blue-900 underline ml-2 cursor-pointer"
+            >
+              Mulai ulang
+            </button>
+          </div>
+        )}
 
         {/* Dimension Badge */}
         <div className="mb-4">
@@ -265,6 +319,7 @@ export function AssessmentFlow() {
             {question.dimension}
           </span>
         </div>
+
         {/* Question */}
         <AnimatePresence mode="wait">
           <motion.div
@@ -274,7 +329,7 @@ export function AssessmentFlow() {
             exit={{ opacity: 0, x: -30 }}
             transition={{ duration: 0.3 }}
           >
-            <h2 className="text-2xl font-bold text-slate-900 mb-8 leading-relaxed">
+            <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mb-6 leading-relaxed">
               {question.question}
             </h2>
 
@@ -287,18 +342,18 @@ export function AssessmentFlow() {
                     key={item.option.label + '-' + item.originalIndex}
                     initial={{ opacity: 0, y: 15 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: displayIdx * 0.06 }}
+                    transition={{ delay: displayIdx * 0.05 }}
                     whileHover={{ scale: 1.01 }}
                     whileTap={{ scale: 0.98 }}
                     onClick={() => handleSelect(item.originalIndex)}
-                    className={`w-full text-left p-5 rounded-2xl transition-all duration-200 flex items-start gap-4 ${
+                    className={`w-full text-left p-4 sm:p-5 rounded-2xl transition-all duration-200 flex items-start gap-4 ${
                       isSelected
                         ? 'option-card selected'
                         : 'option-card'
                     }`}
                   >
                     <span
-                      className="shrink-0 w-9 h-9 rounded-xl flex items-center justify-center text-sm font-bold"
+                      className="shrink-0 w-8 h-8 sm:w-9 sm:h-9 rounded-xl flex items-center justify-center text-sm font-bold"
                       style={{
                         background: isSelected
                           ? 'rgba(37,99,235,0.12)'
@@ -309,7 +364,7 @@ export function AssessmentFlow() {
                       {['A', 'B', 'C', 'D'][displayIdx]}
                     </span>
                     <span
-                      className="text-base leading-relaxed pt-1"
+                      className="text-sm sm:text-base leading-relaxed pt-1"
                       style={{
                         color: isSelected ? '#1e293b' : '#64748b',
                       }}
@@ -323,12 +378,21 @@ export function AssessmentFlow() {
           </motion.div>
         </AnimatePresence>
 
+        {/* Error notification if submit fails */}
+        {syncError && (
+          <div className="mt-6 p-3.5 rounded-xl bg-red-50 border border-red-200 text-red-600 text-xs flex items-center justify-between">
+            <span>{syncError}</span>
+            <button onClick={() => setSyncError(null)} className="font-bold ml-2">Tutup</button>
+          </div>
+        )}
+
         {/* Navigation */}
         <div className="flex items-center justify-between mt-10">
           <button
+            type="button"
             onClick={handlePrev}
             disabled={currentIdx === 0}
-            className="btn-ghost flex items-center gap-1 text-sm disabled:opacity-30"
+            className="px-4 py-2.5 rounded-xl border border-slate-300 text-slate-700 hover:bg-slate-50 font-semibold transition-all disabled:opacity-30 disabled:cursor-not-allowed flex items-center gap-1.5 text-sm cursor-pointer"
           >
             <ChevronLeft size={16} />
             Sebelumnya
@@ -336,20 +400,31 @@ export function AssessmentFlow() {
 
           {currentIdx === total - 1 ? (
             <button
+              type="button"
               onClick={handleFinish}
               disabled={answers[question.id] === undefined || isSyncing}
-              className="btn-primary flex items-center gap-2 text-sm disabled:opacity-40"
+              className="btn-primary flex items-center gap-2 text-sm disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
             >
-              {isSyncing ? 'Menyimpan...' : 'Selesai'}
-              {!isSyncing && <BarChart3 size={16} />}
+              {isSyncing ? (
+                <>
+                  <Loader2 size={16} className="animate-spin" />
+                  <span>Menghitung hasil...</span>
+                </>
+              ) : (
+                <>
+                  <span>Lihat Hasil</span>
+                  <BarChart3 size={16} />
+                </>
+              )}
             </button>
           ) : (
             <button
+              type="button"
               onClick={handleNext}
               disabled={answers[question.id] === undefined}
-              className="btn-primary flex items-center gap-2 text-sm disabled:opacity-40"
+              className="btn-primary flex items-center gap-2 text-sm disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
             >
-              Selanjutnya
+              <span>Selanjutnya</span>
               <ChevronRight size={16} />
             </button>
           )}
