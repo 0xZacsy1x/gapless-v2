@@ -255,27 +255,35 @@ export function ResultDetailClient({
               return (
                 <div
                   key={career.id}
-                  className={`bg-white rounded-3xl p-6 sm:p-7 border transition-all duration-200 flex flex-col justify-between relative overflow-hidden shadow-xs hover:shadow-md ${
+                  className={`bg-white rounded-3xl p-6 sm:p-7 border transition-all duration-200 flex flex-col justify-between shadow-xs hover:shadow-md ${
                     isFirst ? "border-blue-300 ring-1 ring-blue-100" : "border-slate-200/90"
                   }`}
                 >
-                  {isFirst && (
-                    <div className="absolute top-4 right-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-[11px] font-bold px-3 py-1 rounded-full shadow-xs flex items-center gap-1">
-                      <Sparkles className="w-3 h-3 text-amber-300" />
-                      Pilihan Teratas
+                  <div className="flex flex-col">
+                    {/* Header Baris: Badge Pilihan Teratas dalam Alur Dokumen */}
+                    <div className="min-h-[28px] flex items-center mb-3">
+                      {isFirst ? (
+                        <span className="inline-flex items-center gap-1 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-[11px] font-bold px-3 py-1 rounded-full shadow-xs">
+                          <Sparkles className="w-3 h-3 text-amber-300" />
+                          Pilihan Teratas
+                        </span>
+                      ) : (
+                        <span className="text-[11px] font-semibold text-slate-400 invisible select-none" aria-hidden="true">
+                          Karier Rekomendasi
+                        </span>
+                      )}
                     </div>
-                  )}
 
-                  <div>
-                    <div className="flex items-center gap-3 mb-3">
-                      <span className="text-3xl p-2.5 bg-slate-50 rounded-2xl border border-slate-100 shadow-xs">
+                    {/* Baris Icon + Judul Karier & Gaji */}
+                    <div className="flex items-start sm:items-center gap-3.5 mb-3.5">
+                      <span className="text-3xl p-2.5 bg-slate-50 rounded-2xl border border-slate-100 shadow-xs shrink-0">
                         {career.icon}
                       </span>
-                      <div>
-                        <h3 className="text-lg font-bold text-slate-900 leading-tight">
+                      <div className="min-w-0 flex-1">
+                        <h3 className="text-base sm:text-lg font-bold text-slate-900 leading-snug break-words">
                           {career.title}
                         </h3>
-                        <span className="inline-block text-[11px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200/60 px-2.5 py-0.5 rounded-full mt-1">
+                        <span className="inline-block text-[11px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200/60 px-2.5 py-0.5 rounded-full mt-1.5">
                           {career.salaryRange}
                         </span>
                       </div>
@@ -303,7 +311,8 @@ export function ResultDetailClient({
                     </div>
                   </div>
 
-                  <button
+                  <div className="mt-auto pt-2">
+                    <button
                     onClick={() => handleSelectCareer(career)}
                     disabled={selectingCareerId !== null}
                     className={`w-full py-3 px-4 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all cursor-pointer ${
@@ -323,7 +332,8 @@ export function ResultDetailClient({
                         <ArrowRight className="w-4 h-4" />
                       </>
                     )}
-                  </button>
+                    </button>
+                  </div>
                 </div>
               );
             })}
