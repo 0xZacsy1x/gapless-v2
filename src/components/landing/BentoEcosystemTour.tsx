@@ -13,9 +13,44 @@ import {
   Clock,
   Award,
   BookOpen,
+  Compass,
+  FileSearch,
+  Layers,
+  ArrowRight,
 } from "lucide-react";
 
-// Career Roadmaps Data (Matching real /roadmap sequential phase structure with active focus module)
+// 3 Connected Scientific Foundation Blocks
+const METHODOLOGY_STEPS = [
+  {
+    step: "01",
+    title: "RIASEC Model",
+    sub: "Pemetaan Minat & Karakter",
+    icon: Compass,
+    iconColor: "text-blue-600 bg-blue-100/80 border-blue-200",
+    tag: "Holland Codes",
+    desc: "Memetakan 6 orientasi vokasional (Realistic, Investigative, Artistic, Social, Enterprising, Conventional) ke jalur karir yang selaras.",
+  },
+  {
+    step: "02",
+    title: "SJT (Situational Judgement)",
+    sub: "Simulasi Kasus Nyata",
+    icon: FileSearch,
+    iconColor: "text-indigo-600 bg-indigo-100/80 border-indigo-200",
+    tag: "Uji Perilaku Nyata",
+    desc: "15 studi kasus situasional industri untuk mendeteksi gaya kerja, etika keputusan, dan respon logis tanpa jebakan soal klise.",
+  },
+  {
+    step: "03",
+    title: "Career Construction Theory",
+    sub: "Adaptabilitas & Roadmap",
+    icon: Layers,
+    iconColor: "text-emerald-600 bg-emerald-100/80 border-emerald-200",
+    tag: "Teori Savickas",
+    desc: "Membangun kesiapan dan adaptabilitas karier melalui roadmap belajar terukur, rekomendasi kegiatan, dan misi pengembangan diri.",
+  },
+];
+
+// Career Roadmaps Data
 const ROADMAP_PRESETS = [
   {
     id: "swe",
@@ -163,7 +198,7 @@ const ROADMAP_PRESETS = [
   },
 ];
 
-// Rekomendasi Kegiatan Data (Matching real /kegiatan opportunities feed)
+// Rekomendasi Kegiatan Data
 const KEGIATAN_PRESETS = [
   {
     id: "k1",
@@ -197,7 +232,7 @@ const KEGIATAN_PRESETS = [
   },
 ];
 
-// Misi Soft Skill Data (Matching real /misi daily challenges)
+// Misi Soft Skill Data
 const MISI_PRESETS = [
   {
     id: "m1",
@@ -320,18 +355,99 @@ export default function BentoEcosystemTour() {
   return (
     <div
       ref={containerRef}
-      className="grid grid-cols-1 lg:grid-cols-12 gap-3.5 sm:gap-4 relative select-none w-full min-h-[620px] sm:min-h-[640px] items-stretch"
+      className="grid grid-cols-1 lg:grid-cols-12 gap-3.5 sm:gap-4 relative select-none w-full items-stretch"
     >
       {/* =========================================================================
-          CARD 1: ROADMAP BELAJAR TERSTRUKTUR (Paling Kiri yang Paling Besar - lg:col-span-8)
+          SECTION ATAS (lg:col-span-12): PERSEGI PANJANG DENGAN 3 BLOK METODOLOGI TERHUBUNG
+          (1. RIASEC -> 2. SJT -> 3. CAREER CONSTRUCTION THEORY)
       ========================================================================= */}
-      <div className="lg:col-span-8 p-4 sm:p-5.5 bg-gray-50/90 border border-gray-200/90 rounded-2xl sm:rounded-3xl flex flex-col justify-between hover:border-brand-primary/40 transition-all duration-300 relative overflow-hidden group shadow-xs min-h-[620px] sm:min-h-[640px]">
+      <div className="lg:col-span-12 p-4 sm:p-5 bg-gradient-to-r from-blue-50/70 via-indigo-50/50 to-slate-50/90 border border-brand-primary/20 rounded-2xl sm:rounded-3xl shadow-xs relative overflow-hidden">
+        {/* Subtle Background Glow */}
+        <div className="absolute top-0 right-1/4 w-80 h-32 bg-brand-primary/5 blur-3xl pointer-events-none" />
+
+        {/* Header Bar */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3.5 pb-2.5 border-b border-gray-200/70">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-brand-primary animate-ping" />
+            <span className="text-[10px] font-black uppercase tracking-wider text-brand-primary px-2.5 py-0.5 rounded-full bg-brand-primary/10 border border-brand-primary/20">
+              Fondasi Metodologi Ilmiah
+            </span>
+            <span className="text-xs sm:text-sm font-bold text-gray-800">
+              Alur Pembentukan Karier Terpadu
+            </span>
+          </div>
+          <span className="text-[11px] text-gray-500 font-medium">
+            3 Teori Psikologi & Validasi Perilaku Kerja Nyata
+          </span>
+        </div>
+
+        {/* 3 Connected Blocks with Sequence Arrows */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 relative">
+          {METHODOLOGY_STEPS.map((m, idx) => {
+            const IconComponent = m.icon;
+            const isLast = idx === METHODOLOGY_STEPS.length - 1;
+
+            return (
+              <div
+                key={m.step}
+                className="bg-white/95 border border-gray-200/90 rounded-2xl p-3.5 sm:p-4 shadow-3xs hover:border-brand-primary/40 hover:shadow-xs transition-all duration-300 flex flex-col justify-between relative group"
+              >
+                {/* Connecting Arrow for Desktop */}
+                {!isLast && (
+                  <div className="hidden md:flex absolute -right-3 top-1/2 -translate-y-1/2 z-20 w-6 h-6 rounded-full bg-white border border-brand-primary/30 text-brand-primary items-center justify-center shadow-3xs">
+                    <ArrowRight className="w-3 h-3 text-brand-primary animate-pulse" />
+                  </div>
+                )}
+
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <div
+                        className={`w-7 h-7 rounded-lg flex items-center justify-center border shadow-3xs ${m.iconColor}`}
+                      >
+                        <IconComponent className="w-4 h-4" />
+                      </div>
+                      <span className="text-xs font-black text-gray-900 tracking-tight">
+                        {m.title}
+                      </span>
+                    </div>
+                    <span className="text-[10px] font-black text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">
+                      TAHAP {m.step}
+                    </span>
+                  </div>
+
+                  <div className="text-[11px] font-bold text-brand-primary mb-1">
+                    {m.sub}
+                  </div>
+                  <p className="text-[11px] text-gray-500 leading-relaxed">
+                    {m.desc}
+                  </p>
+                </div>
+
+                <div className="pt-2 mt-2 border-t border-gray-100 flex items-center justify-between">
+                  <span className="text-[9.5px] font-bold px-2 py-0.5 rounded-md bg-gray-50 border border-gray-200 text-gray-600">
+                    {m.tag}
+                  </span>
+                  <span className="text-[10px] font-bold text-gray-400 group-hover:text-brand-primary transition-colors flex items-center gap-0.5">
+                    Terhubung <ArrowRight className="w-2.5 h-2.5 ml-0.5" />
+                  </span>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* =========================================================================
+          CARD 1: ROADMAP BELAJAR TERSTRUKTUR (lg:col-span-8 - Padat, Penuh & Pepet ke Bawah)
+      ========================================================================= */}
+      <div className="lg:col-span-8 p-4 sm:p-5 bg-gray-50/90 border border-gray-200/90 rounded-2xl sm:rounded-3xl flex flex-col justify-between hover:border-brand-primary/40 transition-all duration-300 relative overflow-hidden group shadow-xs">
         {/* Subtle Ambient Glow */}
         <div className="absolute top-0 right-0 w-72 h-72 bg-brand-primary/5 blur-[80px] pointer-events-none" />
 
         {/* 1. Top Header */}
-        <div>
-          <div className="flex items-center justify-between mb-2">
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
             <div className="flex items-center gap-2.5">
               <div className="w-8 h-8 rounded-lg bg-brand-primary/10 flex items-center justify-center text-brand-primary border border-brand-primary/20 shadow-3xs">
                 <GraduationCap className="w-4 h-4 text-brand-primary" />
@@ -354,7 +470,7 @@ export default function BentoEcosystemTour() {
           </div>
 
           {/* Interactive Career Selector Chips */}
-          <div className="flex items-center gap-1.5 pt-1.5 pb-2.5 overflow-x-auto no-scrollbar">
+          <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
             {ROADMAP_PRESETS.map((preset, idx) => {
               const isSelected = idx === activeCareerIdx;
               return (
@@ -382,7 +498,7 @@ export default function BentoEcosystemTour() {
           </div>
 
           {/* Active Career Track Banner with Progress Meter */}
-          <div className="bg-white border border-gray-200/90 rounded-xl p-2.5 px-3 mb-2.5 shadow-3xs flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div className="bg-white border border-gray-200/90 rounded-xl p-2.5 px-3 shadow-3xs flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <div className="flex items-center gap-2">
               <span className="text-[10px] font-black uppercase tracking-wider text-brand-primary px-2 py-0.5 rounded bg-brand-primary/10">
                 Track
@@ -405,11 +521,8 @@ export default function BentoEcosystemTour() {
           </div>
         </div>
 
-        {/* 2. Middle Focus Module Box (Isi Bagian Tengah yang Sebelumnya Kosong) */}
-        <div className="bg-white border border-brand-primary/25 rounded-2xl p-3 sm:p-3.5 my-2 shadow-3xs relative overflow-hidden min-h-[130px] flex flex-col justify-between">
-          {/* Subtle Accent Shimmer */}
-          <div className="absolute top-0 right-0 w-44 h-44 bg-brand-primary/5 rounded-full blur-2xl pointer-events-none" />
-
+        {/* 2. Middle Focus Module Box (Padat & Mengisi Ruang dengan Rapi) */}
+        <div className="bg-white border border-brand-primary/25 rounded-2xl p-3 sm:p-3.5 my-2.5 shadow-3xs relative overflow-hidden flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between gap-2 mb-1">
               <div className="flex items-center gap-2">
@@ -427,7 +540,7 @@ export default function BentoEcosystemTour() {
               </span>
             </div>
 
-            <h4 className="text-sm font-black text-gray-900 leading-snug">
+            <h4 className="text-xs sm:text-sm font-black text-gray-900 leading-snug">
               {currentRoadmap.activeModule.name}
             </h4>
             <p className="text-[11px] text-gray-500 leading-relaxed mt-0.5 line-clamp-2">
@@ -451,17 +564,17 @@ export default function BentoEcosystemTour() {
               ))}
             </div>
 
-            <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-brand-primary/5 border border-brand-primary/20 text-brand-primary text-[10px] font-bold">
+            <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-brand-primary/5 border border-brand-primary/20 text-brand-primary text-[10px] font-bold">
               <Award className="w-3 h-3 text-brand-primary shrink-0" />
-              <span className="truncate max-w-[220px]">
+              <span className="truncate max-w-[200px]">
                 {currentRoadmap.activeModule.project}
               </span>
             </div>
           </div>
         </div>
 
-        {/* 3. Bottom: 4 Phases Interactive Timeline */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 mt-auto">
+        {/* 3. Bottom: 4 Phases Interactive Timeline (Pepet ke Bawah & Penuh) */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
           {currentRoadmap.phases.map((phase) => {
             const isCompleted = phase.status === "completed";
             const isInProgress = phase.status === "in_progress";
@@ -470,7 +583,7 @@ export default function BentoEcosystemTour() {
             return (
               <div
                 key={phase.phase}
-                className={`p-2.5 sm:p-3 rounded-xl border transition-all duration-300 flex flex-col justify-between relative overflow-hidden min-h-[135px] ${
+                className={`p-2.5 rounded-xl border transition-all duration-300 flex flex-col justify-between relative overflow-hidden min-h-[125px] ${
                   isInProgress
                     ? "bg-white border-brand-primary/50 shadow-xs ring-1 ring-brand-primary/20 scale-[1.01]"
                     : isCompleted
@@ -489,25 +602,25 @@ export default function BentoEcosystemTour() {
 
                 <div>
                   {/* Phase Status Badge */}
-                  <div className="flex items-center justify-between mb-1.5">
+                  <div className="flex items-center justify-between mb-1">
                     <span className="text-[9px] font-black uppercase tracking-wider text-gray-400">
                       FASE 0{phase.phase}
                     </span>
                     {isCompleted ? (
-                      <span className="inline-flex items-center gap-1 text-[9px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded-full border border-emerald-200">
+                      <span className="inline-flex items-center gap-1 text-[8.5px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.2 rounded-full border border-emerald-200">
                         <CheckCircle2 className="w-2.5 h-2.5" /> Selesai
                       </span>
                     ) : isInProgress ? (
-                      <span className="inline-flex items-center gap-1 text-[9px] font-bold text-brand-primary bg-brand-primary/10 px-1.5 py-0.5 rounded-full border border-brand-primary/20">
+                      <span className="inline-flex items-center gap-1 text-[8.5px] font-bold text-brand-primary bg-brand-primary/10 px-1.5 py-0.2 rounded-full border border-brand-primary/20">
                         <span className="w-1.5 h-1.5 rounded-full bg-brand-primary animate-ping" />
                         Aktif
                       </span>
                     ) : isReady ? (
-                      <span className="text-[9px] font-bold text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded-full border border-gray-200">
+                      <span className="text-[8.5px] font-bold text-gray-500 bg-gray-100 px-1.5 py-0.2 rounded-full border border-gray-200">
                         Berikutnya
                       </span>
                     ) : (
-                      <span className="inline-flex items-center gap-1 text-[9px] font-bold text-gray-400">
+                      <span className="inline-flex items-center gap-1 text-[8.5px] font-bold text-gray-400">
                         <Lock className="w-2.5 h-2.5" /> Terkunci
                       </span>
                     )}
@@ -516,13 +629,13 @@ export default function BentoEcosystemTour() {
                   <h4 className="text-xs font-black text-gray-900 leading-snug">
                     {phase.title}
                   </h4>
-                  <p className="text-[10px] text-gray-500 leading-tight mt-0.5 line-clamp-2">
+                  <p className="text-[10px] text-gray-500 leading-tight mt-0.5 line-clamp-1">
                     {phase.desc}
                   </p>
                 </div>
 
                 {/* Modules Chips */}
-                <div className="pt-1.5 mt-1.5 border-t border-gray-100/90 space-y-1">
+                <div className="pt-1.5 mt-1.5 border-t border-gray-100/90 space-y-0.5">
                   {phase.modules.map((mod) => (
                     <div
                       key={mod}
@@ -548,11 +661,11 @@ export default function BentoEcosystemTour() {
       {/* =========================================================================
           RIGHT COLUMN: Cards 2 & 3 (Stacked: Rekomendasi Kegiatan & Misi)
       ========================================================================= */}
-      <div className="lg:col-span-4 flex flex-col gap-3.5 sm:gap-4 h-full justify-between min-h-[620px] sm:min-h-[640px]">
+      <div className="lg:col-span-4 flex flex-col gap-3.5 sm:gap-4 h-full justify-between">
         {/* =====================================================================
-            CARD 2: REKOMENDASI KEGIATAN (Kanan Atas - Locked Height to Prevent Shift)
+            CARD 2: REKOMENDASI KEGIATAN (Kanan Atas)
         ===================================================================== */}
-        <div className="p-4 sm:p-4.5 bg-gray-50/90 border border-gray-200/90 rounded-2xl sm:rounded-3xl flex flex-col justify-between hover:border-brand-primary/40 transition-all duration-300 relative group flex-1 shadow-xs min-h-[295px] sm:min-h-[305px]">
+        <div className="p-4 sm:p-4.5 bg-gray-50/90 border border-gray-200/90 rounded-2xl sm:rounded-3xl flex flex-col justify-between hover:border-brand-primary/40 transition-all duration-300 relative group flex-1 shadow-xs min-h-[250px]">
           <div>
             <div className="flex items-center justify-between mb-1.5">
               <div className="flex items-center gap-2">
@@ -576,8 +689,8 @@ export default function BentoEcosystemTour() {
               </span>
             </div>
 
-            {/* Active Featured Activity Card with Fixed Height to Avoid Bouncing */}
-            <div className="bg-white border border-gray-200/90 rounded-xl p-3 shadow-3xs mt-2 relative min-h-[175px] flex flex-col justify-between">
+            {/* Active Featured Activity Card */}
+            <div className="bg-white border border-gray-200/90 rounded-xl p-3 shadow-3xs mt-2 relative min-h-[145px] flex flex-col justify-between">
               <div>
                 <div className="flex items-start justify-between gap-2">
                   <div>
@@ -586,7 +699,7 @@ export default function BentoEcosystemTour() {
                     >
                       {currentKegiatan.type}
                     </span>
-                    <h4 className="text-xs sm:text-sm font-bold text-gray-900 leading-snug line-clamp-1 min-h-[20px]">
+                    <h4 className="text-xs sm:text-sm font-bold text-gray-900 leading-snug line-clamp-1">
                       {currentKegiatan.title}
                     </h4>
                     <p className="text-[10px] text-gray-500 font-medium truncate">
@@ -614,18 +727,18 @@ export default function BentoEcosystemTour() {
               </div>
 
               {/* Activity Tags & Deadline */}
-              <div className="pt-2 mt-auto border-t border-gray-100">
-                <div className="flex flex-wrap gap-1 mb-1.5">
-                  {currentKegiatan.tags.map((tag) => (
+              <div className="pt-2 mt-auto border-t border-gray-100 flex items-center justify-between">
+                <div className="flex flex-wrap gap-1">
+                  {currentKegiatan.tags.slice(0, 2).map((tag) => (
                     <span
                       key={tag}
-                      className="text-[9px] font-semibold px-2 py-0.5 bg-gray-50 border border-gray-200/80 rounded text-gray-600 truncate max-w-[120px]"
+                      className="text-[9px] font-semibold px-2 py-0.5 bg-gray-50 border border-gray-200/80 rounded text-gray-600 truncate max-w-[110px]"
                     >
                       {tag}
                     </span>
                   ))}
                 </div>
-                <div className="text-[9px] font-bold text-amber-600 flex items-center gap-1">
+                <div className="text-[9px] font-bold text-amber-600 flex items-center gap-1 shrink-0">
                   <Clock className="w-2.5 h-2.5 shrink-0" />
                   <span>{currentKegiatan.deadline}</span>
                 </div>
@@ -656,9 +769,9 @@ export default function BentoEcosystemTour() {
         </div>
 
         {/* =====================================================================
-            CARD 3: MISI SOFT SKILL (Kanan Bawah - Locked Height to Prevent Shift)
+            CARD 3: MISI SOFT SKILL (Kanan Bawah)
         ===================================================================== */}
-        <div className="p-4 sm:p-4.5 bg-gray-50/90 border border-gray-200/90 rounded-2xl sm:rounded-3xl flex flex-col justify-between hover:border-brand-primary/40 transition-all duration-300 relative group flex-1 shadow-xs min-h-[295px] sm:min-h-[305px]">
+        <div className="p-4 sm:p-4.5 bg-gray-50/90 border border-gray-200/90 rounded-2xl sm:rounded-3xl flex flex-col justify-between hover:border-brand-primary/40 transition-all duration-300 relative group flex-1 shadow-xs min-h-[250px]">
           <div>
             <div className="flex items-center justify-between mb-1.5">
               <div className="flex items-center gap-2">
@@ -682,7 +795,7 @@ export default function BentoEcosystemTour() {
               </span>
             </div>
 
-            {/* Missions List with Fixed Row Heights */}
+            {/* Missions List */}
             <div className="space-y-1.5 pt-1.5">
               {MISI_PRESETS.map((misi) => {
                 const isCompleted = misi.status === "completed";
@@ -691,7 +804,7 @@ export default function BentoEcosystemTour() {
                 return (
                   <div
                     key={misi.id}
-                    className={`flex items-center justify-between gap-2 p-2 px-2.5 rounded-xl border transition-all duration-300 h-[48px] ${
+                    className={`flex items-center justify-between gap-2 p-2 px-2.5 rounded-xl border transition-all duration-300 h-[46px] ${
                       isInProgress
                         ? "bg-white border-brand-primary/40 shadow-3xs ring-1 ring-brand-primary/20"
                         : isCompleted
