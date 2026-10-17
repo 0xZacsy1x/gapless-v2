@@ -208,7 +208,7 @@ export function ResultDetailClient({
         </div>
 
         {/* CTA Banner: Pilih Karier untuk Lanjut */}
-        <div className="mb-8 bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-500 rounded-3xl p-6 sm:p-8 text-white shadow-lg relative overflow-hidden">
+        <div className="mb-8 bg-linear-to-r from-blue-600 via-indigo-600 to-cyan-500 rounded-3xl p-6 sm:p-8 text-white shadow-lg relative overflow-hidden">
           <div className="absolute top-0 right-0 w-80 h-80 bg-white/10 rounded-full blur-2xl pointer-events-none transform translate-x-20 -translate-y-20" />
           <div className="relative z-10 max-w-3xl">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-xs font-semibold mb-3 border border-white/30">
@@ -261,9 +261,9 @@ export function ResultDetailClient({
                 >
                   <div className="flex flex-col">
                     {/* Header Baris: Badge Pilihan Teratas dalam Alur Dokumen */}
-                    <div className="min-h-[28px] flex items-center mb-3">
+                    <div className="min-h-7 flex items-center mb-3">
                       {isFirst ? (
-                        <span className="inline-flex items-center gap-1 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-[11px] font-bold px-3 py-1 rounded-full shadow-xs">
+                        <span className="inline-flex items-center gap-1 bg-linear-to-r from-blue-600 to-indigo-600 text-white text-[11px] font-bold px-3 py-1 rounded-full shadow-xs">
                           <Sparkles className="w-3 h-3 text-amber-300" />
                           Pilihan Teratas
                         </span>
@@ -369,11 +369,11 @@ export function ResultDetailClient({
       {/* Header Validasi Karier (Khusus Jalur Sudah Tahu Minat / Studi Kasus) */}
       {isValidationPath ? (
         <div className="mb-8 bg-white/90 backdrop-blur-md rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-sm relative overflow-hidden">
-          <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-blue-600 via-indigo-500 to-cyan-400" />
+          <div className="absolute top-0 left-0 w-full h-1.5 bg-linear-to-r from-blue-600 via-indigo-500 to-cyan-400" />
           
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div className="flex items-start sm:items-center gap-4">
-              <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-br from-slate-50 to-slate-100 border border-slate-200/80 p-1 flex items-center justify-center shrink-0 shadow-xs relative">
+              <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-linear-to-br from-slate-50 to-slate-100 border border-slate-200/80 p-1 flex items-center justify-center shrink-0 shadow-xs relative">
                 <Image
                   src={`/${careerProfile.trait}.png`}
                   alt={careerProfile.trait}

@@ -35,7 +35,7 @@ export function HomePageClient() {
 
       {/* Closing CTA — Compact Strip (No extra long scroll) */}
       <section className="w-full max-w-5xl mx-auto px-6 md:px-12 py-12 md:py-16 text-center">
-        <div className="p-8 md:p-12 rounded-[32px] md:rounded-[40px] bg-gray-50 border border-gray-200/80 space-y-6 relative overflow-hidden">
+        <div className="p-8 md:p-12 rounded-4xl md:rounded-[40px] bg-gray-50 border border-gray-200/80 space-y-6 relative overflow-hidden">
           <div className="space-y-3 max-w-xl mx-auto">
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-black tracking-tight text-gray-900">
               Siap menemukan arah karier sejatimu?
