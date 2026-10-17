@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "motion/react";
 import { NAV_ITEMS } from "@/config/navigation";
@@ -28,8 +29,16 @@ export function NavLinks({ authButton, variant = 'light' }: NavLinksProps) {
       >
         <Link
           href="/"
-          className="flex items-center gap-2 transition-transform hover:scale-[1.02]"
+          className="flex items-center gap-2.5 transition-transform hover:scale-[1.02]"
         >
+          <Image
+            src="/logo.png"
+            alt="Gapless Logo"
+            width={32}
+            height={32}
+            className="w-8 h-8 object-contain"
+            priority
+          />
           <span className={`text-2xl md:text-3xl font-black tracking-tight transition-colors ${
             isDark ? "text-white" : "text-gray-900"
           }`}>
