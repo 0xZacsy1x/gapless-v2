@@ -11,15 +11,25 @@ import {
   Bookmark,
   Zap,
   Clock,
+  Award,
+  BookOpen,
 } from "lucide-react";
 
-// Career Roadmaps Data (Matching real /roadmap sequential phase structure)
+// Career Roadmaps Data (Matching real /roadmap sequential phase structure with active focus module)
 const ROADMAP_PRESETS = [
   {
     id: "swe",
     career: "Software Engineer",
     track: "Full-Stack & Cloud Architecture",
     overallProgress: 68,
+    activeModule: {
+      phase: "Fase 02 — Modul Aktif",
+      name: "Framework Modern & Arsitektur API",
+      desc: "Membangun sistem modular berbasis Next.js 15, state architecture, dan integrasi backend.",
+      skills: ["React 19 & Next.js", "REST & GraphQL", "State Architecture"],
+      project: "Studi Kasus: Sistem Finansial & Checkout Skala Nyata",
+      pace: "3 Minggu • 15 Jam Belajar",
+    },
     phases: [
       {
         phase: 1,
@@ -32,7 +42,7 @@ const ROADMAP_PRESETS = [
       {
         phase: 2,
         title: "Praktik Industri",
-        desc: "Framework modern & arsitektur API",
+        desc: "Framework modern & API sistem",
         status: "in_progress",
         progress: 75,
         modules: ["Next.js & React 19", "REST & GraphQL", "State Architecture"],
@@ -60,6 +70,14 @@ const ROADMAP_PRESETS = [
     career: "Data Analyst",
     track: "Business Intelligence & Machine Learning",
     overallProgress: 62,
+    activeModule: {
+      phase: "Fase 02 — Modul Aktif",
+      name: "Pemrosesan Data & Exploratory Analysis",
+      desc: "Mengekstraksi wawasan bisnis kuantitatif, data cleaning tingkat lanjut, dan visualisasi interaktif.",
+      skills: ["Python & Pandas", "Data Wrangling", "Tableau Dashboard"],
+      project: "Studi Kasus: Prediksi Churn Pelanggan & Analisis LTV",
+      pace: "3 Minggu • 14 Jam Belajar",
+    },
     phases: [
       {
         phase: 1,
@@ -100,6 +118,14 @@ const ROADMAP_PRESETS = [
     career: "UI/UX Designer",
     track: "Product Design & Design Systems",
     overallProgress: 75,
+    activeModule: {
+      phase: "Fase 02 — Modul Aktif",
+      name: "Riset Pengguna & Interactive Prototyping",
+      desc: "Menyusun wireframing resolusi tinggi, pengujian usability terarah, dan design systems multi-platform.",
+      skills: ["User Flow Mapping", "Figma Auto-Layout", "Usability Testing"],
+      project: "Studi Kasus: Redesain End-to-End Onboarding FinTech",
+      pace: "2.5 Minggu • 12 Jam Belajar",
+    },
     phases: [
       {
         phase: 1,
@@ -252,24 +278,24 @@ export default function BentoEcosystemTour() {
     };
   }, []);
 
-  // Auto-cycle Career Roadmap every 4.2 seconds
+  // Auto-cycle Career Roadmap every 4.5 seconds
   useEffect(() => {
     if (prefersReducedMotion || !isInView || !isTabActive || isUserInteracting) return;
 
     const timer = setInterval(() => {
       setActiveCareerIdx((prev) => (prev + 1) % ROADMAP_PRESETS.length);
-    }, 4200);
+    }, 4500);
 
     return () => clearInterval(timer);
   }, [isInView, isTabActive, isUserInteracting, prefersReducedMotion]);
 
-  // Auto-cycle Kegiatan every 3.6 seconds
+  // Auto-cycle Kegiatan every 3.8 seconds
   useEffect(() => {
     if (prefersReducedMotion || !isInView || !isTabActive) return;
 
     const timer = setInterval(() => {
       setActiveKegiatanIdx((prev) => (prev + 1) % KEGIATAN_PRESETS.length);
-    }, 3600);
+    }, 3800);
 
     return () => clearInterval(timer);
   }, [isInView, isTabActive, prefersReducedMotion]);
@@ -294,16 +320,16 @@ export default function BentoEcosystemTour() {
   return (
     <div
       ref={containerRef}
-      className="grid grid-cols-1 lg:grid-cols-12 gap-3.5 sm:gap-4 relative select-none w-full"
+      className="grid grid-cols-1 lg:grid-cols-12 gap-3.5 sm:gap-4 relative select-none w-full min-h-[620px] sm:min-h-[640px] items-stretch"
     >
       {/* =========================================================================
-          CARD 1: ROADMAP BELAJAR (Paling Kiri yang Paling Besar - lg:col-span-8)
+          CARD 1: ROADMAP BELAJAR TERSTRUKTUR (Paling Kiri yang Paling Besar - lg:col-span-8)
       ========================================================================= */}
-      <div className="lg:col-span-8 p-4 sm:p-5 bg-gray-50/90 border border-gray-200/90 rounded-2xl sm:rounded-3xl flex flex-col justify-between hover:border-brand-primary/40 transition-all duration-300 relative overflow-hidden group shadow-xs">
+      <div className="lg:col-span-8 p-4 sm:p-5.5 bg-gray-50/90 border border-gray-200/90 rounded-2xl sm:rounded-3xl flex flex-col justify-between hover:border-brand-primary/40 transition-all duration-300 relative overflow-hidden group shadow-xs min-h-[620px] sm:min-h-[640px]">
         {/* Subtle Ambient Glow */}
-        <div className="absolute top-0 right-0 w-64 h-64 bg-brand-primary/5 blur-[70px] pointer-events-none" />
+        <div className="absolute top-0 right-0 w-72 h-72 bg-brand-primary/5 blur-[80px] pointer-events-none" />
 
-        {/* Top Header */}
+        {/* 1. Top Header */}
         <div>
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-2.5">
@@ -356,7 +382,7 @@ export default function BentoEcosystemTour() {
           </div>
 
           {/* Active Career Track Banner with Progress Meter */}
-          <div className="bg-white border border-gray-200/90 rounded-xl p-2.5 px-3 mb-3 shadow-3xs flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div className="bg-white border border-gray-200/90 rounded-xl p-2.5 px-3 mb-2.5 shadow-3xs flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <div className="flex items-center gap-2">
               <span className="text-[10px] font-black uppercase tracking-wider text-brand-primary px-2 py-0.5 rounded bg-brand-primary/10">
                 Track
@@ -379,8 +405,63 @@ export default function BentoEcosystemTour() {
           </div>
         </div>
 
-        {/* 4 Phases Interactive Timeline */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
+        {/* 2. Middle Focus Module Box (Isi Bagian Tengah yang Sebelumnya Kosong) */}
+        <div className="bg-white border border-brand-primary/25 rounded-2xl p-3 sm:p-3.5 my-2 shadow-3xs relative overflow-hidden min-h-[130px] flex flex-col justify-between">
+          {/* Subtle Accent Shimmer */}
+          <div className="absolute top-0 right-0 w-44 h-44 bg-brand-primary/5 rounded-full blur-2xl pointer-events-none" />
+
+          <div>
+            <div className="flex items-center justify-between gap-2 mb-1">
+              <div className="flex items-center gap-2">
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-brand-primary/10 text-brand-primary text-[9.5px] font-black uppercase tracking-wider">
+                  <BookOpen className="w-2.5 h-2.5" />
+                  {currentRoadmap.activeModule.phase}
+                </span>
+                <span className="hidden sm:inline-flex text-[10px] text-emerald-600 font-bold bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                  Target Selesai Minggu Ini
+                </span>
+              </div>
+              <span className="text-[10px] text-gray-500 font-semibold flex items-center gap-1 shrink-0">
+                <Clock className="w-3 h-3 text-brand-primary" />
+                {currentRoadmap.activeModule.pace}
+              </span>
+            </div>
+
+            <h4 className="text-sm font-black text-gray-900 leading-snug">
+              {currentRoadmap.activeModule.name}
+            </h4>
+            <p className="text-[11px] text-gray-500 leading-relaxed mt-0.5 line-clamp-2">
+              {currentRoadmap.activeModule.desc}
+            </p>
+          </div>
+
+          {/* Skill Badges & Project Capstone */}
+          <div className="flex flex-wrap items-center justify-between gap-2 pt-2 mt-2 border-t border-gray-100">
+            <div className="flex flex-wrap items-center gap-1.5">
+              <span className="text-[9.5px] font-bold text-gray-400 uppercase tracking-wider">
+                Skill Kunci:
+              </span>
+              {currentRoadmap.activeModule.skills.map((skill) => (
+                <span
+                  key={skill}
+                  className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-gray-50 border border-gray-200/90 text-gray-700"
+                >
+                  {skill}
+                </span>
+              ))}
+            </div>
+
+            <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-brand-primary/5 border border-brand-primary/20 text-brand-primary text-[10px] font-bold">
+              <Award className="w-3 h-3 text-brand-primary shrink-0" />
+              <span className="truncate max-w-[220px]">
+                {currentRoadmap.activeModule.project}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* 3. Bottom: 4 Phases Interactive Timeline */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 mt-auto">
           {currentRoadmap.phases.map((phase) => {
             const isCompleted = phase.status === "completed";
             const isInProgress = phase.status === "in_progress";
@@ -389,7 +470,7 @@ export default function BentoEcosystemTour() {
             return (
               <div
                 key={phase.phase}
-                className={`p-3 rounded-xl border transition-all duration-300 flex flex-col justify-between relative overflow-hidden ${
+                className={`p-2.5 sm:p-3 rounded-xl border transition-all duration-300 flex flex-col justify-between relative overflow-hidden min-h-[135px] ${
                   isInProgress
                     ? "bg-white border-brand-primary/50 shadow-xs ring-1 ring-brand-primary/20 scale-[1.01]"
                     : isCompleted
@@ -441,11 +522,11 @@ export default function BentoEcosystemTour() {
                 </div>
 
                 {/* Modules Chips */}
-                <div className="pt-2 mt-2 border-t border-gray-100/90 space-y-1">
+                <div className="pt-1.5 mt-1.5 border-t border-gray-100/90 space-y-1">
                   {phase.modules.map((mod) => (
                     <div
                       key={mod}
-                      className="text-[9.5px] font-medium text-gray-600 truncate flex items-center gap-1"
+                      className="text-[9px] font-medium text-gray-600 truncate flex items-center gap-1"
                     >
                       {isCompleted ? (
                         <CheckCircle2 className="w-2.5 h-2.5 text-emerald-600 shrink-0" />
@@ -467,11 +548,11 @@ export default function BentoEcosystemTour() {
       {/* =========================================================================
           RIGHT COLUMN: Cards 2 & 3 (Stacked: Rekomendasi Kegiatan & Misi)
       ========================================================================= */}
-      <div className="lg:col-span-4 flex flex-col gap-3.5 sm:gap-4">
+      <div className="lg:col-span-4 flex flex-col gap-3.5 sm:gap-4 h-full justify-between min-h-[620px] sm:min-h-[640px]">
         {/* =====================================================================
-            CARD 2: REKOMENDASI KEGIATAN (Kanan Atas)
+            CARD 2: REKOMENDASI KEGIATAN (Kanan Atas - Locked Height to Prevent Shift)
         ===================================================================== */}
-        <div className="p-4 sm:p-4.5 bg-gray-50/90 border border-gray-200/90 rounded-2xl sm:rounded-3xl flex flex-col justify-between hover:border-brand-primary/40 transition-all duration-300 relative group flex-1 shadow-xs">
+        <div className="p-4 sm:p-4.5 bg-gray-50/90 border border-gray-200/90 rounded-2xl sm:rounded-3xl flex flex-col justify-between hover:border-brand-primary/40 transition-all duration-300 relative group flex-1 shadow-xs min-h-[295px] sm:min-h-[305px]">
           <div>
             <div className="flex items-center justify-between mb-1.5">
               <div className="flex items-center gap-2">
@@ -489,61 +570,65 @@ export default function BentoEcosystemTour() {
               </div>
 
               {/* Match Badge */}
-              <span className="inline-flex items-center gap-1 text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-brand-primary/10 text-brand-primary border border-brand-primary/20">
+              <span className="inline-flex items-center gap-1 text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-brand-primary/10 text-brand-primary border border-brand-primary/20 shrink-0">
                 <Sparkles className="w-2.5 h-2.5" />
                 {currentKegiatan.match}% Cocok
               </span>
             </div>
 
-            {/* Active Featured Activity Card */}
-            <div className="bg-white border border-gray-200/90 rounded-xl p-3 shadow-3xs mt-2 relative transition-all duration-300 hover:shadow-xs">
-              <div className="flex items-start justify-between gap-2">
-                <div>
-                  <span
-                    className={`inline-block text-[9px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-full border mb-1 ${currentKegiatan.typeColor}`}
-                  >
-                    {currentKegiatan.type}
-                  </span>
-                  <h4 className="text-xs sm:text-sm font-bold text-gray-900 leading-snug">
-                    {currentKegiatan.title}
-                  </h4>
-                  <p className="text-[10px] text-gray-500 font-medium">
-                    {currentKegiatan.organizer}
-                  </p>
-                </div>
+            {/* Active Featured Activity Card with Fixed Height to Avoid Bouncing */}
+            <div className="bg-white border border-gray-200/90 rounded-xl p-3 shadow-3xs mt-2 relative min-h-[175px] flex flex-col justify-between">
+              <div>
+                <div className="flex items-start justify-between gap-2">
+                  <div>
+                    <span
+                      className={`inline-block text-[9px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-full border mb-1 ${currentKegiatan.typeColor}`}
+                    >
+                      {currentKegiatan.type}
+                    </span>
+                    <h4 className="text-xs sm:text-sm font-bold text-gray-900 leading-snug line-clamp-1 min-h-[20px]">
+                      {currentKegiatan.title}
+                    </h4>
+                    <p className="text-[10px] text-gray-500 font-medium truncate">
+                      {currentKegiatan.organizer}
+                    </p>
+                  </div>
 
-                {/* Interactive Bookmark Button */}
-                <button
-                  onClick={(e) => toggleBookmark(currentKegiatan.id, e)}
-                  aria-label="Simpan Kegiatan"
-                  className={`p-1.5 rounded-lg border transition-all cursor-pointer ${
-                    bookmarkedId === currentKegiatan.id
-                      ? "bg-brand-primary text-white border-brand-primary shadow-3xs"
-                      : "bg-gray-50 hover:bg-gray-100 border-gray-200 text-gray-400"
-                  }`}
-                >
-                  <Bookmark
-                    className={`w-3.5 h-3.5 ${
-                      bookmarkedId === currentKegiatan.id ? "fill-white" : ""
+                  {/* Interactive Bookmark Button */}
+                  <button
+                    onClick={(e) => toggleBookmark(currentKegiatan.id, e)}
+                    aria-label="Simpan Kegiatan"
+                    className={`p-1.5 rounded-lg border transition-all cursor-pointer shrink-0 ${
+                      bookmarkedId === currentKegiatan.id
+                        ? "bg-brand-primary text-white border-brand-primary shadow-3xs"
+                        : "bg-gray-50 hover:bg-gray-100 border-gray-200 text-gray-400"
                     }`}
-                  />
-                </button>
+                  >
+                    <Bookmark
+                      className={`w-3.5 h-3.5 ${
+                        bookmarkedId === currentKegiatan.id ? "fill-white" : ""
+                      }`}
+                    />
+                  </button>
+                </div>
               </div>
 
-              {/* Activity Tags */}
-              <div className="flex flex-wrap gap-1 mt-2.5 pt-2 border-t border-gray-100">
-                {currentKegiatan.tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="text-[9px] font-semibold px-2 py-0.5 bg-gray-50 border border-gray-200/80 rounded text-gray-600"
-                  >
-                    {tag}
-                  </span>
-                ))}
-                <span className="text-[9px] font-bold text-amber-600 ml-auto flex items-center gap-0.5">
-                  <Clock className="w-2.5 h-2.5" />
-                  {currentKegiatan.deadline}
-                </span>
+              {/* Activity Tags & Deadline */}
+              <div className="pt-2 mt-auto border-t border-gray-100">
+                <div className="flex flex-wrap gap-1 mb-1.5">
+                  {currentKegiatan.tags.map((tag) => (
+                    <span
+                      key={tag}
+                      className="text-[9px] font-semibold px-2 py-0.5 bg-gray-50 border border-gray-200/80 rounded text-gray-600 truncate max-w-[120px]"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+                <div className="text-[9px] font-bold text-amber-600 flex items-center gap-1">
+                  <Clock className="w-2.5 h-2.5 shrink-0" />
+                  <span>{currentKegiatan.deadline}</span>
+                </div>
               </div>
             </div>
           </div>
@@ -571,9 +656,9 @@ export default function BentoEcosystemTour() {
         </div>
 
         {/* =====================================================================
-            CARD 3: MISI SOFT SKILL (Kanan Bawah)
+            CARD 3: MISI SOFT SKILL (Kanan Bawah - Locked Height to Prevent Shift)
         ===================================================================== */}
-        <div className="p-4 sm:p-4.5 bg-gray-50/90 border border-gray-200/90 rounded-2xl sm:rounded-3xl flex flex-col justify-between hover:border-brand-primary/40 transition-all duration-300 relative group flex-1 shadow-xs">
+        <div className="p-4 sm:p-4.5 bg-gray-50/90 border border-gray-200/90 rounded-2xl sm:rounded-3xl flex flex-col justify-between hover:border-brand-primary/40 transition-all duration-300 relative group flex-1 shadow-xs min-h-[295px] sm:min-h-[305px]">
           <div>
             <div className="flex items-center justify-between mb-1.5">
               <div className="flex items-center gap-2">
@@ -591,13 +676,13 @@ export default function BentoEcosystemTour() {
               </div>
 
               {/* Level XP Badge */}
-              <span className="inline-flex items-center gap-1 text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+              <span className="inline-flex items-center gap-1 text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 shrink-0">
                 <Zap className="w-2.5 h-2.5 text-emerald-600" />
                 Level 3 • 450 XP
               </span>
             </div>
 
-            {/* Missions List */}
+            {/* Missions List with Fixed Row Heights */}
             <div className="space-y-1.5 pt-1.5">
               {MISI_PRESETS.map((misi) => {
                 const isCompleted = misi.status === "completed";
@@ -606,7 +691,7 @@ export default function BentoEcosystemTour() {
                 return (
                   <div
                     key={misi.id}
-                    className={`flex items-center justify-between gap-2 p-2 px-2.5 rounded-xl border transition-all duration-300 ${
+                    className={`flex items-center justify-between gap-2 p-2 px-2.5 rounded-xl border transition-all duration-300 h-[48px] ${
                       isInProgress
                         ? "bg-white border-brand-primary/40 shadow-3xs ring-1 ring-brand-primary/20"
                         : isCompleted
@@ -667,7 +752,7 @@ export default function BentoEcosystemTour() {
           </div>
 
           {/* Daily Mission Progress Bar */}
-          <div className="pt-2 mt-1">
+          <div className="pt-2 mt-auto">
             <div className="flex items-center justify-between text-[10px] text-gray-500 font-semibold mb-1">
               <span>Progres Misi Harian</span>
               <span className="font-bold text-emerald-600">2 / 3 Selesai (67%)</span>
