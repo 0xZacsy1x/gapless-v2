@@ -39,10 +39,6 @@ export default function HeroSection() {
                 Sudah Tahu Minatku
               </Link>
             </div>
-            {/* Microcopy */}
-            <p className="text-xs text-gray-400 font-medium tracking-wide">
-              Tes 5-7 menit • Gratis tanpa kartu kredit • Hasil instan
-            </p>
           </div>
         </div>
 
