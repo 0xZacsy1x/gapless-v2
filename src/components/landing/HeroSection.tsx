@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { ArrowRight, Compass, FileSearch, Layers } from "lucide-react";
+import { ArrowRight, Compass, FileSearch, Briefcase } from "lucide-react";
 import AssessmentDemo from "./AssessmentDemo";
 
 export default function HeroSection() {
@@ -46,14 +46,14 @@ export default function HeroSection() {
           </div>
         </div>
 
-        {/* Cara Kerjanya — 3 Metodologi Ilmiah Terpadu (RIASEC -> SJT -> Career Construction Theory) */}
+        {/* Cara Kerjanya — 3 Fondasi Riset & Standar Industri (RIASEC -> SJT -> Skill Gap 702 Lowongan) */}
         <div className="pt-6 border-t border-gray-100/90 mt-4">
           <div className="flex items-center justify-between mb-4">
             <div className="text-[11px] font-extrabold uppercase tracking-[0.25em] text-gray-400">
-              CARA KERJA (3 METODOLOGI ILMIAH)
+              CARA KERJA & STANDAR RISET
             </div>
             <span className="text-[10px] font-bold text-brand-primary bg-brand-primary/10 px-2 py-0.5 rounded-full border border-brand-primary/20">
-              Validasi Ilmiah
+              Data 702 Lowongan
             </span>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 md:gap-6">
@@ -95,22 +95,22 @@ export default function HeroSection() {
               </p>
             </div>
 
-            {/* Step 03: Career Construction */}
+            {/* Step 03: Asesmen Skill Gap */}
             <div className="flex flex-col">
               <div className="flex items-center gap-3 mb-2">
                 <span className="text-4xl lg:text-5xl font-black text-gray-200 tracking-tight select-none">
                   03
                 </span>
-                <Layers className="w-8 h-8 text-emerald-600 stroke-[1.6]" />
+                <Briefcase className="w-8 h-8 text-emerald-600 stroke-[1.6]" />
               </div>
               <div className="text-sm font-bold text-gray-900 leading-snug">
-                Career Construction
+                Asesmen Skill Gap
               </div>
               <div className="text-[11px] font-semibold text-emerald-600 mt-0.5">
-                Adaptabilitas & Roadmap
+                Standar Industri Nyata
               </div>
               <p className="text-xs text-gray-500 leading-relaxed mt-1">
-                Teori Savickas untuk kurikulum belajar adaptif, rekomendasi kegiatan, & misi XP.
+                Asesmen Skill Gap di Gapless dirancang berbasis data standar skill dari 702 lowongan pekerjaan di berbagai perusahaan terkemuka.
               </p>
             </div>
           </div>
