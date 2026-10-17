@@ -41,7 +41,7 @@ export function HomePageClient() {
               Siap menemukan arah karier sejatimu?
             </h2>
             <p className="text-sm sm:text-base text-gray-500 leading-relaxed">
-              Mulai dari tes 5-7 menit dan dapatkan rekomendasi karier serta roadmap belajar pribadimu.
+              Mulai dari tes 8-15 menit dan dapatkan rekomendasi karier serta roadmap belajar pribadimu.
             </p>
           </div>
           <div>
