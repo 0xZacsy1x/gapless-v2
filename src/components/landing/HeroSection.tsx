@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { ArrowRight, FileCheck, FileSearch, Puzzle } from "lucide-react";
+import { ArrowRight, Compass, FileSearch, Layers } from "lucide-react";
 import AssessmentDemo from "./AssessmentDemo";
 
 export default function HeroSection() {
@@ -46,57 +46,71 @@ export default function HeroSection() {
           </div>
         </div>
 
-        {/* Cara Kerjanya — Mirip Referensi Foto (Nomor besar 01-03, outline icon, tanpa kotak/border) */}
+        {/* Cara Kerjanya — 3 Metodologi Ilmiah Terpadu (RIASEC -> SJT -> Career Construction Theory) */}
         <div className="pt-6 border-t border-gray-100/90 mt-4">
-          <div className="text-[11px] font-extrabold uppercase tracking-[0.25em] text-gray-400 text-center sm:text-left mb-4">
-            CARA KERJANYA
+          <div className="flex items-center justify-between mb-4">
+            <div className="text-[11px] font-extrabold uppercase tracking-[0.25em] text-gray-400">
+              CARA KERJA (3 METODOLOGI ILMIAH)
+            </div>
+            <span className="text-[10px] font-bold text-brand-primary bg-brand-primary/10 px-2 py-0.5 rounded-full border border-brand-primary/20">
+              Validasi Ilmiah
+            </span>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 md:gap-6">
-            {/* Step 01 */}
+            {/* Step 01: RIASEC */}
             <div className="flex flex-col">
               <div className="flex items-center gap-3 mb-2">
                 <span className="text-4xl lg:text-5xl font-black text-gray-200 tracking-tight select-none">
                   01
                 </span>
-                <FileCheck className="w-8 h-8 text-gray-800 stroke-[1.6]" />
+                <Compass className="w-8 h-8 text-blue-600 stroke-[1.6]" />
               </div>
               <div className="text-sm font-bold text-gray-900 leading-snug">
-                Ikuti Asesmen (5-7 Menit)
+                RIASEC Model
+              </div>
+              <div className="text-[11px] font-semibold text-brand-primary mt-0.5">
+                Pemetaan Minat & Karakter
               </div>
               <p className="text-xs text-gray-500 leading-relaxed mt-1">
-                15 studi kasus situasional, ga perlu ribet.
+                6 orientasi minat vokasional (Holland Codes) yang selaras dengan bakat alamimu.
               </p>
             </div>
 
-            {/* Step 02 */}
+            {/* Step 02: SJT */}
             <div className="flex flex-col">
               <div className="flex items-center gap-3 mb-2">
                 <span className="text-4xl lg:text-5xl font-black text-gray-200 tracking-tight select-none">
                   02
                 </span>
-                <FileSearch className="w-8 h-8 text-gray-800 stroke-[1.6]" />
+                <FileSearch className="w-8 h-8 text-indigo-600 stroke-[1.6]" />
               </div>
               <div className="text-sm font-bold text-gray-900 leading-snug">
-                AI Analisis Perilaku
+                Situational Judgement
+              </div>
+              <div className="text-[11px] font-semibold text-indigo-600 mt-0.5">
+                15 Simulasi Kasus Nyata
               </div>
               <p className="text-xs text-gray-500 leading-relaxed mt-1">
-                Deteksi logika, archetype, & gaya kerja.
+                Mendeteksi respon logis, etika keputusan, dan gaya kerja sesungguhnya.
               </p>
             </div>
 
-            {/* Step 03 */}
+            {/* Step 03: Career Construction */}
             <div className="flex flex-col">
               <div className="flex items-center gap-3 mb-2">
                 <span className="text-4xl lg:text-5xl font-black text-gray-200 tracking-tight select-none">
                   03
                 </span>
-                <Puzzle className="w-8 h-8 text-gray-800 stroke-[1.6]" />
+                <Layers className="w-8 h-8 text-emerald-600 stroke-[1.6]" />
               </div>
               <div className="text-sm font-bold text-gray-900 leading-snug">
-                Dapat Skor & Roadmap
+                Career Construction
+              </div>
+              <div className="text-[11px] font-semibold text-emerald-600 mt-0.5">
+                Adaptabilitas & Roadmap
               </div>
               <p className="text-xs text-gray-500 leading-relaxed mt-1">
-                Skor kesiapan 0–100% & kurikulum belajar.
+                Teori Savickas untuk kurikulum belajar adaptif, rekomendasi kegiatan, & misi XP.
               </p>
             </div>
           </div>

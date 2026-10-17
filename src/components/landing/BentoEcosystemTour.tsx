@@ -13,42 +13,7 @@ import {
   Clock,
   Award,
   BookOpen,
-  Compass,
-  FileSearch,
-  Layers,
-  ArrowRight,
 } from "lucide-react";
-
-// 3 Connected Scientific Foundation Blocks
-const METHODOLOGY_STEPS = [
-  {
-    step: "01",
-    title: "RIASEC Model",
-    sub: "Pemetaan Minat & Karakter",
-    icon: Compass,
-    iconColor: "text-blue-600 bg-blue-100/80 border-blue-200",
-    tag: "Holland Codes",
-    desc: "Memetakan 6 orientasi vokasional (Realistic, Investigative, Artistic, Social, Enterprising, Conventional) ke jalur karir yang selaras.",
-  },
-  {
-    step: "02",
-    title: "SJT (Situational Judgement)",
-    sub: "Simulasi Kasus Nyata",
-    icon: FileSearch,
-    iconColor: "text-indigo-600 bg-indigo-100/80 border-indigo-200",
-    tag: "Uji Perilaku Nyata",
-    desc: "15 studi kasus situasional industri untuk mendeteksi gaya kerja, etika keputusan, dan respon logis tanpa jebakan soal klise.",
-  },
-  {
-    step: "03",
-    title: "Career Construction Theory",
-    sub: "Adaptabilitas & Roadmap",
-    icon: Layers,
-    iconColor: "text-emerald-600 bg-emerald-100/80 border-emerald-200",
-    tag: "Teori Savickas",
-    desc: "Membangun kesiapan dan adaptabilitas karier melalui roadmap belajar terukur, rekomendasi kegiatan, dan misi pengembangan diri.",
-  },
-];
 
 // Career Roadmaps Data
 const ROADMAP_PRESETS = [
@@ -357,86 +322,7 @@ export default function BentoEcosystemTour() {
       ref={containerRef}
       className="grid grid-cols-1 lg:grid-cols-12 gap-3.5 sm:gap-4 relative select-none w-full items-stretch"
     >
-      {/* =========================================================================
-          SECTION ATAS (lg:col-span-12): PERSEGI PANJANG DENGAN 3 BLOK METODOLOGI TERHUBUNG
-          (1. RIASEC -> 2. SJT -> 3. CAREER CONSTRUCTION THEORY)
-      ========================================================================= */}
-      <div className="lg:col-span-12 p-4 sm:p-5 bg-gradient-to-r from-blue-50/70 via-indigo-50/50 to-slate-50/90 border border-brand-primary/20 rounded-2xl sm:rounded-3xl shadow-xs relative overflow-hidden">
-        {/* Subtle Background Glow */}
-        <div className="absolute top-0 right-1/4 w-80 h-32 bg-brand-primary/5 blur-3xl pointer-events-none" />
 
-        {/* Header Bar */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3.5 pb-2.5 border-b border-gray-200/70">
-          <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-brand-primary animate-ping" />
-            <span className="text-[10px] font-black uppercase tracking-wider text-brand-primary px-2.5 py-0.5 rounded-full bg-brand-primary/10 border border-brand-primary/20">
-              Fondasi Metodologi Ilmiah
-            </span>
-            <span className="text-xs sm:text-sm font-bold text-gray-800">
-              Alur Pembentukan Karier Terpadu
-            </span>
-          </div>
-          <span className="text-[11px] text-gray-500 font-medium">
-            3 Teori Psikologi & Validasi Perilaku Kerja Nyata
-          </span>
-        </div>
-
-        {/* 3 Connected Blocks with Sequence Arrows */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 relative">
-          {METHODOLOGY_STEPS.map((m, idx) => {
-            const IconComponent = m.icon;
-            const isLast = idx === METHODOLOGY_STEPS.length - 1;
-
-            return (
-              <div
-                key={m.step}
-                className="bg-white/95 border border-gray-200/90 rounded-2xl p-3.5 sm:p-4 shadow-3xs hover:border-brand-primary/40 hover:shadow-xs transition-all duration-300 flex flex-col justify-between relative group"
-              >
-                {/* Connecting Arrow for Desktop */}
-                {!isLast && (
-                  <div className="hidden md:flex absolute -right-3 top-1/2 -translate-y-1/2 z-20 w-6 h-6 rounded-full bg-white border border-brand-primary/30 text-brand-primary items-center justify-center shadow-3xs">
-                    <ArrowRight className="w-3 h-3 text-brand-primary animate-pulse" />
-                  </div>
-                )}
-
-                <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center gap-2">
-                      <div
-                        className={`w-7 h-7 rounded-lg flex items-center justify-center border shadow-3xs ${m.iconColor}`}
-                      >
-                        <IconComponent className="w-4 h-4" />
-                      </div>
-                      <span className="text-xs font-black text-gray-900 tracking-tight">
-                        {m.title}
-                      </span>
-                    </div>
-                    <span className="text-[10px] font-black text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">
-                      TAHAP {m.step}
-                    </span>
-                  </div>
-
-                  <div className="text-[11px] font-bold text-brand-primary mb-1">
-                    {m.sub}
-                  </div>
-                  <p className="text-[11px] text-gray-500 leading-relaxed">
-                    {m.desc}
-                  </p>
-                </div>
-
-                <div className="pt-2 mt-2 border-t border-gray-100 flex items-center justify-between">
-                  <span className="text-[9.5px] font-bold px-2 py-0.5 rounded-md bg-gray-50 border border-gray-200 text-gray-600">
-                    {m.tag}
-                  </span>
-                  <span className="text-[10px] font-bold text-gray-400 group-hover:text-brand-primary transition-colors flex items-center gap-0.5">
-                    Terhubung <ArrowRight className="w-2.5 h-2.5 ml-0.5" />
-                  </span>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </div>
 
       {/* =========================================================================
           CARD 1: ROADMAP BELAJAR TERSTRUKTUR (lg:col-span-8 - Padat, Penuh & Pepet ke Bawah)
