@@ -110,7 +110,7 @@ export default function HeroSection() {
                 Standar Industri Nyata
               </div>
               <p className="text-xs text-gray-500 leading-relaxed mt-1">
-                Asesmen Skill Gap di Gapless dirancang berbasis data standar skill dari 702 lowongan pekerjaan di berbagai perusahaan terkemuka.
+                Dirancang berbasis data standar skill dari 702 lowongan pekerjaan di berbagai perusahaan terkemuka.
               </p>
             </div>
           </div>
