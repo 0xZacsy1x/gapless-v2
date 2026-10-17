@@ -28,11 +28,10 @@ export function NavLinks({ authButton, variant = 'light' }: NavLinksProps) {
       >
         <Link
           href="/"
-          className="flex items-center gap-2 transition-transform hover:scale-105"
+          className="flex items-center gap-2 transition-transform hover:scale-[1.02]"
         >
-          <img src="/Asset 1.png" alt="Logo Gapless" className="h-8 md:h-10 w-auto" />
-          <span className={`font-bold text-xl md:text-2xl transition-colors ${
-            isDark ? "text-white" : "text-slate-900"
+          <span className={`text-2xl md:text-3xl font-black tracking-tight transition-colors ${
+            isDark ? "text-white" : "text-gray-900"
           }`}>
             Gapless
           </span>
