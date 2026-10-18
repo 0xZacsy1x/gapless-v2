@@ -19,10 +19,19 @@ export function isModuleDone(params: {
   profile: CareerProfile;
   moduleStatuses: Record<string, any>;
   skillRatings: Record<string, number>;
+  totalResources?: number;
 }): boolean {
-  const { moduleSlug, moduleStatuses } = params;
-  // Modul selesai hanya jika user benar-benar telah menyelesaikannya lewat sesi belajar
-  return moduleStatuses[moduleSlug] === true;
+  const { moduleSlug, moduleStatuses, totalResources } = params;
+  if (!moduleStatuses || moduleStatuses[moduleSlug] !== true) {
+    return false;
+  }
+  // Jika ada tracking completed resources, modul hanya dianggap tuntas jika seluruh materi selesai dipelajari
+  const completedResources = moduleStatuses._completed_resources?.[moduleSlug];
+  if (Array.isArray(completedResources)) {
+    const requiredCount = totalResources || 4;
+    return completedResources.length >= requiredCount;
+  }
+  return true;
 }
 
 export interface ModuleSequenceStatus {

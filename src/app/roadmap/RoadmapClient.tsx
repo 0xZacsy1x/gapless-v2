@@ -90,6 +90,10 @@ export default function RoadmapClient({ history, initialAssessmentId, serverUser
 
             const completedModules = phase.modules.filter((_module: string) => {
               const moduleSlug = slugify(_module);
+              const completedResources = (moduleStatuses as any)?._completed_resources?.[moduleSlug];
+              if (Array.isArray(completedResources)) {
+                return completedResources.length >= 4;
+              }
               return !!moduleStatuses[moduleSlug];
             });
 
@@ -150,6 +154,10 @@ export default function RoadmapClient({ history, initialAssessmentId, serverUser
 
             const completedModules = phase.modules.filter((_module: string) => {
               const moduleSlug = slugify(_module);
+              const completedResources = (moduleStatuses as any)?._completed_resources?.[moduleSlug];
+              if (Array.isArray(completedResources)) {
+                return completedResources.length >= 4;
+              }
               return !!moduleStatuses[moduleSlug];
             });
 

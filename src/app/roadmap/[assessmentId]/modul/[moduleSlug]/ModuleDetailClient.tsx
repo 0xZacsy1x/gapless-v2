@@ -48,16 +48,20 @@ export default function ModuleDetailClient({
   const router = useRouter();
   const context = useGaplessContext();
 
-  const [isCompleted, setIsCompleted] = useState(initialCompleted);
+  const [detailData, setDetailData] = useState<ModuleDetail | null>(initialDetailData);
+  const totalResources = detailData?.resources?.length || 4;
+
   const [completedResources, setCompletedResources] = useState<number[]>(
-    initialCompletedResources.length > 0 ? initialCompletedResources : (initialCompleted ? [0] : [])
+    initialCompletedResources.length > 0 ? initialCompletedResources : []
+  );
+  const isAllResourcesDone = completedResources.length >= totalResources && totalResources > 0;
+  const [isCompleted, setIsCompleted] = useState(
+    initialCompleted && initialCompletedResources.length >= totalResources
   );
   const [isStudying, setIsStudying] = useState(false);
   const [studyNotice, setStudyNotice] = useState<string | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [openedResources, setOpenedResources] = useState<number[]>([]);
-
-  const [detailData, setDetailData] = useState<ModuleDetail | null>(initialDetailData);
   const [isGenerating, setIsGenerating] = useState(!initialDetailData);
   const isCheckingRef = useRef(false);
 
@@ -79,20 +83,32 @@ export default function ModuleDetailClient({
       const res = await fetch('/api/roadmap/check-study', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ assessmentId, moduleSlug }),
+        body: JSON.stringify({
+          assessmentId,
+          moduleSlug,
+          totalResources: detailData?.resources?.length || 4,
+        }),
       });
 
       if (res.ok) {
         const data = await res.json();
-        if (data.completedResources) {
-          setCompletedResources(data.completedResources);
-        }
-        if (data.completed) {
+        const updatedCompleted = data.completedResources || [];
+        setCompletedResources(updatedCompleted);
+
+        const currentTotal = data.totalResources || detailData?.resources?.length || 4;
+        const isNowAllDone = updatedCompleted.length >= currentTotal;
+
+        if (isNowAllDone) {
           setIsCompleted(true);
+          setIsStudying(false);
+          setStudyNotice(null);
+          setToastMessage('Selamat! Seluruh materi selesai dan modul ini telah tuntas ✓');
+          router.refresh();
+        } else if (data.newlyCompletedResource) {
+          setIsCompleted(false);
           setIsStudying(data.isStudying || false);
           setStudyNotice(null);
-          setToastMessage('Materi selesai! Progres berhasil tercatat ✓');
-          router.refresh();
+          setToastMessage('Materi selesai! Silakan lanjutkan ke materi berikutnya ✓');
         } else if (data.isStudying) {
           setIsStudying(true);
           if (showNoticeOnIncomplete) {
@@ -100,6 +116,8 @@ export default function ModuleDetailClient({
               'Sedang dipelajari — Pelajari materi di tab baru dengan fokus. Centang hijau akan otomatis muncul setelah kamu kembali.'
             );
           }
+        } else {
+          setIsStudying(false);
         }
       }
     } catch (err) {
@@ -107,11 +125,11 @@ export default function ModuleDetailClient({
     } finally {
       isCheckingRef.current = false;
     }
-  }, [assessmentId, moduleSlug, router]);
+  }, [assessmentId, moduleSlug, detailData, router]);
 
   // Event listener saat user kembali ke tab (visibilitychange / focus / pageshow)
   useEffect(() => {
-    if (isCompleted) return;
+    if (isCompleted || isAllResourcesDone) return;
 
     const handleReturnToTab = () => {
       if (document.visibilityState === 'visible') {
@@ -504,7 +522,7 @@ export default function ModuleDetailClient({
             <div className="bg-slate-50 border border-slate-200/80 rounded-2xl p-4 text-xs text-slate-600 flex items-start gap-2.5 mt-4 leading-relaxed">
               <span className="text-base shrink-0">💡</span>
               <span>
-                <strong>Cara menyelesaikan modul:</strong> Klik salah satu link materi di atas untuk belajar di tab baru. Saat kamu kembali ke tab Gapless ini setelah mempelajari materi, materi yang dipelajari akan otomatis tercentang dan modul berikutnya akan terbuka.
+                <strong>Cara menyelesaikan modul:</strong> Pelajari setiap materi di atas secara berurutan dari atas ke bawah. Saat kamu kembali ke tab Gapless ini setelah mempelajari suatu materi, materi tersebut akan otomatis tercentang dan materi selanjutnya akan terbuka. Selesaikan seluruh ke-4 materi untuk menuntaskan modul ini dan membuka modul berikutnya di roadmap.
               </span>
             </div>
           </div>
@@ -520,7 +538,7 @@ export default function ModuleDetailClient({
           <ArrowLeft size={16} /> Kembali ke Roadmap Belajar
         </Link>
 
-        {isCompleted ? (
+        {isAllResourcesDone || isCompleted ? (
           <div className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-emerald-50 text-emerald-800 font-bold border border-emerald-200 text-xs sm:text-sm">
             <CheckCircle2 size={16} className="text-emerald-600" />
             <span>Modul Ini Telah Selesai ✓</span>
@@ -529,6 +547,10 @@ export default function ModuleDetailClient({
           <div className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-blue-50 text-blue-800 font-bold border border-blue-200 text-xs sm:text-sm">
             <Loader2 size={16} className="text-blue-600 animate-spin" />
             <span>Sedang Dipelajari — Kembali ke tab ini setelah selesai belajar</span>
+          </div>
+        ) : completedResources.length > 0 ? (
+          <div className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-slate-100 text-slate-700 font-medium border border-slate-200 text-xs sm:text-sm">
+            <span>Materi {completedResources.length} dari {totalResources} Selesai — Lanjutkan materi berikutnya</span>
           </div>
         ) : (
           <div className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-slate-100 text-slate-500 font-medium border border-slate-200 text-xs sm:text-sm">

@@ -121,20 +121,22 @@ export default async function ModuleDetailPage({ params }: { params: Promise<{ a
   const { targetPhaseIndex, targetModuleIndex, moduleTitle } = sequenceStatus;
   const phaseData = profile.roadmap[targetPhaseIndex];
 
-  // 5. Cek apakah modul ini sudah selesai (idempotent)
+  // 5. Ambil data kurasi modul
+  const detailData = MODULE_DETAILS[moduleSlug] || null;
+  const totalResourcesCount = detailData?.resources?.length || 4;
+
+  const completedResourcesMap = (moduleStatuses._completed_resources as Record<string, number[]>) || {};
+  const initialCompletedResources = completedResourcesMap[moduleSlug] || [];
+
+  // 6. Cek apakah modul ini sudah selesai (idempotent - seluruh materi harus selesai)
   const isCompleted = isModuleDone({
     moduleSlug,
     moduleIndexInPhase: targetModuleIndex,
     profile,
     moduleStatuses,
     skillRatings,
-  });
-
-  const completedResourcesMap = (moduleStatuses._completed_resources as Record<string, number[]>) || {};
-  const initialCompletedResources = completedResourcesMap[moduleSlug] || (isCompleted ? [0] : []);
-
-  // 6. Ambil data kurasi modul
-  const detailData = MODULE_DETAILS[moduleSlug] || null;
+    totalResources: totalResourcesCount,
+  }) && (initialCompletedResources.length >= totalResourcesCount || (!completedResourcesMap[moduleSlug] && moduleStatuses[moduleSlug] === true));
 
   return (
     <div className="min-h-screen flex flex-col bg-[#F3FAFF]">

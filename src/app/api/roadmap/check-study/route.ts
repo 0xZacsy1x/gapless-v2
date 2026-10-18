@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
 import { db } from "@/db";
-import { assessmentResults, roadmapProgress } from "@/db/schema";
+import { assessmentResults, roadmapProgress, aiModuleInsights } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
 import { auth } from "@/auth";
 import { z } from "zod";
-import { findCareerProfile, CAREER_PROFILES } from "@/data/gaplessData";
+import { findCareerProfile, CAREER_PROFILES, MODULE_DETAILS } from "@/data/gaplessData";
 import { checkModuleSequence, MIN_STUDY_SECONDS } from "@/lib/roadmapSequence";
 import { hasActivePro } from "@/lib/payment_service";
 
@@ -12,6 +12,7 @@ const RequestSchema = z.object({
   assessmentId: z.string().min(1, "Missing assessmentId"),
   moduleSlug: z.string().min(1, "Missing moduleSlug"),
   resourceIndex: z.number().optional(),
+  totalResources: z.number().optional(),
 });
 
 export async function POST(req: Request) {
@@ -30,7 +31,7 @@ export async function POST(req: Request) {
       );
     }
 
-    const { assessmentId, moduleSlug, resourceIndex } = validationResult.data;
+    const { assessmentId, moduleSlug, resourceIndex, totalResources: clientTotal } = validationResult.data;
 
     // 1. Ambil data asesmen milik user
     const assessment = await db.query.assessmentResults.findFirst({
@@ -91,18 +92,47 @@ export async function POST(req: Request) {
       );
     }
 
-    // 4. Cek Sesi Belajar per resource
+    // 4. Hitung total materi yang harus diselesaikan di modul ini
+    let expectedTotal = clientTotal && clientTotal > 0 ? clientTotal : 0;
+    if (!expectedTotal) {
+      const manual = MODULE_DETAILS[moduleSlug];
+      if (manual?.resources?.length) {
+        expectedTotal = manual.resources.length;
+      } else {
+        const cachedInsight = await db.query.aiModuleInsights.findFirst({
+          where: and(
+            eq(aiModuleInsights.moduleSlug, moduleSlug),
+            eq(aiModuleInsights.careerSlug, careerSlug)
+          ),
+        });
+        if (cachedInsight?.insightData && typeof cachedInsight.insightData === "object") {
+          const resList = (cachedInsight.insightData as any).resources;
+          if (Array.isArray(resList) && resList.length > 0) {
+            expectedTotal = resList.length;
+          }
+        }
+      }
+    }
+    if (!expectedTotal) {
+      expectedTotal = 4;
+    }
+
+    // 5. Cek Sesi Belajar per resource
     const studySessions = (moduleStatuses._study_sessions as Record<string, any>) || {};
     const sessionData = studySessions[moduleSlug];
     const completedResourcesMap = (moduleStatuses._completed_resources as Record<string, number[]>) || {};
     const currentCompleted = [...(completedResourcesMap[moduleSlug] || [])];
 
     if (!sessionData) {
+      const isModuleFullyCompleted = currentCompleted.length >= expectedTotal;
       return NextResponse.json({
         success: true,
-        completed: moduleStatuses[moduleSlug] === true,
+        completed: isModuleFullyCompleted,
+        moduleCompleted: isModuleFullyCompleted,
+        newlyCompletedResource: false,
         isStudying: false,
         completedResources: currentCompleted,
+        totalResources: expectedTotal,
         message: "Tidak ada sesi belajar aktif.",
       });
     }
@@ -132,8 +162,10 @@ export async function POST(req: Request) {
       }
     }
 
+    const isModuleFullyCompleted = currentCompleted.length >= expectedTotal;
+
     if (newlyCompleted) {
-      // Tandai modul ini selesai di roadmap dan simpan resource yang selesai
+      // Simpan resource yang selesai & update status modul jika ke-4 materi sudah tuntas
       const updatedSessions = {
         ...studySessions,
         [moduleSlug]: {
@@ -142,15 +174,20 @@ export async function POST(req: Request) {
         },
       };
 
-      const updatedStatuses = {
+      const updatedStatuses: Record<string, any> = {
         ...moduleStatuses,
-        [moduleSlug]: true,
         _completed_resources: {
           ...completedResourcesMap,
           [moduleSlug]: currentCompleted,
         },
         _study_sessions: updatedSessions,
       };
+
+      if (isModuleFullyCompleted) {
+        updatedStatuses[moduleSlug] = true;
+      } else {
+        delete updatedStatuses[moduleSlug];
+      }
 
       await db
         .update(roadmapProgress)
@@ -162,20 +199,41 @@ export async function POST(req: Request) {
 
       return NextResponse.json({
         success: true,
-        completed: true,
+        completed: isModuleFullyCompleted,
+        moduleCompleted: isModuleFullyCompleted,
+        newlyCompletedResource: true,
         isStudying: Object.keys(updatedResources).length > 0,
         completedResources: currentCompleted,
-        message: "Selamat! Materi telah berhasil dipelajari.",
+        totalResources: expectedTotal,
+        message: isModuleFullyCompleted
+          ? "Selamat! Seluruh materi modul ini telah selesai dipelajari."
+          : "Materi berhasil diselesaikan! Lanjutkan materi berikutnya.",
       });
+    }
+
+    // Auto-heal status lama jika moduleStatuses[moduleSlug] terlanjur true padahal belum semua materi selesai
+    if (moduleStatuses[moduleSlug] === true && !isModuleFullyCompleted) {
+      const cleanedStatuses = { ...moduleStatuses };
+      delete cleanedStatuses[moduleSlug];
+      await db
+        .update(roadmapProgress)
+        .set({
+          moduleStatuses: cleanedStatuses,
+          updatedAt: new Date(),
+        })
+        .where(eq(roadmapProgress.id, progress.id));
     }
 
     const hasActivePending = Object.keys(updatedResources).length > 0;
 
     return NextResponse.json({
       success: true,
-      completed: moduleStatuses[moduleSlug] === true,
+      completed: isModuleFullyCompleted,
+      moduleCompleted: isModuleFullyCompleted,
+      newlyCompletedResource: false,
       isStudying: hasActivePending,
       completedResources: currentCompleted,
+      totalResources: expectedTotal,
       message: hasActivePending ? "Materi sedang dipelajari." : "Sesi belajar telah selesai.",
     });
   } catch (error) {
