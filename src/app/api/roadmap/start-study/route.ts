@@ -1,16 +1,16 @@
-import { NextResponse } from 'next/server';
-import { db } from '@/db';
-import { assessmentResults, roadmapProgress } from '@/db/schema';
-import { eq, and } from 'drizzle-orm';
-import { auth } from '@/auth';
-import { z } from 'zod';
-import { findCareerProfile, CAREER_PROFILES } from '@/data/gaplessData';
-import { checkModuleSequence, MIN_STUDY_SECONDS } from '@/lib/roadmapSequence';
-import { hasActivePro } from '@/lib/payment_service';
+import { NextResponse } from "next/server";
+import { db } from "@/db";
+import { assessmentResults, roadmapProgress } from "@/db/schema";
+import { eq, and } from "drizzle-orm";
+import { auth } from "@/auth";
+import { z } from "zod";
+import { findCareerProfile, CAREER_PROFILES } from "@/data/gaplessData";
+import { checkModuleSequence, MIN_STUDY_SECONDS } from "@/lib/roadmapSequence";
+import { hasActivePro } from "@/lib/payment_service";
 
 const RequestSchema = z.object({
-  assessmentId: z.string().min(1, 'Missing assessmentId'),
-  moduleSlug: z.string().min(1, 'Missing moduleSlug'),
+  assessmentId: z.string().min(1, "Missing assessmentId"),
+  moduleSlug: z.string().min(1, "Missing moduleSlug"),
   resourceIndex: z.number().optional(),
 });
 
@@ -18,19 +18,20 @@ export async function POST(req: Request) {
   try {
     const session = await auth();
     if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const rawBody = await req.json();
     const validationResult = RequestSchema.safeParse(rawBody);
     if (!validationResult.success) {
       return NextResponse.json(
-        { error: 'Bad Request', details: validationResult.error.format() },
+        { error: "Bad Request", details: validationResult.error.format() },
         { status: 400 }
       );
     }
 
     const { assessmentId, moduleSlug, resourceIndex } = validationResult.data;
+    const targetResourceIndex = resourceIndex ?? 0;
 
     // 1. Ambil data asesmen milik user
     const assessment = await db.query.assessmentResults.findFirst({
@@ -42,14 +43,14 @@ export async function POST(req: Request) {
 
     if (!assessment || !assessment.selectedCareer) {
       return NextResponse.json(
-        { error: 'Asesmen tidak ditemukan atau karier belum dipilih' },
+        { error: "Asesmen tidak ditemukan atau karier belum dipilih" },
         { status: 404 }
       );
     }
 
     const careerSlug =
       assessment.careerSlug ||
-      assessment.selectedCareer.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+      assessment.selectedCareer.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)+/g, "");
 
     const profile =
       findCareerProfile(careerSlug) ||
@@ -92,40 +93,45 @@ export async function POST(req: Request) {
     if (!sequenceCheck.isUnlocked) {
       return NextResponse.json(
         {
-          error: 'Forbidden',
-          message: sequenceCheck.reason || 'Modul ini masih terkunci. Selesaikan modul sebelumnya terlebih dahulu.',
+          error: "Forbidden",
+          message: sequenceCheck.reason || "Modul ini masih terkunci. Selesaikan modul sebelumnya terlebih dahulu.",
         },
         { status: 403 }
       );
     }
 
-    // 4. Jika modul sudah selesai sebelumnya, tidak perlu mencatat sesi belajar baru
-    if (moduleStatuses[moduleSlug] === true) {
+    // 4. Cek apakah resource spesifik ini sudah selesai
+    const completedResourcesMap = (moduleStatuses._completed_resources as Record<string, number[]>) || {};
+    const moduleCompletedResources = completedResourcesMap[moduleSlug] || [];
+    if (moduleCompletedResources.includes(targetResourceIndex)) {
       return NextResponse.json({
         success: true,
         alreadyCompleted: true,
         startedAt: Date.now(),
-        minStudySeconds: MIN_STUDY_SECONDS,
       });
     }
 
-    // 5. Catat / perbarui sesi belajar di server
+    // 5. Catat / perbarui sesi belajar untuk resource spesifik di server
     const currentSessions = (moduleStatuses._study_sessions as Record<string, any>) || {};
     const now = Date.now();
-    const existingSession = currentSessions[moduleSlug];
+    const existingSession = currentSessions[moduleSlug] || {};
+    const resourceSessions = { ...(existingSession.resources || {}) };
 
     const startedAt =
-      existingSession?.startedAt && now - existingSession.startedAt < 24 * 60 * 60 * 1000
-        ? existingSession.startedAt
+      resourceSessions[targetResourceIndex] && now - resourceSessions[targetResourceIndex] < 24 * 60 * 60 * 1000
+        ? resourceSessions[targetResourceIndex]
         : now;
+
+    resourceSessions[targetResourceIndex] = startedAt;
 
     const updatedStatuses = {
       ...moduleStatuses,
       _study_sessions: {
         ...currentSessions,
         [moduleSlug]: {
-          startedAt,
-          resourceIndex: resourceIndex ?? 0,
+          startedAt: existingSession.startedAt || startedAt,
+          resourceIndex: targetResourceIndex,
+          resources: resourceSessions,
           updatedAt: now,
         },
       },
@@ -142,11 +148,10 @@ export async function POST(req: Request) {
     return NextResponse.json({
       success: true,
       startedAt,
-      minStudySeconds: MIN_STUDY_SECONDS,
-      message: 'Sesi belajar telah dimulai.',
+      message: "Sesi belajar telah dimulai.",
     });
   } catch (error) {
-    console.error('Error starting study session:', error);
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    console.error("Error starting study session:", error);
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }

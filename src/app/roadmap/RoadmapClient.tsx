@@ -88,14 +88,9 @@ export default function RoadmapClient({ history, initialAssessmentId, serverUser
             const moduleStatuses: Record<string, boolean> = (selectedHistory.moduleStatuses as Record<string, boolean>) || {};
             const slugify = (text: string) => text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
 
-            const completedModules = phase.modules.filter((_module: string, idx: number) => {
+            const completedModules = phase.modules.filter((_module: string) => {
               const moduleSlug = slugify(_module);
-              if (moduleStatuses[moduleSlug]) return true;
-
-              const skill = profile.skills[idx % profile.skills.length];
-              if (!skill) return false;
-              const userLevel = rawSkillRatings[skill.name] ?? 0;
-              return userLevel >= skill.required;
+              return !!moduleStatuses[moduleSlug];
             });
 
             return {
@@ -153,14 +148,9 @@ export default function RoadmapClient({ history, initialAssessmentId, serverUser
               };
             }
 
-            const completedModules = phase.modules.filter((_module: string, idx: number) => {
+            const completedModules = phase.modules.filter((_module: string) => {
               const moduleSlug = slugify(_module);
-              if (moduleStatuses[moduleSlug]) return true;
-
-              const skill = profile.skills[idx % profile.skills.length];
-              if (!skill) return false;
-              const userLevel = rawSkillRatings[skill.name] ?? 0;
-              return userLevel >= skill.required;
+              return !!moduleStatuses[moduleSlug];
             });
 
             return {

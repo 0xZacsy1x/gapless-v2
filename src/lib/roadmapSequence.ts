@@ -1,6 +1,6 @@
 import { CareerProfile } from '@/data/gaplessData';
 
-export const MIN_STUDY_SECONDS = 120; // 2 menit waktu minimal belajar
+export const MIN_STUDY_SECONDS = 300; // 5 menit waktu minimal belajar
 
 export function slugify(text: string): string {
   return text
@@ -20,18 +20,9 @@ export function isModuleDone(params: {
   moduleStatuses: Record<string, any>;
   skillRatings: Record<string, number>;
 }): boolean {
-  const { moduleSlug, moduleIndexInPhase, profile, moduleStatuses, skillRatings } = params;
-  if (moduleStatuses[moduleSlug] === true) return true;
-
-  if (profile.skills && profile.skills.length > 0) {
-    const skill = profile.skills[moduleIndexInPhase % profile.skills.length];
-    if (skill) {
-      const userLevel = skillRatings[skill.name] ?? 0;
-      if (userLevel >= skill.required) return true;
-    }
-  }
-
-  return false;
+  const { moduleSlug, moduleStatuses } = params;
+  // Modul selesai hanya jika user benar-benar telah menyelesaikannya lewat sesi belajar
+  return moduleStatuses[moduleSlug] === true;
 }
 
 export interface ModuleSequenceStatus {

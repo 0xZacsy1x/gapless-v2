@@ -1,35 +1,36 @@
-import { NextResponse } from 'next/server';
-import { db } from '@/db';
-import { assessmentResults, roadmapProgress } from '@/db/schema';
-import { eq, and } from 'drizzle-orm';
-import { auth } from '@/auth';
-import { z } from 'zod';
-import { findCareerProfile, CAREER_PROFILES } from '@/data/gaplessData';
-import { checkModuleSequence, MIN_STUDY_SECONDS } from '@/lib/roadmapSequence';
-import { hasActivePro } from '@/lib/payment_service';
+import { NextResponse } from "next/server";
+import { db } from "@/db";
+import { assessmentResults, roadmapProgress } from "@/db/schema";
+import { eq, and } from "drizzle-orm";
+import { auth } from "@/auth";
+import { z } from "zod";
+import { findCareerProfile, CAREER_PROFILES } from "@/data/gaplessData";
+import { checkModuleSequence, MIN_STUDY_SECONDS } from "@/lib/roadmapSequence";
+import { hasActivePro } from "@/lib/payment_service";
 
 const RequestSchema = z.object({
-  assessmentId: z.string().min(1, 'Missing assessmentId'),
-  moduleSlug: z.string().min(1, 'Missing moduleSlug'),
+  assessmentId: z.string().min(1, "Missing assessmentId"),
+  moduleSlug: z.string().min(1, "Missing moduleSlug"),
+  resourceIndex: z.number().optional(),
 });
 
 export async function POST(req: Request) {
   try {
     const session = await auth();
     if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const rawBody = await req.json();
     const validationResult = RequestSchema.safeParse(rawBody);
     if (!validationResult.success) {
       return NextResponse.json(
-        { error: 'Bad Request', details: validationResult.error.format() },
+        { error: "Bad Request", details: validationResult.error.format() },
         { status: 400 }
       );
     }
 
-    const { assessmentId, moduleSlug } = validationResult.data;
+    const { assessmentId, moduleSlug, resourceIndex } = validationResult.data;
 
     // 1. Ambil data asesmen milik user
     const assessment = await db.query.assessmentResults.findFirst({
@@ -41,14 +42,14 @@ export async function POST(req: Request) {
 
     if (!assessment || !assessment.selectedCareer) {
       return NextResponse.json(
-        { error: 'Asesmen tidak ditemukan atau karier belum dipilih' },
+        { error: "Asesmen tidak ditemukan atau karier belum dipilih" },
         { status: 404 }
       );
     }
 
     const careerSlug =
       assessment.careerSlug ||
-      assessment.selectedCareer.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+      assessment.selectedCareer.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)+/g, "");
 
     const profile =
       findCareerProfile(careerSlug) ||
@@ -64,23 +65,13 @@ export async function POST(req: Request) {
     });
 
     if (!progress) {
-      return NextResponse.json({ error: 'Progress belum diinisialisasi' }, { status: 404 });
+      return NextResponse.json({ error: "Progress belum diinisialisasi" }, { status: 404 });
     }
 
     const moduleStatuses = (progress.moduleStatuses as Record<string, any>) || {};
     const skillRatings = (assessment.skillRatings as Record<string, number>) || {};
 
-    // 3. Jika modul sudah selesai sebelumnya, langsung return sukses idempotent
-    if (moduleStatuses[moduleSlug] === true) {
-      return NextResponse.json({
-        success: true,
-        completed: true,
-        alreadyCompleted: true,
-        message: 'Modul sudah selesai sebelumnya.',
-      });
-    }
-
-    // 4. Validasi urutan (Sequence Gating)
+    // 3. Validasi urutan (Sequence Gating)
     const isPro = await hasActivePro(session.user.id);
     const sequenceCheck = checkModuleSequence({
       profile,
@@ -93,37 +84,71 @@ export async function POST(req: Request) {
     if (!sequenceCheck.isUnlocked) {
       return NextResponse.json(
         {
-          error: 'Forbidden',
-          message: sequenceCheck.reason || 'Modul ini masih terkunci.',
+          error: "Forbidden",
+          message: sequenceCheck.reason || "Modul ini masih terkunci.",
         },
         { status: 403 }
       );
     }
 
-    // 5. Cek Sesi Belajar yang aktif
+    // 4. Cek Sesi Belajar per resource
     const studySessions = (moduleStatuses._study_sessions as Record<string, any>) || {};
     const sessionData = studySessions[moduleSlug];
+    const completedResourcesMap = (moduleStatuses._completed_resources as Record<string, number[]>) || {};
+    const currentCompleted = [...(completedResourcesMap[moduleSlug] || [])];
 
-    if (!sessionData || !sessionData.startedAt) {
+    if (!sessionData) {
       return NextResponse.json({
         success: true,
-        completed: false,
-        noSession: true,
-        message: 'Belum ada sesi belajar yang dimulai untuk modul ini.',
+        completed: moduleStatuses[moduleSlug] === true,
+        isStudying: false,
+        completedResources: currentCompleted,
+        message: "Tidak ada sesi belajar aktif.",
       });
     }
 
     const now = Date.now();
-    const elapsedSeconds = Math.floor((now - sessionData.startedAt) / 1000);
+    const updatedResources = { ...(sessionData.resources || {}) };
 
-    if (elapsedSeconds >= MIN_STUDY_SECONDS) {
-      // Waktu belajar memenuhi syarat (>= 120 detik) -> Tandai Selesai Otomatis!
-      const updatedSessions = { ...studySessions };
-      delete updatedSessions[moduleSlug];
+    // Migrasi sesi lama yang hanya punya startedAt & resourceIndex
+    if (Object.keys(updatedResources).length === 0 && sessionData.startedAt) {
+      const idx = sessionData.resourceIndex ?? 0;
+      updatedResources[idx] = sessionData.startedAt;
+    }
+
+    let newlyCompleted = false;
+
+    // Evaluasi durasi belajar untuk setiap resource yang aktif
+    for (const [resIdxStr, startTime] of Object.entries(updatedResources)) {
+      const resIdx = parseInt(resIdxStr, 10);
+      const elapsed = Math.floor((now - Number(startTime)) / 1000);
+
+      if (elapsed >= MIN_STUDY_SECONDS) {
+        if (!currentCompleted.includes(resIdx)) {
+          currentCompleted.push(resIdx);
+          newlyCompleted = true;
+        }
+        delete updatedResources[resIdx];
+      }
+    }
+
+    if (newlyCompleted) {
+      // Tandai modul ini selesai di roadmap dan simpan resource yang selesai
+      const updatedSessions = {
+        ...studySessions,
+        [moduleSlug]: {
+          ...sessionData,
+          resources: updatedResources,
+        },
+      };
 
       const updatedStatuses = {
         ...moduleStatuses,
         [moduleSlug]: true,
+        _completed_resources: {
+          ...completedResourcesMap,
+          [moduleSlug]: currentCompleted,
+        },
         _study_sessions: updatedSessions,
       };
 
@@ -138,22 +163,23 @@ export async function POST(req: Request) {
       return NextResponse.json({
         success: true,
         completed: true,
-        elapsedSeconds,
-        message: 'Selamat! Modul telah berhasil diselesaikan.',
-      });
-    } else {
-      // Waktu belajar belum mencapai syarat
-      const remainingSeconds = MIN_STUDY_SECONDS - elapsedSeconds;
-      return NextResponse.json({
-        success: true,
-        completed: false,
-        elapsedSeconds,
-        remainingSeconds,
-        message: `Pelajari materi minimal ${MIN_STUDY_SECONDS} detik. Sisa waktu: ${remainingSeconds} detik lagi.`,
+        isStudying: Object.keys(updatedResources).length > 0,
+        completedResources: currentCompleted,
+        message: "Selamat! Materi telah berhasil dipelajari.",
       });
     }
+
+    const hasActivePending = Object.keys(updatedResources).length > 0;
+
+    return NextResponse.json({
+      success: true,
+      completed: moduleStatuses[moduleSlug] === true,
+      isStudying: hasActivePending,
+      completedResources: currentCompleted,
+      message: hasActivePending ? "Materi sedang dipelajari." : "Sesi belajar telah selesai.",
+    });
   } catch (error) {
-    console.error('Error checking study session:', error);
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    console.error("Error checking study session:", error);
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }

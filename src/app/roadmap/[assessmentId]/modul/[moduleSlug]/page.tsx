@@ -130,6 +130,9 @@ export default async function ModuleDetailPage({ params }: { params: Promise<{ a
     skillRatings,
   });
 
+  const completedResourcesMap = (moduleStatuses._completed_resources as Record<string, number[]>) || {};
+  const initialCompletedResources = completedResourcesMap[moduleSlug] || (isCompleted ? [0] : []);
+
   // 6. Ambil data kurasi modul
   const detailData = MODULE_DETAILS[moduleSlug] || null;
 
@@ -146,6 +149,7 @@ export default async function ModuleDetailPage({ params }: { params: Promise<{ a
           detailData={detailData}
           moduleTitle={moduleTitle || moduleSlug}
           isCompleted={isCompleted}
+          initialCompletedResources={initialCompletedResources}
         />
       </main>
     </div>

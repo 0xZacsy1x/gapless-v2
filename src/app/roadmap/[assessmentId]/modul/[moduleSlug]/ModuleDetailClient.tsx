@@ -30,6 +30,7 @@ interface Props {
   detailData: ModuleDetail | null;
   moduleTitle: string;
   isCompleted: boolean;
+  initialCompletedResources?: number[];
 }
 
 export default function ModuleDetailClient({
@@ -41,11 +42,15 @@ export default function ModuleDetailClient({
   detailData: initialDetailData,
   moduleTitle,
   isCompleted: initialCompleted,
+  initialCompletedResources = [],
 }: Props) {
   const router = useRouter();
   const context = useGaplessContext();
 
   const [isCompleted, setIsCompleted] = useState(initialCompleted);
+  const [completedResources, setCompletedResources] = useState<number[]>(
+    initialCompletedResources.length > 0 ? initialCompletedResources : (initialCompleted ? [0] : [])
+  );
   const [isStudying, setIsStudying] = useState(false);
   const [studyNotice, setStudyNotice] = useState<string | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -57,7 +62,7 @@ export default function ModuleDetailClient({
 
   // Fungsi pengecekan durasi belajar ke server (Idempotent)
   const checkStudyProgress = useCallback(async (showNoticeOnIncomplete = true) => {
-    if (isCompleted || !assessmentId || isCheckingRef.current) return;
+    if (!assessmentId || isCheckingRef.current) return;
 
     try {
       isCheckingRef.current = true;
@@ -69,17 +74,20 @@ export default function ModuleDetailClient({
 
       if (res.ok) {
         const data = await res.json();
+        if (data.completedResources) {
+          setCompletedResources(data.completedResources);
+        }
         if (data.completed) {
           setIsCompleted(true);
-          setIsStudying(false);
+          setIsStudying(data.isStudying || false);
           setStudyNotice(null);
-          setToastMessage('Modul selesai! Modul berikutnya terbuka ✓');
+          setToastMessage('Materi selesai! Progres berhasil tercatat ✓');
           router.refresh();
-        } else if (data.remainingSeconds !== undefined) {
+        } else if (data.isStudying) {
           setIsStudying(true);
           if (showNoticeOnIncomplete) {
             setStudyNotice(
-              `Sedang dipelajari — Pelajari dulu sebentar (sisa ${data.remainingSeconds} detik), centang hijau akan otomatis muncul setelah kamu kembali.`
+              'Sedang dipelajari — Pelajari materi di tab baru dengan fokus. Centang hijau akan otomatis muncul setelah kamu kembali.'
             );
           }
         }
@@ -89,7 +97,7 @@ export default function ModuleDetailClient({
     } finally {
       isCheckingRef.current = false;
     }
-  }, [assessmentId, moduleSlug, isCompleted, router]);
+  }, [assessmentId, moduleSlug, router]);
 
   // Event listener saat user kembali ke tab (visibilitychange / focus / pageshow)
   useEffect(() => {
@@ -123,10 +131,10 @@ export default function ModuleDetailClient({
   const handleOpenResource = async (index: number, url?: string) => {
     setOpenedResources((prev) => (prev.includes(index) ? prev : [...prev, index]));
 
-    if (isCompleted || !assessmentId) return;
+    if (!assessmentId || completedResources.includes(index)) return;
 
     setIsStudying(true);
-    setStudyNotice('Sesi belajar aktif. Pelajari materi di tab baru, modul akan selesai otomatis saat kamu kembali.');
+    setStudyNotice('Sesi belajar aktif. Pelajari materi di tab baru dengan fokus, centang hijau akan otomatis muncul saat kamu kembali.');
 
     try {
       await fetch('/api/roadmap/start-study', {
@@ -376,19 +384,20 @@ export default function ModuleDetailClient({
                 const Icon = isVideo ? Play : res.isFree ? Book : Lock;
                 const isValidUrl = res.url && res.url !== '#';
                 const hasOpened = openedResources.includes(idx);
+                const isResourceDone = completedResources.includes(idx);
                 
                 return (
                   <div 
                     key={idx} 
                     className={`flex items-center p-4 rounded-2xl border bg-white shadow-xs transition-all gap-4 ${
-                      isCompleted
+                      isResourceDone
                         ? 'border-emerald-200 bg-emerald-50/20'
                         : hasOpened
                           ? 'border-blue-300 bg-blue-50/10'
                           : 'border-slate-200 hover:border-blue-300'
                     }`}
                   >
-                    <div className={`${isCompleted ? 'bg-emerald-600' : hasOpened ? 'bg-blue-600' : 'bg-slate-700'} text-white p-3 rounded-xl shrink-0 transition-colors`}>
+                    <div className={`${isResourceDone ? 'bg-emerald-600' : hasOpened ? 'bg-blue-600' : 'bg-slate-700'} text-white p-3 rounded-xl shrink-0 transition-colors`}>
                       <Icon size={18} fill={isVideo ? "currentColor" : "none"} />
                     </div>
                     <div className="flex flex-col flex-1 min-w-0">
@@ -428,14 +437,14 @@ export default function ModuleDetailClient({
                         rel="noopener noreferrer"
                         onClick={() => handleOpenResource(idx, res.url)}
                         className={`shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold transition-all border cursor-pointer ${
-                          isCompleted
+                          isResourceDone
                             ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
                             : hasOpened
                               ? 'bg-blue-50 text-blue-700 border-blue-200'
                               : 'bg-slate-900 text-white hover:bg-slate-800 border-slate-900'
                         }`}
                       >
-                        {isCompleted ? (
+                        {isResourceDone ? (
                           <>
                             <Check className="w-3.5 h-3.5 text-emerald-600" />
                             <span className="hidden sm:inline">Selesai</span>
@@ -462,7 +471,7 @@ export default function ModuleDetailClient({
             <div className="bg-slate-50 border border-slate-200/80 rounded-2xl p-4 text-xs text-slate-600 flex items-start gap-2.5 mt-4 leading-relaxed">
               <span className="text-base shrink-0">💡</span>
               <span>
-                <strong>Cara menyelesaikan modul:</strong> Klik salah satu link materi di atas untuk belajar di tab baru. Saat kamu kembali ke tab Gapless ini setelah minimal <strong>2 menit</strong>, modul akan otomatis tercentang dan modul berikutnya akan terbuka.
+                <strong>Cara menyelesaikan modul:</strong> Klik salah satu link materi di atas untuk belajar di tab baru. Saat kamu kembali ke tab Gapless ini setelah mempelajari materi, materi yang dipelajari akan otomatis tercentang dan modul berikutnya akan terbuka.
               </span>
             </div>
           </div>
@@ -486,7 +495,7 @@ export default function ModuleDetailClient({
         ) : isStudying ? (
           <div className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-blue-50 text-blue-800 font-bold border border-blue-200 text-xs sm:text-sm">
             <Loader2 size={16} className="text-blue-600 animate-spin" />
-            <span>Sedang Dipelajari — Kembali ke tab ini setelah 2 menit</span>
+            <span>Sedang Dipelajari — Kembali ke tab ini setelah selesai belajar</span>
           </div>
         ) : (
           <div className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-slate-100 text-slate-500 font-medium border border-slate-200 text-xs sm:text-sm">
