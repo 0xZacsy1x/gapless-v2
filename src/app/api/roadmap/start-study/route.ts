@@ -100,9 +100,20 @@ export async function POST(req: Request) {
       );
     }
 
-    // 4. Cek apakah resource spesifik ini sudah selesai
+    // 4. Cek urutan materi: Materi berikutnya hanya bisa dibuka jika materi sebelumnya sudah selesai
     const completedResourcesMap = (moduleStatuses._completed_resources as Record<string, number[]>) || {};
     const moduleCompletedResources = completedResourcesMap[moduleSlug] || [];
+
+    if (targetResourceIndex > 0 && !moduleCompletedResources.includes(targetResourceIndex - 1)) {
+      return NextResponse.json(
+        {
+          error: "Forbidden",
+          message: "Materi ini masih terkunci. Selesaikan materi sebelumnya terlebih dahulu.",
+        },
+        { status: 403 }
+      );
+    }
+
     if (moduleCompletedResources.includes(targetResourceIndex)) {
       return NextResponse.json({
         success: true,

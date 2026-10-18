@@ -16,7 +16,8 @@ import {
   Loader2,
   ExternalLink,
   Clock,
-  Check
+  Check,
+  X
 } from 'lucide-react';
 import type { CareerProfile, CurriculumPhase, ModuleDetail } from '@/data/gaplessData';
 import { useGaplessContext } from '@/contexts/CareerContext';
@@ -59,6 +60,15 @@ export default function ModuleDetailClient({
   const [detailData, setDetailData] = useState<ModuleDetail | null>(initialDetailData);
   const [isGenerating, setIsGenerating] = useState(!initialDetailData);
   const isCheckingRef = useRef(false);
+
+  // Auto-dismiss toast setelah 4 detik
+  useEffect(() => {
+    if (!toastMessage) return;
+    const timer = setTimeout(() => {
+      setToastMessage(null);
+    }, 4000);
+    return () => clearTimeout(timer);
+  }, [toastMessage]);
 
   // Fungsi pengecekan durasi belajar ke server (Idempotent)
   const checkStudyProgress = useCallback(async (showNoticeOnIncomplete = true) => {
@@ -127,8 +137,14 @@ export default function ModuleDetailClient({
     };
   }, [isCompleted, checkStudyProgress]);
 
-  // Handler saat user mengklik sumber belajar eksternal
+  // Handler saat user mengklik sumber belajar eksternal (Harus urut dari atas)
   const handleOpenResource = async (index: number, url?: string) => {
+    const isUnlocked = index === 0 || completedResources.includes(index - 1);
+    if (!isUnlocked) {
+      setStudyNotice("Selesaikan materi sebelumnya terlebih dahulu untuk membuka materi ini.");
+      return;
+    }
+
     setOpenedResources((prev) => (prev.includes(index) ? prev : [...prev, index]));
 
     if (!assessmentId || completedResources.includes(index)) return;
@@ -258,11 +274,18 @@ export default function ModuleDetailClient({
 
   return (
     <div className="flex flex-col gap-8 pb-20">
-      {/* Toast Notification */}
+      {/* Toast Notification — Auto dismiss dalam 4 detik, posisi di bawah navbar agar tidak menutupi akun */}
       {toastMessage && (
-        <div className="fixed top-6 right-6 z-50 bg-emerald-600 text-white px-5 py-3 rounded-2xl shadow-xl flex items-center gap-2.5 text-sm font-semibold animate-in fade-in slide-in-from-top-4 duration-300">
-          <Sparkles className="w-4 h-4 text-amber-300" />
+        <div className="fixed top-20 right-4 sm:top-24 sm:right-8 z-50 bg-emerald-600 text-white px-4 py-3 rounded-2xl shadow-2xl border border-emerald-500/40 flex items-center gap-3 text-sm font-semibold animate-in fade-in slide-in-from-top-3 duration-300">
+          <Sparkles className="w-4 h-4 text-amber-300 shrink-0" />
           <span>{toastMessage}</span>
+          <button
+            onClick={() => setToastMessage(null)}
+            className="ml-1 p-1 hover:bg-emerald-700/60 rounded-lg transition-colors cursor-pointer text-emerald-100 hover:text-white"
+            aria-label="Tutup notifikasi"
+          >
+            <X className="w-3.5 h-3.5" />
+          </button>
         </div>
       )}
 
@@ -381,27 +404,31 @@ export default function ModuleDetailClient({
             <div className="space-y-3">
               {detailData.resources.map((res, idx) => {
                 const isVideo = res.type === 'Video';
-                const Icon = isVideo ? Play : res.isFree ? Book : Lock;
-                const isValidUrl = res.url && res.url !== '#';
                 const hasOpened = openedResources.includes(idx);
                 const isResourceDone = completedResources.includes(idx);
+                // Terbuka hanya jika materi pertama (idx === 0) atau materi tepat sebelumnya sudah selesai
+                const isUnlocked = idx === 0 || completedResources.includes(idx - 1);
+                const Icon = !isUnlocked ? Lock : isVideo ? Play : res.isFree ? Book : Lock;
+                const isValidUrl = res.url && res.url !== '#';
                 
                 return (
                   <div 
                     key={idx} 
-                    className={`flex items-center p-4 rounded-2xl border bg-white shadow-xs transition-all gap-4 ${
-                      isResourceDone
-                        ? 'border-emerald-200 bg-emerald-50/20'
-                        : hasOpened
-                          ? 'border-blue-300 bg-blue-50/10'
-                          : 'border-slate-200 hover:border-blue-300'
+                    className={`flex items-center p-4 rounded-2xl border transition-all gap-4 ${
+                      !isUnlocked
+                        ? 'border-slate-200/60 bg-slate-50/60 opacity-60 select-none'
+                        : isResourceDone
+                          ? 'border-emerald-200 bg-emerald-50/20'
+                          : hasOpened
+                            ? 'border-blue-300 bg-blue-50/10'
+                            : 'border-slate-200 hover:border-blue-300 bg-white shadow-xs'
                     }`}
                   >
-                    <div className={`${isResourceDone ? 'bg-emerald-600' : hasOpened ? 'bg-blue-600' : 'bg-slate-700'} text-white p-3 rounded-xl shrink-0 transition-colors`}>
-                      <Icon size={18} fill={isVideo ? "currentColor" : "none"} />
+                    <div className={`${!isUnlocked ? 'bg-slate-300 text-slate-500' : isResourceDone ? 'bg-emerald-600 text-white' : hasOpened ? 'bg-blue-600 text-white' : 'bg-slate-700 text-white'} p-3 rounded-xl shrink-0 transition-colors`}>
+                      <Icon size={18} fill={!isUnlocked ? "none" : isVideo ? "currentColor" : "none"} />
                     </div>
                     <div className="flex flex-col flex-1 min-w-0">
-                      {isValidUrl ? (
+                      {isUnlocked && isValidUrl ? (
                         <a 
                           href={res.url} 
                           target="_blank" 
@@ -414,8 +441,9 @@ export default function ModuleDetailClient({
                           <ExternalLink className="w-3.5 h-3.5 text-blue-500 shrink-0" />
                         </a>
                       ) : (
-                        <span className="font-bold text-slate-500 text-sm truncate">
-                          {res.title}
+                        <span className={`font-bold text-sm truncate flex items-center gap-1.5 ${!isUnlocked ? 'text-slate-400' : 'text-slate-500'}`}>
+                          <span className="truncate">{res.title}</span>
+                          {!isUnlocked && <Lock className="w-3.5 h-3.5 text-slate-400 shrink-0" />}
                         </span>
                       )}
                       <span className="text-xs text-slate-400 mt-0.5">{res.provider}</span>
@@ -429,8 +457,13 @@ export default function ModuleDetailClient({
                       </div>
                     </div>
 
-                    {/* Status Tombol Buka */}
-                    {isValidUrl && (
+                    {/* Status Tombol Buka / Terkunci */}
+                    {!isUnlocked ? (
+                      <div className="shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold bg-slate-100 text-slate-400 border border-slate-200/80 cursor-not-allowed">
+                        <Lock className="w-3.5 h-3.5" />
+                        <span className="hidden sm:inline">Terkunci</span>
+                      </div>
+                    ) : isValidUrl ? (
                       <a
                         href={res.url}
                         target="_blank"
@@ -441,7 +474,7 @@ export default function ModuleDetailClient({
                             ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
                             : hasOpened
                               ? 'bg-blue-50 text-blue-700 border-blue-200'
-                              : 'bg-slate-900 text-white hover:bg-slate-800 border-slate-900'
+                              : 'bg-slate-900 text-white hover:bg-slate-800 border-slate-900 shadow-xs'
                         }`}
                       >
                         {isResourceDone ? (
@@ -461,7 +494,7 @@ export default function ModuleDetailClient({
                           </>
                         )}
                       </a>
-                    )}
+                    ) : null}
                   </div>
                 );
               })}
