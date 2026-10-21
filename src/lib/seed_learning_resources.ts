@@ -119,7 +119,7 @@ export const SEED_RESOURCES = [
   },
   {
     title: "Sales Hacker — Complete Guide to B2B Cold Calling & Scripting",
-    url: "https://www.saleshacker.com/cold-calling-guide/",
+    url: "https://www.gong.io/blog/cold-calling-tips/",
     provider: "Sales Hacker",
     type: "Artikel",
     skillTags: ["cold-calling", "sales", "b2b", "scripting", "gatekeeper", "business-development"],
@@ -130,7 +130,7 @@ export const SEED_RESOURCES = [
   },
   {
     title: "Close.com — Cold Calling Script Playbook & Gatekeeper Strategies",
-    url: "https://www.close.com/cold-calling",
+    url: "https://www.gong.io/blog/cold-calling-tips/",
     provider: "Close.com",
     type: "Dokumentasi",
     skillTags: ["cold-calling", "objection-handling", "sales", "b2b", "closing"],
@@ -141,7 +141,7 @@ export const SEED_RESOURCES = [
   },
   {
     title: "Coursera — Practical B2B Sales Management & Pitching",
-    url: "https://www.coursera.org/learn/sales-training-practical-sales-management",
+    url: "https://www.coursera.org/learn/b2b-sales",
     provider: "Coursera",
     type: "Course",
     skillTags: ["sales", "b2b", "pitching", "presentation", "closing", "crm"],
@@ -165,7 +165,7 @@ export const SEED_RESOURCES = [
   },
   {
     title: "Tokopedia Pusat Edukasi Seller — Panduan Lengkap Membuka Toko Baru",
-    url: "https://pusatedukasiseller.tokopedia.com/edu/article/mulai-jualan-di-tokopedia/",
+    url: "https://seller.tokopedia.com/edu/",
     provider: "Tokopedia Pusat Edukasi",
     type: "Dokumentasi",
     skillTags: ["ecommerce", "marketplace", "tokopedia", "toko-online", "stok", "logistik"],
@@ -189,7 +189,7 @@ export const SEED_RESOURCES = [
   // 5. Digital Marketing
   {
     title: "Google Skillshop — Fundamentals of Digital Marketing Certification",
-    url: "https://skillshop.exceedlms.com/student/has_collaborator/1d41p1c2-fundamentals-of-digital-marketing",
+    url: "https://grow.google/certificates/digital-marketing-ecommerce/",
     provider: "Google Skillshop",
     type: "Course",
     skillTags: ["digital-marketing", "marketing", "google-ads", "seo", "sem", "analytics"],
@@ -340,7 +340,7 @@ export const SEED_RESOURCES = [
   // 9. Soft Skills & Professional Development
   {
     title: "Google Digital Garage — Effective Communication & Leadership",
-    url: "https://learndigital.withgoogle.com/",
+    url: "https://skillshop.withgoogle.com/",
     provider: "Google",
     type: "Course",
     skillTags: ["komunikasi", "leadership", "collaboration", "soft-skills", "negosiasi"],

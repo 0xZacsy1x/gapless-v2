@@ -43,7 +43,7 @@ export const CAREER_DOMAIN_CONFIGS: Record<string, CareerDomainConfig> = {
     courseProvider: "Shopee Seller Education Hub",
     courseSearchUrl: (q) => `https://seller.shopee.co.id/edu/search?keyword=${encodeURIComponent(q)}`,
     docProvider: "Tokopedia Pusat Edukasi Seller",
-    docSearchUrl: (q) => `https://pusatedukasiseller.tokopedia.com/edu/search/?q=${encodeURIComponent(q)}`,
+    docSearchUrl: (q) => `https://seller.tokopedia.com/edu/search?keyword=${encodeURIComponent(q)}`,
     articleProvider: "TikTok Shop Academy",
     articleSearchUrl: (q) => `https://seller-id.tiktok.com/university/home?q=${encodeURIComponent(q)}`,
     videoQuerySuffix: "tutorial jualan toko online marketplace shopee tokopedia",
@@ -51,7 +51,7 @@ export const CAREER_DOMAIN_CONFIGS: Record<string, CareerDomainConfig> = {
   "community-manager": {
     domainTitle: "Digital Marketing Specialist",
     courseProvider: "Google Skillshop",
-    courseSearchUrl: (q) => `https://skillshop.exceedlms.com/student/catalog?search=${encodeURIComponent(q)}`,
+    courseSearchUrl: (q) => `https://grow.google/certificates/digital-marketing-ecommerce/`,
     docProvider: "Meta Blueprint / Google Search Central",
     docSearchUrl: (q) => `https://developers.google.com/search/docs?hl=id&q=${encodeURIComponent(q)}`,
     articleProvider: "Ahrefs / HubSpot Blog",
@@ -63,7 +63,7 @@ export const CAREER_DOMAIN_CONFIGS: Record<string, CareerDomainConfig> = {
     courseProvider: "HubSpot Academy (Content Marketing)",
     courseSearchUrl: (q) => `https://academy.hubspot.com/courses?query=${encodeURIComponent(q + " content")}`,
     docProvider: "YouTube Creator Academy",
-    docSearchUrl: (q) => `https://creatoracademy.youtube.com/page/browse?query=${encodeURIComponent(q)}`,
+    docSearchUrl: (q) => `https://www.youtube.com/creators/`,
     articleProvider: "Copyblogger / Hootsuite Blog",
     articleSearchUrl: (q) => `https://copyblogger.com/?s=${encodeURIComponent(q)}`,
     videoQuerySuffix: "tutorial content creator copywriting social media",
@@ -73,7 +73,7 @@ export const CAREER_DOMAIN_CONFIGS: Record<string, CareerDomainConfig> = {
     courseProvider: "Canva Design School / Coursera",
     courseSearchUrl: (q) => `https://www.canva.com/designschool/tutorials/?query=${encodeURIComponent(q)}`,
     docProvider: "Adobe Help & Tutorials",
-    docSearchUrl: (q) => `https://helpx.adobe.com/id_id/search-results.html?q=${encodeURIComponent(q)}`,
+    docSearchUrl: (q) => `https://www.canva.com/design-school/explore/?query=${encodeURIComponent(q)}`,
     articleProvider: "Behance / Envato Tuts+",
     articleSearchUrl: (q) => `https://www.behance.net/search/projects?search=${encodeURIComponent(q)}`,
     videoQuerySuffix: "tutorial graphic design illustrator photoshop typography",
@@ -103,7 +103,7 @@ export const CAREER_DOMAIN_CONFIGS: Record<string, CareerDomainConfig> = {
     courseProvider: "Coursera (Research Methodologies)",
     courseSearchUrl: (q) => `https://www.coursera.org/search?query=${encodeURIComponent(q + " Research Methodology")}`,
     docProvider: "Pew Research Center / Statista",
-    docSearchUrl: (q) => `https://www.statista.com/search/?q=${encodeURIComponent(q)}`,
+    docSearchUrl: (q) => `https://www.pewresearch.org/search/${encodeURIComponent(q)}`,
     articleProvider: "Harvard Business Review / McKinsey",
     articleSearchUrl: (q) => `https://hbr.org/search?term=${encodeURIComponent(q)}`,
     videoQuerySuffix: "business research strategy quantitative data synthesis tutorial",
@@ -173,11 +173,11 @@ export const HANDCRAFTED_MODULE_DETAILS: Record<string, Partial<CuratedModuleDet
         url: "https://www.youtube.com/results?search_query=cold+calling+techniques+b2b+sales+tutorial"
       },
       {
-        title: "Close.com — Cold Calling Script Playbook & Gatekeeper Strategies",
-        provider: "Close.com",
+        title: "Gong — Data-Backed Cold Calling Tips & Discovery Call Playbook",
+        provider: "Gong.io",
         type: "Dokumentasi",
         isFree: true,
-        url: "https://www.close.com/cold-calling"
+        url: "https://www.gong.io/blog/cold-calling-tips/"
       }
     ]
   },
@@ -199,11 +199,11 @@ export const HANDCRAFTED_MODULE_DETAILS: Record<string, Partial<CuratedModuleDet
         url: "https://academy.hubspot.com/courses/email-marketing"
       },
       {
-        title: "Lemlist Blog — B2B Cold Email Masterclass & High-Converting Templates",
-        provider: "Lemlist",
+        title: "Mailchimp — Panduan Lengkap Email Outreach & Deliverability",
+        provider: "Mailchimp Guides",
         type: "Artikel",
         isFree: true,
-        url: "https://www.lemlist.com/blog/cold-email-guide"
+        url: "https://mailchimp.com/resources/email-marketing-field-guide/"
       },
       {
         title: "Cara Menulis Email Outreach B2B yang Menghasilkan Balasan Eksekutif",
@@ -213,11 +213,11 @@ export const HANDCRAFTED_MODULE_DETAILS: Record<string, Partial<CuratedModuleDet
         url: "https://www.youtube.com/results?search_query=b2b+cold+email+outreach+tutorial"
       },
       {
-        title: "Mailshake — Complete Guide to Cold Email Deliverability & Anti-Spam",
-        provider: "Mailshake",
+        title: "Coursera — High-Impact Business Email Writing & Outreach",
+        provider: "Coursera",
         type: "Dokumentasi",
         isFree: true,
-        url: "https://mailshake.com/cold-email-guide/"
+        url: "https://www.coursera.org/search?query=cold+email"
       }
     ]
   },
@@ -232,11 +232,11 @@ export const HANDCRAFTED_MODULE_DETAILS: Record<string, Partial<CuratedModuleDet
     ],
     resources: [
       {
-        title: "Coursera — Sales Training: Practical Sales Fundamentals",
+        title: "Coursera — Fundamentals of B2B Sales & Pipeline Management",
         provider: "Coursera",
         type: "Course",
         isFree: true,
-        url: "https://www.coursera.org/learn/sales-training-practical-sales-management"
+        url: "https://www.coursera.org/learn/b2b-sales"
       },
       {
         title: "Harvard Business Review — The New B2B Sales Process",
@@ -279,11 +279,11 @@ export const HANDCRAFTED_MODULE_DETAILS: Record<string, Partial<CuratedModuleDet
         url: "https://www.linkedin.com/help/linkedin/answer/a548443"
       },
       {
-        title: "HubSpot — How to Use LinkedIn for B2B Sales Prospecting",
-        provider: "HubSpot",
+        title: "Coursera — Social Selling and B2B Prospecting on LinkedIn",
+        provider: "Coursera",
         type: "Artikel",
         isFree: true,
-        url: "https://blog.hubspot.com/sales/linkedin-for-sales-prospecting"
+        url: "https://www.coursera.org/search?query=linkedin+social+selling"
       },
       {
         title: "Tutorial Praktis Optimasi Profil & Prospek B2B Sales di LinkedIn",
@@ -312,11 +312,11 @@ export const HANDCRAFTED_MODULE_DETAILS: Record<string, Partial<CuratedModuleDet
     ],
     resources: [
       {
-        title: "Coursera — Effective Business Communication & Professional Rapport",
+        title: "Coursera (Wharton) — Improving Communication Skills in Business",
         provider: "Coursera",
         type: "Course",
         isFree: true,
-        url: "https://www.coursera.org/learn/business-communication"
+        url: "https://www.coursera.org/learn/wharton-communication-skills"
       },
       {
         title: "Harvard Business Review — Communicating with Impact and Influence",
@@ -333,11 +333,11 @@ export const HANDCRAFTED_MODULE_DETAILS: Record<string, Partial<CuratedModuleDet
         url: "https://www.youtube.com/results?search_query=business+communication+skills+for+sales"
       },
       {
-        title: "Google Digital Garage — Effective Communication in the Workplace",
-        provider: "Google Digital Garage",
+        title: "Grow with Google — Workplace Communication & Professional Skills",
+        provider: "Grow with Google",
         type: "Dokumentasi",
         isFree: true,
-        url: "https://learndigital.withgoogle.com/digitalgarage"
+        url: "https://grow.google/certificates/"
       }
     ]
   },
@@ -360,11 +360,11 @@ export const HANDCRAFTED_MODULE_DETAILS: Record<string, Partial<CuratedModuleDet
         url: "https://seller.shopee.co.id/edu/article/33"
       },
       {
-        title: "Tokopedia Pusat Edukasi Seller — Panduan Lengkap Membuka Toko Baru",
+        title: "Tokopedia Pusat Edukasi Seller — Panduan Resmi Membuka Toko Baru",
         provider: "Tokopedia Pusat Edukasi",
         type: "Dokumentasi",
         isFree: true,
-        url: "https://pusatedukasiseller.tokopedia.com/edu/article/mulai-jualan-di-tokopedia/"
+        url: "https://seller.tokopedia.com/edu/"
       },
       {
         title: "Tutorial Membuka & Mengelola Toko di Shopee & TikTok Shop dari Nol",
@@ -400,11 +400,11 @@ export const HANDCRAFTED_MODULE_DETAILS: Record<string, Partial<CuratedModuleDet
         url: "https://seller.shopee.co.id/edu/article/32"
       },
       {
-        title: "Tokopedia Seller Edu — Strategi SEO Judul Produk agar Mudah Ditemukan",
+        title: "Tokopedia Seller Edu — Panduan Optimasi Judul & Foto Produk",
         provider: "Tokopedia Pusat Edukasi",
         type: "Artikel",
         isFree: true,
-        url: "https://pusatedukasiseller.tokopedia.com/edu/article/tips-judul-produk/"
+        url: "https://seller.tokopedia.com/edu/search?keyword=judul+produk"
       },
       {
         title: "Riset Keyword Judul Produk Marketplace Meningkatkan Penjualan Drastis",
@@ -434,11 +434,11 @@ export const HANDCRAFTED_MODULE_DETAILS: Record<string, Partial<CuratedModuleDet
     ],
     resources: [
       {
-        title: "Google Skillshop — Fundamentals of Digital Marketing Certification",
-        provider: "Google Skillshop",
+        title: "Grow with Google — Digital Marketing & E-commerce Certificate",
+        provider: "Grow with Google",
         type: "Course",
         isFree: true,
-        url: "https://skillshop.exceedlms.com/student/has_collaborator/1d41p1c2-fundamentals-of-digital-marketing"
+        url: "https://grow.google/certificates/digital-marketing-ecommerce/"
       },
       {
         title: "HubSpot Academy — Inbound Digital Marketing Strategy Guide",
@@ -455,11 +455,11 @@ export const HANDCRAFTED_MODULE_DETAILS: Record<string, Partial<CuratedModuleDet
         url: "https://www.youtube.com/results?search_query=belajar+digital+marketing+dari+nol+pemula"
       },
       {
-        title: "Meta Blueprint — Digital Marketing Associate Official Learning",
-        provider: "Meta Blueprint",
+        title: "Meta Official via Coursera — Meta Digital Marketing Associate",
+        provider: "Meta / Coursera",
         type: "Dokumentasi",
         isFree: true,
-        url: "https://www.facebook.com/business/learn"
+        url: "https://www.coursera.org/search?query=meta+digital+marketing"
       }
     ]
   },
@@ -522,11 +522,11 @@ export const HANDCRAFTED_MODULE_DETAILS: Record<string, Partial<CuratedModuleDet
         url: "https://www.canva.com/designschool/courses/graphic-design-basics/"
       },
       {
-        title: "Adobe Help — Color Harmony, Type Pairing & Layout Grid Principles",
-        provider: "Adobe Help",
+        title: "Canva — Color Wheel & Color Theory Fundamentals for Designers",
+        provider: "Canva Design School",
         type: "Dokumentasi",
         isFree: true,
-        url: "https://helpx.adobe.com/creative-cloud/how-to/color-basics.html"
+        url: "https://www.canva.com/colors/color-wheel/"
       },
       {
         title: "Typography & Layout Composition Rules for Graphic Designers",
@@ -700,11 +700,11 @@ export const HANDCRAFTED_MODULE_DETAILS: Record<string, Partial<CuratedModuleDet
         url: "https://www.deeplearning.ai/courses/"
       },
       {
-        title: "Towards Data Science — Practical Math Foundations for AI Engineers",
-        provider: "Towards Data Science",
+        title: "DeepLearning.AI — Mathematics for Machine Learning & Data Science",
+        provider: "Coursera / DeepLearning.AI",
         type: "Artikel",
         isFree: true,
-        url: "https://towardsdatascience.com/mathematics-for-machine-learning-linear-algebra-and-calculus-simplified/"
+        url: "https://www.coursera.org/specializations/mathematics-for-machine-learning-and-data-science"
       }
     ]
   },

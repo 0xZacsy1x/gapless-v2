@@ -310,12 +310,11 @@ export const MODULE_DETAILS: Record<string, ModuleDetail> = {
         url: 'https://www.youtube.com/results?search_query=Studi+Kasus+Redesain+Aplikasi'
       },
       {
-        title: 'Design Thinking Masterclass',
-        provider: 'skillshare.com',
+        title: 'Design Thinking: The Ultimate Guide',
+        provider: 'Interaction Design Foundation',
         type: 'Course',
-        isFree: false,
-        price: 'Rp 149.000',
-        url: 'https://www.skillshare.com/en/search?query=Design+Thinking+Masterclass'
+        isFree: true,
+        url: 'https://www.interaction-design.org/courses/design-thinking-the-ultimate-guide'
       }
     ]
   }
