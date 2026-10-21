@@ -348,16 +348,16 @@ Output WAJIB berupa JSON murni dengan skema:
         model: google('gemini-3.5-flash-lite'),
         system: systemPrompt,
         messages: [{ role: 'user', content: JSON.stringify(promptInput) }],
-        maxOutputTokens: 2500,
-        abortSignal: AbortSignal.timeout(12000),
+        maxOutputTokens: 6000,
+        abortSignal: AbortSignal.timeout(25000),
       });
     } catch {
       aiRes = await generateText({
         model: google('gemini-3.8-flash'),
         system: systemPrompt,
         messages: [{ role: 'user', content: JSON.stringify(promptInput) }],
-        maxOutputTokens: 2500,
-        abortSignal: AbortSignal.timeout(12000),
+        maxOutputTokens: 6000,
+        abortSignal: AbortSignal.timeout(25000),
       });
     }
 
@@ -377,6 +377,28 @@ Output WAJIB berupa JSON murni dengan skema:
       priorityList: fallbackPriorityList,
     };
   }
+}
+
+/**
+ * Validasi apakah record report_contents di DB benar-benar lengkap dan valid
+ */
+function isCompleteReportRecord(record: typeof reportContents.$inferSelect | undefined | null): boolean {
+  if (!record || record.isStale) return false;
+
+  // Validasi Action Plan 30/60/90 lengkap dengan phaseTitle & milestone
+  const plan = record.aiActionPlan306090 as any;
+  if (!plan || typeof plan !== 'object') return false;
+  if (!plan.day30?.phaseTitle || !plan.day60?.phaseTitle || !plan.day90?.phaseTitle) {
+    return false;
+  }
+
+  // Validasi skill interpretations adalah array
+  const interpretations = record.aiSkillInterpretations;
+  if (!Array.isArray(interpretations)) {
+    return false;
+  }
+
+  return true;
 }
 
 /**
@@ -425,7 +447,7 @@ export async function getOrCreateReportContent(params: {
       ),
     });
 
-    if (existing && !existing.isStale) {
+    if (existing && isCompleteReportRecord(existing)) {
       // Reconstruct comprehensive data dari DB
       return buildReportDataFromDb({
         existingRecord: existing,
@@ -460,28 +482,44 @@ export async function getOrCreateReportContent(params: {
 
   const reportNumber = generateReportNumber();
 
-  // Simpan ke Neon DB (report_contents)
-  const [saved] = await db
-    .insert(reportContents)
-    .values({
-      assessmentResultId: assessmentId,
-      userId,
-      careerSlug,
-      reportNumber,
-      aiSkillInterpretations: aiResult.aiSkillInterpretations,
-      aiActionPlan306090: aiResult.aiActionPlan306090,
-      isStale: false,
-    })
-    .onConflictDoUpdate({
-      target: [reportContents.reportNumber],
-      set: {
+  // Simpan atau update ke Neon DB (report_contents)
+  const existingRow = await db.query.reportContents.findFirst({
+    where: and(
+      eq(reportContents.assessmentResultId, assessmentId),
+      eq(reportContents.userId, userId)
+    ),
+  });
+
+  let saved: typeof reportContents.$inferSelect;
+
+  if (existingRow) {
+    const [updated] = await db
+      .update(reportContents)
+      .set({
+        careerSlug,
         aiSkillInterpretations: aiResult.aiSkillInterpretations,
         aiActionPlan306090: aiResult.aiActionPlan306090,
         generatedAt: new Date(),
         isStale: false,
-      },
-    })
-    .returning();
+      })
+      .where(eq(reportContents.id, existingRow.id))
+      .returning();
+    saved = updated;
+  } else {
+    const [inserted] = await db
+      .insert(reportContents)
+      .values({
+        assessmentResultId: assessmentId,
+        userId,
+        careerSlug,
+        reportNumber,
+        aiSkillInterpretations: aiResult.aiSkillInterpretations,
+        aiActionPlan306090: aiResult.aiActionPlan306090,
+        isStale: false,
+      })
+      .returning();
+    saved = inserted;
+  }
 
   return buildReportDataFromDb({
     existingRecord: saved,
@@ -572,19 +610,52 @@ async function buildReportDataFromDb(params: {
     required: s.required,
   }));
 
-  // Interpretations dari DB
-  const skillInterpretations = (existingRecord.aiSkillInterpretations as SkillInterpretation[]) || [];
-  const actionPlan = (existingRecord.aiActionPlan306090 as ActionPlan306090) || {
+  // Interpretations dari DB (dengan validasi array ketat & fallback)
+  let skillInterpretations: SkillInterpretation[] = [];
+  const rawInterpretations = existingRecord.aiSkillInterpretations as any;
+
+  if (Array.isArray(rawInterpretations)) {
+    skillInterpretations = rawInterpretations.filter(
+      (item) => item && typeof item === 'object' && typeof item.skillName === 'string'
+    ) as SkillInterpretation[];
+  }
+
+  // Jika DB kosong atau bukan array, buat fallback terstruktur dari gap skills
+  if (skillInterpretations.length === 0 && skillGapTable.some((s) => s.gap < 0)) {
+    skillInterpretations = skillGapTable
+      .filter((s) => s.gap < 0)
+      .map((s) => ({
+        skillName: s.name,
+        currentLevel: s.current,
+        targetLevel: s.required,
+        canDo: [
+          `Memahami terminologi dasar dan alur kerja standar materi ${s.name}.`,
+          `Mampu menjalankan instruksi teknis dasar dengan bimbingan dan contoh yang ada.`,
+        ],
+        cannotDo: [
+          `Belum mandiri dalam menangani studi kasus tingkat tinggi atau masalah tak terduga.`,
+          `Belum terbiasa mengambil keputusan arsitektur/strategis tanpa arahan senior.`,
+        ],
+        industryExample: `Mengerjakan task implementasi terarah pada proyek industri nyata untuk peran ${careerTitle}.`,
+      }));
+  }
+
+  // Action Plan 30/60/90 (dengan validasi nested objek & fallback per fase)
+  const rawPlan = existingRecord.aiActionPlan306090 as any;
+  const fallbackPlan: ActionPlan306090 = {
     day30: {
       phaseTitle: 'Fondasi Esensial & Penutupan Gap Kritis',
-      focusSkills: priorityGaps,
+      focusSkills: priorityGaps.length > 0 ? priorityGaps : [careerTitle],
       weeksFirstHalf: 'Mempelajari modul teoretis dan framework kerja standar industri.',
       weeksSecondHalf: 'Pengerjaan latihan mandiri terstruktur dan telaah studi kasus nyata.',
       milestone: 'Mampu mereplikasi 1 studi kasus industri standar dengan benar secara mandiri.',
     },
     day60: {
       phaseTitle: 'Pengembangan Kompetensi Lanjutan & Integrasi',
-      focusSkills: skillGapTable.filter((s) => s.gap < 0).slice(2, 4).map((s) => s.name),
+      focusSkills:
+        skillGapTable.filter((s) => s.gap < 0).slice(2, 4).map((s) => s.name).length > 0
+          ? skillGapTable.filter((s) => s.gap < 0).slice(2, 4).map((s) => s.name)
+          : ['Studi Kasus Lanjutan'],
       weeksFirstHalf: 'Eksplorasi teknik lanjutan dan praktik integrasi lintas-fitur.',
       weeksSecondHalf: 'Membangun mini-proyek mandiri untuk memvalidasi pemahaman teknis.',
       milestone: 'Menghasilkan 1 mini-proyek teruji yang mendemonstrasikan skill target.',
@@ -595,6 +666,39 @@ async function buildReportDataFromDb(params: {
       weeksFirstHalf: 'Simulasi skenario kerja tim dan pemecahan kendala (troubleshooting).',
       weeksSecondHalf: 'Dokumentasi portofolio komprehensif dan persiapan wawancara teknis.',
       milestone: 'Portofolio siap presentasi dengan bukti kesiapan kerja level entry-level.',
+    },
+  };
+
+  const actionPlan: ActionPlan306090 = {
+    day30: {
+      phaseTitle: rawPlan?.day30?.phaseTitle || fallbackPlan.day30.phaseTitle,
+      focusSkills:
+        Array.isArray(rawPlan?.day30?.focusSkills) && rawPlan.day30.focusSkills.length > 0
+          ? rawPlan.day30.focusSkills
+          : fallbackPlan.day30.focusSkills,
+      weeksFirstHalf: rawPlan?.day30?.weeksFirstHalf || fallbackPlan.day30.weeksFirstHalf,
+      weeksSecondHalf: rawPlan?.day30?.weeksSecondHalf || fallbackPlan.day30.weeksSecondHalf,
+      milestone: rawPlan?.day30?.milestone || fallbackPlan.day30.milestone,
+    },
+    day60: {
+      phaseTitle: rawPlan?.day60?.phaseTitle || fallbackPlan.day60.phaseTitle,
+      focusSkills:
+        Array.isArray(rawPlan?.day60?.focusSkills) && rawPlan.day60.focusSkills.length > 0
+          ? rawPlan.day60.focusSkills
+          : fallbackPlan.day60.focusSkills,
+      weeksFirstHalf: rawPlan?.day60?.weeksFirstHalf || fallbackPlan.day60.weeksFirstHalf,
+      weeksSecondHalf: rawPlan?.day60?.weeksSecondHalf || fallbackPlan.day60.weeksSecondHalf,
+      milestone: rawPlan?.day60?.milestone || fallbackPlan.day60.milestone,
+    },
+    day90: {
+      phaseTitle: rawPlan?.day90?.phaseTitle || fallbackPlan.day90.phaseTitle,
+      focusSkills:
+        Array.isArray(rawPlan?.day90?.focusSkills) && rawPlan.day90.focusSkills.length > 0
+          ? rawPlan.day90.focusSkills
+          : fallbackPlan.day90.focusSkills,
+      weeksFirstHalf: rawPlan?.day90?.weeksFirstHalf || fallbackPlan.day90.weeksFirstHalf,
+      weeksSecondHalf: rawPlan?.day90?.weeksSecondHalf || fallbackPlan.day90.weeksSecondHalf,
+      milestone: rawPlan?.day90?.milestone || fallbackPlan.day90.milestone,
     },
   };
 

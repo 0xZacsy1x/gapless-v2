@@ -139,6 +139,34 @@ interface PdfDocumentProps {
 }
 
 export function PdfDocument({ report }: PdfDocumentProps) {
+  // Fallback defensif untuk actionPlan & list
+  const day30 = report.actionPlan?.day30 || {
+    phaseTitle: 'Fondasi Esensial & Penutupan Gap Kritis',
+    focusSkills: [],
+    weeksFirstHalf: 'Mempelajari modul teoretis dan framework kerja standar industri.',
+    weeksSecondHalf: 'Pengerjaan latihan mandiri terstruktur dan telaah studi kasus nyata.',
+    milestone: 'Mampu mereplikasi 1 studi kasus industri standar dengan benar secara mandiri.',
+  };
+
+  const day60 = report.actionPlan?.day60 || {
+    phaseTitle: 'Pengembangan Kompetensi Lanjutan & Integrasi',
+    focusSkills: [],
+    weeksFirstHalf: 'Eksplorasi teknik lanjutan dan praktik integrasi lintas-fitur.',
+    weeksSecondHalf: 'Membangun mini-proyek mandiri untuk memvalidasi pemahaman teknis.',
+    milestone: 'Menghasilkan 1 mini-proyek teruji yang mendemonstrasikan skill target.',
+  };
+
+  const day90 = report.actionPlan?.day90 || {
+    phaseTitle: 'Konsolidasi & Kesiapan Kerja Profesional',
+    focusSkills: [],
+    weeksFirstHalf: 'Simulasi skenario kerja tim dan pemecahan kendala (troubleshooting).',
+    weeksSecondHalf: 'Dokumentasi portofolio komprehensif dan persiapan wawancara teknis.',
+    milestone: 'Portofolio siap presentasi dengan bukti kesiapan kerja level entry-level.',
+  };
+
+  const skillInterpretations = Array.isArray(report.skillInterpretations) ? report.skillInterpretations : [];
+  const priorityList = Array.isArray(report.priorityList) ? report.priorityList : [];
+  const skillResources = report.skillResources || {};
   const Header = () => (
     <View style={styles.headerRow}>
       <Text style={styles.headerOrg}>GAPLESS ADVISORY • LAPORAN KESIAPAN KARIER</Text>
@@ -347,7 +375,7 @@ export function PdfDocument({ report }: PdfDocumentProps) {
           <Text style={styles.sectionTitle}>Interpretasi Mendalam Per Skill</Text>
           <View style={styles.divider} />
 
-          {report.skillInterpretations.map((item) => (
+          {skillInterpretations.map((item) => (
             <View key={item.skillName} style={[styles.card, { marginBottom: 8 }]}>
               <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 4 }}>
                 <Text style={{ fontSize: 10, fontFamily: 'Helvetica-Bold', color: colors.primary }}>{item.skillName}</Text>
@@ -394,7 +422,7 @@ export function PdfDocument({ report }: PdfDocumentProps) {
             Urutan kompetensi yang sebaiknya dituntaskan pertama berdasarkan urgensi peran {report.targetRole}:
           </Text>
 
-          {report.priorityList.map((item) => (
+          {priorityList.map((item) => (
             <View key={item.rank} style={[styles.card, { paddingVertical: 6, marginBottom: 6 }]}>
               <Text style={{ fontSize: 9.5, fontFamily: 'Helvetica-Bold', color: colors.primary }}>
                 {item.rank}. {item.skillName}
@@ -499,57 +527,57 @@ export function PdfDocument({ report }: PdfDocumentProps) {
           {/* 30 Hari */}
           <View style={[styles.card, { borderColor: '#bfdbfe', backgroundColor: '#eff6ff' }]}>
             <Text style={{ fontSize: 9.5, fontFamily: 'Helvetica-Bold', color: '#1e3a8a' }}>
-              30 HARI PERTAMA — {report.actionPlan.day30.phaseTitle}
+              30 HARI PERTAMA — {day30.phaseTitle}
             </Text>
             <Text style={{ fontSize: 7.5, color: '#3b82f6', marginBottom: 4 }}>
-              Fokus: {report.actionPlan.day30.focusSkills.join(', ')}
+              Fokus: {(day30.focusSkills || []).join(', ')}
             </Text>
             <Text style={{ fontSize: 8, color: colors.textDark, marginBottom: 2 }}>
-              <Text style={{ fontFamily: 'Helvetica-Bold' }}>Minggu 1–2:</Text> {report.actionPlan.day30.weeksFirstHalf}
+              <Text style={{ fontFamily: 'Helvetica-Bold' }}>Minggu 1–2:</Text> {day30.weeksFirstHalf}
             </Text>
             <Text style={{ fontSize: 8, color: colors.textDark, marginBottom: 3 }}>
-              <Text style={{ fontFamily: 'Helvetica-Bold' }}>Minggu 3–4:</Text> {report.actionPlan.day30.weeksSecondHalf}
+              <Text style={{ fontFamily: 'Helvetica-Bold' }}>Minggu 3–4:</Text> {day30.weeksSecondHalf}
             </Text>
             <Text style={{ fontSize: 8, fontFamily: 'Helvetica-Bold', color: '#1e40af' }}>
-              Milestone: {report.actionPlan.day30.milestone}
+              Milestone: {day30.milestone}
             </Text>
           </View>
 
           {/* 60 Hari */}
           <View style={[styles.card, { borderColor: '#c7d2fe', backgroundColor: '#eef2ff' }]}>
             <Text style={{ fontSize: 9.5, fontFamily: 'Helvetica-Bold', color: '#312e81' }}>
-              60 HARI — {report.actionPlan.day60.phaseTitle}
+              60 HARI — {day60.phaseTitle}
             </Text>
             <Text style={{ fontSize: 7.5, color: '#6366f1', marginBottom: 4 }}>
-              Fokus: {report.actionPlan.day60.focusSkills.join(', ')}
+              Fokus: {(day60.focusSkills || []).join(', ')}
             </Text>
             <Text style={{ fontSize: 8, color: colors.textDark, marginBottom: 2 }}>
-              <Text style={{ fontFamily: 'Helvetica-Bold' }}>Minggu 5–6:</Text> {report.actionPlan.day60.weeksFirstHalf}
+              <Text style={{ fontFamily: 'Helvetica-Bold' }}>Minggu 5–6:</Text> {day60.weeksFirstHalf}
             </Text>
             <Text style={{ fontSize: 8, color: colors.textDark, marginBottom: 3 }}>
-              <Text style={{ fontFamily: 'Helvetica-Bold' }}>Minggu 7–8:</Text> {report.actionPlan.day60.weeksSecondHalf}
+              <Text style={{ fontFamily: 'Helvetica-Bold' }}>Minggu 7–8:</Text> {day60.weeksSecondHalf}
             </Text>
             <Text style={{ fontSize: 8, fontFamily: 'Helvetica-Bold', color: '#3730a3' }}>
-              Milestone: {report.actionPlan.day60.milestone}
+              Milestone: {day60.milestone}
             </Text>
           </View>
 
           {/* 90 Hari */}
           <View style={[styles.card, { borderColor: '#bbf7d0', backgroundColor: '#f0fdf4' }]}>
             <Text style={{ fontSize: 9.5, fontFamily: 'Helvetica-Bold', color: '#14532d' }}>
-              90 HARI — {report.actionPlan.day90.phaseTitle}
+              90 HARI — {day90.phaseTitle}
             </Text>
             <Text style={{ fontSize: 7.5, color: '#16a34a', marginBottom: 4 }}>
-              Fokus: {report.actionPlan.day90.focusSkills.join(', ')}
+              Fokus: {(day90.focusSkills || []).join(', ')}
             </Text>
             <Text style={{ fontSize: 8, color: colors.textDark, marginBottom: 2 }}>
-              <Text style={{ fontFamily: 'Helvetica-Bold' }}>Minggu 9–10:</Text> {report.actionPlan.day90.weeksFirstHalf}
+              <Text style={{ fontFamily: 'Helvetica-Bold' }}>Minggu 9–10:</Text> {day90.weeksFirstHalf}
             </Text>
             <Text style={{ fontSize: 8, color: colors.textDark, marginBottom: 3 }}>
-              <Text style={{ fontFamily: 'Helvetica-Bold' }}>Minggu 11–12:</Text> {report.actionPlan.day90.weeksSecondHalf}
+              <Text style={{ fontFamily: 'Helvetica-Bold' }}>Minggu 11–12:</Text> {day90.weeksSecondHalf}
             </Text>
             <Text style={{ fontSize: 8, fontFamily: 'Helvetica-Bold', color: '#166534' }}>
-              Milestone: {report.actionPlan.day90.milestone}
+              Milestone: {day90.milestone}
             </Text>
           </View>
         </View>
@@ -565,7 +593,7 @@ export function PdfDocument({ report }: PdfDocumentProps) {
           <Text style={styles.sectionTitle}>Rekomendasi Sumber Belajar Terkurasi</Text>
           <View style={styles.divider} />
 
-          {Object.entries(report.skillResources).map(([skill, resources]) => (
+          {Object.entries(skillResources).map(([skill, resources]) => (
             <View key={skill} style={[styles.card, { marginBottom: 6, paddingVertical: 6 }]}>
               <Text style={{ fontSize: 9, fontFamily: 'Helvetica-Bold', color: colors.primary, marginBottom: 4 }}>
                 {skill}

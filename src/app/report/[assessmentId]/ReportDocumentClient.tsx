@@ -16,6 +16,35 @@ export function ReportDocumentClient({ report, assessmentId }: Props) {
   const [isPrinting, setIsPrinting] = useState(false);
   const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
 
+  // Fallback defensif untuk actionPlan & list
+  const day30 = report.actionPlan?.day30 || {
+    phaseTitle: 'Fondasi Esensial & Penutupan Gap Kritis',
+    focusSkills: [],
+    weeksFirstHalf: 'Mempelajari modul teoretis dan framework kerja standar industri.',
+    weeksSecondHalf: 'Pengerjaan latihan mandiri terstruktur dan telaah studi kasus nyata.',
+    milestone: 'Mampu mereplikasi 1 studi kasus industri standar dengan benar secara mandiri.',
+  };
+
+  const day60 = report.actionPlan?.day60 || {
+    phaseTitle: 'Pengembangan Kompetensi Lanjutan & Integrasi',
+    focusSkills: [],
+    weeksFirstHalf: 'Eksplorasi teknik lanjutan dan praktik integrasi lintas-fitur.',
+    weeksSecondHalf: 'Membangun mini-proyek mandiri untuk memvalidasi pemahaman teknis.',
+    milestone: 'Menghasilkan 1 mini-proyek teruji yang mendemonstrasikan skill target.',
+  };
+
+  const day90 = report.actionPlan?.day90 || {
+    phaseTitle: 'Konsolidasi & Kesiapan Kerja Profesional',
+    focusSkills: [],
+    weeksFirstHalf: 'Simulasi skenario kerja tim dan pemecahan kendala (troubleshooting).',
+    weeksSecondHalf: 'Dokumentasi portofolio komprehensif dan persiapan wawancara teknis.',
+    milestone: 'Portofolio siap presentasi dengan bukti kesiapan kerja level entry-level.',
+  };
+
+  const skillInterpretations = Array.isArray(report.skillInterpretations) ? report.skillInterpretations : [];
+  const priorityList = Array.isArray(report.priorityList) ? report.priorityList : [];
+  const skillResources = report.skillResources || {};
+
   const handlePrint = () => {
     setIsPrinting(true);
     setTimeout(() => {
@@ -398,8 +427,8 @@ export function ReportDocumentClient({ report, assessmentId }: Props) {
             </div>
 
             <div className="space-y-4">
-              {report.skillInterpretations.length > 0 ? (
-                report.skillInterpretations.map((item) => (
+              {skillInterpretations.length > 0 ? (
+                skillInterpretations.map((item) => (
                   <div
                     key={item.skillName}
                     className="p-4 rounded-xl border border-slate-200 bg-slate-50/40 space-y-2.5 text-xs"
@@ -470,7 +499,7 @@ export function ReportDocumentClient({ report, assessmentId }: Props) {
 
             {/* List Bernomor dengan Alasan */}
             <div className="space-y-3 mb-6">
-              {report.priorityList.map((item) => (
+              {priorityList.map((item) => (
                 <div
                   key={item.rank}
                   className="p-3.5 rounded-xl border border-slate-200 bg-white flex items-start gap-3 text-xs shadow-2xs"
@@ -627,22 +656,22 @@ export function ReportDocumentClient({ report, assessmentId }: Props) {
                 <div className="flex items-center justify-between pb-1.5 border-b border-blue-200">
                   <div className="flex items-center gap-2">
                     <span className="px-2 py-0.5 rounded bg-blue-700 text-white font-bold font-mono text-[10px]">30 HARI</span>
-                    <strong className="text-blue-950 text-xs sm:text-sm">{report.actionPlan.day30.phaseTitle}</strong>
+                    <strong className="text-blue-950 text-xs sm:text-sm">{day30.phaseTitle}</strong>
                   </div>
-                  <span className="text-[10px] text-blue-700 font-medium">Fokus: {report.actionPlan.day30.focusSkills.join(', ')}</span>
+                  <span className="text-[10px] text-blue-700 font-medium">Fokus: {(day30.focusSkills || []).join(', ')}</span>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-slate-700 text-[11px]">
                   <div>
                     <span className="font-semibold block text-slate-900">Minggu 1 – 2:</span>
-                    <p>{report.actionPlan.day30.weeksFirstHalf}</p>
+                    <p>{day30.weeksFirstHalf}</p>
                   </div>
                   <div>
                     <span className="font-semibold block text-slate-900">Minggu 3 – 4:</span>
-                    <p>{report.actionPlan.day30.weeksSecondHalf}</p>
+                    <p>{day30.weeksSecondHalf}</p>
                   </div>
                 </div>
                 <div className="pt-2 border-t border-blue-200/80 text-[11px] text-blue-900 font-medium">
-                  🎯 <strong>Milestone Akhir 30 Hari:</strong> {report.actionPlan.day30.milestone}
+                  🎯 <strong>Milestone Akhir 30 Hari:</strong> {day30.milestone}
                 </div>
               </div>
 
@@ -651,22 +680,22 @@ export function ReportDocumentClient({ report, assessmentId }: Props) {
                 <div className="flex items-center justify-between pb-1.5 border-b border-indigo-200">
                   <div className="flex items-center gap-2">
                     <span className="px-2 py-0.5 rounded bg-indigo-700 text-white font-bold font-mono text-[10px]">60 HARI</span>
-                    <strong className="text-indigo-950 text-xs sm:text-sm">{report.actionPlan.day60.phaseTitle}</strong>
+                    <strong className="text-indigo-950 text-xs sm:text-sm">{day60.phaseTitle}</strong>
                   </div>
-                  <span className="text-[10px] text-indigo-700 font-medium">Fokus: {report.actionPlan.day60.focusSkills.join(', ')}</span>
+                  <span className="text-[10px] text-indigo-700 font-medium">Fokus: {(day60.focusSkills || []).join(', ')}</span>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-slate-700 text-[11px]">
                   <div>
                     <span className="font-semibold block text-slate-900">Minggu 5 – 6:</span>
-                    <p>{report.actionPlan.day60.weeksFirstHalf}</p>
+                    <p>{day60.weeksFirstHalf}</p>
                   </div>
                   <div>
                     <span className="font-semibold block text-slate-900">Minggu 7 – 8:</span>
-                    <p>{report.actionPlan.day60.weeksSecondHalf}</p>
+                    <p>{day60.weeksSecondHalf}</p>
                   </div>
                 </div>
                 <div className="pt-2 border-t border-indigo-200/80 text-[11px] text-indigo-900 font-medium">
-                  🎯 <strong>Milestone Akhir 60 Hari:</strong> {report.actionPlan.day60.milestone}
+                  🎯 <strong>Milestone Akhir 60 Hari:</strong> {day60.milestone}
                 </div>
               </div>
 
@@ -675,22 +704,22 @@ export function ReportDocumentClient({ report, assessmentId }: Props) {
                 <div className="flex items-center justify-between pb-1.5 border-b border-emerald-200">
                   <div className="flex items-center gap-2">
                     <span className="px-2 py-0.5 rounded bg-emerald-700 text-white font-bold font-mono text-[10px]">90 HARI</span>
-                    <strong className="text-emerald-950 text-xs sm:text-sm">{report.actionPlan.day90.phaseTitle}</strong>
+                    <strong className="text-emerald-950 text-xs sm:text-sm">{day90.phaseTitle}</strong>
                   </div>
-                  <span className="text-[10px] text-emerald-700 font-medium">Fokus: {report.actionPlan.day90.focusSkills.join(', ')}</span>
+                  <span className="text-[10px] text-emerald-700 font-medium">Fokus: {(day90.focusSkills || []).join(', ')}</span>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-slate-700 text-[11px]">
                   <div>
                     <span className="font-semibold block text-slate-900">Minggu 9 – 10:</span>
-                    <p>{report.actionPlan.day90.weeksFirstHalf}</p>
+                    <p>{day90.weeksFirstHalf}</p>
                   </div>
                   <div>
                     <span className="font-semibold block text-slate-900">Minggu 11 – 12:</span>
-                    <p>{report.actionPlan.day90.weeksSecondHalf}</p>
+                    <p>{day90.weeksSecondHalf}</p>
                   </div>
                 </div>
                 <div className="pt-2 border-t border-emerald-200/80 text-[11px] text-emerald-900 font-medium">
-                  🎯 <strong>Milestone Akhir 90 Hari:</strong> {report.actionPlan.day90.milestone}
+                  🎯 <strong>Milestone Akhir 90 Hari:</strong> {day90.milestone}
                 </div>
               </div>
             </div>
@@ -716,8 +745,8 @@ export function ReportDocumentClient({ report, assessmentId }: Props) {
             </div>
 
             <div className="space-y-4">
-              {Object.keys(report.skillResources).length > 0 ? (
-                Object.entries(report.skillResources).map(([skill, resources]) => (
+              {Object.keys(skillResources).length > 0 ? (
+                Object.entries(skillResources).map(([skill, resources]) => (
                   <div key={skill} className="p-3.5 rounded-xl border border-slate-200 bg-slate-50/50 space-y-2">
                     <h3 className="font-bold text-xs text-[#1a1a2e] flex items-center gap-1.5">
                       <BookOpen className="w-3.5 h-3.5 text-[#2d4a8a]" />

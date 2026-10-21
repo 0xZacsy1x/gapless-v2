@@ -5,10 +5,6 @@ import { z } from 'zod';
 import { auth } from '@/auth';
 import { checkRateLimit } from '@/lib/rateLimit';
 import { hasGapReport } from '@/lib/payment_service';
-import { db } from '@/db';
-import { reportContents } from '@/db/schema';
-import { eq, and } from 'drizzle-orm';
-import { generateReportNumber } from '@/lib/report_generator';
 
 const google = createGoogleGenerativeAI({ apiKey: process.env.GEMINI_API_KEY || '' });
 
@@ -90,33 +86,6 @@ export async function POST(request: Request) {
       );
     }
 
-    // 0. Cek Cache di DB (report_contents) jika assessmentId disertakan & user sudah membeli
-    let existingReport: any = null;
-    if (assessmentId) {
-      try {
-        existingReport = await db.query.reportContents.findFirst({
-          where: and(
-            eq(reportContents.assessmentResultId, assessmentId),
-            eq(reportContents.userId, session.user.id)
-          ),
-        });
-
-        if (existingReport && !existingReport.isStale) {
-          const cachedInsight = (existingReport.aiSkillInterpretations as any)?._cachedGapInsight;
-          if (cachedInsight && cachedInsight.basis_penilaian) {
-            return NextResponse.json({
-              isPurchased: true,
-              careerSlug,
-              ai_engine_used: 'cache-report-contents',
-              ...cachedInsight,
-            });
-          }
-        }
-      } catch (cacheLookupErr) {
-        console.warn('Gagal membaca cache report_contents:', cacheLookupErr);
-      }
-    }
-
     // Rate Limit Check untuk AI Call
     if (!checkRateLimit(session.user.id, 15, 60000)) {
       return NextResponse.json({ error: 'Too Many Requests' }, { status: 429 });
@@ -173,38 +142,6 @@ Berikan analisis terstruktur menggunakan Bahasa Indonesia yang profesional dan m
         catatan_singkat: `Tingkatkan kompetensimu secara terarah melalui modul-modul roadmap ${roleName} yang telah dirancang.`
       };
       engineUsed = 'structured-heuristic';
-    }
-
-    // Simpan ke Cache DB (report_contents) jika assessmentId ada
-    if (assessmentId) {
-      try {
-        if (existingReport) {
-          const currentInterpretations = (existingReport.aiSkillInterpretations as Record<string, any>) || {};
-          await db
-            .update(reportContents)
-            .set({
-              aiSkillInterpretations: {
-                ...currentInterpretations,
-                _cachedGapInsight: object,
-              },
-            })
-            .where(eq(reportContents.id, existingReport.id));
-        } else {
-          await db.insert(reportContents).values({
-            assessmentResultId: assessmentId,
-            userId: session.user.id,
-            careerSlug,
-            reportNumber: generateReportNumber(),
-            aiSkillInterpretations: {
-              _cachedGapInsight: object,
-            },
-            aiActionPlan306090: {},
-            isStale: false,
-          });
-        }
-      } catch (cacheSaveErr) {
-        console.warn('Gagal menyimpan cache gap insight ke DB:', cacheSaveErr);
-      }
     }
 
     return NextResponse.json({
