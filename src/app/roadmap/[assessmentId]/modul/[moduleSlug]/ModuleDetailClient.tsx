@@ -63,6 +63,7 @@ export default function ModuleDetailClient({
   const [studyNotice, setStudyNotice] = useState<string | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [openedResources, setOpenedResources] = useState<number[]>([]);
+  const [activeStudyingResources, setActiveStudyingResources] = useState<number[]>([]);
   const [isGenerating, setIsGenerating] = useState(!initialDetailData);
   const isCheckingRef = useRef(false);
 
@@ -95,6 +96,9 @@ export default function ModuleDetailClient({
         const data = await res.json();
         const updatedCompleted = data.completedResources || [];
         setCompletedResources(updatedCompleted);
+        if (Array.isArray(data.activeResources)) {
+          setActiveStudyingResources(data.activeResources);
+        }
 
         const currentTotal = data.totalResources || detailData?.resources?.length || 4;
         const isNowAllDone = updatedCompleted.length >= currentTotal;
@@ -102,6 +106,7 @@ export default function ModuleDetailClient({
         if (isNowAllDone) {
           setIsCompleted(true);
           setIsStudying(false);
+          setActiveStudyingResources([]);
           setStudyNotice(null);
           setToastMessage('Selamat! Seluruh materi selesai dan modul ini telah tuntas ✓');
           router.refresh();
@@ -127,6 +132,17 @@ export default function ModuleDetailClient({
       isCheckingRef.current = false;
     }
   }, [assessmentId, moduleSlug, detailData, router]);
+
+  // Polling periodik di latar belakang saat sesi belajar aktif (tiap 10 detik)
+  useEffect(() => {
+    if (!isStudying || isCompleted || isAllResourcesDone) return;
+
+    const interval = setInterval(() => {
+      checkStudyProgress(false);
+    }, 10000);
+
+    return () => clearInterval(interval);
+  }, [isStudying, isCompleted, isAllResourcesDone, checkStudyProgress]);
 
   // Event listener saat user kembali ke tab (visibilitychange / focus / pageshow)
   useEffect(() => {
@@ -165,11 +181,12 @@ export default function ModuleDetailClient({
     }
 
     setOpenedResources((prev) => (prev.includes(index) ? prev : [...prev, index]));
+    setActiveStudyingResources((prev) => (prev.includes(index) ? prev : [...prev, index]));
 
     if (!assessmentId || completedResources.includes(index)) return;
 
     setIsStudying(true);
-    setStudyNotice('Sesi belajar aktif. Pelajari materi di tab baru dengan fokus, centang hijau akan otomatis muncul saat kamu kembali.');
+    setStudyNotice('Sesi belajar sedang berjalan aktif di latar belakang. Pelajari materi di tab baru, tanda selesai akan otomatis muncul.');
 
     try {
       await fetch('/api/roadmap/start-study', {
@@ -402,8 +419,8 @@ export default function ModuleDetailClient({
                 const isVideo = res.type === 'Video';
                 const hasOpened = openedResources.includes(idx);
                 const isResourceDone = completedResources.includes(idx);
-                // Terbuka hanya jika materi pertama (idx === 0) atau materi tepat sebelumnya sudah selesai
                 const isUnlocked = idx === 0 || completedResources.includes(idx - 1);
+                const isCurrentlyStudying = isStudying && !isResourceDone && (activeStudyingResources.includes(idx) || (activeStudyingResources.length === 0 && hasOpened));
                 const Icon = !isUnlocked ? Lock : isVideo ? Play : res.isFree ? Book : Lock;
                 const isValidUrl = res.url && res.url !== '#';
                 
@@ -415,13 +432,29 @@ export default function ModuleDetailClient({
                         ? 'border-slate-200/60 bg-slate-50/60 opacity-60 select-none'
                         : isResourceDone
                           ? 'border-emerald-200 bg-emerald-50/20'
-                          : hasOpened
-                            ? 'border-blue-300 bg-blue-50/10'
-                            : 'border-slate-200 hover:border-blue-300 bg-white shadow-xs'
+                          : isCurrentlyStudying
+                            ? 'border-blue-400 bg-blue-50/30 shadow-sm ring-2 ring-blue-500/20'
+                            : hasOpened
+                              ? 'border-blue-200 bg-blue-50/10'
+                              : 'border-slate-200 hover:border-blue-300 bg-white shadow-xs'
                     }`}
                   >
-                    <div className={`${!isUnlocked ? 'bg-slate-300 text-slate-500' : isResourceDone ? 'bg-emerald-600 text-white' : hasOpened ? 'bg-blue-600 text-white' : 'bg-slate-700 text-white'} p-3 rounded-xl shrink-0 transition-colors`}>
-                      <Icon size={18} fill={!isUnlocked ? "none" : isVideo ? "currentColor" : "none"} />
+                    <div className={`${
+                      !isUnlocked 
+                        ? 'bg-slate-300 text-slate-500' 
+                        : isResourceDone 
+                          ? 'bg-emerald-600 text-white' 
+                          : isCurrentlyStudying
+                            ? 'bg-blue-600 text-white shadow-sm ring-4 ring-blue-200 animate-pulse'
+                            : hasOpened 
+                              ? 'bg-blue-600 text-white' 
+                              : 'bg-slate-700 text-white'
+                    } p-3 rounded-xl shrink-0 transition-all`}>
+                      {isCurrentlyStudying ? (
+                        <Loader2 size={18} className="animate-spin text-white" />
+                      ) : (
+                        <Icon size={18} fill={!isUnlocked ? "none" : isVideo ? "currentColor" : "none"} />
+                      )}
                     </div>
                     <div className="flex flex-col flex-1 min-w-0">
                       {isUnlocked && isValidUrl ? (
@@ -443,13 +476,19 @@ export default function ModuleDetailClient({
                         </span>
                       )}
                       <span className="text-xs text-slate-400 mt-0.5">{res.provider}</span>
-                      <div className="flex items-center gap-2 mt-2">
+                      <div className="flex items-center gap-2 mt-2 flex-wrap">
                         {res.isFree ? (
                           <span className="bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-0.5 rounded text-[10px] font-bold">Free</span>
                         ) : (
                           <span className="bg-rose-50 text-rose-700 border border-rose-200 px-2 py-0.5 rounded text-[10px] font-bold">{res.price || 'Berbayar'}</span>
                         )}
                         <span className="bg-slate-50 border border-slate-200 text-slate-600 px-2 py-0.5 rounded text-[10px] font-bold">{res.type}</span>
+                        {isCurrentlyStudying && (
+                          <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[10px] font-bold bg-blue-100 text-blue-700 border border-blue-200 animate-pulse">
+                            <Loader2 className="w-2.5 h-2.5 animate-spin text-blue-600" />
+                            Sedang Dipelajari
+                          </span>
+                        )}
                       </div>
                     </div>
 
@@ -468,15 +507,23 @@ export default function ModuleDetailClient({
                         className={`shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold transition-all border cursor-pointer ${
                           isResourceDone
                             ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                            : hasOpened
-                              ? 'bg-blue-50 text-blue-700 border-blue-200'
-                              : 'bg-slate-900 text-white hover:bg-slate-800 border-slate-900 shadow-xs'
+                            : isCurrentlyStudying
+                              ? 'bg-blue-50 text-blue-700 border-blue-300 hover:bg-blue-100/80 shadow-xs ring-2 ring-blue-500/20'
+                              : hasOpened
+                                ? 'bg-blue-50 text-blue-700 border-blue-200'
+                                : 'bg-slate-900 text-white hover:bg-slate-800 border-slate-900 shadow-xs'
                         }`}
                       >
                         {isResourceDone ? (
                           <>
                             <Check className="w-3.5 h-3.5 text-emerald-600" />
                             <span className="hidden sm:inline">Selesai</span>
+                          </>
+                        ) : isCurrentlyStudying ? (
+                          <>
+                            <Loader2 className="w-3.5 h-3.5 animate-spin text-blue-600" />
+                            <span className="hidden sm:inline">Sedang Belajar</span>
+                            <span className="sm:hidden">Belajar</span>
                           </>
                         ) : hasOpened ? (
                           <>
@@ -495,6 +542,27 @@ export default function ModuleDetailClient({
                 );
               })}
             </div>
+
+            {/* Live Indicator Sesi Belajar Latar Belakang */}
+            {isStudying && !isAllResourcesDone && (
+              <div className="bg-gradient-to-r from-blue-50/90 via-indigo-50/60 to-blue-50/90 border border-blue-200 rounded-2xl p-4 text-xs text-blue-900 flex items-center gap-3.5 shadow-xs animate-in fade-in duration-300 mt-4">
+                <div className="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center shrink-0 shadow-xs">
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2">
+                    <span className="font-bold text-blue-950 text-xs sm:text-sm">Sesi Belajar Sedang Berjalan di Latar Belakang</span>
+                    <span className="relative flex h-2 w-2">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-600"></span>
+                    </span>
+                  </div>
+                  <p className="text-blue-700 mt-0.5 text-[11px] sm:text-xs leading-relaxed">
+                    Sistem otomatis memverifikasi sesi belajarmu di tab materi. Tanda centang hijau selesai akan otomatis muncul begitu durasi belajar terpenuhi.
+                  </p>
+                </div>
+              </div>
+            )}
 
             {/* Info Box Alur Belajar Otomatis */}
             <div className="bg-slate-50 border border-slate-200/80 rounded-2xl p-4 text-xs text-slate-600 flex items-start gap-2.5 mt-4 leading-relaxed">
@@ -522,9 +590,9 @@ export default function ModuleDetailClient({
             <span>Modul Ini Telah Selesai ✓</span>
           </div>
         ) : isStudying ? (
-          <div className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-blue-50 text-blue-800 font-bold border border-blue-200 text-xs sm:text-sm">
-            <Loader2 size={16} className="text-blue-600 animate-spin" />
-            <span>Sedang Dipelajari — Kembali ke tab ini setelah selesai belajar</span>
+          <div className="w-full sm:w-auto flex items-center justify-center gap-2.5 px-6 py-3 rounded-xl bg-blue-50 text-blue-800 font-bold border border-blue-200 text-xs sm:text-sm shadow-xs">
+            <Loader2 size={16} className="text-blue-600 animate-spin shrink-0" />
+            <span>Sedang Dipelajari — Berjalan aktif di latar belakang...</span>
           </div>
         ) : completedResources.length > 0 ? (
           <div className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-slate-100 text-slate-700 font-medium border border-slate-200 text-xs sm:text-sm">

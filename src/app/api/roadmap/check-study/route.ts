@@ -119,6 +119,7 @@ export async function POST(req: Request) {
         moduleCompleted: isModuleFullyCompleted,
         newlyCompletedResource: false,
         isStudying: false,
+        activeResources: [],
         completedResources: currentCompleted,
         totalResources: expectedTotal,
         message: "Tidak ada sesi belajar aktif.",
@@ -185,12 +186,14 @@ export async function POST(req: Request) {
         })
         .where(eq(roadmapProgress.id, progress.id));
 
+      const activeIndices = Object.keys(updatedResources).map((k) => parseInt(k, 10));
       return NextResponse.json({
         success: true,
         completed: isModuleFullyCompleted,
         moduleCompleted: isModuleFullyCompleted,
         newlyCompletedResource: true,
         isStudying: Object.keys(updatedResources).length > 0,
+        activeResources: activeIndices,
         completedResources: currentCompleted,
         totalResources: expectedTotal,
         message: isModuleFullyCompleted
@@ -213,6 +216,7 @@ export async function POST(req: Request) {
     }
 
     const hasActivePending = Object.keys(updatedResources).length > 0;
+    const activeIndices = Object.keys(updatedResources).map((k) => parseInt(k, 10));
 
     return NextResponse.json({
       success: true,
@@ -220,6 +224,7 @@ export async function POST(req: Request) {
       moduleCompleted: isModuleFullyCompleted,
       newlyCompletedResource: false,
       isStudying: hasActivePending,
+      activeResources: activeIndices,
       completedResources: currentCompleted,
       totalResources: expectedTotal,
       message: hasActivePending ? "Materi sedang dipelajari." : "Sesi belajar telah selesai.",
