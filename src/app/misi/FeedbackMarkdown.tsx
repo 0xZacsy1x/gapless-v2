@@ -14,7 +14,7 @@ export function FeedbackMarkdown({ content }: { content: string }) {
         li: ({ children }) => <li className="leading-relaxed">{children}</li>,
       }}
     >
-      {content}
+      {content || ''}
     </ReactMarkdown>
   );
 }

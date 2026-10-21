@@ -127,12 +127,13 @@ export function MisiClient({
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [lockedMissionModal, setLockedMissionModal] = useState<Mission | null>(null);
   const [feedbacks, setFeedbacks] = useState<Record<string, string>>(feedbackMap);
+  const [progress, setProgress] = useState<Record<string, MissionProgress>>(progressMap);
 
   const groups = groupByCompetency(missions);
   const allCompetencies = Object.keys(COMPETENCY_CONFIG);
 
   const completedCount = missions.filter(
-    (m) => !m.isLocked && (progressMap[m.id]?.status === 'completed' || submittedId === m.id)
+    (m) => !m.isLocked && (progress[m.id]?.status === 'completed' || submittedId === m.id)
   ).length;
 
   async function handleSubmit(missionId: string) {
@@ -157,6 +158,9 @@ export function MisiClient({
       if (!res.ok) {
         setSubmitError(data.error || 'Gagal memproses jawaban. Coba lagi.');
         return;
+      }
+      if (data.progress) {
+        setProgress((prev) => ({ ...prev, [missionId]: data.progress }));
       }
       if (data.feedback) {
         setFeedbacks((prev) => ({ ...prev, [missionId]: data.feedback }));
@@ -210,7 +214,7 @@ export function MisiClient({
               const misiList = groups[comp] || [];
               const done = misiList.filter((m) => {
                 if (m.isLocked) return false;
-                const p = progressMap[m.id];
+                const p = progress[m.id];
                 return p?.status === 'completed' || submittedId === m.id;
               }).length;
               const pct = misiList.length > 0 ? Math.round((done / misiList.length) * 100) : 0;
@@ -259,7 +263,7 @@ export function MisiClient({
             <div className="space-y-3">
               {misiList.map((mission) => {
                 const isLocked = Boolean(mission.isLocked);
-                const isCompleted = !isLocked && (progressMap[mission.id]?.status === 'completed' || submittedId === mission.id);
+                const isCompleted = !isLocked && (progress[mission.id]?.status === 'completed' || submittedId === mission.id);
                 const isExpanded = expandedId === mission.id;
                 const diffCfg = DIFFICULTY_CONFIG[mission.difficultyLevel || 'medium'];
 
@@ -364,11 +368,11 @@ export function MisiClient({
                               )}
 
                               {/* Jawaban / Refleksi User */}
-                              {(progressMap[mission.id]?.notes || progressMap[mission.id]?.submissionText) && (
+                              {(progress[mission.id]?.notes || progress[mission.id]?.submissionText) && (
                                 <div className="bg-slate-50 border border-slate-200/80 rounded-xl p-3 text-xs text-slate-700 space-y-1">
                                   <span className="font-semibold text-slate-500 block">Refleksi / Jawaban Kamu:</span>
                                   <p className="text-slate-800 whitespace-pre-wrap leading-relaxed">
-                                    {progressMap[mission.id]?.notes || progressMap[mission.id]?.submissionText}
+                                    {progress[mission.id]?.notes || progress[mission.id]?.submissionText}
                                   </p>
                                 </div>
                               )}

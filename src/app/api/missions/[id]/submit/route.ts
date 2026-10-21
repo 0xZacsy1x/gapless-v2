@@ -132,17 +132,27 @@ ${userNotes}
           model: google('gemini-3.5-flash-lite'),
           system: systemPrompt,
           prompt: userPrompt,
-          maxOutputTokens: 500,
-          abortSignal: AbortSignal.timeout(8000),
+          maxOutputTokens: 600,
+          abortSignal: AbortSignal.timeout(15000),
         });
       } catch {
-        aiRes = await generateText({
-          model: google('gemini-3.8-flash'),
-          system: systemPrompt,
-          prompt: userPrompt,
-          maxOutputTokens: 500,
-          abortSignal: AbortSignal.timeout(8000),
-        });
+        try {
+          aiRes = await generateText({
+            model: google('gemini-3.8-flash'),
+            system: systemPrompt,
+            prompt: userPrompt,
+            maxOutputTokens: 600,
+            abortSignal: AbortSignal.timeout(15000),
+          });
+        } catch {
+          aiRes = await generateText({
+            model: google('gemini-3.6-flash'),
+            system: systemPrompt,
+            prompt: userPrompt,
+            maxOutputTokens: 600,
+            abortSignal: AbortSignal.timeout(15000),
+          });
+        }
       }
       aiRawText = aiRes.text.trim();
     } catch (aiErr) {
@@ -170,6 +180,10 @@ ${userNotes}
         { error: 'Gagal memvalidasi, coba lagi.' },
         { status: 500 }
       );
+    }
+
+    if (parsedAi.is_relevant && !parsedAi.feedback) {
+      parsedAi.feedback = `Halo ${firstName}!\n\n**Yang sudah baik:**\nRefleksi kamu menunjukkan pemahaman awal yang baik terhadap instruksi dan konteks misi ini.\n\n**Yang perlu diperbaiki:**\nPerjelas metrik atau contoh implementasi konkret agar hasilnya lebih terukur.\n\n**Saran konkret:**\nGunakan pendekatan berbasis STAR method (Situation, Task, Action, Result) untuk memperkuat hasil kerja di dunia profesional.`;
     }
 
     // Jika is_relevant = false: jangan simpan status, jangan naikkan readiness
@@ -239,8 +253,8 @@ ${userNotes}
         })
         .onConflictDoNothing();
 
-      // Simpan feedback AI khusus pengguna Gapless Pro
-      if (isPro && parsedAi.feedback) {
+      // Simpan feedback AI untuk semua pengguna (baik free maupun Pro)
+      if (parsedAi.feedback) {
         const existingFeedback = await db
           .select()
           .from(missionFeedbacks)
@@ -280,7 +294,7 @@ ${userNotes}
     return NextResponse.json({
       success: true,
       progress: resultProgress,
-      feedback: isPro ? parsedAi.feedback : null,
+      feedback: parsedAi.feedback,
       isPro,
     });
   } catch (error) {
