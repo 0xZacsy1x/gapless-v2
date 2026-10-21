@@ -20,6 +20,7 @@ import {
   X
 } from 'lucide-react';
 import type { CareerProfile, CurriculumPhase, ModuleDetail } from '@/data/gaplessData';
+import { getCuratedModuleDetail } from '@/lib/curatedLearningResources';
 import { useGaplessContext } from '@/contexts/CareerContext';
 
 interface Props {
@@ -210,36 +211,13 @@ export default function ModuleDetailClient({
               ...fetched,
             });
           } else {
-            setDetailData({
-              slug: moduleSlug,
-              title: moduleTitle,
-              duration: 'Estimasi 1-2 Jam',
-              target: 'Menguasai konsep dasar materi ini dalam proyek industri nyata.',
-              breakdown: [{ title: 'Dasar Pemahaman', description: 'Pengenalan dan terminologi esensial' }],
-              resources: [
-                {
-                  title: `Tutorial "${moduleTitle}" di YouTube`,
-                  type: 'Video',
-                  url: `https://www.youtube.com/results?search_query=${encodeURIComponent(moduleTitle)}`,
-                  isFree: true,
-                  provider: 'YouTube',
-                },
-                {
-                  title: `Panduan & Artikel "${moduleTitle}"`,
-                  type: 'Artikel',
-                  url: `https://www.freecodecamp.org/news/search/?query=${encodeURIComponent(moduleTitle)}`,
-                  isFree: true,
-                  provider: 'freeCodeCamp',
-                },
-                {
-                  title: `Dokumentasi Teknis "${moduleTitle}"`,
-                  type: 'Dokumentasi',
-                  url: `https://developer.mozilla.org/en-US/search?q=${encodeURIComponent(moduleTitle)}`,
-                  isFree: true,
-                  provider: 'MDN Web Docs',
-                },
-              ],
+            const fallbackCurated = getCuratedModuleDetail({
+              moduleSlug,
+              moduleTitle,
+              careerSlug: profile.id,
+              roleName: profile.title,
             });
+            setDetailData(fallbackCurated);
           }
         } catch (e) {
           console.error(e);

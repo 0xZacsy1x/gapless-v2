@@ -5,6 +5,7 @@ import { eq, and } from "drizzle-orm";
 import { auth } from "@/auth";
 import { z } from "zod";
 import { findCareerProfile, CAREER_PROFILES, MODULE_DETAILS } from "@/data/gaplessData";
+import { getCuratedModuleDetail } from "@/lib/curatedLearningResources";
 import { checkModuleSequence, MIN_STUDY_SECONDS } from "@/lib/roadmapSequence";
 import { hasActivePro } from "@/lib/payment_service";
 
@@ -95,26 +96,13 @@ export async function POST(req: Request) {
     // 4. Hitung total materi yang harus diselesaikan di modul ini
     let expectedTotal = clientTotal && clientTotal > 0 ? clientTotal : 0;
     if (!expectedTotal) {
-      const manual = MODULE_DETAILS[moduleSlug];
-      if (manual?.resources?.length) {
-        expectedTotal = manual.resources.length;
-      } else {
-        const cachedInsight = await db.query.aiModuleInsights.findFirst({
-          where: and(
-            eq(aiModuleInsights.moduleSlug, moduleSlug),
-            eq(aiModuleInsights.careerSlug, careerSlug)
-          ),
-        });
-        if (cachedInsight?.insightData && typeof cachedInsight.insightData === "object") {
-          const resList = (cachedInsight.insightData as any).resources;
-          if (Array.isArray(resList) && resList.length > 0) {
-            expectedTotal = resList.length;
-          }
-        }
-      }
-    }
-    if (!expectedTotal) {
-      expectedTotal = 4;
+      const curated = getCuratedModuleDetail({
+        moduleSlug,
+        moduleTitle: moduleSlug,
+        careerSlug,
+        roleName: profile.title,
+      });
+      expectedTotal = curated.resources.length || 4;
     }
 
     // 5. Cek Sesi Belajar per resource

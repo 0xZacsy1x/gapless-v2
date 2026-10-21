@@ -5,6 +5,7 @@ import { assessmentResults, roadmapProgress } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { auth } from '@/auth';
 import { CAREER_PROFILES, MODULE_DETAILS, findCareerProfile } from '@/data/gaplessData';
+import { getCuratedModuleDetail } from '@/lib/curatedLearningResources';
 import { Navbar } from '@/components/Navbar';
 import ModuleDetailClient from './ModuleDetailClient';
 import { checkModuleSequence, isModuleDone } from '@/lib/roadmapSequence';
@@ -121,9 +122,14 @@ export default async function ModuleDetailPage({ params }: { params: Promise<{ a
   const { targetPhaseIndex, targetModuleIndex, moduleTitle } = sequenceStatus;
   const phaseData = profile.roadmap[targetPhaseIndex];
 
-  // 5. Ambil data kurasi modul
-  const detailData = MODULE_DETAILS[moduleSlug] || null;
-  const totalResourcesCount = detailData?.resources?.length || 4;
+  // 5. Ambil data kurasi modul yang terverifikasi & 100% tepat domain untuk karir yang dipilih
+  const detailData = getCuratedModuleDetail({
+    moduleSlug,
+    moduleTitle: moduleTitle || moduleSlug,
+    careerSlug,
+    roleName: profile.title,
+  });
+  const totalResourcesCount = detailData.resources.length;
 
   const completedResourcesMap = (moduleStatuses._completed_resources as Record<string, number[]>) || {};
   const initialCompletedResources = completedResourcesMap[moduleSlug] || [];

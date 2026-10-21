@@ -3,6 +3,7 @@
 import { useGaplessContext } from '@/contexts/CareerContext';
 import ModuleDetailClient from '@/app/roadmap/[assessmentId]/modul/[moduleSlug]/ModuleDetailClient';
 import { MODULE_DETAILS } from '@/data/gaplessData';
+import { getCuratedModuleDetail } from '@/lib/curatedLearningResources';
 import { Navbar } from '@/components/Navbar';
 
 export function GuestModuleDetailView() {
@@ -47,7 +48,12 @@ export function GuestModuleDetailView() {
   }
 
   // Get Detail Data
-  const detailData = MODULE_DETAILS[selectedModuleSlug] || null;
+  const detailData = getCuratedModuleDetail({
+    moduleSlug: selectedModuleSlug,
+    moduleTitle: moduleName,
+    careerSlug: selectedCareer.id,
+    roleName: selectedCareer.title,
+  });
 
   return (
     <div className="flex-1 w-full flex flex-col">
