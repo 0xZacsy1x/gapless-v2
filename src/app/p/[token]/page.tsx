@@ -14,6 +14,8 @@ import { Shield, CheckCircle2, Award, Briefcase, ExternalLink, Sparkles, Crown, 
 import Link from 'next/link';
 import { CAREER_PROFILES, TRAIT_META, Trait } from '@/data/gaplessData';
 import { hasActivePro } from '@/lib/payment_service';
+import { computeSJTScores, SJT_SKILLS, SJT_SKILL_META } from '@/data/sjtBank';
+import { COMPETENCIES, CompetencyItem } from '@/app/passport/types';
 
 import type { Metadata } from 'next';
 
@@ -105,7 +107,54 @@ export default async function PublicPassportPage({
     ? TRAIT_META[dominantTrait as Trait]
     : null;
 
-  const softScore = Math.min(95, 60 + completedMissions.length * 4 + userActivities.length * 7);
+  // Ekstraksi 8 Dimensi Soft Skill SJT
+  let hasVerifiedSjt = false;
+  let competencies: CompetencyItem[] = COMPETENCIES;
+
+  if (latestAssessment[0]?.rawAnswers) {
+    const raw = latestAssessment[0].rawAnswers as Record<string, any>;
+    const sjtAnswers: Record<number, number> = {};
+    let sjtCount = 0;
+    Object.entries(raw).forEach(([k, v]) => {
+      if (k.startsWith('sjt_')) {
+        const idx = parseInt(k.replace('sjt_', ''), 10);
+        if (!isNaN(idx) && typeof v === 'number') {
+          sjtAnswers[idx] = v;
+          sjtCount++;
+        }
+      }
+    });
+
+    if (sjtCount > 0) {
+      hasVerifiedSjt = true;
+      const sjtScores = computeSJTScores(sjtAnswers);
+      const boost = Math.min(10, completedMissions.length * 1 + userActivities.length * 2);
+
+      competencies = SJT_SKILLS.map((skill) => {
+        const meta = SJT_SKILL_META[skill];
+        const scoreData = sjtScores[skill];
+        const basePct = scoreData ? scoreData.percentage : 70;
+        const finalScore = Math.min(99, Math.max(25, basePct + boost));
+        const level: 1 | 2 | 3 = finalScore >= 80 ? 3 : finalScore >= 50 ? 2 : 1;
+
+        return {
+          id: skill.toLowerCase().replace(/[^a-z0-9]/g, '_'),
+          name: meta.label,
+          shortLabel: meta.shortLabel,
+          icon: meta.icon,
+          base: finalScore,
+          desc: meta.description,
+          level,
+          feedbackList: scoreData?.feedbackList || [],
+          isVerified: true,
+        };
+      });
+    }
+  }
+
+  const softScore = hasVerifiedSjt
+    ? Math.round(competencies.reduce((sum, c) => sum + c.base, 0) / competencies.length)
+    : Math.min(95, 60 + completedMissions.length * 4 + userActivities.length * 7);
   const hardScore = latestAssessment.length ? 78 : 65;
 
   return (
@@ -202,7 +251,78 @@ export default async function PublicPassportPage({
               Soft Skill Readiness
             </span>
             <div className="text-3xl font-extrabold text-indigo-400 mt-1">{softScore}%</div>
-            <p className="text-xs text-slate-400 mt-1">5 Kompetensi industri terapan</p>
+            <p className="text-xs text-slate-400 mt-1">
+              {hasVerifiedSjt ? '8 Dimensi SJT terverifikasi' : '8 Dimensi soft skill terapan'}
+            </p>
+          </div>
+        </div>
+
+        {/* 8 Dimensi Soft Skill Breakdown (Publik) */}
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h3 className="text-sm font-bold text-slate-300 uppercase tracking-wider">
+              8 Dimensi Soft Skill Kesiapan Karir
+            </h3>
+            {hasVerifiedSjt ? (
+              <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-400 bg-emerald-500/10 px-2.5 py-0.5 rounded-full border border-emerald-500/20">
+                <CheckCircle2 className="w-3 h-3" /> Terverifikasi SJT
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-amber-400 bg-amber-500/10 px-2.5 py-0.5 rounded-full border border-amber-500/20">
+                <Sparkles className="w-3 h-3" /> Estimasi Standar
+              </span>
+            )}
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {competencies.map((comp) => {
+              const score = comp.base;
+              const isLevel3 = score >= 80;
+              const isLevel2 = score >= 50 && score < 80;
+
+              let badgeText = 'Perlu Asah';
+              let badgeColor = 'text-amber-400 bg-amber-400/10 border-amber-400/20';
+              let barGradient = 'from-amber-400 to-amber-500';
+              let scoreColor = 'text-amber-400';
+
+              if (isLevel3) {
+                badgeText = 'Unggul';
+                badgeColor = 'text-emerald-400 bg-emerald-400/10 border-emerald-400/20';
+                barGradient = 'from-emerald-400 to-teal-400';
+                scoreColor = 'text-emerald-400';
+              } else if (isLevel2) {
+                badgeText = 'Standar';
+                badgeColor = 'text-blue-400 bg-blue-400/10 border-blue-400/20';
+                barGradient = 'from-blue-400 to-indigo-500';
+                scoreColor = 'text-blue-400';
+              }
+
+              return (
+                <div
+                  key={comp.id}
+                  className="p-3.5 rounded-xl bg-slate-800/60 border border-slate-700/80 space-y-2"
+                >
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <span className="text-base">{comp.icon || '🎯'}</span>
+                      <div className="min-w-0">
+                        <h4 className="text-xs font-semibold text-white truncate">{comp.name}</h4>
+                        <span className={`text-[10px] px-1.5 py-0.2 rounded border font-medium ${badgeColor}`}>
+                          {badgeText}
+                        </span>
+                      </div>
+                    </div>
+                    <span className={`text-sm font-bold ${scoreColor}`}>{score}%</span>
+                  </div>
+                  <div className="w-full h-1.5 bg-slate-700 rounded-full overflow-hidden">
+                    <div
+                      className={`h-full bg-linear-to-r ${barGradient} rounded-full`}
+                      style={{ width: `${score}%` }}
+                    />
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
 

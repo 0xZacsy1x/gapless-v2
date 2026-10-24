@@ -53,6 +53,9 @@ export interface AssessmentInfo {
   dominantTrait?: string | null;
   isActive: boolean;
   createdAt: string;
+  hasSjt?: boolean;
+  competencies?: CompetencyItem[];
+  softScore?: number;
 }
 
 export interface CertificateData {
@@ -90,19 +93,101 @@ export interface PassportProps {
   snapshots: SnapshotItem[];
   publicProfile: PublicProfile | null;
   isPro: boolean;
+  competencies?: CompetencyItem[];
+  hasVerifiedSjt?: boolean;
 }
 
 export interface CompetencyItem {
   id: string;
   name: string;
+  shortLabel?: string;
+  icon?: string;
   base: number;
   desc: string;
+  level?: 1 | 2 | 3;
+  feedbackList?: string[];
+  isVerified?: boolean;
 }
 
 export const COMPETENCIES: CompetencyItem[] = [
-  { id: 'komunikasi', name: 'Komunikasi & Negosiasi', base: 75, desc: 'Kemampuan menyampaikan ide, persuasi, dan mendengar aktif.' },
-  { id: 'kerjasama', name: 'Kerjasama & Kolaborasi', base: 82, desc: 'Bekerja efektif dalam tim lintas fungsi dan resolusi konflik.' },
-  { id: 'integritas', name: 'Integritas & Etika Kerja', base: 90, desc: 'Konsistensi moral, kejujuran data, dan komitmen profesional.' },
-  { id: 'keandalan', name: 'Keandalan & Tanggung Jawab', base: 80, desc: 'Ketepatan deadline dan kepemilikan hasil kerja.' },
-  { id: 'adaptabilitas', name: 'Adaptabilitas & Ketahanan', base: 72, desc: 'Kelincahan belajar hal baru dan merespons perubahan situasi.' },
+  {
+    id: 'kolaborasi',
+    name: 'Kolaborasi Tim & Lintas Fungsi',
+    shortLabel: 'Kolaborasi Tim',
+    icon: '🤝',
+    base: 78,
+    desc: 'Kemampuan bekerja sama, menyelaraskan tujuan lintas divisi, dan resolusi konflik secara konstruktif.',
+    level: 2,
+    isVerified: false,
+  },
+  {
+    id: 'komunikasi',
+    name: 'Komunikasi Efektif',
+    shortLabel: 'Komunikasi',
+    icon: '💬',
+    base: 82,
+    desc: 'Menyampaikan pesan secara jelas, mendengarkan aktif, dan persuasi terstruktur.',
+    level: 3,
+    isVerified: false,
+  },
+  {
+    id: 'berpikir_analitis',
+    name: 'Berpikir Analitis & Kritis',
+    shortLabel: 'Berpikir Kritis',
+    icon: '🔍',
+    base: 80,
+    desc: 'Mengevaluasi bukti secara objektif, membedakan fakta vs asumsi, dan penalaran logis.',
+    level: 3,
+    isVerified: false,
+  },
+  {
+    id: 'problem_solving',
+    name: 'Pemecahan Masalah (Problem Solving)',
+    shortLabel: 'Problem Solving',
+    icon: '🧩',
+    base: 85,
+    desc: 'Menganalisis akar masalah secara sistematis dan merumuskan solusi dengan pertimbangan trade-off.',
+    level: 3,
+    isVerified: false,
+  },
+  {
+    id: 'kemauan_belajar',
+    name: 'Kemauan Belajar & Rasa Ingin Tahu',
+    shortLabel: 'Kemauan Belajar',
+    icon: '📚',
+    base: 88,
+    desc: 'Proaktif mencari wawasan baru, terbuka pada umpan balik, dan cepat menguasai hal baru.',
+    level: 3,
+    isVerified: false,
+  },
+  {
+    id: 'ketelitian',
+    name: 'Ketelitian (Attention to Detail)',
+    shortLabel: 'Ketelitian',
+    icon: '🎯',
+    base: 74,
+    desc: 'Cermat dalam akurasi data, mematuhi standar kualitas, dan minim kekeliruan.',
+    level: 2,
+    isVerified: false,
+  },
+  {
+    id: 'inisiatif',
+    name: 'Inisiatif & Proaktif',
+    shortLabel: 'Inisiatif',
+    icon: '⚡',
+    base: 76,
+    desc: 'Mengambil tindakan tanpa harus diperintah, mencari peluang perbaikan, dan kepemilikan hasil.',
+    level: 2,
+    isVerified: false,
+  },
+  {
+    id: 'adaptabilitas',
+    name: 'Adaptabilitas & Kelincahan',
+    shortLabel: 'Adaptabilitas',
+    icon: '🌱',
+    base: 72,
+    desc: 'Cepat menyesuaikan diri dengan perubahan prioritas, tantangan tak terduga, dan dinamika tim.',
+    level: 2,
+    isVerified: false,
+  },
 ];

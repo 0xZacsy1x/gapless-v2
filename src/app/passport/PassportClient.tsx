@@ -47,6 +47,8 @@ export function PassportClient({
   certificates: initialCertificates = [],
   publicProfile: initialPublicProfile,
   isPro,
+  competencies: initialCompetencies,
+  hasVerifiedSjt: initialHasVerifiedSjt = false,
 }: PassportProps) {
   const [profile, setProfile] = useState<PublicProfile | null>(initialPublicProfile);
   const [isTogglingLink, setIsTogglingLink] = useState(false);
@@ -64,6 +66,10 @@ export function PassportClient({
     ? TRAIT_META[currentAssessment.dominantTrait as Trait]
     : null;
 
+  // Kompetensi & status verifikasi aktif sesuai asesmen yang dipilih
+  const activeCompetencies = currentAssessment?.competencies || initialCompetencies;
+  const activeHasVerifiedSjt = currentAssessment?.hasSjt ?? initialHasVerifiedSjt;
+
   // Perhitungan skor dinamis real-time saat sertifikat baru tervalidasi AI
   const initialCertBoost = initialCertificates
     .filter((c) => c.status === 'Tervalidasi')
@@ -74,7 +80,8 @@ export function PassportClient({
   const certBoostDiff = currentCertBoost - initialCertBoost;
 
   const currentHardScore = Math.min(95, hardSkillScore + certBoostDiff);
-  const currentSoftScore = Math.min(98, softSkillScore + certBoostDiff);
+  const baseSoftScore = currentAssessment?.softScore ?? softSkillScore;
+  const currentSoftScore = Math.min(98, baseSoftScore + certBoostDiff);
 
   const handleTogglePublicLink = async () => {
     setIsTogglingLink(true);
@@ -305,11 +312,13 @@ export function PassportClient({
             <div className="flex items-baseline gap-2 mt-1">
               <span className="text-3xl font-extrabold text-slate-900">{currentSoftScore}%</span>
               <span className="text-xs font-medium text-indigo-600 flex items-center">
-                <UserCheck className="w-3 h-3 mr-0.5" /> 5 Kompetensi
+                <UserCheck className="w-3 h-3 mr-0.5" /> {activeHasVerifiedSjt ? '8 Dimensi Terverifikasi' : '8 Dimensi Soft Skill'}
               </span>
             </div>
             <p className="text-xs text-slate-500 mt-1">
-              Berdasarkan misi terselesaikan & bukti kegiatan terkonfirmasi.
+              {activeHasVerifiedSjt
+                ? 'Terverifikasi dari 40 skenario Situational Judgement Test (SJT).'
+                : 'Berdasarkan misi terselesaikan & bukti kegiatan terkonfirmasi.'}
             </p>
           </div>
           <div className="w-16 h-16 rounded-full border-4 border-indigo-500 flex items-center justify-center font-bold text-indigo-600 bg-indigo-50 text-sm">
@@ -318,8 +327,11 @@ export function PassportClient({
         </div>
       </div>
 
-      {/* 5 Kompetensi Soft Skill Breakdown */}
-      <SoftSkillCompetencies />
+      {/* 8 Dimensi Soft Skill Breakdown */}
+      <SoftSkillCompetencies
+        competencies={activeCompetencies}
+        hasVerifiedSjt={activeHasVerifiedSjt}
+      />
 
       {/* SECTION: Sertifikat & Portofolio */}
       <CertificatesSection
