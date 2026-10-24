@@ -126,8 +126,15 @@ export function AnalysisResultBlock({
               <ShieldCheck className="w-5 h-5" />
             </span>
             <div>
-              <h4 className="font-bold text-slate-900 text-sm">Laporan Lengkap Terbuka</h4>
-              <p className="text-xs text-slate-600">Dokumen konsultasi eksekutif 11 halaman siap diakses untuk {careerName}.</p>
+              <div className="flex flex-wrap items-center gap-2">
+                <h4 className="font-bold text-slate-900 text-sm">Laporan Lengkap Terbuka</h4>
+                <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300/60">
+                  Hard Skill + Soft Skill Terpadu
+                </span>
+              </div>
+              <p className="text-xs text-slate-600 mt-1">
+                Satu dokumen konsultasi eksekutif 11 halaman terpadu siap diakses untuk {careerName} (mencakup evaluasi gap teknis, analisis mendalam 8 soft skill SJT, dan rencana aksi 30/60/90 hari).
+              </p>
             </div>
           </div>
           <div className="flex items-center gap-2.5 w-full sm:w-auto">
@@ -155,7 +162,7 @@ export function AnalysisResultBlock({
               ) : (
                 <>
                   <Download className="w-3.5 h-3.5" />
-                  <span>Unduh PDF (11 Hal)</span>
+                  <span>Unduh PDF Lengkap (11 Hal)</span>
                 </>
               )}
             </button>
@@ -170,13 +177,13 @@ export function AnalysisResultBlock({
             </span>
             <div>
               <div className="flex items-center gap-2">
-                <h4 className="font-bold text-slate-900 text-sm">Dokumen Laporan Konsultasi 11 Halaman</h4>
+                <h4 className="font-bold text-slate-900 text-sm">Dokumen Laporan Konsultasi 11 Halaman (Hard &amp; Soft Skill)</h4>
                 <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 border border-amber-200">
                   Rp 9.900
                 </span>
               </div>
-              <p className="text-xs text-slate-500">
-                Akses dokumen PDF formal lengkap dengan analisis gap mendalam AI, evaluasi 8 soft skills, dan panduan interview untuk target karier {careerName}.
+              <p className="text-xs text-slate-500 mt-1">
+                Akses satu dokumen PDF formal lengkap: analisis gap mendalam AI, evaluasi 8 dimensi soft skill (SJT 40 skenario), dan panduan interview STAR Method untuk target karier {careerName}.
               </p>
             </div>
           </div>

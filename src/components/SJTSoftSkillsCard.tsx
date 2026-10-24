@@ -10,14 +10,11 @@ import {
   TrendingUp,
   AlertCircle,
   Lock,
-  FileText,
   ShieldCheck,
   ArrowRight,
-  ExternalLink,
   Target,
   Zap,
 } from 'lucide-react';
-import Link from 'next/link';
 import { SJT_SKILLS, SJT_SKILL_META, SJTSkill } from '@/data/sjtBank';
 import { getDetailedSoftSkillAnalysis, SoftSkillDetailReport } from '@/data/sjtAnalysisData';
 
@@ -117,7 +114,7 @@ export function SJTSoftSkillsCard({
           {isPurchased ? (
             <span className="text-[11px] font-bold bg-emerald-500/25 text-emerald-100 border border-emerald-300/40 px-3 py-0.5 rounded-full flex items-center gap-1 shadow-2xs">
               <ShieldCheck className="w-3.5 h-3.5 text-emerald-300" />
-              <span>Laporan Lengkap Terbuka</span>
+              <span>Tergabung di Laporan Lengkap 11 Hal</span>
             </span>
           ) : (
             <span className="text-[11px] font-medium bg-white/20 text-white px-2.5 py-0.5 rounded-full border border-white/30 flex items-center gap-1">
@@ -146,20 +143,8 @@ export function SJTSoftSkillsCard({
             </p>
           </div>
 
-          {/* Action Button: View Details or Document */}
+          {/* Action Button: Toggle Details */}
           <div className="flex items-center gap-2 shrink-0 self-start md:self-auto">
-            {isPurchased && assessmentId && (
-              <Link
-                href={`/report/${assessmentId}`}
-                target="_blank"
-                className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-700 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 border border-slate-200 px-3.5 py-2 rounded-xl transition cursor-pointer"
-              >
-                <FileText className="w-3.5 h-3.5 text-blue-600" />
-                <span>Dokumen PDF</span>
-                <ExternalLink className="w-3 h-3 text-slate-400" />
-              </Link>
-            )}
-
             <button
               type="button"
               onClick={() => setIsExpanded((prev) => !prev)}
@@ -335,11 +320,16 @@ export function SJTSoftSkillsCard({
                   <Sparkles className="w-4 h-4" />
                 </span>
                 <div>
-                  <h4 className="text-xs font-bold text-indigo-950">
-                    Evaluasi Kematangan Perilaku Kerja &amp; Panduan Wawancara ({careerTitle})
-                  </h4>
-                  <p className="text-[11px] text-indigo-800 leading-relaxed mt-0.5">
-                    Data di bawah menganalisis respon alami di tempat kerja, jebakan blind spots, aksi perbaikan mingguan, dan simulasi jawaban interview (STAR Method).
+                  <div className="flex flex-wrap items-center gap-2 mb-1">
+                    <h4 className="text-xs font-bold text-indigo-950">
+                      Evaluasi Kematangan Perilaku Kerja &amp; Panduan Wawancara ({careerTitle})
+                    </h4>
+                    <span className="text-[10px] font-semibold text-emerald-800 bg-emerald-100 border border-emerald-200 px-2 py-0.5 rounded-md">
+                      ✓ Tergabung di Laporan Lengkap (Hal 4 &amp; 5)
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-indigo-800 leading-relaxed">
+                    Data di bawah menganalisis respon alami di tempat kerja, deteksi blind spots, aksi perbaikan mingguan, dan simulasi jawaban interview (STAR Method). Analisis ini otomatis terintegrasi utuh di dalam Dokumen Laporan Eksekutif 11 Halaman di bawah.
                   </p>
                 </div>
               </div>

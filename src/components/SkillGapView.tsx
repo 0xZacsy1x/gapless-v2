@@ -18,28 +18,28 @@ import {
 const slugify = (text: string) => text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
 
 const getQuizKey = (title: string) => {
-    const slug = slugify(title);
-    const aliases: Record<string, string> = {
-        'ui-ux-designer': 'ui-ux-designer',
-        'ux-designer': 'ui-ux-designer',
-        'content-creator-social-media-specialist': 'content-creator',
-        'content-creator-social-media-strategist': 'content-creator',
-        'content-strategist': 'content-creator',
-        'software-engineer-front-back-full-stack': 'software-engineer',
-        'ai-ml-engineer-machine-learning-engineer': 'ai-ml-engineer',
-        'devops-engineer-qa-automation-engineer': 'devops-qa-engineer',
-        'data-analyst-business-intelligence': 'data-analyst',
-        'data-researcher-strategy-analyst': 'data-researcher',
-        'research-scientist': 'data-researcher',
-        'digital-marketing-specialist': 'digital-marketing',
-        'community-manager': 'digital-marketing',
-        'business-development-account-executive': 'business-development',
-        'graphic-designer-digital-creative-product-designer': 'graphic-designer',
-        'graphic-designer-visual-designer': 'graphic-designer',
-        'e-commerce-dropship-specialist': 'ecommerce-specialist',
-        'e-commerce-specialist-dropshipper': 'ecommerce-specialist',
-    };
-    return aliases[slug] || slug;
+  const slug = slugify(title);
+  const aliases: Record<string, string> = {
+    'ui-ux-designer': 'ui-ux-designer',
+    'ux-designer': 'ui-ux-designer',
+    'content-creator-social-media-specialist': 'content-creator',
+    'content-creator-social-media-strategist': 'content-creator',
+    'content-strategist': 'content-creator',
+    'software-engineer-front-back-full-stack': 'software-engineer',
+    'ai-ml-engineer-machine-learning-engineer': 'ai-ml-engineer',
+    'devops-engineer-qa-automation-engineer': 'devops-qa-engineer',
+    'data-analyst-business-intelligence': 'data-analyst',
+    'data-researcher-strategy-analyst': 'data-researcher',
+    'research-scientist': 'data-researcher',
+    'digital-marketing-specialist': 'digital-marketing',
+    'community-manager': 'digital-marketing',
+    'business-development-account-executive': 'business-development',
+    'graphic-designer-digital-creative-product-designer': 'graphic-designer',
+    'graphic-designer-visual-designer': 'graphic-designer',
+    'e-commerce-dropship-specialist': 'ecommerce-specialist',
+    'e-commerce-specialist-dropshipper': 'ecommerce-specialist',
+  };
+  return aliases[slug] || slug;
 };
 
 export function SkillGapView() {
@@ -57,7 +57,7 @@ export function SkillGapView() {
   const [step, setStep] = useState(1);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<number, number>>({});
-  
+
   const [isSyncing, setIsSyncing] = useState(false);
   const [syncError, setSyncError] = useState<string | null>(null);
   const [isRestoredFromDraft, setIsRestoredFromDraft] = useState(false);
@@ -152,39 +152,39 @@ export function SkillGapView() {
 
   const handleFinish = () => {
     if (selectedOptionIdx === null || !currentQuestion || isSyncing) return;
-    
+
     const totalSkills = selectedCareer.skills.length;
     const totalQs = questions.length;
-    
+
     selectedCareer.skills.forEach((skill, skillIdx) => {
-        let skillPoints = 0;
-        let maxSkillPoints = 0;
-        
-        for (let qIdx = 0; qIdx < totalQs; qIdx++) {
-             if (qIdx % totalSkills === skillIdx) {
-                 const optIdx = answers[qIdx];
-                 const optScore = (optIdx !== undefined && questions[qIdx]?.options[optIdx])
-                   ? questions[qIdx].options[optIdx].score
-                   : 0;
-                 skillPoints += optScore;
-                 maxSkillPoints += 10;
-             }
+      let skillPoints = 0;
+      let maxSkillPoints = 0;
+
+      for (let qIdx = 0; qIdx < totalQs; qIdx++) {
+        if (qIdx % totalSkills === skillIdx) {
+          const optIdx = answers[qIdx];
+          const optScore = (optIdx !== undefined && questions[qIdx]?.options[optIdx])
+            ? questions[qIdx].options[optIdx].score
+            : 0;
+          skillPoints += optScore;
+          maxSkillPoints += 10;
         }
-        
-        const pct = maxSkillPoints > 0 ? skillPoints / maxSkillPoints : 0;
-        
-        let finalLevel = 1;
-        if (pct >= 0.8) {
-            finalLevel = 3; // Lanjutan
-        } else if (pct >= 0.4) {
-            finalLevel = 2; // Menengah
-        } else {
-            finalLevel = 1; // Dasar
-        }
-        
-        setSkillRating(skill.name, finalLevel);
+      }
+
+      const pct = maxSkillPoints > 0 ? skillPoints / maxSkillPoints : 0;
+
+      let finalLevel = 1;
+      if (pct >= 0.8) {
+        finalLevel = 3; // Lanjutan
+      } else if (pct >= 0.4) {
+        finalLevel = 2; // Menengah
+      } else {
+        finalLevel = 1; // Dasar
+      }
+
+      setSkillRating(skill.name, finalLevel);
     });
-    
+
     // Proceed to Step 2 (Saving & Redirecting)
     setStep(2);
   };
@@ -243,16 +243,16 @@ export function SkillGapView() {
                     <div className="text-center py-8">
                       <h2 className="text-xl font-bold text-slate-900 mb-4">Quiz Case Study</h2>
                       <p className="mb-6 text-gray-500">Modul kuis untuk peran ini sedang disiapkan.</p>
-                      <button 
-                          onClick={() => {
-                              selectedCareer.skills.forEach(skill => {
-                                  setSkillRating(skill.name, 1);
-                              });
-                              setStep(2);
-                          }}
-                          className="btn-primary w-full max-w-xs mx-auto flex items-center justify-center gap-2"
+                      <button
+                        onClick={() => {
+                          selectedCareer.skills.forEach(skill => {
+                            setSkillRating(skill.name, 1);
+                          });
+                          setStep(2);
+                        }}
+                        className="btn-primary w-full max-w-xs mx-auto flex items-center justify-center gap-2"
                       >
-                          Lanjut ke Analisis <ChevronRight size={16} />
+                        Lanjut ke Analisis <ChevronRight size={16} />
                       </button>
                     </div>
                   ) : (
@@ -275,107 +275,104 @@ export function SkillGapView() {
                       )}
 
                       <div className="text-center mb-6">
-                          <h2 className="text-2xl font-bold text-slate-900 mb-2">Case Study: {selectedCareer.title}</h2>
-                          <p className="text-gray-500 text-sm">Pertanyaan {currentIndex + 1} dari {questions.length}</p>
+                        <h2 className="text-2xl font-bold text-slate-900 mb-2">Case Study: {selectedCareer.title}</h2>
+                        <p className="text-gray-500 text-sm">Pertanyaan {currentIndex + 1} dari {questions.length}</p>
                       </div>
 
                       {/* Progress bar */}
                       <div className="w-full bg-gray-200 h-1.5 rounded-full mb-8 overflow-hidden">
-                          <motion.div 
-                              className="h-full rounded-full"
-                              style={{ background: traitMeta.color }}
-                              initial={{ width: 0 }}
-                              animate={{ width: `${((currentIndex + 1) / questions.length) * 100}%` }}
-                              transition={{ duration: 0.3 }}
-                          />
+                        <motion.div
+                          className="h-full rounded-full"
+                          style={{ background: traitMeta.color }}
+                          initial={{ width: 0 }}
+                          animate={{ width: `${((currentIndex + 1) / questions.length) * 100}%` }}
+                          transition={{ duration: 0.3 }}
+                        />
                       </div>
 
                       <AnimatePresence mode="wait">
-                          <motion.div
-                              key={currentIndex}
-                              initial={{ opacity: 0, x: 20 }}
-                              animate={{ opacity: 1, x: 0 }}
-                              exit={{ opacity: 0, x: -20 }}
-                              transition={{ duration: 0.2 }}
-                          >
-                              <h3 className="text-lg sm:text-xl font-semibold text-slate-900 mb-6 leading-relaxed">
-                                  {currentQuestion.question}
-                              </h3>
+                        <motion.div
+                          key={currentIndex}
+                          initial={{ opacity: 0, x: 20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          exit={{ opacity: 0, x: -20 }}
+                          transition={{ duration: 0.2 }}
+                        >
+                          <h3 className="text-lg sm:text-xl font-semibold text-slate-900 mb-6 leading-relaxed">
+                            {currentQuestion.question}
+                          </h3>
 
-                              <div className="space-y-3">
-                                  {currentQuestion.options.map((option, idx) => {
-                                      const isSelected = selectedOptionIdx === idx;
-                                      return (
-                                        <button
-                                            key={idx}
-                                            onClick={() => handleSelectOption(idx)}
-                                            className={`w-full text-left p-4 rounded-xl border transition-all group flex items-start gap-3 ${
-                                              isSelected
-                                                ? 'border-blue-500 bg-blue-50 ring-1 ring-blue-200'
-                                                : 'border-gray-200 hover:border-blue-300 hover:bg-blue-50/50'
-                                            }`}
-                                        >
-                                            <div className={`w-7 h-7 rounded-full border flex items-center justify-center text-xs font-bold shrink-0 transition-all mt-0.5 ${
-                                              isSelected
-                                                ? 'bg-blue-600 text-white border-blue-600'
-                                                : 'border-gray-300 text-gray-400 group-hover:border-blue-400 group-hover:text-blue-500'
-                                            }`}>
-                                                {option.label}
-                                            </div>
-                                            <span className={`transition-colors text-sm ${
-                                              isSelected ? 'text-slate-900 font-medium' : 'text-gray-600 group-hover:text-slate-900'
-                                            }`}>
-                                                {option.text}
-                                            </span>
-                                        </button>
-                                      );
-                                  })}
-                              </div>
-
-                              {/* Tombol Navigasi: Sebelumnya & Selanjutnya/Lihat Hasil */}
-                              <div className="mt-8 flex items-center justify-between">
+                          <div className="space-y-3">
+                            {currentQuestion.options.map((option, idx) => {
+                              const isSelected = selectedOptionIdx === idx;
+                              return (
                                 <button
-                                  type="button"
-                                  onClick={handlePrev}
-                                  disabled={currentIndex === 0}
-                                  className="px-4 py-2.5 rounded-xl border border-slate-300 text-slate-700 hover:bg-slate-50 font-semibold transition-all disabled:opacity-30 disabled:cursor-not-allowed flex items-center gap-1.5 text-sm cursor-pointer"
+                                  key={idx}
+                                  onClick={() => handleSelectOption(idx)}
+                                  className={`w-full text-left p-4 rounded-xl border transition-all group flex items-start gap-3 ${isSelected
+                                      ? 'border-blue-500 bg-blue-50 ring-1 ring-blue-200'
+                                      : 'border-gray-200 hover:border-blue-300 hover:bg-blue-50/50'
+                                    }`}
                                 >
-                                  <ChevronLeft size={16} />
-                                  Sebelumnya
+                                  <div className={`w-7 h-7 rounded-full border flex items-center justify-center text-xs font-bold shrink-0 transition-all mt-0.5 ${isSelected
+                                      ? 'bg-blue-600 text-white border-blue-600'
+                                      : 'border-gray-300 text-gray-400 group-hover:border-blue-400 group-hover:text-blue-500'
+                                    }`}>
+                                    {option.label}
+                                  </div>
+                                  <span className={`transition-colors text-sm ${isSelected ? 'text-slate-900 font-medium' : 'text-gray-600 group-hover:text-slate-900'
+                                    }`}>
+                                    {option.text}
+                                  </span>
                                 </button>
+                              );
+                            })}
+                          </div>
 
-                                {currentIndex === questions.length - 1 ? (
-                                  <button
-                                    type="button"
-                                    onClick={handleFinish}
-                                    disabled={selectedOptionIdx === null || isSyncing}
-                                    className="btn-primary flex items-center gap-2 text-sm disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
-                                  >
-                                    {isSyncing ? (
-                                      <>
-                                        <Loader2 size={16} className="animate-spin" />
-                                        <span>Menghitung hasil...</span>
-                                      </>
-                                    ) : (
-                                      <>
-                                        <span>Lihat Hasil</span>
-                                        <ChevronRight size={16} />
-                                      </>
-                                    )}
-                                  </button>
+                          {/* Tombol Navigasi: Sebelumnya & Selanjutnya/Lihat Hasil */}
+                          <div className="mt-8 flex items-center justify-between">
+                            <button
+                              type="button"
+                              onClick={handlePrev}
+                              disabled={currentIndex === 0}
+                              className="px-4 py-2.5 rounded-xl border border-slate-300 text-slate-700 hover:bg-slate-50 font-semibold transition-all disabled:opacity-30 disabled:cursor-not-allowed flex items-center gap-1.5 text-sm cursor-pointer"
+                            >
+                              <ChevronLeft size={16} />
+                              Sebelumnya
+                            </button>
+
+                            {currentIndex === questions.length - 1 ? (
+                              <button
+                                type="button"
+                                onClick={handleFinish}
+                                disabled={selectedOptionIdx === null || isSyncing}
+                                className="btn-primary flex items-center gap-2 text-sm disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+                              >
+                                {isSyncing ? (
+                                  <>
+                                    <Loader2 size={16} className="animate-spin" />
+                                    <span>Menghitung hasil...</span>
+                                  </>
                                 ) : (
-                                  <button
-                                    type="button"
-                                    onClick={handleNext}
-                                    disabled={selectedOptionIdx === null}
-                                    className="btn-primary flex items-center gap-2 text-sm disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
-                                  >
-                                    <span>Selanjutnya</span>
+                                  <>
+                                    <span>Lihat Hasil</span>
                                     <ChevronRight size={16} />
-                                  </button>
+                                  </>
                                 )}
-                              </div>
-                          </motion.div>
+                              </button>
+                            ) : (
+                              <button
+                                type="button"
+                                onClick={handleNext}
+                                disabled={selectedOptionIdx === null}
+                                className="btn-primary flex items-center gap-2 text-sm disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+                              >
+                                <span>Selanjutnya</span>
+                                <ChevronRight size={16} />
+                              </button>
+                            )}
+                          </div>
+                        </motion.div>
                       </AnimatePresence>
                     </>
                   )}
@@ -418,13 +415,13 @@ export function SkillGapView() {
                       <h3 className="text-xl font-bold text-red-600">Gagal Menyimpan Hasil</h3>
                       <p className="text-sm text-slate-500 max-w-sm">{syncError}</p>
                       <div className="flex gap-4 mt-4">
-                        <button 
+                        <button
                           onClick={() => setSyncError(null)}
                           className="btn-primary"
                         >
                           Coba Lagi
                         </button>
-                        <button 
+                        <button
                           onClick={() => setStep(1)}
                           className="btn-ghost"
                         >
