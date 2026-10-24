@@ -126,15 +126,20 @@ export function CaseStudyQuizView() {
     'graphic-designer-digital-creative-product-designer': 'graphic-designer',
     'graphic-designer-visual-designer': 'graphic-designer',
     'content-creator-social-media-specialist': 'content-creator',
+    'content-creator-social-media-strategist': 'content-creator',
+    'content-strategist': 'content-creator',
     'software-engineer-front-back-full-stack': 'software-engineer',
     'ai-ml-engineer-machine-learning-engineer': 'ai-ml-engineer',
     'devops-engineer-qa-automation-engineer': 'devops-qa-engineer',
     'data-analyst-business-intelligence': 'data-analyst',
     'data-researcher-strategy-analyst': 'data-researcher',
+    'research-scientist': 'data-researcher',
     'digital-marketing-specialist': 'digital-marketing',
+    'community-manager': 'digital-marketing',
     'business-development-account-executive': 'business-development',
     'e-commerce-dropship-specialist': 'ecommerce-specialist',
     'e-commerce-specialist-dropshipper': 'ecommerce-specialist',
+    'ux-designer': 'ui-ux-designer',
   };
 
   const urlRole = searchParams.get('role');
