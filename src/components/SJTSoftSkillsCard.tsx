@@ -105,7 +105,7 @@ export function SJTSoftSkillsCard({
   return (
     <div className="w-full bg-white/95 backdrop-blur-md rounded-3xl border border-slate-200/90 shadow-sm overflow-hidden mb-8 transition-all">
       {/* Top Banner with Tier Indicator */}
-      <div className="bg-gradient-to-r from-violet-600 via-indigo-600 to-blue-600 px-6 py-3.5 text-white flex flex-wrap items-center justify-between gap-3">
+      <div className="bg-linear-to-r from-violet-600 via-indigo-600 to-blue-600 px-6 py-3.5 text-white flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-2 text-xs md:text-sm font-semibold">
           <Brain className="w-4 h-4 text-violet-200" />
           <span>Hasil Evaluasi 8 Dimensi Soft Skill (SJT 40 Skenario)</span>
@@ -238,7 +238,7 @@ export function SJTSoftSkillsCard({
               onClick={() => setActiveTab('in_depth')}
               className={`px-4 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer ${
                 activeTab === 'in_depth'
-                  ? 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-xs'
+                  ? 'bg-linear-to-r from-violet-600 to-indigo-600 text-white shadow-xs'
                   : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
               }`}
             >

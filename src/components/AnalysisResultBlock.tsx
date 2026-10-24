@@ -119,25 +119,26 @@ export function AnalysisResultBlock({
   return (
     <div className="w-full flex flex-col print:p-0">
       {/* Top Banner when purchased */}
+      {/* Top Banner when purchased */}
       {isPurchased ? (
-        <div className="mb-6 p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-emerald-500/10 via-teal-500/10 to-blue-500/10 border border-emerald-200/80 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 print:hidden">
-          <div className="flex items-center gap-2.5">
-            <span className="p-2 rounded-xl bg-emerald-100 text-emerald-700">
+        <div className="mb-6 p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-emerald-500/10 via-teal-500/10 to-blue-500/10 border border-emerald-200/80 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 print:hidden">
+          <div className="flex items-start sm:items-center gap-3 min-w-0 flex-1">
+            <span className="p-2 rounded-xl bg-emerald-100 text-emerald-700 shrink-0 mt-0.5 sm:mt-0">
               <ShieldCheck className="w-5 h-5" />
             </span>
-            <div>
+            <div className="min-w-0">
               <div className="flex flex-wrap items-center gap-2">
                 <h4 className="font-bold text-slate-900 text-sm">Laporan Lengkap Terbuka</h4>
                 <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300/60">
                   Hard Skill + Soft Skill Terpadu
                 </span>
               </div>
-              <p className="text-xs text-slate-600 mt-1">
-                Satu dokumen konsultasi eksekutif 11 halaman terpadu siap diakses untuk {careerName} (mencakup evaluasi gap teknis, analisis mendalam 8 soft skill SJT, dan rencana aksi 30/60/90 hari).
+              <p className="text-xs text-slate-600 mt-1 leading-relaxed">
+                Satu dokumen konsultasi eksekutif 11 halaman terpadu siap diakses untuk {careerName} (mencakup evaluasi gap teknis, analisis 8 soft skill SJT, dan rencana aksi 30/60/90 hari).
               </p>
             </div>
           </div>
-          <div className="flex items-center gap-2.5 w-full sm:w-auto">
+          <div className="flex items-center gap-2 shrink-0 self-start lg:self-auto flex-wrap sm:flex-nowrap">
             {assessmentId && (
               <Link
                 href={`/report/${assessmentId}`}
@@ -152,7 +153,7 @@ export function AnalysisResultBlock({
             <button
               onClick={handleDownloadPdf}
               disabled={isDownloadingPdf}
-              className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 disabled:bg-slate-700 text-white text-xs font-semibold flex items-center justify-center gap-1.5 shadow-sm transition shrink-0 cursor-pointer"
+              className="px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 disabled:bg-slate-700 text-white text-xs font-semibold flex items-center justify-center gap-1.5 shadow-sm transition shrink-0 cursor-pointer"
             >
               {isDownloadingPdf ? (
                 <>
@@ -162,7 +163,7 @@ export function AnalysisResultBlock({
               ) : (
                 <>
                   <Download className="w-3.5 h-3.5" />
-                  <span>Unduh PDF Lengkap (11 Hal)</span>
+                  <span>Unduh PDF (11 Hal)</span>
                 </>
               )}
             </button>
@@ -170,29 +171,29 @@ export function AnalysisResultBlock({
         </div>
       ) : (
         /* Top Banner when NOT purchased */
-        <div className="mb-6 p-4 sm:p-5 rounded-2xl bg-slate-50 border border-slate-200 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 print:hidden">
-          <div className="flex items-center gap-2.5">
-            <span className="p-2 rounded-xl bg-slate-200/80 text-slate-700">
+        <div className="mb-6 p-4 sm:p-5 rounded-2xl bg-slate-50 border border-slate-200 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 print:hidden">
+          <div className="flex items-start sm:items-center gap-3 min-w-0 flex-1">
+            <span className="p-2 rounded-xl bg-slate-200/80 text-slate-700 shrink-0 mt-0.5 sm:mt-0">
               <FileText className="w-5 h-5 text-blue-600" />
             </span>
-            <div>
-              <div className="flex items-center gap-2">
+            <div className="min-w-0">
+              <div className="flex flex-wrap items-center gap-2">
                 <h4 className="font-bold text-slate-900 text-sm">Dokumen Laporan Konsultasi 11 Halaman (Hard &amp; Soft Skill)</h4>
                 <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 border border-amber-200">
                   Rp 9.900
                 </span>
               </div>
-              <p className="text-xs text-slate-500 mt-1">
+              <p className="text-xs text-slate-500 mt-1 leading-relaxed">
                 Akses satu dokumen PDF formal lengkap: analisis gap mendalam AI, evaluasi 8 dimensi soft skill (SJT 40 skenario), dan panduan interview STAR Method untuk target karier {careerName}.
               </p>
             </div>
           </div>
           <button
             onClick={() => setShowPaymentModal(true)}
-            className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold flex items-center justify-center gap-1.5 shadow-sm transition shrink-0 cursor-pointer"
+            className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold flex items-center justify-center gap-1.5 shadow-sm transition shrink-0 self-start lg:self-auto cursor-pointer"
           >
-            <Lock className="w-3.5 h-3.5 text-amber-400" />
-            <span>Buka Laporan &amp; Unduh PDF</span>
+            <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+            <span>Buka Laporan Lengkap (Rp 9.900)</span>
           </button>
         </div>
       )}
