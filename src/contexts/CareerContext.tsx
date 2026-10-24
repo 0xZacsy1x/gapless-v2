@@ -128,6 +128,7 @@ export interface GaplessContextValue {
   // ── Skill self-ratings ──
   skillRatings: Record<string, number>;
   setSkillRating: (skillName: string, level: number) => void;
+  setSkillRatings: (ratings: Record<string, number>) => void;
   selectedModuleSlug: string | null;
   setSelectedModuleSlug: (slug: string | null) => void;
   currentAssessmentId: string | null;
@@ -137,7 +138,7 @@ export interface GaplessContextValue {
   resetProgress: () => Promise<void>;
   skillGapData: SkillGapEntry[];
   allSkillsRated: boolean;
-  syncResultNow: () => Promise<string | undefined>;
+  syncResultNow: (overrideData?: { skillRatings?: Record<string, number>; rawAnswers?: Record<any, any> }) => Promise<string | undefined>;
 
   // ── Roadmap ──
   roadmapWithProgress: RoadmapNode[];
@@ -324,6 +325,10 @@ export function GaplessProvider({ children }: { children: ReactNode }) {
     setSkillRatingsState((prev) => ({ ...prev, [skillName]: level }));
   }, []);
 
+  const setSkillRatings = useCallback((ratings: Record<string, number>) => {
+    setSkillRatingsState((prev) => ({ ...prev, ...ratings }));
+  }, []);
+
   const fetchAiInsight = useCallback(async () => {
     const currentAnswersStr = JSON.stringify(answers);
 
@@ -449,17 +454,20 @@ export function GaplessProvider({ children }: { children: ReactNode }) {
 
   // ── Persistence & Auto-Sync ──
 
-  const saveResultToServerOrLocal = useCallback(async (): Promise<string | undefined> => {
+  const saveResultToServerOrLocal = useCallback(async (overrideData?: { skillRatings?: Record<string, number>; rawAnswers?: Record<any, any> }): Promise<string | undefined> => {
     if (quizType === 'belum_tahu_minat' && !dominantTrait) return undefined;
     if (quizType === 'sudah_tahu_minat' && !selectedCareer) return undefined;
     
+    const finalSkillRatings = overrideData?.skillRatings || skillRatings;
+    const finalAnswers = overrideData?.rawAnswers || answers;
+
     const payload = {
       assessmentId: currentAssessmentId,
-      rawAnswers: answers,
+      rawAnswers: finalAnswers,
       traitScores,
       dominantTrait,
       selectedCareer: selectedCareer?.title || null,
-      skillRatings: Object.keys(skillRatings).length > 0 ? skillRatings : null,
+      skillRatings: Object.keys(finalSkillRatings).length > 0 ? finalSkillRatings : null,
       quizType,
     };
 
@@ -536,6 +544,7 @@ export function GaplessProvider({ children }: { children: ReactNode }) {
       setSelectedRole,
       skillRatings,
       setSkillRating,
+      setSkillRatings,
       setAnswers,
       currentAssessmentId,
       setCurrentAssessmentId,
@@ -570,6 +579,7 @@ export function GaplessProvider({ children }: { children: ReactNode }) {
       setSelectedRole,
       skillRatings,
       setSkillRating,
+      setSkillRatings,
       skillGapData,
       allSkillsRated,
       roadmapWithProgress,

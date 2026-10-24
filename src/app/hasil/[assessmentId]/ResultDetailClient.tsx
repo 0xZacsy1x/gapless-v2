@@ -15,6 +15,7 @@ import {
 import { useGaplessContext } from "@/contexts/CareerContext";
 import dynamic from "next/dynamic";
 import { GapInsight } from "@/contexts/CareerContext";
+import { SJTSoftSkillsCard } from "@/components/SJTSoftSkillsCard";
 
 const ArchetypeReasoningBlock = dynamic(
   () => import("@/components/ArchetypeReasoningBlock").then((mod) => mod.ArchetypeReasoningBlock),
@@ -442,6 +443,9 @@ export function ResultDetailClient({
           assessmentId={resultId}
         />
       </div>
+
+      {/* SJT Soft Skills Evaluation Card (Khusus jika ada data 40 SJT) */}
+      <SJTSoftSkillsCard skillRatings={skillRatings || {}} />
 
       {/* Analysis Result (Radar + Gap Insight) */}
       <AnalysisResultBlock
