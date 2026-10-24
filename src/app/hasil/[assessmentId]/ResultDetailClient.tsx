@@ -445,25 +445,38 @@ export function ResultDetailClient({
       </div>
 
       {/* SJT Soft Skills Evaluation Card (Khusus jika ada data 40 SJT) */}
-      <SJTSoftSkillsCard skillRatings={skillRatings || {}} />
+      <SJTSoftSkillsCard
+        skillRatings={skillRatings || {}}
+        isPurchased={isPurchased}
+        assessmentId={resultId}
+        careerTitle={careerProfile?.title || selectedCareer || 'Target Karier'}
+        onUnlockClick={() => {
+          const el = document.getElementById('laporan-eksekutif-section');
+          if (el) {
+            el.scrollIntoView({ behavior: 'smooth' });
+          }
+        }}
+      />
 
       {/* Analysis Result (Radar + Gap Insight) */}
-      <AnalysisResultBlock
-        radarData={radarData}
-        traitMetaColor={traitMetaColor}
-        chartReady={chartReady}
-        isLoadingGapAi={isLoadingGapAi}
-        gapInsight={gapInsight}
-        isPurchased={isPurchased}
-        freeSummary={freeSummary}
-        careerName={careerProfile.title}
-        careerSlug={careerSlug}
-        assessmentId={resultId}
-        onPurchaseSuccess={() => {
-          fetchInsight();
-        }}
-        roadmapHref={`/roadmap?assessmentId=${resultId}`}
-      />
+      <div id="laporan-eksekutif-section" className="scroll-mt-6">
+        <AnalysisResultBlock
+          radarData={radarData}
+          traitMetaColor={traitMetaColor}
+          chartReady={chartReady}
+          isLoadingGapAi={isLoadingGapAi}
+          gapInsight={gapInsight}
+          isPurchased={isPurchased}
+          freeSummary={freeSummary}
+          careerName={careerProfile.title}
+          careerSlug={careerSlug}
+          assessmentId={resultId}
+          onPurchaseSuccess={() => {
+            fetchInsight();
+          }}
+          roadmapHref={`/roadmap?assessmentId=${resultId}`}
+        />
+      </div>
     </div>
   );
 }

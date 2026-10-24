@@ -4,6 +4,7 @@ import { db } from '@/db';
 import { learningResources, learningTimeEstimates, reportContents, assessmentResults, userPurchases, users } from '@/db/schema';
 import { eq, and, sql } from 'drizzle-orm';
 import { findCareerProfile, CareerProfile, SkillRequirement } from '@/data/gaplessData';
+import { SoftSkillDetailReport, getDetailedSoftSkillAnalysis } from '@/data/sjtAnalysisData';
 
 const google = createGoogleGenerativeAI({
   apiKey: process.env.GEMINI_API_KEY || '',
@@ -87,6 +88,7 @@ export interface ComprehensiveReportData {
     url: string;
     type: string;
   }[]>;
+  softSkillsAnalysis?: SoftSkillDetailReport[];
 }
 
 /**
@@ -717,6 +719,8 @@ async function buildReportDataFromDb(params: {
       consequenceIfNotClosed: `Menjadi hambatan utama saat dihadapkan pada tugas industri tingkat menengah ke atas.`,
     }));
 
+  const softSkillsAnalysis = getDetailedSoftSkillAnalysis(skillRatings, careerTitle);
+
   return {
     reportNumber: existingRecord.reportNumber,
     generatedAt: existingRecord.generatedAt
@@ -750,5 +754,6 @@ async function buildReportDataFromDb(params: {
     priorityList,
     actionPlan,
     skillResources,
+    softSkillsAnalysis,
   };
 }

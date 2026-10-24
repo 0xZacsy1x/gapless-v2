@@ -82,7 +82,7 @@ export default async function ReportPage({
           </div>
           <h2 className="text-lg font-bold text-slate-800">Laporan Komprehensif Terkunci</h2>
           <p className="text-xs text-slate-600 leading-relaxed">
-            Laporan Analisis Kesiapan Karier format konsultan (9 halaman lengkap) memerlukan akses Laporan Gap Mendalam untuk peran <strong>{careerTitle}</strong>.
+            Laporan Analisis Kesiapan Karier format konsultan (11 halaman lengkap) memerlukan akses Laporan Gap Mendalam untuk peran <strong>{careerTitle}</strong>.
           </p>
           <div className="pt-2 flex flex-col gap-2">
             <Link

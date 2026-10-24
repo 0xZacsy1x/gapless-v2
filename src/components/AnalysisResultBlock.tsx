@@ -127,7 +127,7 @@ export function AnalysisResultBlock({
             </span>
             <div>
               <h4 className="font-bold text-slate-900 text-sm">Laporan Lengkap Terbuka</h4>
-              <p className="text-xs text-slate-600">Dokumen konsultasi eksekutif 9 halaman siap diakses untuk {careerName}.</p>
+              <p className="text-xs text-slate-600">Dokumen konsultasi eksekutif 11 halaman siap diakses untuk {careerName}.</p>
             </div>
           </div>
           <div className="flex items-center gap-2.5 w-full sm:w-auto">
@@ -155,7 +155,7 @@ export function AnalysisResultBlock({
               ) : (
                 <>
                   <Download className="w-3.5 h-3.5" />
-                  <span>Unduh PDF (9 Hal)</span>
+                  <span>Unduh PDF (11 Hal)</span>
                 </>
               )}
             </button>
@@ -170,13 +170,13 @@ export function AnalysisResultBlock({
             </span>
             <div>
               <div className="flex items-center gap-2">
-                <h4 className="font-bold text-slate-900 text-sm">Dokumen Laporan Konsultasi 9 Halaman</h4>
+                <h4 className="font-bold text-slate-900 text-sm">Dokumen Laporan Konsultasi 11 Halaman</h4>
                 <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 border border-amber-200">
                   Rp 9.900
                 </span>
               </div>
               <p className="text-xs text-slate-500">
-                Akses dokumen PDF formal lengkap dengan analisis gap mendalam berbasis AI untuk target karier {careerName}.
+                Akses dokumen PDF formal lengkap dengan analisis gap mendalam AI, evaluasi 8 soft skills, dan panduan interview untuk target karier {careerName}.
               </p>
             </div>
           </div>
@@ -334,7 +334,7 @@ export function AnalysisResultBlock({
                     Analisis Narasi AI &amp; PDF Terkunci
                   </h4>
                   <p className="text-xs text-slate-500 mb-4 max-w-sm mx-auto leading-relaxed">
-                    Dapatkan analisis naratif personal AI, diagnosis mendalam per skill, rekomendasi langkah akselerasi terarah, dan dokumen laporan resmi 9 halaman.
+                    Dapatkan analisis naratif personal AI, diagnosis mendalam per skill, evaluasi 8 soft skills, latihan mingguan, dan dokumen laporan resmi 11 halaman.
                   </p>
                   <button
                     onClick={() => setShowPaymentModal(true)}
