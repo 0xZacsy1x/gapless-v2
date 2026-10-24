@@ -47,7 +47,23 @@ export function loadAssessmentDraft(quizType: string, userId?: string | null): A
   if (typeof window === "undefined") return null;
   try {
     const key = getDraftStorageKey(quizType, userId);
-    const raw = localStorage.getItem(key);
+    let raw = localStorage.getItem(key);
+
+    // Fallback if not found: check guest or search by prefix
+    if (!raw) {
+      const guestKey = getDraftStorageKey(quizType, null);
+      raw = localStorage.getItem(guestKey);
+    }
+    if (!raw) {
+      const prefix = `gapless:assessment-draft:v${BANK_VERSION}:${quizType}:`;
+      for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        if (k && k.startsWith(prefix)) {
+          raw = localStorage.getItem(k);
+          break;
+        }
+      }
+    }
     if (!raw) return null;
 
     const parsed = JSON.parse(raw);

@@ -42,6 +42,73 @@ const slugify = (text: string) =>
 
 type AssessmentPhase = 'hardskill' | 'transition' | 'sjt' | 'saving';
 
+function getInitialAssessmentState(roleSlug: string, userId?: string | null) {
+  if (typeof window === 'undefined' || !roleSlug) {
+    return {
+      phase: 'hardskill' as AssessmentPhase,
+      hardskillIndex: 0,
+      sjtIndex: 0,
+      hardskillAnswers: {} as Record<number, number>,
+      sjtAnswers: {} as Record<number, number>,
+      isRestored: false,
+    };
+  }
+
+  const draftQuizType = `sudah_tahu_minat_${roleSlug}`;
+  const draft = loadAssessmentDraft(draftQuizType, userId);
+  const storedPhase = localStorage.getItem(`gapless:sjt_phase:${draftQuizType}`);
+
+  if (draft && Object.keys(draft.answers).length > 0) {
+    const hs: Record<number, number> = {};
+    const sjt: Record<number, number> = {};
+
+    Object.entries(draft.answers).forEach(([key, val]) => {
+      if (key.startsWith('sjt_')) {
+        const idx = parseInt(key.replace('sjt_', ''), 10);
+        if (!isNaN(idx)) sjt[idx] = val;
+      } else if (key.startsWith('hs_')) {
+        const idx = parseInt(key.replace('hs_', ''), 10);
+        if (!isNaN(idx)) hs[idx] = val;
+      } else {
+        const idx = parseInt(key, 10);
+        if (!isNaN(idx)) hs[idx] = val;
+      }
+    });
+
+    let phase: AssessmentPhase = 'hardskill';
+    let sjtIndex = 0;
+    let hardskillIndex = 0;
+
+    if (storedPhase === 'sjt' || Object.keys(sjt).length > 0) {
+      phase = 'sjt';
+      sjtIndex = Math.min(draft.currentIndex, sjtBank.length - 1);
+    } else if (storedPhase === 'transition') {
+      phase = 'transition';
+    } else {
+      phase = 'hardskill';
+      hardskillIndex = draft.currentIndex;
+    }
+
+    return {
+      phase,
+      hardskillIndex,
+      sjtIndex,
+      hardskillAnswers: hs,
+      sjtAnswers: sjt,
+      isRestored: true,
+    };
+  }
+
+  return {
+    phase: (storedPhase === 'sjt' ? 'sjt' : 'hardskill') as AssessmentPhase,
+    hardskillIndex: 0,
+    sjtIndex: 0,
+    hardskillAnswers: {} as Record<number, number>,
+    sjtAnswers: {} as Record<number, number>,
+    isRestored: false,
+  };
+}
+
 export function CaseStudyQuizView() {
   const {
     selectedRole,
@@ -53,11 +120,6 @@ export function CaseStudyQuizView() {
   const { session } = useAuthGuard();
   const router = useRouter();
   const searchParams = useSearchParams();
-
-  const [phase, setPhase] = useState<AssessmentPhase>('hardskill');
-  const [isSyncing, setIsSyncing] = useState(false);
-  const [syncError, setSyncError] = useState<string | null>(null);
-  const [isRestoredFromDraft, setIsRestoredFromDraft] = useState(false);
 
   // Map DB role slugs to quizBank keys if they don't match exactly
   const ROLE_ALIASES: Record<string, string> = {
@@ -94,13 +156,25 @@ export function CaseStudyQuizView() {
     ? `sudah_tahu_minat_${roleSlug}`
     : 'sudah_tahu_minat_generic';
 
+  // Synchronously compute initial draft state to PREVENT ANY FLICKER
+  const initialDraft = useMemo(
+    () => getInitialAssessmentState(roleSlug, session?.user?.id),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [roleSlug]
+  );
+
+  const [phase, setPhase] = useState<AssessmentPhase>(initialDraft.phase);
+  const [isSyncing, setIsSyncing] = useState(false);
+  const [syncError, setSyncError] = useState<string | null>(null);
+  const [isRestoredFromDraft, setIsRestoredFromDraft] = useState(initialDraft.isRestored);
+
   // Hardskill state
-  const [hardskillIndex, setHardskillIndex] = useState(0);
-  const [hardskillAnswers, setHardskillAnswers] = useState<Record<number, number>>({});
+  const [hardskillIndex, setHardskillIndex] = useState(initialDraft.hardskillIndex);
+  const [hardskillAnswers, setHardskillAnswers] = useState<Record<number, number>>(initialDraft.hardskillAnswers);
 
   // SJT (Soft Skills) state
-  const [sjtIndex, setSjtIndex] = useState(0);
-  const [sjtAnswers, setSjtAnswers] = useState<Record<number, number>>({});
+  const [sjtIndex, setSjtIndex] = useState(initialDraft.sjtIndex);
+  const [sjtAnswers, setSjtAnswers] = useState<Record<number, number>>(initialDraft.sjtAnswers);
 
   // If role has no hardskill questions, default directly to SJT
   useEffect(() => {
@@ -109,9 +183,9 @@ export function CaseStudyQuizView() {
     }
   }, [hardskillQuestions.length, phase]);
 
-  // ── Restore Draft on Mount ──
+  // ── Restore Draft on Mount (if not already restored synchronously) ──
   useEffect(() => {
-    if (!roleSlug) return;
+    if (!roleSlug || isRestoredFromDraft) return;
     const draft = loadAssessmentDraft(draftQuizType, session?.user?.id);
     if (draft && Object.keys(draft.answers).length > 0) {
       const hs: Record<number, number> = {};
@@ -148,7 +222,7 @@ export function CaseStudyQuizView() {
 
       setIsRestoredFromDraft(true);
     }
-  }, [draftQuizType, hardskillQuestions.length, roleSlug, session?.user?.id]);
+  }, [draftQuizType, hardskillQuestions.length, isRestoredFromDraft, roleSlug, session?.user?.id]);
 
   // ── Auto-Save Draft on Change ──
   useEffect(() => {

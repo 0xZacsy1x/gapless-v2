@@ -24,6 +24,7 @@ import {
   getTraitRadarData,
   getSkillGapData,
   getRecommendedCareers,
+  findCareerProfile,
 } from '@/data/gaplessData';
 
 // ──────────────────────────────────────────────
@@ -176,12 +177,31 @@ export function GaplessProvider({ children }: { children: ReactNode }) {
 
 
   // ── Navigation ──
-  const [currentView, setCurrentView] = useState<GaplessView>('assessment');
+  const [currentView, setCurrentView] = useState<GaplessView>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const urlParams = new URLSearchParams(window.location.search);
+        const qType = urlParams.get('quizType') || localStorage.getItem('gapless:active_quiz_type');
+        if (qType === 'sudah_tahu_minat') {
+          return 'case-study';
+        }
+      } catch (e) {}
+    }
+    return 'assessment';
+  });
 
   // ── Assessment answers ──
   const [answers, setAnswersState] = useState<Record<number, number>>({});
   const [currentAssessmentId, setCurrentAssessmentId] = useState<string | null>(null);
-  const [quizType, setQuizType] = useState<string>('belum_tahu_minat');
+  const [quizType, setQuizType] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get('quizType') || localStorage.getItem('gapless:active_quiz_type') || 'belum_tahu_minat';
+      } catch (e) {}
+    }
+    return 'belum_tahu_minat';
+  });
 
   const setAnswers = useCallback((newAnswers: Record<number, number> | ((prev: Record<number, number>) => Record<number, number>)) => {
     setAnswersState(newAnswers);
@@ -192,12 +212,43 @@ export function GaplessProvider({ children }: { children: ReactNode }) {
   }, []);
 
   // ── Career selection (Assessment flow) ──
-  const [selectedCareer, setSelectedCareer] = useState<CareerProfile | null>(
-    null
-  );
+  const [selectedCareer, setSelectedCareer] = useState<CareerProfile | null>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const saved = localStorage.getItem('gapless:selected_career');
+        if (saved) return JSON.parse(saved);
+        const urlParams = new URLSearchParams(window.location.search);
+        const role = urlParams.get('role');
+        if (role) return findCareerProfile(role) || null;
+      } catch (e) {}
+    }
+    return null;
+  });
 
   // ── Role selection (Database flow) ──
-  const [selectedRole, setSelectedRole] = useState<JobRole | null>(null);
+  const [selectedRole, setSelectedRoleState] = useState<JobRole | null>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const saved = localStorage.getItem('gapless:selected_role');
+        if (saved) return JSON.parse(saved);
+      } catch (e) {}
+    }
+    return null;
+  });
+
+  const setSelectedRole = useCallback((role: JobRole | null) => {
+    setSelectedRoleState(role);
+    if (typeof window !== 'undefined') {
+      try {
+        if (role) {
+          localStorage.setItem('gapless:selected_role', JSON.stringify(role));
+        } else {
+          localStorage.removeItem('gapless:selected_role');
+        }
+      } catch (e) {}
+    }
+  }, []);
+
   const [selectedModuleSlug, setSelectedModuleSlug] = useState<string | null>(null);
 
   // ── Skill self-ratings ──
