@@ -17,7 +17,7 @@ import {
   Briefcase,
   Layers,
 } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useGaplessContext } from '@/contexts/CareerContext';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 import { quizBank } from '@/data/quizBank';
@@ -52,6 +52,7 @@ export function CaseStudyQuizView() {
   } = useGaplessContext();
   const { session } = useAuthGuard();
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const [phase, setPhase] = useState<AssessmentPhase>('hardskill');
   const [isSyncing, setIsSyncing] = useState(false);
@@ -74,7 +75,14 @@ export function CaseStudyQuizView() {
     'e-commerce-specialist-dropshipper': 'ecommerce-specialist',
   };
 
-  const rawRoleSlug = selectedRole ? slugify(selectedRole.roleName) : '';
+  const urlRole = searchParams.get('role');
+  const localRole = typeof window !== 'undefined' ? localStorage.getItem('gapless:active_role_slug') || '' : '';
+
+  const rawRoleSlug = selectedRole
+    ? slugify(selectedRole.roleName)
+    : selectedCareer
+    ? slugify(selectedCareer.title)
+    : urlRole || localRole;
   const roleSlug = ROLE_ALIASES[rawRoleSlug] || rawRoleSlug;
 
   // Hardskill Questions (from quizBank)
@@ -318,6 +326,10 @@ export function CaseStudyQuizView() {
       clearAssessmentDraft(draftQuizType, session?.user?.id);
       try {
         localStorage.removeItem(`gapless:sjt_phase:${draftQuizType}`);
+        localStorage.removeItem('gapless:active_quiz_type');
+        localStorage.removeItem('gapless:active_role_slug');
+        localStorage.removeItem('gapless:selected_role');
+        localStorage.removeItem('gapless:selected_career');
       } catch (e) {}
 
       if (assessmentId) {

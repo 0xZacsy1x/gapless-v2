@@ -107,9 +107,21 @@ export function CareerSelectionWrapper({ roles }: WrapperProps) {
                                         };
                                     }
                                     
+                                    setSelectedRole(role);
                                     selectCareer(careerProfile); 
+                                    setQuizType('sudah_tahu_minat');
                                     setCurrentView('case-study');
-                                    router.push('/assessment');
+
+                                    const roleSlug = role.roleName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+
+                                    try {
+                                        localStorage.setItem('gapless:active_quiz_type', 'sudah_tahu_minat');
+                                        localStorage.setItem('gapless:active_role_slug', roleSlug);
+                                        localStorage.setItem('gapless:selected_role', JSON.stringify(role));
+                                        localStorage.setItem('gapless:selected_career', JSON.stringify(careerProfile));
+                                    } catch (e) {}
+
+                                    router.push(`/assessment?quizType=sudah_tahu_minat&role=${encodeURIComponent(roleSlug)}`);
                                 }}
                                 className="group relative w-full text-left p-8 bg-white/80 backdrop-blur-xl rounded-3xl border border-white/60 hover:border-blue-300 transition-all duration-300 cursor-pointer hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:-translate-y-1 overflow-hidden"
                             >

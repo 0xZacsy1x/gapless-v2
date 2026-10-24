@@ -119,7 +119,7 @@ export interface GaplessContextValue {
 
   // ── Career selection (Assessment flow) ──
   selectedCareer: CareerProfile | null;
-  selectCareer: (career: CareerProfile) => void;
+  selectCareer: (career: CareerProfile, targetView?: GaplessView) => void;
 
   // ── Role selection (Database flow) ──
   selectedRole: JobRole | null;
@@ -315,10 +315,19 @@ export function GaplessProvider({ children }: { children: ReactNode }) {
     setAnswers((prev) => ({ ...prev, [questionId]: optionIndex }));
   }, [setAnswers]);
 
-  const selectCareer = useCallback((career: CareerProfile) => {
+  const selectCareer = useCallback((career: CareerProfile, targetView?: GaplessView) => {
     setSelectedCareer(career);
     setSkillRatingsState({});
-    setCurrentView('skills');
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.setItem('gapless:selected_career', JSON.stringify(career));
+      } catch (e) {}
+    }
+    if (targetView) {
+      setCurrentView(targetView);
+    } else {
+      setCurrentView((prev) => (prev === 'case-study' ? 'case-study' : 'skills'));
+    }
   }, []);
 
   const setSkillRating = useCallback((skillName: string, level: number) => {
@@ -446,6 +455,14 @@ export function GaplessProvider({ children }: { children: ReactNode }) {
     lastFetchedGap.current = '';
     fetchLock.current = false;
     fetchGapLock.current = false;
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.removeItem('gapless:active_quiz_type');
+        localStorage.removeItem('gapless:active_role_slug');
+        localStorage.removeItem('gapless:selected_role');
+        localStorage.removeItem('gapless:selected_career');
+      } catch (e) {}
+    }
   }, [setAnswers]);
 
   const resetProgress = useCallback(async () => {

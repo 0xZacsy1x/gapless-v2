@@ -16,17 +16,26 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function AssessmentPage() {
+export default async function AssessmentPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ quizType?: string; role?: string }>;
+}) {
   const session = await auth();
+  const params = await searchParams;
+  const quizType = params?.quizType === 'sudah_tahu_minat' ? 'sudah_tahu_minat' : 'belum_tahu_minat';
 
   if (!session?.user?.id) {
-    redirect('/api/auth/signin?callbackUrl=/assessment');
+    const callbackPath = params?.quizType
+      ? `/assessment?quizType=${params.quizType}${params?.role ? `&role=${encodeURIComponent(params.role)}` : ''}`
+      : '/assessment';
+    redirect(`/api/auth/signin?callbackUrl=${encodeURIComponent(callbackPath)}`);
   }
 
   const userTier = (session.user as any).tier || 'FREE';
   const { isAllowed, remaining, limit } = await getRemainingAttempts(
     session.user.id,
-    'belum_tahu_minat',
+    quizType,
     userTier
   );
 
