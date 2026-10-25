@@ -27,7 +27,7 @@ export default function HeroSection() {
 
           {/* Subtext */}
           <p className="text-base sm:text-lg text-slate-600 leading-relaxed max-w-xl font-normal font-sans">
-            Berhenti menebak-nebak masa depan. Gapless menggunakan model psikometri RIASEC, 15 simulasi kasus situasional (SJT), dan data analitik dari 702+ lowongan kerja untuk memetakan kesiapan kariermu ke roadmap terstruktur.
+            Berhenti menebak-nebak masa depan. Gapless menggunakan model psikometri RIASEC, Simulasi kasus situasional (SJT), dan data analitik dari 702+ lowongan kerja untuk memetakan kesiapan kariermu ke roadmap terstruktur.
           </p>
 
           {/* Tactile Action Buttons */}

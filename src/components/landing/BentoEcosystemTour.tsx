@@ -13,8 +13,8 @@ import {
   BookOpen,
   ArrowRight,
   Sparkles,
+  Zap,
 } from "lucide-react";
-import FakeCursor from "./FakeCursor";
 
 // Career Roadmaps Data (Streamlined & Clean)
 const ROADMAP_PRESETS = [
@@ -168,31 +168,8 @@ const KEGIATAN_PRESETS = [
   },
 ];
 
-// Interactive Live Scenarios for Right Card Live Preview (Single-line choices)
-const SCENARIO_PRESETS = [
-  {
-    id: "s1",
-    question: "Sprint deadline mendadak maju 3 hari sementara ada bug kritis di staging. Apa langkah utamamu?",
-    choiceA: "[A] Isolasi bug & komunikasikan trade-off scope fitur ke tim.",
-    choiceB: "[B] Deploy hotfix cepat tanpa pengujian menyeluruh.",
-    correctChoice: "A" as const,
-    reward: "+50 XP Adaptabilitas & Manajemen Risiko",
-  },
-  {
-    id: "s2",
-    question: "Stakeholder meminta penambahan 3 fitur besar di tengah sprint tanpa mengubah deadline rilis.",
-    choiceA: "[A] Terima semua permintaan tanpa validasi kapasitas tim.",
-    choiceB: "[B] Analisis trade-off teknis & tawarkan rilis modular.",
-    correctChoice: "B" as const,
-    reward: "+75 XP Negosiasi & Komunikasi Efektif",
-  },
-];
-
 export default function BentoEcosystemTour() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const rightCardRef = useRef<HTMLDivElement>(null);
-  const choiceARef = useRef<HTMLButtonElement>(null);
-  const choiceBRef = useRef<HTMLButtonElement>(null);
 
   // States for Left Card & Bottom Card
   const [activeCareerIdx, setActiveCareerIdx] = useState<number>(0);
@@ -201,16 +178,6 @@ export default function BentoEcosystemTour() {
   const [isInView, setIsInView] = useState<boolean>(true);
   const [isTabActive, setIsTabActive] = useState<boolean>(true);
   const [isUserInteracting, setIsUserInteracting] = useState<boolean>(false);
-
-  // States for Right Card (Live Preview Interactive with Fake Cursor)
-  const [activeScenarioIdx, setActiveScenarioIdx] = useState<number>(0);
-  const [selectedChoice, setSelectedChoice] = useState<"A" | "B" | null>(null);
-  const [isRewardAwarded, setIsRewardAwarded] = useState<boolean>(false);
-
-  // Fake Cursor States for Right Card
-  const [cursorPos, setCursorPos] = useState<{ x: number; y: number }>({ x: 260, y: 30 });
-  const [isClicking, setIsClicking] = useState<boolean>(false);
-  const [cursorVisible, setCursorVisible] = useState<boolean>(false);
 
   const [prefersReducedMotion, setPrefersReducedMotion] = useState<boolean>(() => {
     if (typeof window !== "undefined") {
@@ -274,82 +241,6 @@ export default function BentoEcosystemTour() {
     return () => clearInterval(timer);
   }, [isInView, isTabActive, prefersReducedMotion]);
 
-  // Helper to move cursor to element within Right Card
-  const moveCursorToTarget = useCallback((targetEl: HTMLElement | null) => {
-    if (!targetEl || !rightCardRef.current) return;
-    const cardRect = rightCardRef.current.getBoundingClientRect();
-    const targetRect = targetEl.getBoundingClientRect();
-
-    // Point cursor near center-left of target
-    const targetX = targetRect.left - cardRect.left + Math.min(60, targetRect.width * 0.4);
-    const targetY = targetRect.top - cardRect.top + targetRect.height * 0.5;
-
-    setCursorPos({ x: targetX, y: targetY });
-  }, []);
-
-  // LIVE PREVIEW STATE MACHINE FOR RIGHT CARD (Misi Soft Skill)
-  useEffect(() => {
-    if (prefersReducedMotion || !isInView || !isTabActive) return;
-
-    let isSubscribed = true;
-    let stepTimer: NodeJS.Timeout;
-
-    const currentScenario = SCENARIO_PRESETS[activeScenarioIdx];
-    const targetChoice = currentScenario.correctChoice;
-
-    // Reset visual state on scenario entry
-    setSelectedChoice(null);
-    setIsRewardAwarded(false);
-    setIsClicking(false);
-    setCursorVisible(true);
-
-    // Initial position above
-    if (rightCardRef.current) {
-      const cardRect = rightCardRef.current.getBoundingClientRect();
-      setCursorPos({ x: cardRect.width * 0.75, y: 40 });
-    }
-
-    // Step 1: Gliding mouse to target option (500ms after entry)
-    stepTimer = setTimeout(() => {
-      if (!isSubscribed) return;
-      const targetEl = targetChoice === "A" ? choiceARef.current : choiceBRef.current;
-      moveCursorToTarget(targetEl);
-
-      // Step 2: Click the target option (850ms glide)
-      stepTimer = setTimeout(() => {
-        if (!isSubscribed) return;
-        setIsClicking(true);
-        setSelectedChoice(targetChoice);
-
-        // Step 3: Award XP (250ms press feedback)
-        stepTimer = setTimeout(() => {
-          if (!isSubscribed) return;
-          setIsClicking(false);
-          setIsRewardAwarded(true);
-
-          // Step 4: Rest and appreciate the reward (2200ms)
-          stepTimer = setTimeout(() => {
-            if (!isSubscribed) return;
-            // Move cursor away slightly
-            setCursorPos((prev) => ({ x: prev.x + 30, y: prev.y + 60 }));
-            setCursorVisible(false);
-
-            // Step 5: Transition to next scenario (600ms)
-            stepTimer = setTimeout(() => {
-              if (!isSubscribed) return;
-              setActiveScenarioIdx((prev) => (prev + 1) % SCENARIO_PRESETS.length);
-            }, 600);
-          }, 2200);
-        }, 250);
-      }, 850);
-    }, 500);
-
-    return () => {
-      isSubscribed = false;
-      clearTimeout(stepTimer);
-    };
-  }, [activeScenarioIdx, isInView, isTabActive, moveCursorToTarget, prefersReducedMotion]);
-
   const handleSelectCareer = (idx: number) => {
     setActiveCareerIdx(idx);
     setIsUserInteracting(true);
@@ -366,7 +257,6 @@ export default function BentoEcosystemTour() {
 
   const currentRoadmap = ROADMAP_PRESETS[activeCareerIdx];
   const currentKegiatan = KEGIATAN_PRESETS[activeKegiatanIdx];
-  const currentScenario = SCENARIO_PRESETS[activeScenarioIdx];
 
   return (
     <div
@@ -580,89 +470,111 @@ export default function BentoEcosystemTour() {
           RIGHT COLUMN (lg:col-span-5): MISI SOFT SKILL (TOP) + PORTOFOLIO (BOTTOM)
       ========================================================================= */}
       <div className="lg:col-span-5 flex flex-col gap-3.5 sm:gap-4 h-full">
-        {/* CARD 2: MISI SOFT SKILL & SJT (Live Simulation with Virtual Cursor) */}
-        <div
-          ref={rightCardRef}
-          className="relative p-3.5 sm:p-4 bg-white border border-slate-200/90 rounded-2xl flex flex-col justify-between shadow-[0_16px_36px_-8px_rgba(0,0,0,0.18),0_4px_12px_-2px_rgba(0,0,0,0.08)] space-y-2.5 overflow-hidden flex-1"
-        >
-          {/* Animated Virtual Mouse Cursor */}
-          <FakeCursor
-            x={cursorPos.x}
-            y={cursorPos.y}
-            isClicking={isClicking}
-            visible={cursorVisible}
-          />
-
+        {/* CARD 2: MISI SOFT SKILL (Checklist Harian Berhadiah XP) */}
+        <div className="p-3.5 sm:p-4 bg-white border border-slate-200/90 rounded-2xl sm:rounded-3xl flex flex-col justify-between shadow-[0_16px_36px_-8px_rgba(0,0,0,0.16),0_4px_12px_-2px_rgba(0,0,0,0.06)] space-y-2.5 overflow-hidden flex-1">
+          {/* Top Header */}
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="w-6.5 h-6.5 rounded-lg bg-blue-50 flex items-center justify-center text-brand-primary border border-blue-100 shadow-3xs">
-                <Target className="w-3.5 h-3.5 text-brand-primary" />
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl sm:rounded-2xl bg-emerald-50 border border-emerald-200/90 flex items-center justify-center text-emerald-600 shadow-2xs">
+                <Target className="w-4 h-4 sm:w-4.5 sm:h-4.5 text-emerald-600" />
               </div>
               <div>
-                <h3 className="text-xs sm:text-sm font-bold text-slate-900 leading-tight">
+                <h3 className="text-xs sm:text-[13.5px] font-extrabold text-slate-900 leading-tight">
                   Misi Soft Skill
                 </h3>
-                <p className="text-[10px] sm:text-[10.5px] text-slate-500">
-                  Latihan situasional harian interaktif berhadiah XP.
+                <p className="text-[10px] sm:text-[10.5px] text-slate-500 leading-tight mt-0.5">
+                  Latihan situasional harian berhadiah XP.
                 </p>
               </div>
             </div>
 
-            {/* Live Indicator Chip */}
-            <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-blue-50 border border-blue-200 text-[9px] sm:text-[9.5px] font-bold text-brand-primary">
-              <span className="w-1.5 h-1.5 rounded-full bg-brand-primary animate-ping" />
-              <span>Live Simulasi</span>
+            {/* Level & XP Pill Badge */}
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50/80 border border-emerald-300/80 text-[10px] sm:text-[11px] font-mono font-bold text-emerald-800 tracking-tight">
+              <Zap className="w-3 h-3 text-emerald-600 fill-emerald-600" />
+              <span>LEVEL 3 • 450 XP</span>
             </div>
           </div>
 
-          {/* Interactive Dilemma Choice Demo */}
-          <div className="p-2.5 sm:p-3 rounded-xl bg-blue-50/50 border border-blue-100 flex flex-col justify-between flex-1 space-y-2">
-            <div>
-              <div className="flex items-center justify-between text-[8px] sm:text-[8.5px] font-mono text-slate-400 uppercase tracking-wider mb-0.5">
-                <span>SKENARIO HARI INI</span>
-                <span className="text-brand-primary font-bold">LEVEL 3 • 450 XP</span>
+          {/* 3 Misi List */}
+          <div className="space-y-1.5 flex-1 flex flex-col justify-between py-0.5">
+            {/* Item 1: Sampaikan Ide Tim Cross-Functional (Completed) */}
+            <div className="flex items-center justify-between px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl sm:rounded-2xl border border-emerald-300 bg-white shadow-2xs transition-all">
+              <div className="flex items-center gap-2.5 min-w-0">
+                <div className="w-5.5 h-5.5 sm:w-6 sm:h-6 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700 shrink-0">
+                  <CheckCircle2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-600" />
+                </div>
+                <div className="min-w-0">
+                  <div className="font-bold text-slate-900 text-[11px] sm:text-xs truncate">
+                    Sampaikan Ide Tim Cross-Functional
+                  </div>
+                  <div className="flex items-center gap-1.5 mt-0.5">
+                    <span className="px-1.5 py-0.2 rounded border border-blue-200 bg-blue-50 text-brand-primary text-[8.5px] sm:text-[9px] font-bold">
+                      Komunikasi
+                    </span>
+                    <span className="text-[9.5px] text-slate-400 font-medium">15 Mnt</span>
+                  </div>
+                </div>
               </div>
-              <p className="text-[11px] sm:text-[11.5px] font-semibold text-slate-900 leading-snug line-clamp-2">
-                &quot;{currentScenario.question}&quot;
-              </p>
+              <div className="px-2 py-0.5 rounded-lg bg-emerald-50 text-emerald-700 font-mono text-[10.5px] sm:text-[11px] font-bold shrink-0">
+                +150 XP
+              </div>
             </div>
 
-            <div className="space-y-1.5">
-              <button
-                ref={choiceARef}
-                type="button"
-                className={`w-full text-left px-2.5 h-[32px] sm:h-[34px] flex items-center rounded-lg text-[10px] sm:text-[10.5px] font-medium border transition-all duration-200 ${
-                  selectedChoice === "A"
-                    ? "bg-white border-brand-primary text-brand-primary font-bold shadow-xs ring-2 ring-brand-primary/20"
-                    : "bg-white/80 border-slate-200 text-slate-600 hover:border-blue-200"
-                }`}
-              >
-                <span className="truncate">{currentScenario.choiceA}</span>
-              </button>
-
-              <button
-                ref={choiceBRef}
-                type="button"
-                className={`w-full text-left px-2.5 h-[32px] sm:h-[34px] flex items-center rounded-lg text-[10px] sm:text-[10.5px] font-medium border transition-all duration-200 ${
-                  selectedChoice === "B"
-                    ? "bg-white border-brand-primary text-brand-primary font-bold shadow-xs ring-2 ring-brand-primary/20"
-                    : "bg-white/80 border-slate-200 text-slate-600 hover:border-blue-200"
-                }`}
-              >
-                <span className="truncate">{currentScenario.choiceB}</span>
-              </button>
+            {/* Item 2: Negosiasi Prioritas Sprint Tim (Active / In Progress) */}
+            <div className="flex items-center justify-between px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl sm:rounded-2xl border-2 border-blue-400 bg-white shadow-2xs transition-all">
+              <div className="flex items-center gap-2.5 min-w-0">
+                <div className="w-5.5 h-5.5 sm:w-6 sm:h-6 rounded-full bg-blue-100/70 flex items-center justify-center shrink-0">
+                  <span className="w-2.5 h-2.5 rounded-full bg-brand-primary" />
+                </div>
+                <div className="min-w-0">
+                  <div className="font-bold text-slate-900 text-[11px] sm:text-xs truncate">
+                    Negosiasi Prioritas Sprint Tim
+                  </div>
+                  <div className="flex items-center gap-1.5 mt-0.5">
+                    <span className="px-1.5 py-0.2 rounded border border-emerald-200 bg-emerald-50 text-emerald-700 text-[8.5px] sm:text-[9px] font-bold">
+                      Kolaborasi
+                    </span>
+                    <span className="text-[9.5px] text-slate-400 font-medium">20 Mnt</span>
+                  </div>
+                </div>
+              </div>
+              <div className="px-2 py-0.5 rounded-lg bg-blue-50 text-brand-primary font-mono text-[10.5px] sm:text-[11px] font-bold shrink-0">
+                +200 XP
+              </div>
             </div>
 
-            {/* XP Award Micro-Animation */}
-            <div className="h-[22px] flex items-center pt-1 border-t border-blue-100/70">
-              <div
-                className={`text-[9.5px] sm:text-[10px] font-mono text-emerald-700 flex items-center gap-1.5 font-bold transition-all duration-300 ${
-                  isRewardAwarded ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-1 pointer-events-none"
-                }`}
-              >
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                <span className="truncate">{currentScenario.reward}</span>
+            {/* Item 3: Evaluasi Risiko Rilis Aplikasi (Locked) */}
+            <div className="flex items-center justify-between px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl sm:rounded-2xl border border-slate-200/90 bg-slate-50/60 transition-all opacity-85">
+              <div className="flex items-center gap-2.5 min-w-0">
+                <div className="w-5.5 h-5.5 sm:w-6 sm:h-6 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 shrink-0">
+                  <Lock className="w-3 h-3 text-slate-400" />
+                </div>
+                <div className="min-w-0">
+                  <div className="font-bold text-slate-600 text-[11px] sm:text-xs truncate">
+                    Evaluasi Risiko Rilis Aplikasi
+                  </div>
+                  <div className="flex items-center gap-1.5 mt-0.5">
+                    <span className="px-1.5 py-0.2 rounded border border-amber-200 bg-amber-50 text-amber-700 text-[8.5px] sm:text-[9px] font-bold">
+                      Tanggung Jawab
+                    </span>
+                    <span className="text-[9.5px] text-slate-400 font-medium">30 Mnt</span>
+                  </div>
+                </div>
               </div>
+              <div className="px-2 py-0.5 text-slate-400 font-mono text-[10.5px] sm:text-[11px] font-bold shrink-0">
+                +250 XP
+              </div>
+            </div>
+          </div>
+
+          {/* Daily Progress Meter */}
+          <div className="pt-2 border-t border-slate-100 space-y-1">
+            <div className="flex items-center justify-between text-[10px] sm:text-[11px]">
+              <span className="text-slate-600 font-medium">Progres Misi Harian</span>
+              <span className="text-emerald-700 font-mono font-bold">2 / 3 Selesai (67%)</span>
+            </div>
+            <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
+              <div className="h-full bg-emerald-500 rounded-full w-[67%]" />
             </div>
           </div>
         </div>
