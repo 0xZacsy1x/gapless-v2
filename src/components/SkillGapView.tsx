@@ -8,6 +8,7 @@ import { TRAIT_META } from '@/data/gaplessData';
 import { useRouter } from 'next/navigation';
 import { useGaplessContext } from '@/contexts/CareerContext';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
+import { Navbar } from '@/components/Navbar';
 import { quizBank } from '@/data/quizBank';
 import {
   saveAssessmentDraft,
@@ -198,14 +199,35 @@ export function SkillGapView() {
   };
 
   return (
-    <div className="min-h-screen bg-space px-4 sm:px-6 py-12 flex flex-col justify-between">
-      <div className="max-w-4xl mx-auto w-full">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-8"
-        >
+    <div className="min-h-screen bg-space flex flex-col justify-between">
+      <Navbar />
+
+      <main className="flex-1 px-4 sm:px-6 py-6 md:py-10 flex flex-col justify-between">
+        <div className="max-w-4xl mx-auto w-full">
+          {/* Top Back Navigation */}
+          <div className="mb-6 flex items-center justify-between">
+            <button
+              type="button"
+              onClick={handleBackToResults}
+              className="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-slate-700 hover:text-slate-900 bg-white/80 hover:bg-white px-3.5 py-2 rounded-xl border border-slate-200/80 shadow-xs transition-all cursor-pointer"
+            >
+              <ChevronLeft size={16} />
+              <span>Kembali ke Hasil Trait</span>
+            </button>
+            <Link
+              href="/"
+              className="inline-flex items-center gap-1.5 text-xs sm:text-sm text-slate-600 hover:text-slate-900 bg-white/60 hover:bg-white px-3 py-1.5 rounded-lg border border-slate-200/60 transition-all"
+            >
+              <Home size={14} /> Beranda
+            </Link>
+          </div>
+
+          {/* Header */}
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-center mb-8"
+          >
           <div
             className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-4"
             style={{
@@ -442,6 +464,7 @@ export function SkillGapView() {
           </AnimatePresence>
         </div>
       </div>
-    </div>
-  );
+    </main>
+  </div>
+);
 }

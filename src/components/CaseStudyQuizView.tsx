@@ -20,6 +20,7 @@ import {
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useGaplessContext } from '@/contexts/CareerContext';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
+import { Navbar } from '@/components/Navbar';
 import { quizBank } from '@/data/quizBank';
 import {
   sjtBank,
@@ -481,8 +482,10 @@ export function CaseStudyQuizView() {
   const sjtProgress = ((sjtIndex + 1) / sjtBank.length) * 100;
 
   return (
-    <div className="min-h-screen bg-space flex flex-col items-center justify-center px-4 sm:px-6 py-12">
-      <div className="w-full max-w-4xl mx-auto flex flex-col items-center">
+    <div className="min-h-screen bg-space flex flex-col justify-between">
+      <Navbar />
+      <div className="flex-1 flex flex-col items-center justify-center px-4 sm:px-6 py-8">
+        <div className="w-full max-w-4xl mx-auto flex flex-col items-center">
         <AnimatePresence mode="wait">
           {/* ══════════════════════════════════════════════════
               PHASE 1: STUDI KASUS TEKNIS (HARDSKILL)
@@ -886,5 +889,6 @@ export function CaseStudyQuizView() {
         </AnimatePresence>
       </div>
     </div>
-  );
+  </div>
+);
 }

@@ -2,9 +2,11 @@
 
 import { useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { TrendingUp, ArrowRight, Sparkles, AlertCircle, Zap } from 'lucide-react';
+import { TrendingUp, ArrowRight, ArrowLeft, Sparkles, AlertCircle, Zap } from 'lucide-react';
+import Link from 'next/link';
 import { TRAIT_META } from '@/data/gaplessData';
 import { useGaplessContext } from '@/contexts/CareerContext';
+import { Navbar } from '@/components/Navbar';
 import dynamic from 'next/dynamic';
 
 const ArchetypeReasoningBlock = dynamic(
@@ -49,14 +51,44 @@ export function ResultsView() {
   const meta = TRAIT_META[dominantTrait as keyof typeof TRAIT_META];
 
   return (
-    <div className="min-h-screen bg-space px-4 sm:px-6 py-12">
-      <div className="max-w-5xl mx-auto">
-        {/* ── Archetype Reasoning ── */}
-        <ArchetypeReasoningBlock 
-          dominantTrait={dominantTrait} 
-          traitScores={traitScores} 
-          keyTraits={aiInsight?.traits} 
-        />
+    <div className="min-h-screen bg-space flex flex-col">
+      <Navbar />
+
+      <main className="flex-1 px-4 sm:px-6 py-6 md:py-10">
+        <div className="max-w-5xl mx-auto">
+          {/* ── Top Navigation Bar ── */}
+          <div className="flex items-center justify-between gap-3 mb-6">
+            <Link
+              href="/"
+              className="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-slate-700 hover:text-slate-900 bg-white/80 hover:bg-white px-3.5 py-2 rounded-xl border border-slate-200/80 shadow-xs transition-all cursor-pointer"
+            >
+              <ArrowLeft size={16} />
+              <span>Kembali ke Beranda</span>
+            </Link>
+
+            <div className="flex items-center gap-2">
+              <Link
+                href="/results"
+                className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-medium text-slate-600 hover:text-slate-900 bg-white/80 hover:bg-white px-3 py-2 rounded-xl border border-slate-200/80 shadow-xs transition-all cursor-pointer"
+              >
+                <span>Riwayat Hasil</span>
+              </Link>
+              <Link
+                href="/passport"
+                className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-blue-600 hover:text-blue-700 bg-blue-50/80 hover:bg-blue-50 px-3.5 py-2 rounded-xl border border-blue-200/60 shadow-xs transition-all cursor-pointer"
+              >
+                <span>Skill Passport</span>
+                <ArrowRight size={14} />
+              </Link>
+            </div>
+          </div>
+
+          {/* ── Archetype Reasoning ── */}
+          <ArchetypeReasoningBlock 
+            dominantTrait={dominantTrait} 
+            traitScores={traitScores} 
+            keyTraits={aiInsight?.traits} 
+          />
 
         {/* ── AI Personality Narrative ── */}
         <motion.div
@@ -290,6 +322,7 @@ export function ResultsView() {
           </button>
         </motion.div>
       </div>
-    </div>
-  );
+    </main>
+  </div>
+);
 }

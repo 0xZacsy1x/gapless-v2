@@ -52,6 +52,8 @@ const GuestModuleDetailView = dynamic(
   { ssr: false, loading: ViewLoadingSkeleton }
 );
 
+import { Navbar } from '@/components/Navbar';
+
 export function GaplessApp() {
   const { currentView } = useGaplessContext();
 
@@ -68,7 +70,14 @@ export function GaplessApp() {
         {currentView === 'results' && <ResultsView />}
         {currentView === 'skills' && <SkillGapView />}
         {currentView === 'case-study' && <CaseStudyQuizView />}
-        {currentView === 'roadmap' && <RoadmapView />}
+        {currentView === 'roadmap' && (
+          <div className="min-h-screen bg-space flex flex-col">
+            <Navbar />
+            <main className="flex-1">
+              <RoadmapView />
+            </main>
+          </div>
+        )}
         {currentView === 'module-detail' && <GuestModuleDetailView />}
       </motion.div>
     </AnimatePresence>
