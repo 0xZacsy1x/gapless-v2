@@ -21,13 +21,16 @@ export function AssessmentPageClient() {
   useEffect(() => {
     const quizTypeParam = searchParams.get('quizType');
     const roleParam = searchParams.get('role');
-    const localQuizType = typeof window !== 'undefined' ? localStorage.getItem('gapless:active_quiz_type') : null;
 
-    const isSudahTahu = quizTypeParam === 'sudah_tahu_minat' || (!quizTypeParam && localQuizType === 'sudah_tahu_minat');
+    // Hanya masuk ke jalur 'sudah_tahu_minat' jika eksplisit ditentukan di query parameter
+    const isSudahTahu = quizTypeParam === 'sudah_tahu_minat';
 
     if (isSudahTahu) {
       setQuizType('sudah_tahu_minat');
       setCurrentView('case-study');
+      try {
+        localStorage.setItem('gapless:active_quiz_type', 'sudah_tahu_minat');
+      } catch (e) {}
 
       // Hydrate selectedCareer if not in state
       if (!selectedCareer) {
@@ -52,13 +55,18 @@ export function AssessmentPageClient() {
         } catch (e) {}
       }
     } else {
-      if (quizTypeParam) {
-        setQuizType(quizTypeParam);
-      }
-      if (currentView === 'selection') {
-        setSelectedRole(null);
-        setCurrentView('assessment');
-      }
+      // Jalur Belum Tahu Minat (default untuk /assessment)
+      // Selalu mulai dari asesmen eksplorasi dan bersihkan data karir lama agar tidak bocor
+      setQuizType('belum_tahu_minat');
+      setCurrentView('assessment');
+      setSelectedRole(null);
+      selectCareer(null);
+      try {
+        localStorage.setItem('gapless:active_quiz_type', 'belum_tahu_minat');
+        localStorage.removeItem('gapless:selected_career');
+        localStorage.removeItem('gapless:selected_role');
+        localStorage.removeItem('gapless:active_role_slug');
+      } catch (e) {}
     }
   }, [
     searchParams,
@@ -68,7 +76,6 @@ export function AssessmentPageClient() {
     selectedRole,
     selectCareer,
     setSelectedRole,
-    currentView,
   ]);
 
   return <GaplessApp />;

@@ -5,15 +5,22 @@ import { Compass, Target } from 'lucide-react';
 import { useGaplessContext } from '@/contexts/CareerContext';
 
 export function RouteSelectionCards({ onSelect }: { onSelect?: () => void }) {
-  const { setSelectedRole, setCurrentView } = useGaplessContext();
+  const { setSelectedRole, setCurrentView, setQuizType } = useGaplessContext();
 
   return (
     <div className="flex flex-col sm:flex-row gap-4 w-full">
       <Link
-        href="/assessment"
+        href="/assessment?quizType=belum_tahu_minat"
         onClick={() => {
           setSelectedRole(null);
           setCurrentView('assessment');
+          setQuizType('belum_tahu_minat');
+          try {
+            localStorage.setItem('gapless:active_quiz_type', 'belum_tahu_minat');
+            localStorage.removeItem('gapless:selected_career');
+            localStorage.removeItem('gapless:selected_role');
+            localStorage.removeItem('gapless:active_role_slug');
+          } catch (e) {}
           if (onSelect) onSelect();
         }}
         className="flex-1 flex flex-col items-center justify-center p-4 bg-white border-2 border-slate-100 hover:border-blue-500 rounded-2xl hover:bg-blue-50/50 transition-all group shadow-sm hover:shadow-md"

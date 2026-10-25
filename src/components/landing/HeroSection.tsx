@@ -27,7 +27,7 @@ export default function HeroSection() {
           <div className="space-y-3 pt-1">
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
               <Link
-                href="/assessment"
+                href="/assessment?quizType=belum_tahu_minat"
                 className="inline-flex items-center justify-center rounded-full px-8 md:px-9 bg-brand-primary hover:bg-brand-primary/90 text-white h-13 text-base font-bold shadow-lg shadow-brand-primary/20 border-none transition-all hover:scale-[1.02] cursor-pointer"
               >
                 Belum Tahu Minatku <ArrowRight className="ml-2 w-4 h-4" />

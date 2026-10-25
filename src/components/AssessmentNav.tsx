@@ -28,11 +28,17 @@ export function AssessmentNav() {
             {/* Left: AI Assessment (Tombol Biru) */}
             <motion.div variants={buttonVariants} className="w-full sm:w-auto">
                 <Link
-                    href="/assessment"
+                    href="/assessment?quizType=belum_tahu_minat"
                     onClick={() => {
                         setSelectedRole(null);
                         setCurrentView('assessment');
                         setQuizType('belum_tahu_minat');
+                        try {
+                            localStorage.setItem('gapless:active_quiz_type', 'belum_tahu_minat');
+                            localStorage.removeItem('gapless:selected_career');
+                            localStorage.removeItem('gapless:selected_role');
+                            localStorage.removeItem('gapless:active_role_slug');
+                        } catch (e) {}
                     }}
                     className="block w-full"
                 >

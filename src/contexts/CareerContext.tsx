@@ -120,7 +120,7 @@ export interface GaplessContextValue {
 
   // ── Career selection (Assessment flow) ──
   selectedCareer: CareerProfile | null;
-  selectCareer: (career: CareerProfile, targetView?: GaplessView) => void;
+  selectCareer: (career: CareerProfile | null, targetView?: GaplessView) => void;
 
   // ── Role selection (Database flow) ──
   selectedRole: JobRole | null;
@@ -181,7 +181,7 @@ export function GaplessProvider({ children }: { children: ReactNode }) {
     if (typeof window !== 'undefined') {
       try {
         const urlParams = new URLSearchParams(window.location.search);
-        const qType = urlParams.get('quizType') || localStorage.getItem('gapless:active_quiz_type');
+        const qType = urlParams.get('quizType');
         if (qType === 'sudah_tahu_minat') {
           return 'case-study';
         }
@@ -197,7 +197,8 @@ export function GaplessProvider({ children }: { children: ReactNode }) {
     if (typeof window !== 'undefined') {
       try {
         const urlParams = new URLSearchParams(window.location.search);
-        return urlParams.get('quizType') || localStorage.getItem('gapless:active_quiz_type') || 'belum_tahu_minat';
+        const qType = urlParams.get('quizType');
+        if (qType) return qType;
       } catch (e) {}
     }
     return 'belum_tahu_minat';
@@ -215,11 +216,15 @@ export function GaplessProvider({ children }: { children: ReactNode }) {
   const [selectedCareer, setSelectedCareer] = useState<CareerProfile | null>(() => {
     if (typeof window !== 'undefined') {
       try {
-        const saved = localStorage.getItem('gapless:selected_career');
-        if (saved) return JSON.parse(saved);
         const urlParams = new URLSearchParams(window.location.search);
-        const role = urlParams.get('role');
-        if (role) return findCareerProfile(role) || null;
+        const qType = urlParams.get('quizType');
+        // Hanya muat career yang tersimpan jika URL secara eksplisit adalah sudah_tahu_minat
+        if (qType === 'sudah_tahu_minat') {
+          const saved = localStorage.getItem('gapless:selected_career');
+          if (saved) return JSON.parse(saved);
+          const role = urlParams.get('role');
+          if (role) return findCareerProfile(role) || null;
+        }
       } catch (e) {}
     }
     return null;
@@ -366,17 +371,21 @@ export function GaplessProvider({ children }: { children: ReactNode }) {
     setAnswers((prev) => ({ ...prev, [questionId]: optionIndex }));
   }, [setAnswers]);
 
-  const selectCareer = useCallback((career: CareerProfile, targetView?: GaplessView) => {
+  const selectCareer = useCallback((career: CareerProfile | null, targetView?: GaplessView) => {
     setSelectedCareer(career);
     setSkillRatingsState({});
     if (typeof window !== 'undefined') {
       try {
-        localStorage.setItem('gapless:selected_career', JSON.stringify(career));
+        if (career) {
+          localStorage.setItem('gapless:selected_career', JSON.stringify(career));
+        } else {
+          localStorage.removeItem('gapless:selected_career');
+        }
       } catch (e) {}
     }
     if (targetView) {
       setCurrentView(targetView);
-    } else {
+    } else if (career) {
       setCurrentView((prev) => (prev === 'case-study' ? 'case-study' : 'skills'));
     }
   }, []);
