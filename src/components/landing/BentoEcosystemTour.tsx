@@ -23,6 +23,14 @@ const ROADMAP_PRESETS = [
     career: "Software Engineer",
     track: "Full-Stack & Cloud Architecture",
     overallProgress: 68,
+    completedModule: {
+      phase: "Fase 01 — Fondasi Sistem",
+      name: "Algoritma Pemrograman, Struktur Data & Database Relasional",
+      skills: ["Data Structures", "PostgreSQL & SQL Indexing", "Git Workflow"],
+      project: "Studi Kasus: Engine Transaksi Database & Logging",
+      score: "Skor: 94/100 (A)",
+      pace: "2 Minggu • Selesai",
+    },
     activeModule: {
       phase: "Fase 02 — Modul Aktif",
       name: "Framework Modern & Arsitektur API",
@@ -62,6 +70,14 @@ const ROADMAP_PRESETS = [
     career: "Data Analyst",
     track: "Business Intelligence & Machine Learning",
     overallProgress: 62,
+    completedModule: {
+      phase: "Fase 01 — Fondasi Analitik",
+      name: "Statistika Deskriptif, Probabilitas & SQL Tingkat Lanjut",
+      skills: ["Statistika Deskriptif", "Complex SQL Joins", "Data Cleaning"],
+      project: "Studi Kasus: Analisis Retensi & Cohort E-Commerce",
+      score: "Skor: 96/100 (A+)",
+      pace: "2 Minggu • Selesai",
+    },
     activeModule: {
       phase: "Fase 02 — Modul Aktif",
       name: "Pemrosesan Data & Exploratory Analysis",
@@ -101,6 +117,14 @@ const ROADMAP_PRESETS = [
     career: "UI/UX Designer",
     track: "Product Design & Design Systems",
     overallProgress: 75,
+    completedModule: {
+      phase: "Fase 01 — Fondasi Desain",
+      name: "Prinsip Desain Visual & Fondasi Design System",
+      skills: ["Visual Hierarchy", "Design Tokens", "Wireframing"],
+      project: "Studi Kasus: UI Style Guide & Token Handoff",
+      score: "Skor: 92/100 (A)",
+      pace: "2 Minggu • Selesai",
+    },
     activeModule: {
       phase: "Fase 02 — Modul Aktif",
       name: "Riset Pengguna & Interactive Prototyping",
@@ -343,49 +367,95 @@ export default function BentoEcosystemTour() {
           </div>
         </div>
 
-        {/* Active Module Box (Clean, streamlined, no walls of text) */}
-        <div className="bg-white border border-blue-100 rounded-xl p-2.5 shadow-3xs space-y-1.5 min-h-[96px] flex flex-col justify-between">
-          <div className="flex items-center justify-between gap-2">
-            <div className="flex items-center gap-2">
-              <span className="inline-flex items-center gap-1 px-2 py-0.2 rounded-full bg-blue-50 text-brand-primary text-[9.5px] font-bold uppercase tracking-wider border border-blue-100">
-                <BookOpen className="w-2.5 h-2.5 text-brand-primary" />
-                {currentRoadmap.activeModule.phase}
-              </span>
-              <span className="text-[9.5px] text-emerald-700 font-bold bg-emerald-50 px-1.5 py-0.2 rounded-full border border-emerald-200">
-                Target Selesai Minggu Ini
+        {/* Module Progression: Fase 01 (Selesai) + Fase 02 (Modul Aktif) */}
+        <div className="space-y-2 flex-1 flex flex-col justify-center py-0.5">
+          {/* FASE 01: MODUL SELESAI */}
+          <div className="bg-emerald-50/25 border border-emerald-200/90 rounded-xl p-2.5 shadow-3xs space-y-1.5 transition-all">
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-1.5 min-w-0">
+                <span className="inline-flex items-center gap-1 px-2 py-0.2 rounded-full bg-emerald-100/70 text-emerald-800 text-[9px] sm:text-[9.5px] font-bold uppercase tracking-wider border border-emerald-200 shrink-0">
+                  <CheckCircle2 className="w-2.5 h-2.5 text-emerald-600" />
+                  {currentRoadmap.completedModule.phase}
+                </span>
+                <span className="text-[9px] text-emerald-700 font-bold bg-white px-1.5 py-0.2 rounded border border-emerald-200/90 font-mono shrink-0">
+                  {currentRoadmap.completedModule.score}
+                </span>
+              </div>
+              <span className="text-[9px] sm:text-[9.5px] text-slate-400 font-medium flex items-center gap-1 shrink-0">
+                <Clock className="w-2.5 h-2.5 text-slate-400" />
+                {currentRoadmap.completedModule.pace}
               </span>
             </div>
-            <span className="text-[9.5px] text-slate-500 font-medium flex items-center gap-1">
-              <Clock className="w-2.5 h-2.5 text-brand-primary" />
-              {currentRoadmap.activeModule.pace}
-            </span>
+
+            <h4 className="text-[11px] sm:text-xs font-bold text-slate-800 leading-snug truncate">
+              {currentRoadmap.completedModule.name}
+            </h4>
+
+            {/* Skill Keys & Project Capstone */}
+            <div className="flex flex-wrap items-center justify-between gap-1 pt-1 border-t border-emerald-100/80">
+              <div className="flex flex-wrap items-center gap-1 min-w-0">
+                <span className="text-[8px] sm:text-[8.5px] font-mono text-slate-400 uppercase tracking-wider">
+                  Skill:
+                </span>
+                {currentRoadmap.completedModule.skills.map((skill) => (
+                  <span
+                    key={skill}
+                    className="text-[9px] font-medium px-1.5 py-0.2 rounded bg-white border border-emerald-200/70 text-slate-700 truncate"
+                  >
+                    {skill}
+                  </span>
+                ))}
+              </div>
+
+              <div className="inline-flex items-center gap-1 text-[9.5px] sm:text-[10px] text-emerald-800 font-bold bg-emerald-100/60 px-1.5 py-0.5 rounded border border-emerald-200 truncate max-w-[230px]">
+                <Award className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-emerald-600 shrink-0" />
+                <span className="truncate">{currentRoadmap.completedModule.project}</span>
+              </div>
+            </div>
           </div>
 
-          <h4 className="text-xs sm:text-[13px] font-bold text-slate-900 leading-snug truncate">
-            {currentRoadmap.activeModule.name}
-          </h4>
-
-          {/* Skill Keys & Project Capstone */}
-          <div className="flex flex-wrap items-center justify-between gap-1.5 pt-1.5 border-t border-slate-100">
-            <div className="flex flex-wrap items-center gap-1">
-              <span className="text-[8.5px] font-mono text-slate-400 uppercase tracking-wider">
-                Skill:
-              </span>
-              {currentRoadmap.activeModule.skills.map((skill) => (
-                <span
-                  key={skill}
-                  className="text-[9.5px] font-medium px-1.5 py-0.2 rounded bg-blue-50/70 border border-blue-100 text-slate-700"
-                >
-                  {skill}
+          {/* FASE 02: MODUL AKTIF */}
+          <div className="bg-white border-2 border-blue-400/80 rounded-xl p-2.5 shadow-xs space-y-1.5 transition-all">
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-1.5 min-w-0">
+                <span className="inline-flex items-center gap-1 px-2 py-0.2 rounded-full bg-blue-50 text-brand-primary text-[9px] sm:text-[9.5px] font-bold uppercase tracking-wider border border-blue-200 shrink-0">
+                  <BookOpen className="w-2.5 h-2.5 text-brand-primary" />
+                  {currentRoadmap.activeModule.phase}
                 </span>
-              ))}
+                <span className="text-[9px] text-brand-primary font-bold bg-blue-50/60 px-1.5 py-0.2 rounded border border-blue-200 font-mono shrink-0">
+                  Target Selesai Minggu Ini
+                </span>
+              </div>
+              <span className="text-[9px] sm:text-[9.5px] text-slate-500 font-medium flex items-center gap-1 shrink-0">
+                <Clock className="w-2.5 h-2.5 text-brand-primary" />
+                {currentRoadmap.activeModule.pace}
+              </span>
             </div>
 
-            <div className="inline-flex items-center gap-1 text-[10.5px] text-brand-primary font-bold bg-blue-50/70 px-1.5 py-0.5 rounded border border-blue-100">
-              <Award className="w-3 h-3 text-brand-primary shrink-0" />
-              <span className="truncate max-w-[240px]">
-                {currentRoadmap.activeModule.project}
-              </span>
+            <h4 className="text-[11px] sm:text-xs font-bold text-slate-900 leading-snug truncate">
+              {currentRoadmap.activeModule.name}
+            </h4>
+
+            {/* Skill Keys & Project Capstone */}
+            <div className="flex flex-wrap items-center justify-between gap-1 pt-1 border-t border-slate-100">
+              <div className="flex flex-wrap items-center gap-1 min-w-0">
+                <span className="text-[8px] sm:text-[8.5px] font-mono text-slate-400 uppercase tracking-wider">
+                  Skill:
+                </span>
+                {currentRoadmap.activeModule.skills.map((skill) => (
+                  <span
+                    key={skill}
+                    className="text-[9px] font-medium px-1.5 py-0.2 rounded bg-blue-50/70 border border-blue-100 text-slate-700 truncate"
+                  >
+                    {skill}
+                  </span>
+                ))}
+              </div>
+
+              <div className="inline-flex items-center gap-1 text-[9.5px] sm:text-[10px] text-brand-primary font-bold bg-blue-50/80 px-1.5 py-0.5 rounded border border-blue-100 truncate max-w-[230px]">
+                <Award className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-brand-primary shrink-0" />
+                <span className="truncate">{currentRoadmap.activeModule.project}</span>
+              </div>
             </div>
           </div>
         </div>
