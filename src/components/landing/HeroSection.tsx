@@ -66,9 +66,9 @@ export default function HeroSection() {
           </div>
         </div>
 
-        {/* Cara Kerjanya — 3 Fondasi Riset & Standar Industri */}
-        <div className="pt-3.5 border-t border-slate-200/70">
-          <div className="flex items-center justify-between mb-3">
+        {/* Cara Kerjanya — 3 Fondasi Riset & Standar Industri (Tightened Divider) */}
+        <div className="pt-2 sm:pt-2.5 -mt-2 sm:-mt-2.5 border-t border-slate-200/80">
+          <div className="flex items-center justify-between mb-2">
             <div className="text-[11px] font-extrabold uppercase tracking-[0.25em] text-slate-400">
               CARA KERJA &amp; STANDAR RISET
             </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import {
   GraduationCap,
@@ -8,15 +8,15 @@ import {
   CheckCircle2,
   Lock,
   Bookmark,
-  Zap,
   Clock,
   Award,
   BookOpen,
   ArrowRight,
   Sparkles,
 } from "lucide-react";
+import FakeCursor from "./FakeCursor";
 
-// Career Roadmaps Data
+// Career Roadmaps Data (Streamlined & Clean)
 const ROADMAP_PRESETS = [
   {
     id: "swe",
@@ -26,7 +26,6 @@ const ROADMAP_PRESETS = [
     activeModule: {
       phase: "Fase 02 — Modul Aktif",
       name: "Framework Modern & Arsitektur API",
-      desc: "Membangun sistem modular berbasis Next.js 15, state architecture, dan integrasi backend.",
       skills: ["React 19 & Next.js", "REST & GraphQL", "State Architecture"],
       project: "Studi Kasus: Sistem Finansial & Checkout Skala Nyata",
       pace: "3 Minggu • 15 Jam Belajar",
@@ -35,33 +34,25 @@ const ROADMAP_PRESETS = [
       {
         phase: 1,
         title: "Fondasi Sistem",
-        desc: "Logika algoritma & struktur data",
         status: "completed",
-        progress: 100,
-        modules: ["Algoritma Dasar", "Version Control Git", "Database & SQL"],
+        modules: ["Algoritma Dasar", "Database & SQL"],
       },
       {
         phase: 2,
         title: "Praktik Industri",
-        desc: "Framework modern & API sistem",
         status: "in_progress",
-        progress: 75,
-        modules: ["Next.js & React 19", "REST & GraphQL", "State Architecture"],
+        modules: ["Next.js & React 19", "Arsitektur API"],
       },
       {
         phase: 3,
         title: "Spesialisasi Cloud",
-        desc: "Docker, CI/CD, & microservices",
         status: "ready",
-        progress: 0,
-        modules: ["Docker Container", "CI/CD Pipeline", "Cloud Deployment"],
+        modules: ["Docker Container", "CI/CD Pipeline"],
       },
       {
         phase: 4,
         title: "Kesiapan Kerja",
-        desc: "Capstone project & tech interview",
         status: "locked",
-        progress: 0,
         modules: ["Capstone Portofolio", "Mock Tech Interview"],
       },
     ],
@@ -74,7 +65,6 @@ const ROADMAP_PRESETS = [
     activeModule: {
       phase: "Fase 02 — Modul Aktif",
       name: "Pemrosesan Data & Exploratory Analysis",
-      desc: "Mengekstraksi wawasan bisnis kuantitatif, data cleaning tingkat lanjut, dan visualisasi interaktif.",
       skills: ["Python & Pandas", "Data Wrangling", "Tableau Dashboard"],
       project: "Studi Kasus: Prediksi Churn Pelanggan & Analisis LTV",
       pace: "3 Minggu • 14 Jam Belajar",
@@ -83,33 +73,25 @@ const ROADMAP_PRESETS = [
       {
         phase: 1,
         title: "Fondasi Analitik",
-        desc: "Statistika & querying data",
         status: "completed",
-        progress: 100,
-        modules: ["Statistika Deskriptif", "Advanced SQL", "Spreadsheet Pro"],
+        modules: ["Statistika Deskriptif", "Advanced SQL"],
       },
       {
         phase: 2,
         title: "Pemrosesan Data",
-        desc: "Python analytics & visualisasi",
         status: "in_progress",
-        progress: 60,
-        modules: ["Python & Pandas", "Data Cleaning", "Tableau Dashboard"],
+        modules: ["Python & Pandas", "Tableau Dashboard"],
       },
       {
         phase: 3,
         title: "Pemodelan Prediktif",
-        desc: "Machine learning & insight",
         status: "ready",
-        progress: 0,
-        modules: ["Scikit-Learn ML", "A/B Testing", "Business Metrics"],
+        modules: ["Scikit-Learn ML", "A/B Testing"],
       },
       {
         phase: 4,
         title: "Kesiapan Industri",
-        desc: "Studi kasus data nyata",
         status: "locked",
-        progress: 0,
         modules: ["Executive Storytelling", "Portfolio Pipeline"],
       },
     ],
@@ -122,7 +104,6 @@ const ROADMAP_PRESETS = [
     activeModule: {
       phase: "Fase 02 — Modul Aktif",
       name: "Riset Pengguna & Interactive Prototyping",
-      desc: "Menyusun wireframing resolusi tinggi, pengujian usability terarah, dan design systems multi-platform.",
       skills: ["User Flow Mapping", "Figma Auto-Layout", "Usability Testing"],
       project: "Studi Kasus: Redesain End-to-End Onboarding FinTech",
       pace: "2.5 Minggu • 12 Jam Belajar",
@@ -131,33 +112,25 @@ const ROADMAP_PRESETS = [
       {
         phase: 1,
         title: "Fondasi Desain",
-        desc: "Prinsip visual & design thinking",
         status: "completed",
-        progress: 100,
-        modules: ["Design Principles", "Figma Auto-Layout", "Design Systems"],
+        modules: ["Design Principles", "Figma Auto-Layout"],
       },
       {
         phase: 2,
         title: "Riset & Prototyping",
-        desc: "Pengujian pengguna interaktif",
         status: "in_progress",
-        progress: 80,
-        modules: ["User Interview", "Interactive Prototype", "Usability Testing"],
+        modules: ["Interactive Prototype", "Usability Testing"],
       },
       {
         phase: 3,
         title: "Interaksi Lanjutan",
-        desc: "Micro-motion & aksesibilitas",
         status: "ready",
-        progress: 0,
         modules: ["Micro-interactions", "Design Token Handoff"],
       },
       {
         phase: 4,
         title: "Portofolio Produk",
-        desc: "Verifikasi studi kasus nyata",
         status: "locked",
-        progress: 0,
         modules: ["Case Study Showcase", "Design Critique"],
       },
     ],
@@ -195,17 +168,17 @@ const KEGIATAN_PRESETS = [
   },
 ];
 
-// Live Scenarios for Right Card Live Preview
+// Interactive Live Scenarios for Right Card Live Preview
 const SCENARIO_PRESETS = [
   {
     id: "s1",
     question: "Sprint deadline mendadak maju 3 hari sementara ada bug kritis di staging. Apa langkah utamamu?",
     choiceA: "[A] Isolasi bug & komunikasikan trade-off scope fitur ke tim.",
     choiceB: "[B] Deploy hotfix cepat tanpa pengujian menyeluruh.",
-    correctChoice: "A",
+    correctChoice: "A" as const,
     reward: "+50 XP Adaptabilitas & Manajemen Risiko",
     activeMissionId: "m2",
-    progressPercent: 67,
+    finalProgress: 67,
     progressLabel: "2 / 3 Selesai (67%)",
   },
   {
@@ -213,23 +186,22 @@ const SCENARIO_PRESETS = [
     question: "Stakeholder meminta penambahan 3 fitur besar di tengah sprint tanpa mengubah deadline rilis.",
     choiceA: "[A] Terima semua permintaan tanpa validasi kapasitas tim.",
     choiceB: "[B] Analisis trade-off teknis dan tawarkan rilis modular bertahap.",
-    correctChoice: "B",
+    correctChoice: "B" as const,
     reward: "+75 XP Negosiasi & Komunikasi Efektif",
     activeMissionId: "m3",
-    progressPercent: 100,
+    finalProgress: 100,
     progressLabel: "3 / 3 Selesai (100%)",
   },
 ];
 
-// Misi Soft Skill Data
-const MISI_PRESETS = [
+// Base Misi List
+const MISI_BASE = [
   {
     id: "m1",
     title: "Sampaikan Ide Tim Cross-Functional",
     competency: "Komunikasi",
     xp: 150,
     time: "15 Mnt",
-    status: "completed",
   },
   {
     id: "m2",
@@ -237,7 +209,6 @@ const MISI_PRESETS = [
     competency: "Kolaborasi",
     xp: 200,
     time: "20 Mnt",
-    status: "in_progress",
   },
   {
     id: "m3",
@@ -245,21 +216,35 @@ const MISI_PRESETS = [
     competency: "Tanggung Jawab",
     xp: 250,
     time: "30 Mnt",
-    status: "locked",
   },
 ];
 
 export default function BentoEcosystemTour() {
   const containerRef = useRef<HTMLDivElement>(null);
+  const rightCardRef = useRef<HTMLDivElement>(null);
+  const choiceARef = useRef<HTMLButtonElement>(null);
+  const choiceBRef = useRef<HTMLButtonElement>(null);
 
-  // States
+  // States for Left Card & Bottom Card
   const [activeCareerIdx, setActiveCareerIdx] = useState<number>(0);
   const [activeKegiatanIdx, setActiveKegiatanIdx] = useState<number>(0);
-  const [activeScenarioIdx, setActiveScenarioIdx] = useState<number>(0);
   const [bookmarkedId, setBookmarkedId] = useState<string>("k1");
   const [isInView, setIsInView] = useState<boolean>(true);
   const [isTabActive, setIsTabActive] = useState<boolean>(true);
   const [isUserInteracting, setIsUserInteracting] = useState<boolean>(false);
+
+  // States for Right Card (Live Preview Interactive with Fake Cursor)
+  const [activeScenarioIdx, setActiveScenarioIdx] = useState<number>(0);
+  const [selectedChoice, setSelectedChoice] = useState<"A" | "B" | null>(null);
+  const [isRewardAwarded, setIsRewardAwarded] = useState<boolean>(false);
+  const [completedMissionIds, setCompletedMissionIds] = useState<string[]>(["m1"]);
+  const [liveDailyProgress, setLiveDailyProgress] = useState<number>(33);
+  const [liveProgressLabel, setLiveProgressLabel] = useState<string>("1 / 3 Selesai (33%)");
+
+  // Fake Cursor States for Right Card
+  const [cursorPos, setCursorPos] = useState<{ x: number; y: number }>({ x: 260, y: 30 });
+  const [isClicking, setIsClicking] = useState<boolean>(false);
+  const [cursorVisible, setCursorVisible] = useState<boolean>(false);
 
   const [prefersReducedMotion, setPrefersReducedMotion] = useState<boolean>(() => {
     if (typeof window !== "undefined") {
@@ -301,38 +286,113 @@ export default function BentoEcosystemTour() {
     };
   }, []);
 
-  // Auto-cycle Career Roadmap every 4.5 seconds (Live preview gerak sendiri)
+  // Auto-cycle Left Card Career Roadmap every 5.0 seconds
   useEffect(() => {
     if (prefersReducedMotion || !isInView || !isTabActive || isUserInteracting) return;
 
     const timer = setInterval(() => {
       setActiveCareerIdx((prev) => (prev + 1) % ROADMAP_PRESETS.length);
-    }, 4500);
+    }, 5000);
 
     return () => clearInterval(timer);
   }, [isInView, isTabActive, isUserInteracting, prefersReducedMotion]);
 
-  // Auto-cycle Kegiatan every 3.8 seconds (Live preview gerak sendiri)
+  // Auto-cycle Kegiatan in Bottom Card every 4.0 seconds
   useEffect(() => {
     if (prefersReducedMotion || !isInView || !isTabActive) return;
 
     const timer = setInterval(() => {
       setActiveKegiatanIdx((prev) => (prev + 1) % KEGIATAN_PRESETS.length);
-    }, 3800);
-
-    return () => clearInterval(timer);
-  }, [isInView, isTabActive, prefersReducedMotion]);
-
-  // Auto-cycle Misi Soft Skill Scenarios every 4.0 seconds (Live preview section kanan)
-  useEffect(() => {
-    if (prefersReducedMotion || !isInView || !isTabActive) return;
-
-    const timer = setInterval(() => {
-      setActiveScenarioIdx((prev) => (prev + 1) % SCENARIO_PRESETS.length);
     }, 4000);
 
     return () => clearInterval(timer);
   }, [isInView, isTabActive, prefersReducedMotion]);
+
+  // Helper to move cursor to element within Right Card
+  const moveCursorToTarget = useCallback((targetEl: HTMLElement | null) => {
+    if (!targetEl || !rightCardRef.current) return;
+    const cardRect = rightCardRef.current.getBoundingClientRect();
+    const targetRect = targetEl.getBoundingClientRect();
+
+    // Point cursor near center-left of target
+    const targetX = targetRect.left - cardRect.left + Math.min(60, targetRect.width * 0.4);
+    const targetY = targetRect.top - cardRect.top + targetRect.height * 0.5;
+
+    setCursorPos({ x: targetX, y: targetY });
+  }, []);
+
+  // LIVE PREVIEW STATE MACHINE FOR RIGHT CARD (Misi Soft Skill)
+  useEffect(() => {
+    if (prefersReducedMotion || !isInView || !isTabActive) return;
+
+    let isSubscribed = true;
+    let stepTimer: NodeJS.Timeout;
+
+    const currentScenario = SCENARIO_PRESETS[activeScenarioIdx];
+    const targetChoice = currentScenario.correctChoice;
+
+    // Reset visual state on scenario entry
+    setSelectedChoice(null);
+    setIsRewardAwarded(false);
+    setIsClicking(false);
+    setCursorVisible(true);
+
+    // Initial position above
+    if (rightCardRef.current) {
+      const cardRect = rightCardRef.current.getBoundingClientRect();
+      setCursorPos({ x: cardRect.width * 0.75, y: 40 });
+    }
+
+    // Step 1: Gliding mouse to target option (500ms after entry)
+    stepTimer = setTimeout(() => {
+      if (!isSubscribed) return;
+      const targetEl = targetChoice === "A" ? choiceARef.current : choiceBRef.current;
+      moveCursorToTarget(targetEl);
+
+      // Step 2: Click the target option (850ms glide)
+      stepTimer = setTimeout(() => {
+        if (!isSubscribed) return;
+        setIsClicking(true);
+        setSelectedChoice(targetChoice);
+
+        // Step 3: Award XP & complete mission (250ms press feedback)
+        stepTimer = setTimeout(() => {
+          if (!isSubscribed) return;
+          setIsClicking(false);
+          setIsRewardAwarded(true);
+
+          if (targetChoice === "A") {
+            setCompletedMissionIds(["m1", "m2"]);
+            setLiveDailyProgress(67);
+            setLiveProgressLabel("2 / 3 Selesai (67%)");
+          } else {
+            setCompletedMissionIds(["m1", "m2", "m3"]);
+            setLiveDailyProgress(100);
+            setLiveProgressLabel("3 / 3 Selesai (100%)");
+          }
+
+          // Step 4: Rest and appreciate the reward (2200ms)
+          stepTimer = setTimeout(() => {
+            if (!isSubscribed) return;
+            // Move cursor away slightly
+            setCursorPos((prev) => ({ x: prev.x + 30, y: prev.y + 60 }));
+            setCursorVisible(false);
+
+            // Step 5: Transition to next scenario (600ms)
+            stepTimer = setTimeout(() => {
+              if (!isSubscribed) return;
+              setActiveScenarioIdx((prev) => (prev + 1) % SCENARIO_PRESETS.length);
+            }, 600);
+          }, 2200);
+        }, 250);
+      }, 850);
+    }, 500);
+
+    return () => {
+      isSubscribed = false;
+      clearTimeout(stepTimer);
+    };
+  }, [activeScenarioIdx, isInView, isTabActive, moveCursorToTarget, prefersReducedMotion]);
 
   const handleSelectCareer = (idx: number) => {
     setActiveCareerIdx(idx);
@@ -355,54 +415,54 @@ export default function BentoEcosystemTour() {
   return (
     <div
       ref={containerRef}
-      className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-5 select-none w-full items-stretch font-sans"
+      className="grid grid-cols-1 lg:grid-cols-12 gap-3.5 sm:gap-4 select-none w-full items-stretch font-sans"
     >
       {/* =========================================================================
           ROW 1, CARD 1: ROADMAP BELAJAR TERSTRUKTUR (lg:col-span-8 - Black Shadow)
       ========================================================================= */}
-      <div className="lg:col-span-8 p-5 sm:p-6 bg-white border border-slate-200/90 rounded-2xl flex flex-col justify-between shadow-[0_16px_36px_-10px_rgba(0,0,0,0.12),0_4px_12px_-2px_rgba(0,0,0,0.06)] space-y-4">
+      <div className="lg:col-span-8 p-3.5 sm:p-4.5 bg-white border border-slate-200/90 rounded-2xl flex flex-col justify-between shadow-[0_16px_36px_-8px_rgba(0,0,0,0.18),0_4px_12px_-2px_rgba(0,0,0,0.08)] space-y-2.5">
         {/* Top Header */}
-        <div className="space-y-3">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-xl bg-blue-50 flex items-center justify-center text-brand-primary border border-blue-100 shadow-3xs">
-                <GraduationCap className="w-4 h-4 text-brand-primary" />
+        <div className="space-y-2">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
+            <div className="flex items-center gap-2">
+              <div className="w-6.5 h-6.5 rounded-lg bg-blue-50 flex items-center justify-center text-brand-primary border border-blue-100 shadow-3xs">
+                <GraduationCap className="w-3.5 h-3.5 text-brand-primary" />
               </div>
               <div>
-                <h3 className="text-base sm:text-lg font-bold tracking-tight text-slate-900 leading-tight">
+                <h3 className="text-xs sm:text-sm font-bold tracking-tight text-slate-900 leading-tight">
                   Roadmap Belajar Terstruktur
                 </h3>
-                <p className="text-xs text-slate-500">
-                  Kurikulum 4 fase progresif terkalibrasi dengan standar lowongan industri.
+                <p className="text-[10.5px] text-slate-500">
+                  Kurikulum 4 fase progresif terkalibrasi dengan standar industri nyata.
                 </p>
               </div>
             </div>
 
             {/* Live Indicator Chip */}
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-blue-50 border border-blue-200 text-[10px] font-bold text-brand-primary self-start sm:self-auto">
+            <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-blue-50 border border-blue-200 text-[9.5px] font-bold text-brand-primary self-start sm:self-auto">
               <span className="w-1.5 h-1.5 rounded-full bg-brand-primary animate-ping" />
               <span>Live Tour Otomatis</span>
             </div>
           </div>
 
           {/* Interactive Career Selector Chips */}
-          <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pt-1">
+          <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
             {ROADMAP_PRESETS.map((preset, idx) => {
               const isSelected = idx === activeCareerIdx;
               return (
                 <button
                   key={preset.id}
                   onClick={() => handleSelectCareer(idx)}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer btn-press flex items-center gap-1.5 shrink-0 ${
+                  className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all duration-200 cursor-pointer btn-press flex items-center gap-1.5 shrink-0 ${
                     isSelected
-                      ? "bg-brand-primary text-white shadow-xs shadow-brand-primary/25 scale-[1.02]"
+                      ? "bg-brand-primary text-white shadow-xs shadow-brand-primary/25 scale-[1.01]"
                       : "bg-white hover:bg-blue-50/60 border border-slate-200 text-slate-700"
                   }`}
                 >
                   {isSelected && <Sparkles className="w-3 h-3 text-white" />}
                   <span>{preset.career}</span>
                   <span
-                    className={`text-[10px] font-mono px-1 py-0.2 rounded font-bold ${
+                    className={`text-[9.5px] font-mono px-1 py-0.2 rounded font-bold ${
                       isSelected ? "bg-white/20 text-white" : "bg-slate-100 text-slate-500"
                     }`}
                   >
@@ -414,81 +474,78 @@ export default function BentoEcosystemTour() {
           </div>
 
           {/* Active Career Track Banner */}
-          <div className="bg-blue-50/50 border border-blue-100 rounded-xl p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-            <div className="flex items-center gap-2">
-              <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-brand-primary px-2 py-0.5 rounded bg-blue-100/70 border border-blue-200">
+          <div className="bg-blue-50/50 border border-blue-100/90 rounded-xl px-2.5 py-1.5 flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+            <div className="flex items-center gap-1.5">
+              <span className="text-[9px] font-mono font-bold uppercase tracking-wider text-brand-primary px-1.5 py-0.2 rounded bg-blue-100/80 border border-blue-200">
                 TRACK
               </span>
-              <span className="text-xs font-bold text-slate-800">
+              <span className="text-[11.5px] font-bold text-slate-800 truncate">
                 {currentRoadmap.track}
               </span>
             </div>
-            <div className="flex items-center gap-2.5">
-              <div className="w-24 sm:w-32 h-2 bg-blue-100/80 rounded-full overflow-hidden">
+            <div className="flex items-center gap-2">
+              <div className="w-20 sm:w-24 h-1.5 bg-blue-100 rounded-full overflow-hidden">
                 <div
                   className="h-full bg-brand-primary rounded-full transition-all duration-700 ease-out"
                   style={{ width: `${currentRoadmap.overallProgress}%` }}
                 />
               </div>
-              <span className="text-xs font-mono font-bold text-brand-primary tabular-nums">
+              <span className="text-[11px] font-mono font-bold text-brand-primary tabular-nums shrink-0">
                 {currentRoadmap.overallProgress}% Kesiapan
               </span>
             </div>
           </div>
         </div>
 
-        {/* Active Module Box */}
-        <div className="bg-white border border-blue-100 rounded-xl p-4 shadow-3xs space-y-2.5">
+        {/* Active Module Box (Clean, streamlined, no walls of text) */}
+        <div className="bg-white border border-blue-100 rounded-xl p-2.5 shadow-3xs space-y-1.5">
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2">
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-blue-50 text-brand-primary text-[10px] font-bold uppercase tracking-wider border border-blue-100">
-                <BookOpen className="w-3 h-3 text-brand-primary" />
+              <span className="inline-flex items-center gap-1 px-2 py-0.2 rounded-full bg-blue-50 text-brand-primary text-[9.5px] font-bold uppercase tracking-wider border border-blue-100">
+                <BookOpen className="w-2.5 h-2.5 text-brand-primary" />
                 {currentRoadmap.activeModule.phase}
               </span>
-              <span className="text-[10px] text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+              <span className="text-[9.5px] text-emerald-700 font-bold bg-emerald-50 px-1.5 py-0.2 rounded-full border border-emerald-200">
                 Target Selesai Minggu Ini
               </span>
             </div>
-            <span className="text-[11px] text-slate-500 font-medium flex items-center gap-1">
-              <Clock className="w-3 h-3 text-brand-primary" />
+            <span className="text-[9.5px] text-slate-500 font-medium flex items-center gap-1">
+              <Clock className="w-2.5 h-2.5 text-brand-primary" />
               {currentRoadmap.activeModule.pace}
             </span>
           </div>
 
-          <h4 className="text-sm font-bold text-slate-900 leading-snug">
+          <h4 className="text-xs sm:text-[13px] font-bold text-slate-900 leading-snug">
             {currentRoadmap.activeModule.name}
           </h4>
-          <p className="text-xs text-slate-500 leading-relaxed">
-            {currentRoadmap.activeModule.desc}
-          </p>
 
           {/* Skill Keys & Project Capstone */}
-          <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-100">
-            <div className="flex flex-wrap items-center gap-1.5">
-              <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider">
-                Skill Kunci:
+          <div className="flex flex-wrap items-center justify-between gap-1.5 pt-1.5 border-t border-slate-100">
+            <div className="flex flex-wrap items-center gap-1">
+              <span className="text-[8.5px] font-mono text-slate-400 uppercase tracking-wider">
+                Skill:
               </span>
               {currentRoadmap.activeModule.skills.map((skill) => (
                 <span
                   key={skill}
-                  className="text-[11px] font-medium px-2 py-0.5 rounded-md bg-blue-50/60 border border-blue-100 text-slate-700"
+                  className="text-[9.5px] font-medium px-1.5 py-0.2 rounded bg-blue-50/70 border border-blue-100 text-slate-700"
                 >
                   {skill}
                 </span>
               ))}
             </div>
 
-            <div className="inline-flex items-center gap-1.5 text-xs text-brand-primary font-bold bg-blue-50/60 px-2.5 py-1 rounded-md border border-blue-100">
-              <Award className="w-3.5 h-3.5 text-brand-primary shrink-0" />
-              <span className="truncate max-w-[280px]">
+            <div className="inline-flex items-center gap-1 text-[10.5px] text-brand-primary font-bold bg-blue-50/70 px-1.5 py-0.5 rounded border border-blue-100">
+              <Award className="w-3 h-3 text-brand-primary shrink-0" />
+              <span className="truncate max-w-[240px]">
                 {currentRoadmap.activeModule.project}
               </span>
             </div>
           </div>
         </div>
 
-        {/* 4 Phases Timeline Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
+        {/* 4 Phases Timeline Grid (Compact & Clear) */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
           {currentRoadmap.phases.map((phase) => {
             const isCompleted = phase.status === "completed";
             const isInProgress = phase.status === "in_progress";
@@ -497,7 +554,7 @@ export default function BentoEcosystemTour() {
             return (
               <div
                 key={phase.phase}
-                className={`p-3 rounded-xl border transition-all duration-300 flex flex-col justify-between min-h-[125px] ${
+                className={`p-2 rounded-xl border transition-all duration-300 flex flex-col justify-between ${
                   isInProgress
                     ? "bg-white border-brand-primary shadow-xs ring-1 ring-brand-primary/20 scale-[1.01]"
                     : isCompleted
@@ -508,47 +565,44 @@ export default function BentoEcosystemTour() {
                 }`}
               >
                 <div>
-                  <div className="flex items-center justify-between mb-1.5">
-                    <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-400">
+                  <div className="flex items-center justify-between mb-0.5">
+                    <span className="text-[8.5px] font-mono font-bold uppercase tracking-wider text-slate-400">
                       FASE 0{phase.phase}
                     </span>
                     {isCompleted ? (
-                      <span className="inline-flex items-center gap-1 text-[9px] font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.2 rounded-full border border-emerald-200">
+                      <span className="inline-flex items-center gap-0.5 text-[8px] font-bold text-emerald-700 bg-emerald-50 px-1 py-0.2 rounded-full border border-emerald-200">
                         <CheckCircle2 className="w-2.5 h-2.5" /> Selesai
                       </span>
                     ) : isInProgress ? (
-                      <span className="inline-flex items-center gap-1 text-[9px] font-bold text-brand-primary bg-blue-50 px-1.5 py-0.2 rounded-full border border-blue-200">
+                      <span className="inline-flex items-center gap-1 text-[8px] font-bold text-brand-primary bg-blue-50 px-1.5 py-0.2 rounded-full border border-blue-200">
                         <span className="w-1.5 h-1.5 rounded-full bg-brand-primary animate-ping" />
                         Aktif
                       </span>
                     ) : isReady ? (
-                      <span className="text-[9px] font-medium text-slate-500 bg-slate-100 px-1.5 py-0.2 rounded-full border border-slate-200">
+                      <span className="text-[8px] font-medium text-slate-500 bg-slate-100 px-1 py-0.2 rounded-full border border-slate-200">
                         Siap
                       </span>
                     ) : (
-                      <span className="inline-flex items-center gap-1 text-[9px] text-slate-400">
+                      <span className="inline-flex items-center gap-0.5 text-[8px] text-slate-400">
                         <Lock className="w-2.5 h-2.5" /> Kunci
                       </span>
                     )}
                   </div>
 
-                  <h4 className="text-xs font-bold text-slate-900 leading-snug">
+                  <h4 className="text-[10.5px] font-bold text-slate-900 leading-snug">
                     {phase.title}
                   </h4>
-                  <p className="text-[11px] text-slate-500 leading-tight mt-0.5 line-clamp-1">
-                    {phase.desc}
-                  </p>
                 </div>
 
-                {/* Modules list */}
-                <div className="pt-2 mt-2 border-t border-slate-100 space-y-1">
-                  {phase.modules.map((mod) => (
+                {/* Modules list (2 items per phase to keep height compact) */}
+                <div className="pt-1 mt-1 border-t border-slate-100 space-y-0.5">
+                  {phase.modules.slice(0, 2).map((mod) => (
                     <div
                       key={mod}
-                      className="text-[10px] font-medium text-slate-600 truncate flex items-center gap-1.5"
+                      className="text-[9px] font-medium text-slate-600 truncate flex items-center gap-1"
                     >
                       <span
-                        className={`w-1.5 h-1.5 rounded-full shrink-0 ${
+                        className={`w-1 h-1 rounded-full shrink-0 ${
                           isCompleted
                             ? "bg-emerald-600"
                             : isInProgress
@@ -567,92 +621,114 @@ export default function BentoEcosystemTour() {
       </div>
 
       {/* =========================================================================
-          ROW 1, CARD 2: MISI SOFT SKILL & SJT (lg:col-span-4 - Live Preview Otomatis)
+          ROW 1, CARD 2: MISI SOFT SKILL & SJT (lg:col-span-4 - Live Preview Virtual Cursor)
       ========================================================================= */}
-      <div className="lg:col-span-4 p-5 sm:p-6 bg-white border border-slate-200/90 rounded-2xl flex flex-col justify-between shadow-[0_16px_36px_-10px_rgba(0,0,0,0.12),0_4px_12px_-2px_rgba(0,0,0,0.06)] space-y-4">
-        <div>
-          <div className="flex items-center justify-between mb-2">
+      <div
+        ref={rightCardRef}
+        className="relative lg:col-span-4 p-3.5 sm:p-4.5 bg-white border border-slate-200/90 rounded-2xl flex flex-col justify-between shadow-[0_16px_36px_-8px_rgba(0,0,0,0.18),0_4px_12px_-2px_rgba(0,0,0,0.08)] space-y-2.5 overflow-hidden"
+      >
+        {/* Animated Virtual Mouse Cursor */}
+        <FakeCursor
+          x={cursorPos.x}
+          y={cursorPos.y}
+          isClicking={isClicking}
+          visible={cursorVisible}
+        />
+
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-xl bg-blue-50 flex items-center justify-center text-brand-primary border border-blue-100 shadow-3xs">
-                <Target className="w-4 h-4 text-brand-primary" />
+              <div className="w-6.5 h-6.5 rounded-lg bg-blue-50 flex items-center justify-center text-brand-primary border border-blue-100 shadow-3xs">
+                <Target className="w-3.5 h-3.5 text-brand-primary" />
               </div>
               <div>
-                <h3 className="text-base font-bold text-slate-900 leading-tight">
+                <h3 className="text-xs sm:text-sm font-bold text-slate-900 leading-tight">
                   Misi Soft Skill
                 </h3>
-                <p className="text-xs text-slate-500">
+                <p className="text-[10.5px] text-slate-500">
                   Latihan situasional harian berhadiah XP.
                 </p>
               </div>
             </div>
 
             {/* Live Indicator Chip */}
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-blue-50 border border-blue-200 text-[10px] font-bold text-brand-primary">
+            <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-blue-50 border border-blue-200 text-[9.5px] font-bold text-brand-primary">
               <span className="w-1.5 h-1.5 rounded-full bg-brand-primary animate-ping" />
               <span>Live Simulasi</span>
             </div>
           </div>
 
-          {/* Interactive Dilemma Choice Demo with Auto-Cycling Live Transition */}
-          <div className="mt-3 p-3.5 rounded-xl bg-blue-50/50 border border-blue-100 space-y-2.5 transition-all duration-300">
-            <div className="flex items-center justify-between text-[10px] font-mono text-slate-400 uppercase tracking-wider">
+          {/* Interactive Dilemma Choice Demo with Live Cursor Motion */}
+          <div className="p-2.5 rounded-xl bg-blue-50/50 border border-blue-100 space-y-1.5 transition-all duration-300">
+            <div className="flex items-center justify-between text-[8.5px] font-mono text-slate-400 uppercase tracking-wider">
               <span>SKENARIO HARI INI</span>
               <span className="text-brand-primary font-bold">LEVEL 3 • 450 XP</span>
             </div>
-            <p className="text-xs font-semibold text-slate-900 leading-snug min-h-[38px] transition-all duration-300">
+            <p className="text-[11.5px] font-semibold text-slate-900 leading-snug min-h-[30px] transition-all duration-300">
               &quot;{currentScenario.question}&quot;
             </p>
 
-            <div className="space-y-1.5 pt-0.5">
-              <div
-                className={`w-full text-left p-2 rounded-lg text-[11px] font-medium border transition-all duration-300 ${
-                  currentScenario.correctChoice === "A"
-                    ? "bg-white border-brand-primary text-brand-primary font-bold shadow-xs ring-2 ring-brand-primary/15"
-                    : "bg-white/80 border-slate-200 text-slate-600"
+            <div className="space-y-1 pt-0.5">
+              <button
+                ref={choiceARef}
+                type="button"
+                className={`w-full text-left px-2 py-1.5 rounded-lg text-[10px] leading-snug font-medium border transition-all duration-200 ${
+                  selectedChoice === "A"
+                    ? "bg-white border-brand-primary text-brand-primary font-bold shadow-xs ring-2 ring-brand-primary/20 scale-[0.99]"
+                    : "bg-white/80 border-slate-200 text-slate-600 hover:border-blue-200"
                 }`}
               >
                 {currentScenario.choiceA}
-              </div>
-              <div
-                className={`w-full text-left p-2 rounded-lg text-[11px] font-medium border transition-all duration-300 ${
-                  currentScenario.correctChoice === "B"
-                    ? "bg-white border-brand-primary text-brand-primary font-bold shadow-xs ring-2 ring-brand-primary/15"
-                    : "bg-white/80 border-slate-200 text-slate-600"
+              </button>
+
+              <button
+                ref={choiceBRef}
+                type="button"
+                className={`w-full text-left px-2 py-1.5 rounded-lg text-[10px] leading-snug font-medium border transition-all duration-200 ${
+                  selectedChoice === "B"
+                    ? "bg-white border-brand-primary text-brand-primary font-bold shadow-xs ring-2 ring-brand-primary/20 scale-[0.99]"
+                    : "bg-white/80 border-slate-200 text-slate-600 hover:border-blue-200"
                 }`}
               >
                 {currentScenario.choiceB}
-              </div>
+              </button>
             </div>
 
-            <div className="text-[10px] font-mono pt-1 text-emerald-700 flex items-center gap-1.5 font-bold animate-fadeIn">
-              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+            {/* XP Award Micro-Animation */}
+            <div
+              className={`text-[9.5px] font-mono pt-0.5 text-emerald-700 flex items-center gap-1.5 font-bold transition-opacity duration-300 ${
+                isRewardAwarded ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-1"
+              }`}
+            >
+              <CheckCircle2 className="w-3 h-3 text-emerald-600 shrink-0" />
               <span>{currentScenario.reward}</span>
             </div>
           </div>
 
           {/* Missions Checklist with Live Active Highlight */}
-          <div className="space-y-2 pt-3">
-            <div className="text-[10px] font-mono text-slate-400 uppercase tracking-wider">
+          <div className="space-y-1 pt-0.5">
+            <div className="text-[8.5px] font-mono text-slate-400 uppercase tracking-wider">
               DAFTAR MISI TERSEDIA:
             </div>
-            {MISI_PRESETS.map((misi) => {
-              const isSimulatedActive = misi.id === currentScenario.activeMissionId;
-              const isCompleted = misi.status === "completed" || (isSimulatedActive && currentScenario.progressPercent === 100);
+            {MISI_BASE.map((misi) => {
+              const isCompleted = completedMissionIds.includes(misi.id);
+              const isSimulatedActive =
+                !isCompleted && misi.id === currentScenario.activeMissionId;
 
               return (
                 <div
                   key={misi.id}
-                  className={`flex items-center justify-between p-2.5 rounded-xl border text-xs transition-all duration-300 ${
+                  className={`flex items-center justify-between px-2 py-1.5 rounded-lg border text-xs transition-all duration-300 ${
                     isSimulatedActive
                       ? "bg-white border-brand-primary shadow-xs ring-1 ring-brand-primary/20 scale-[1.01]"
                       : isCompleted
-                      ? "bg-emerald-50/20 border-emerald-200"
+                      ? "bg-emerald-50/25 border-emerald-200"
                       : "bg-slate-50/60 border-slate-200 opacity-60"
                   }`}
                 >
                   <div className="flex items-center gap-2 min-w-0">
                     <span
-                      className={`w-4 h-4 rounded-full flex items-center justify-center shrink-0 ${
+                      className={`w-3.5 h-3.5 rounded-full flex items-center justify-center shrink-0 ${
                         isCompleted
                           ? "bg-emerald-100 text-emerald-700"
                           : isSimulatedActive
@@ -661,22 +737,22 @@ export default function BentoEcosystemTour() {
                       }`}
                     >
                       {isCompleted ? (
-                        <CheckCircle2 className="w-3 h-3" />
+                        <CheckCircle2 className="w-2.5 h-2.5" />
                       ) : (
                         <span className="w-1.5 h-1.5 rounded-full bg-brand-primary" />
                       )}
                     </span>
                     <div className="truncate">
-                      <div className="font-semibold text-slate-900 truncate">
+                      <div className="font-semibold text-slate-900 text-[10.5px] truncate">
                         {misi.title}
                       </div>
-                      <div className="text-[10px] text-slate-400">
+                      <div className="text-[8.5px] text-slate-400">
                         {misi.competency} • {misi.time}
                       </div>
                     </div>
                   </div>
 
-                  <span className="font-mono text-[10px] font-bold text-brand-primary bg-blue-50 px-2 py-0.5 rounded border border-blue-100 shrink-0">
+                  <span className="font-mono text-[8.5px] font-bold text-brand-primary bg-blue-50 px-1.5 py-0.2 rounded border border-blue-100 shrink-0">
                     +{misi.xp} XP
                   </span>
                 </div>
@@ -686,17 +762,17 @@ export default function BentoEcosystemTour() {
         </div>
 
         {/* Daily Progress Meter with Live Fill Transition */}
-        <div className="pt-2 border-t border-slate-100">
-          <div className="flex items-center justify-between text-[11px] text-slate-500 mb-1.5 font-mono">
+        <div className="pt-1.5 border-t border-slate-100">
+          <div className="flex items-center justify-between text-[9.5px] text-slate-500 mb-0.5 font-mono">
             <span>PROGRES MISI HARIAN</span>
             <span className="font-bold text-emerald-700 transition-all">
-              {currentScenario.progressLabel}
+              {liveProgressLabel}
             </span>
           </div>
           <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
             <div
               className="h-full bg-emerald-500 rounded-full transition-all duration-700 ease-out"
-              style={{ width: `${currentScenario.progressPercent}%` }}
+              style={{ width: `${liveDailyProgress}%` }}
             />
           </div>
         </div>
@@ -705,46 +781,48 @@ export default function BentoEcosystemTour() {
       {/* =========================================================================
           ROW 2, CARD 3: FULL WIDTH ROYAL BLUE SECTION (lg:col-span-12 - Black Shadow)
       ========================================================================= */}
-      <div className="lg:col-span-12 p-6 sm:p-7 bg-gradient-to-br from-[#0066FF] to-[#004ecc] text-white rounded-2xl flex flex-col justify-between shadow-[0_24px_50px_-10px_rgba(0,0,0,0.22),0_6px_20px_-4px_rgba(0,0,0,0.1)] space-y-4">
+      <div className="lg:col-span-12 p-3.5 sm:p-4 bg-gradient-to-br from-[#0066FF] to-[#004ecc] text-white rounded-2xl flex flex-col justify-between shadow-[0_20px_45px_-10px_rgba(0,0,0,0.35),0_8px_18px_-4px_rgba(0,0,0,0.18)] space-y-2.5">
         <div>
           {/* Header Eyebrow */}
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-blue-100">
+          <div className="flex items-center justify-between mb-1">
+            <span className="text-[9px] font-mono font-bold uppercase tracking-wider text-blue-100">
               SIMULASI KERJA VIRTUAL &amp; VERIFIKASI INDUSTRI
             </span>
-            <span className="text-[10px] font-mono font-bold text-white bg-white/20 border border-white/30 px-2.5 py-0.5 rounded-full">
+            <span className="text-[9px] font-mono font-bold text-white bg-white/20 border border-white/30 px-2 py-0.2 rounded-full">
               PORTOFOLIO TERVERIFIKASI
             </span>
           </div>
 
-          <h3 className="text-lg sm:text-xl font-bold tracking-tight text-white leading-tight">
-            Bangun Portofolio Teruji Sebelum Melamar Kerja
-          </h3>
-          <p className="text-xs sm:text-sm text-blue-100/90 leading-relaxed mt-1 max-w-3xl">
-            Selesaikan studi kasus kerja nyata yang divalidasi standar industri, lengkapi dengan program magang dan kompetisi terkurasi.
-          </p>
+          <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1 mb-2">
+            <h3 className="text-xs sm:text-sm font-bold tracking-tight text-white leading-tight">
+              Bangun Portofolio Teruji Sebelum Melamar Kerja
+            </h3>
+            <p className="text-[10.5px] text-blue-100/90 leading-tight">
+              Studi kasus riil yang dievaluasi standar industri dan lowongan terkurasi.
+            </p>
+          </div>
 
           {/* 2-Column Split: Featured Curated Activity + Virtual Work Simulation */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
             {/* Left Column: Featured Curated Activity with Auto-Cycle */}
-            <div className="p-4 rounded-xl bg-white/10 backdrop-blur-xs border border-white/20 flex flex-col justify-between space-y-3">
+            <div className="p-2.5 rounded-xl bg-white/10 backdrop-blur-xs border border-white/20 flex flex-col justify-between space-y-1.5">
               <div>
-                <div className="flex items-center justify-between text-[10px] font-mono text-blue-100 mb-1">
+                <div className="flex items-center justify-between text-[8.5px] font-mono text-blue-100 mb-0.5">
                   <span>KEGIATAN TERKURASI</span>
                   <span className="text-white font-bold">{currentKegiatan.match}% Cocok</span>
                 </div>
-                <h4 className="text-sm sm:text-base font-bold text-white">
+                <h4 className="text-xs sm:text-[13px] font-bold text-white">
                   {currentKegiatan.title}
                 </h4>
-                <div className="text-xs text-blue-100 mt-0.5">
+                <div className="text-[10.5px] text-blue-100 mt-0.5">
                   {currentKegiatan.organizer}
                 </div>
 
-                <div className="flex flex-wrap gap-1.5 mt-2.5">
+                <div className="flex flex-wrap gap-1 mt-1">
                   {currentKegiatan.tags.map((tag) => (
                     <span
                       key={tag}
-                      className="text-[10px] px-2 py-0.5 bg-white/15 border border-white/20 rounded text-white"
+                      className="text-[8.5px] px-1.5 py-0.2 bg-white/15 border border-white/20 rounded text-white"
                     >
                       {tag}
                     </span>
@@ -752,17 +830,17 @@ export default function BentoEcosystemTour() {
                 </div>
               </div>
 
-              <div className="flex items-center justify-between pt-2.5 border-t border-white/15 text-[11px]">
+              <div className="flex items-center justify-between pt-1.5 border-t border-white/15 text-[9.5px]">
                 <span className="text-amber-200 font-mono font-semibold flex items-center gap-1">
-                  <Clock className="w-3.5 h-3.5 text-amber-200" />
+                  <Clock className="w-3 h-3 text-amber-200" />
                   {currentKegiatan.deadline}
                 </span>
                 <button
                   onClick={(e) => toggleBookmark(currentKegiatan.id, e)}
-                  className="text-white hover:text-blue-200 transition-colors cursor-pointer flex items-center gap-1.5 font-mono text-[11px]"
+                  className="text-white hover:text-blue-200 transition-colors cursor-pointer flex items-center gap-1 font-mono text-[9.5px]"
                 >
                   <Bookmark
-                    className={`w-3.5 h-3.5 ${
+                    className={`w-3 h-3 ${
                       bookmarkedId === currentKegiatan.id ? "fill-white text-white" : ""
                     }`}
                   />
@@ -772,33 +850,33 @@ export default function BentoEcosystemTour() {
             </div>
 
             {/* Right Column: Work Simulation Showcase */}
-            <div className="p-4 rounded-xl bg-white/10 backdrop-blur-xs border border-white/20 flex flex-col justify-between space-y-3">
+            <div className="p-2.5 rounded-xl bg-white/10 backdrop-blur-xs border border-white/20 flex flex-col justify-between space-y-1.5">
               <div>
-                <div className="flex items-center justify-between text-[10px] font-mono text-blue-100 mb-1">
+                <div className="flex items-center justify-between text-[8.5px] font-mono text-blue-100 mb-0.5">
                   <span>STUDI KASUS SPESIALISASI</span>
                   <span className="text-emerald-300 font-bold">100% RELEVAN</span>
                 </div>
-                <h4 className="text-sm sm:text-base font-bold text-white">
+                <h4 className="text-xs sm:text-[13px] font-bold text-white">
                   Simulasi Penanganan Insiden Finansial
                 </h4>
-                <p className="text-xs text-blue-100/90 mt-1 leading-relaxed">
+                <p className="text-[10.5px] text-blue-100/90 mt-0.5 leading-snug">
                   Menyelesaikan simulasi arsitektur sistem checkout skala tinggi &amp; analisis trade-off performa.
                 </p>
-                <div className="text-[11px] font-mono text-blue-200 mt-2">
+                <div className="text-[9.5px] font-mono text-blue-200 mt-0.5">
                   Luaran: Dokumen RFC + Script Pengujian Stres
                 </div>
               </div>
 
-              <div className="pt-2.5 border-t border-white/15 flex items-center justify-between">
-                <span className="text-[11px] font-mono text-blue-100">
+              <div className="pt-1.5 border-t border-white/15 flex items-center justify-between">
+                <span className="text-[9.5px] font-mono text-blue-100">
                   Model Sertifikasi Mandiri
                 </span>
                 <Link
                   href="/assessment"
-                  className="btn-press inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-white text-brand-primary text-xs font-bold shadow-xs hover:bg-blue-50 transition-colors cursor-pointer group"
+                  className="btn-press inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white text-brand-primary text-[11px] font-bold shadow-xs hover:bg-blue-50 transition-colors cursor-pointer group"
                 >
                   <span>Mulai Simulasi</span>
-                  <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" />
+                  <ArrowRight className="w-3 h-3 transition-transform group-hover:translate-x-0.5" />
                 </Link>
               </div>
             </div>
@@ -806,18 +884,18 @@ export default function BentoEcosystemTour() {
         </div>
 
         {/* Footer Bar inside Blue Card */}
-        <div className="pt-3 border-t border-white/20 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-blue-100">
-          <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-emerald-400" />
+        <div className="pt-1.5 border-t border-white/20 flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 text-[10.5px] text-blue-100">
+          <div className="flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
             <span>Terbuka untuk semua mahasiswa dengan akun terdaftar</span>
           </div>
 
-          <div className="flex items-center gap-1.5 font-mono text-[11px]">
+          <div className="flex items-center gap-1 font-mono text-[9.5px]">
             {KEGIATAN_PRESETS.map((k, i) => (
               <button
                 key={k.id}
                 onClick={() => setActiveKegiatanIdx(i)}
-                className={`px-2.5 py-1 rounded cursor-pointer transition-colors ${
+                className={`px-2 py-0.2 rounded cursor-pointer transition-colors ${
                   i === activeKegiatanIdx
                     ? "bg-white text-brand-primary font-bold shadow-xs"
                     : "text-blue-200 hover:text-white"

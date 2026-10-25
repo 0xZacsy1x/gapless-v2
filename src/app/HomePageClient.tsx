@@ -15,17 +15,17 @@ export function HomePageClient() {
       {/* Hero Section — 2 Columns with Left Content & Right Upward-Sliding Animated Demo */}
       <HeroSection />
 
-      {/* Bento Grid Features — "Ekosistem Karir Terpadu" (Biru-Putih Brand Theme with Live Auto-Tour) */}
-      <section className="w-full max-w-7xl mx-auto px-6 md:px-12 py-8 md:py-10 space-y-5 md:space-y-6 border-t border-blue-50">
-        <div className="space-y-1.5 max-w-2xl">
-          <div className="text-[11px] font-mono font-bold text-brand-primary tracking-widest uppercase">
+      {/* Bento Grid Features — "Ekosistem Karir Terpadu" (Full Screen Viewport Fitted) */}
+      <section className="w-full max-w-7xl mx-auto px-6 md:px-12 py-4 sm:py-6 lg:py-8 min-h-[calc(100vh-4.5rem)] flex flex-col justify-center space-y-3 border-t border-blue-50/70">
+        <div className="space-y-1 max-w-2xl">
+          <div className="text-[10.5px] font-mono font-bold text-brand-primary tracking-widest uppercase">
             FITUR UTAMA · ARSITEKTUR EKOSISTEM
           </div>
-          <h2 className="text-2xl md:text-3xl lg:text-4xl font-black tracking-tight text-slate-900 font-sans">
+          <h2 className="text-xl sm:text-2xl md:text-3xl font-black tracking-tight text-slate-900 font-sans">
             Ekosistem Karir Terpadu
           </h2>
-          <p className="text-sm md:text-base text-slate-500 leading-relaxed font-normal">
-            Semua instrumen yang kamu butuhkan untuk memetakan minat, menutup gap kompetensi, dan bertransisi ke industri profesional dengan percaya diri.
+          <p className="text-xs sm:text-sm text-slate-500 leading-relaxed font-normal">
+            Kurikulum 4 fase terstruktur, simulasi tantangan harian, dan verifikasi portofolio industri.
           </p>
         </div>
 
