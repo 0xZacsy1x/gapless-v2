@@ -66,79 +66,72 @@ export default function HeroSection() {
           </div>
         </div>
 
-        {/* 3 Fondasi Riset & Standar Industri */}
+        {/* Cara Kerjanya — 3 Fondasi Riset & Standar Industri */}
         <div className="pt-6 border-t border-slate-100">
-          <div className="flex items-center justify-between mb-3.5">
-            <div className="text-[11px] font-mono font-bold uppercase tracking-[0.2em] text-slate-400">
-              STANDAR RISET &amp; METODOLOGI
+          <div className="flex items-center justify-between mb-4">
+            <div className="text-[11px] font-extrabold uppercase tracking-[0.25em] text-slate-400">
+              CARA KERJA &amp; STANDAR RISET
             </div>
-            <span className="text-[10px] font-mono font-bold text-brand-primary bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
-              3 FONDASI ILMIAH
+            <span className="text-[10px] font-bold text-brand-primary bg-brand-primary/10 px-2.5 py-0.5 rounded-full border border-brand-primary/20">
+              Data 702 Lowongan
             </span>
           </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 md:gap-6">
             {/* Step 01: RIASEC */}
-            <div className="p-3.5 rounded-xl border border-blue-100 bg-white/90 hover:border-blue-300 shadow-3xs transition-colors flex flex-col justify-between space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="font-mono text-[10px] font-bold text-slate-400 tracking-wider">
-                  01 / RIASEC
+            <div className="flex flex-col">
+              <div className="flex items-center gap-3 mb-2">
+                <span className="text-4xl lg:text-5xl font-black text-slate-200 tracking-tight select-none font-sans">
+                  01
                 </span>
-                <Compass className="w-4 h-4 text-brand-primary" />
+                <Compass className="w-8 h-8 text-blue-600 stroke-[1.6]" />
               </div>
-              <div>
-                <div className="text-xs font-bold text-slate-900 leading-snug">
-                  Holland Codes
-                </div>
-                <div className="text-[11px] font-medium text-brand-primary mt-0.5">
-                  6 Orientasi Minat
-                </div>
-                <p className="text-[11px] text-slate-500 leading-relaxed mt-1">
-                  Mendeteksi keselarasan bakat alamiah dengan jalur karir vokasional.
-                </p>
+              <div className="text-sm font-bold text-slate-900 leading-snug">
+                RIASEC Model
               </div>
+              <div className="text-[11px] font-semibold text-brand-primary mt-0.5">
+                Pemetaan Minat &amp; Karakter
+              </div>
+              <p className="text-xs text-slate-500 leading-relaxed mt-1">
+                6 orientasi minat vokasional (Holland Codes) yang selaras dengan bakat alamimu.
+              </p>
             </div>
 
             {/* Step 02: SJT */}
-            <div className="p-3.5 rounded-xl border border-blue-100 bg-white/90 hover:border-blue-300 shadow-3xs transition-colors flex flex-col justify-between space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="font-mono text-[10px] font-bold text-slate-400 tracking-wider">
-                  02 / SJT
+            <div className="flex flex-col">
+              <div className="flex items-center gap-3 mb-2">
+                <span className="text-4xl lg:text-5xl font-black text-slate-200 tracking-tight select-none font-sans">
+                  02
                 </span>
-                <FileSearch className="w-4 h-4 text-indigo-600" />
+                <FileSearch className="w-8 h-8 text-indigo-600 stroke-[1.6]" />
               </div>
-              <div>
-                <div className="text-xs font-bold text-slate-900 leading-snug">
-                  Situational Test
-                </div>
-                <div className="text-[11px] font-medium text-indigo-600 mt-0.5">
-                  15 Simulasi Kasus
-                </div>
-                <p className="text-[11px] text-slate-500 leading-relaxed mt-1">
-                  Mengevaluasi etika kerja, pengambilan keputusan, dan pola kolaborasi.
-                </p>
+              <div className="text-sm font-bold text-slate-900 leading-snug">
+                Situational Judgement
               </div>
+              <div className="text-[11px] font-semibold text-indigo-600 mt-0.5">
+                15 Simulasi Kasus Nyata
+              </div>
+              <p className="text-xs text-slate-500 leading-relaxed mt-1">
+                Mendeteksi respon logis, etika keputusan, dan gaya kerja sesungguhnya.
+              </p>
             </div>
 
             {/* Step 03: Asesmen Skill Gap */}
-            <div className="p-3.5 rounded-xl border border-blue-100 bg-white/90 hover:border-blue-300 shadow-3xs transition-colors flex flex-col justify-between space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="font-mono text-[10px] font-bold text-slate-400 tracking-wider">
-                  03 / SKILL GAP
+            <div className="flex flex-col">
+              <div className="flex items-center gap-3 mb-2">
+                <span className="text-4xl lg:text-5xl font-black text-slate-200 tracking-tight select-none font-sans">
+                  03
                 </span>
-                <Briefcase className="w-4 h-4 text-emerald-600" />
+                <Briefcase className="w-8 h-8 text-emerald-600 stroke-[1.6]" />
               </div>
-              <div>
-                <div className="text-xs font-bold text-slate-900 leading-snug">
-                  Skill Gap Analysis
-                </div>
-                <div className="text-[11px] font-medium text-emerald-700 mt-0.5">
-                  702+ Lowongan
-                </div>
-                <p className="text-[11px] text-slate-500 leading-relaxed mt-1">
-                  Mengukur jarak kesiapan kompetensi riil terhadap standar rekrutmen.
-                </p>
+              <div className="text-sm font-bold text-slate-900 leading-snug">
+                Asesmen Skill Gap
               </div>
+              <div className="text-[11px] font-semibold text-emerald-600 mt-0.5">
+                Standar Industri Nyata
+              </div>
+              <p className="text-xs text-slate-500 leading-relaxed mt-1">
+                Dirancang berbasis data standar skill dari 702 lowongan pekerjaan di berbagai perusahaan terkemuka.
+              </p>
             </div>
           </div>
         </div>
