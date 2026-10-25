@@ -177,9 +177,6 @@ const SCENARIO_PRESETS = [
     choiceB: "[B] Deploy hotfix cepat tanpa pengujian menyeluruh.",
     correctChoice: "A" as const,
     reward: "+50 XP Adaptabilitas & Manajemen Risiko",
-    activeMissionId: "m2",
-    finalProgress: 67,
-    progressLabel: "2 / 3 Selesai (67%)",
   },
   {
     id: "s2",
@@ -188,34 +185,6 @@ const SCENARIO_PRESETS = [
     choiceB: "[B] Analisis trade-off teknis & tawarkan rilis modular.",
     correctChoice: "B" as const,
     reward: "+75 XP Negosiasi & Komunikasi Efektif",
-    activeMissionId: "m3",
-    finalProgress: 100,
-    progressLabel: "3 / 3 Selesai (100%)",
-  },
-];
-
-// Base Misi List
-const MISI_BASE = [
-  {
-    id: "m1",
-    title: "Sampaikan Ide Tim Cross-Functional",
-    competency: "Komunikasi",
-    xp: 150,
-    time: "15 Mnt",
-  },
-  {
-    id: "m2",
-    title: "Negosiasi Prioritas Sprint Tim",
-    competency: "Kolaborasi",
-    xp: 200,
-    time: "20 Mnt",
-  },
-  {
-    id: "m3",
-    title: "Evaluasi Risiko Rilis Aplikasi",
-    competency: "Tanggung Jawab",
-    xp: 250,
-    time: "30 Mnt",
   },
 ];
 
@@ -237,9 +206,6 @@ export default function BentoEcosystemTour() {
   const [activeScenarioIdx, setActiveScenarioIdx] = useState<number>(0);
   const [selectedChoice, setSelectedChoice] = useState<"A" | "B" | null>(null);
   const [isRewardAwarded, setIsRewardAwarded] = useState<boolean>(false);
-  const [completedMissionIds, setCompletedMissionIds] = useState<string[]>(["m1"]);
-  const [liveDailyProgress, setLiveDailyProgress] = useState<number>(33);
-  const [liveProgressLabel, setLiveProgressLabel] = useState<string>("1 / 3 Selesai (33%)");
 
   // Fake Cursor States for Right Card
   const [cursorPos, setCursorPos] = useState<{ x: number; y: number }>({ x: 260, y: 30 });
@@ -355,21 +321,11 @@ export default function BentoEcosystemTour() {
         setIsClicking(true);
         setSelectedChoice(targetChoice);
 
-        // Step 3: Award XP & complete mission (250ms press feedback)
+        // Step 3: Award XP (250ms press feedback)
         stepTimer = setTimeout(() => {
           if (!isSubscribed) return;
           setIsClicking(false);
           setIsRewardAwarded(true);
-
-          if (targetChoice === "A") {
-            setCompletedMissionIds(["m1", "m2"]);
-            setLiveDailyProgress(67);
-            setLiveProgressLabel("2 / 3 Selesai (67%)");
-          } else {
-            setCompletedMissionIds(["m1", "m2", "m3"]);
-            setLiveDailyProgress(100);
-            setLiveProgressLabel("3 / 3 Selesai (100%)");
-          }
 
           // Step 4: Rest and appreciate the reward (2200ms)
           stepTimer = setTimeout(() => {
@@ -418,9 +374,9 @@ export default function BentoEcosystemTour() {
       className="grid grid-cols-1 lg:grid-cols-12 gap-3.5 sm:gap-4 select-none w-full items-stretch font-sans"
     >
       {/* =========================================================================
-          ROW 1, CARD 1: ROADMAP BELAJAR TERSTRUKTUR (lg:col-span-8 - Black Shadow)
+          ROW 1, CARD 1: ROADMAP BELAJAR TERSTRUKTUR (lg:col-span-7 - Black Shadow)
       ========================================================================= */}
-      <div className="lg:col-span-8 p-3.5 sm:p-4.5 bg-white border border-slate-200/90 rounded-2xl flex flex-col justify-between shadow-[0_16px_36px_-8px_rgba(0,0,0,0.18),0_4px_12px_-2px_rgba(0,0,0,0.08)] space-y-2.5 min-h-[465px] h-full">
+      <div className="lg:col-span-7 p-3.5 sm:p-4.5 bg-white border border-slate-200/90 rounded-2xl flex flex-col justify-between shadow-[0_16px_36px_-8px_rgba(0,0,0,0.18),0_4px_12px_-2px_rgba(0,0,0,0.08)] space-y-2.5 min-h-[465px] h-full">
         {/* Top Header */}
         <div className="space-y-2">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
@@ -621,21 +577,22 @@ export default function BentoEcosystemTour() {
       </div>
 
       {/* =========================================================================
-          ROW 1, CARD 2: MISI SOFT SKILL & SJT (lg:col-span-4 - Live Preview Virtual Cursor)
+          RIGHT COLUMN (lg:col-span-5): MISI SOFT SKILL (TOP) + PORTOFOLIO (BOTTOM)
       ========================================================================= */}
-      <div
-        ref={rightCardRef}
-        className="relative lg:col-span-4 p-3.5 sm:p-4.5 bg-white border border-slate-200/90 rounded-2xl flex flex-col justify-between shadow-[0_16px_36px_-8px_rgba(0,0,0,0.18),0_4px_12px_-2px_rgba(0,0,0,0.08)] space-y-2.5 overflow-hidden min-h-[465px] h-full"
-      >
-        {/* Animated Virtual Mouse Cursor */}
-        <FakeCursor
-          x={cursorPos.x}
-          y={cursorPos.y}
-          isClicking={isClicking}
-          visible={cursorVisible}
-        />
+      <div className="lg:col-span-5 flex flex-col gap-3.5 sm:gap-4 h-full">
+        {/* CARD 2: MISI SOFT SKILL & SJT (Live Simulation with Virtual Cursor) */}
+        <div
+          ref={rightCardRef}
+          className="relative p-3.5 sm:p-4 bg-white border border-slate-200/90 rounded-2xl flex flex-col justify-between shadow-[0_16px_36px_-8px_rgba(0,0,0,0.18),0_4px_12px_-2px_rgba(0,0,0,0.08)] space-y-2.5 overflow-hidden flex-1"
+        >
+          {/* Animated Virtual Mouse Cursor */}
+          <FakeCursor
+            x={cursorPos.x}
+            y={cursorPos.y}
+            isClicking={isClicking}
+            visible={cursorVisible}
+          />
 
-        <div className="space-y-2">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <div className="w-6.5 h-6.5 rounded-lg bg-blue-50 flex items-center justify-center text-brand-primary border border-blue-100 shadow-3xs">
@@ -645,27 +602,27 @@ export default function BentoEcosystemTour() {
                 <h3 className="text-xs sm:text-sm font-bold text-slate-900 leading-tight">
                   Misi Soft Skill
                 </h3>
-                <p className="text-[10.5px] text-slate-500">
-                  Latihan situasional harian berhadiah XP.
+                <p className="text-[10px] sm:text-[10.5px] text-slate-500">
+                  Latihan situasional harian interaktif berhadiah XP.
                 </p>
               </div>
             </div>
 
             {/* Live Indicator Chip */}
-            <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-blue-50 border border-blue-200 text-[9.5px] font-bold text-brand-primary">
+            <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-blue-50 border border-blue-200 text-[9px] sm:text-[9.5px] font-bold text-brand-primary">
               <span className="w-1.5 h-1.5 rounded-full bg-brand-primary animate-ping" />
               <span>Live Simulasi</span>
             </div>
           </div>
 
-          {/* Interactive Dilemma Choice Demo with Live Cursor Motion (Comfortably Contained: 192px) */}
-          <div className="p-3 rounded-xl bg-blue-50/50 border border-blue-100 min-h-[192px] h-[192px] flex flex-col justify-between overflow-hidden transition-all duration-300">
+          {/* Interactive Dilemma Choice Demo */}
+          <div className="p-2.5 sm:p-3 rounded-xl bg-blue-50/50 border border-blue-100 flex flex-col justify-between flex-1 space-y-2">
             <div>
-              <div className="flex items-center justify-between text-[8.5px] font-mono text-slate-400 uppercase tracking-wider mb-1">
+              <div className="flex items-center justify-between text-[8px] sm:text-[8.5px] font-mono text-slate-400 uppercase tracking-wider mb-0.5">
                 <span>SKENARIO HARI INI</span>
                 <span className="text-brand-primary font-bold">LEVEL 3 • 450 XP</span>
               </div>
-              <p className="text-[11.5px] font-semibold text-slate-900 leading-snug line-clamp-2 h-[34px]">
+              <p className="text-[11px] sm:text-[11.5px] font-semibold text-slate-900 leading-snug line-clamp-2">
                 &quot;{currentScenario.question}&quot;
               </p>
             </div>
@@ -674,7 +631,7 @@ export default function BentoEcosystemTour() {
               <button
                 ref={choiceARef}
                 type="button"
-                className={`w-full text-left px-2.5 h-[34px] flex items-center rounded-lg text-[10.5px] font-medium border transition-all duration-200 ${
+                className={`w-full text-left px-2.5 h-[32px] sm:h-[34px] flex items-center rounded-lg text-[10px] sm:text-[10.5px] font-medium border transition-all duration-200 ${
                   selectedChoice === "A"
                     ? "bg-white border-brand-primary text-brand-primary font-bold shadow-xs ring-2 ring-brand-primary/20"
                     : "bg-white/80 border-slate-200 text-slate-600 hover:border-blue-200"
@@ -686,7 +643,7 @@ export default function BentoEcosystemTour() {
               <button
                 ref={choiceBRef}
                 type="button"
-                className={`w-full text-left px-2.5 h-[34px] flex items-center rounded-lg text-[10.5px] font-medium border transition-all duration-200 ${
+                className={`w-full text-left px-2.5 h-[32px] sm:h-[34px] flex items-center rounded-lg text-[10px] sm:text-[10.5px] font-medium border transition-all duration-200 ${
                   selectedChoice === "B"
                     ? "bg-white border-brand-primary text-brand-primary font-bold shadow-xs ring-2 ring-brand-primary/20"
                     : "bg-white/80 border-slate-200 text-slate-600 hover:border-blue-200"
@@ -696,10 +653,10 @@ export default function BentoEcosystemTour() {
               </button>
             </div>
 
-            {/* XP Award Micro-Animation (Securely inside the scenario box) */}
-            <div className="h-[24px] flex items-center pt-1 border-t border-blue-100/70">
+            {/* XP Award Micro-Animation */}
+            <div className="h-[22px] flex items-center pt-1 border-t border-blue-100/70">
               <div
-                className={`text-[10px] font-mono text-emerald-700 flex items-center gap-1.5 font-bold transition-all duration-300 ${
+                className={`text-[9.5px] sm:text-[10px] font-mono text-emerald-700 flex items-center gap-1.5 font-bold transition-all duration-300 ${
                   isRewardAwarded ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-1 pointer-events-none"
                 }`}
               >
@@ -708,126 +665,50 @@ export default function BentoEcosystemTour() {
               </div>
             </div>
           </div>
+        </div>
 
-          {/* Missions Checklist with Live Active Highlight (Locked Height: 34px per item) */}
-          <div className="space-y-1 pt-0.5">
-            <div className="text-[8.5px] font-mono text-slate-400 uppercase tracking-wider">
-              DAFTAR MISI TERSEDIA:
+        {/* CARD 3: PORTOFOLIO TERVERIFIKASI & SIMULASI KERJA (Tetap Biru) */}
+        <div className="p-3.5 sm:p-4 bg-gradient-to-br from-[#0066FF] to-[#004ecc] text-white border border-blue-400/30 rounded-2xl flex flex-col justify-between shadow-[0_16px_36px_-8px_rgba(0,0,0,0.22),0_4px_12px_-2px_rgba(0,0,0,0.12)] space-y-2.5 overflow-hidden flex-1">
+          <div>
+            {/* Header Eyebrow */}
+            <div className="flex items-center justify-between mb-1">
+              <span className="text-[8.5px] sm:text-[9px] font-mono font-bold uppercase tracking-wider text-blue-100">
+                SIMULASI KERJA VIRTUAL
+              </span>
+              <span className="text-[8.5px] sm:text-[9px] font-mono font-bold text-white bg-white/20 border border-white/30 px-2 py-0.2 rounded-full">
+                PORTOFOLIO TERVERIFIKASI
+              </span>
             </div>
-            {MISI_BASE.map((misi) => {
-              const isCompleted = completedMissionIds.includes(misi.id);
-              const isSimulatedActive =
-                !isCompleted && misi.id === currentScenario.activeMissionId;
 
-              return (
-                <div
-                  key={misi.id}
-                  className={`flex items-center justify-between px-2 h-[34px] rounded-lg border text-xs transition-all duration-300 ${
-                    isSimulatedActive
-                      ? "bg-white border-brand-primary shadow-xs ring-1 ring-brand-primary/20"
-                      : isCompleted
-                      ? "bg-emerald-50/25 border-emerald-200"
-                      : "bg-slate-50/60 border-slate-200 opacity-60"
-                  }`}
-                >
-                  <div className="flex items-center gap-2 min-w-0">
-                    <span
-                      className={`w-3.5 h-3.5 rounded-full flex items-center justify-center shrink-0 ${
-                        isCompleted
-                          ? "bg-emerald-100 text-emerald-700"
-                          : isSimulatedActive
-                          ? "bg-blue-100 text-brand-primary"
-                          : "bg-slate-200 text-slate-400"
-                      }`}
-                    >
-                      {isCompleted ? (
-                        <CheckCircle2 className="w-2.5 h-2.5" />
-                      ) : (
-                        <span className="w-1.5 h-1.5 rounded-full bg-brand-primary" />
-                      )}
-                    </span>
-                    <div className="truncate">
-                      <div className="font-semibold text-slate-900 text-[10.5px] truncate">
-                        {misi.title}
-                      </div>
-                      <div className="text-[8.5px] text-slate-400 leading-none">
-                        {misi.competency} • {misi.time}
-                      </div>
-                    </div>
-                  </div>
+            <div className="mb-2">
+              <h3 className="text-xs sm:text-sm font-bold tracking-tight text-white leading-tight">
+                Bangun Portofolio Teruji
+              </h3>
+              <p className="text-[10px] sm:text-[10.5px] text-blue-100/90 leading-tight mt-0.5">
+                Studi kasus riil yang dievaluasi standar industri &amp; lowongan terkurasi.
+              </p>
+            </div>
 
-                  <span className="font-mono text-[8.5px] font-bold text-brand-primary bg-blue-50 px-1.5 py-0.2 rounded border border-blue-100 shrink-0">
-                    +{misi.xp} XP
-                  </span>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Daily Progress Meter with Live Fill Transition (Locked Height: 28px) */}
-        <div className="pt-1.5 border-t border-slate-100 h-[28px] flex flex-col justify-between">
-          <div className="flex items-center justify-between text-[9.5px] text-slate-500 font-mono">
-            <span>PROGRES MISI HARIAN</span>
-            <span className="font-bold text-emerald-700 transition-all">
-              {liveProgressLabel}
-            </span>
-          </div>
-          <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
-            <div
-              className="h-full bg-emerald-500 rounded-full transition-all duration-700 ease-out"
-              style={{ width: `${liveDailyProgress}%` }}
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* =========================================================================
-          ROW 2, CARD 3: FULL WIDTH ROYAL BLUE SECTION (lg:col-span-12 - Black Shadow)
-      ========================================================================= */}
-      <div className="lg:col-span-12 p-3.5 sm:p-4 bg-gradient-to-br from-[#0066FF] to-[#004ecc] text-white rounded-2xl flex flex-col justify-between shadow-[0_20px_45px_-10px_rgba(0,0,0,0.35),0_8px_18px_-4px_rgba(0,0,0,0.18)] space-y-2.5">
-        <div>
-          {/* Header Eyebrow */}
-          <div className="flex items-center justify-between mb-1">
-            <span className="text-[9px] font-mono font-bold uppercase tracking-wider text-blue-100">
-              SIMULASI KERJA VIRTUAL &amp; VERIFIKASI INDUSTRI
-            </span>
-            <span className="text-[9px] font-mono font-bold text-white bg-white/20 border border-white/30 px-2 py-0.2 rounded-full">
-              PORTOFOLIO TERVERIFIKASI
-            </span>
-          </div>
-
-          <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1 mb-2">
-            <h3 className="text-xs sm:text-sm font-bold tracking-tight text-white leading-tight">
-              Bangun Portofolio Teruji Sebelum Melamar Kerja
-            </h3>
-            <p className="text-[10.5px] text-blue-100/90 leading-tight">
-              Studi kasus riil yang dievaluasi standar industri dan lowongan terkurasi.
-            </p>
-          </div>
-
-          {/* 2-Column Split: Featured Curated Activity + Virtual Work Simulation */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
-            {/* Left Column: Featured Curated Activity with Auto-Cycle */}
-            <div className="p-3 rounded-xl bg-white/10 backdrop-blur-xs border border-white/20 flex flex-col justify-between min-h-[145px] sm:min-h-[150px] space-y-1.5">
+            {/* Inner Curated / Case Study Card */}
+            <div className="p-2.5 sm:p-3 rounded-xl bg-white/10 backdrop-blur-xs border border-white/20 flex flex-col justify-between space-y-1.5">
               <div>
-                <div className="flex items-center justify-between text-[8.5px] font-mono text-blue-100 mb-0.5">
-                  <span>KEGIATAN TERKURASI</span>
+                <div className="flex items-center justify-between text-[8px] sm:text-[8.5px] font-mono text-blue-100 mb-0.5">
+                  <span>KEGIATAN &amp; STUDI KASUS</span>
                   <span className="text-white font-bold tabular-nums">{currentKegiatan.match}% Cocok</span>
                 </div>
                 <h4 className="text-xs sm:text-[13px] font-bold text-white truncate">
                   {currentKegiatan.title}
                 </h4>
-                <div className="text-[10.5px] text-blue-100 mt-0.5 truncate">
+                <div className="text-[10px] text-blue-100 mt-0.5 truncate">
                   {currentKegiatan.organizer}
                 </div>
 
-                {/* Tags in single row with stable height */}
-                <div className="flex items-center gap-1 mt-1.5 overflow-hidden h-[22px]">
+                {/* Tags in single row */}
+                <div className="flex items-center gap-1 mt-1.5 overflow-hidden h-[20px]">
                   {currentKegiatan.tags.map((tag) => (
                     <span
                       key={tag}
-                      className="text-[8.5px] px-1.5 py-0.2 bg-white/15 border border-white/20 rounded text-white shrink-0 truncate max-w-[140px]"
+                      className="text-[8px] sm:text-[8.5px] px-1.5 py-0.2 bg-white/15 border border-white/20 rounded text-white shrink-0 truncate max-w-[120px]"
                     >
                       {tag}
                     </span>
@@ -835,17 +716,18 @@ export default function BentoEcosystemTour() {
                 </div>
               </div>
 
-              <div className="flex items-center justify-between pt-1.5 border-t border-white/15 text-[9.5px]">
+              <div className="flex items-center justify-between pt-1.5 border-t border-white/15 text-[9px]">
                 <span className="text-amber-200 font-mono font-semibold flex items-center gap-1">
-                  <Clock className="w-3 h-3 text-amber-200" />
+                  <Clock className="w-2.5 h-2.5 text-amber-200" />
                   {currentKegiatan.deadline}
                 </span>
                 <button
+                  type="button"
                   onClick={(e) => toggleBookmark(currentKegiatan.id, e)}
-                  className="text-white hover:text-blue-200 transition-colors cursor-pointer flex items-center gap-1 font-mono text-[9.5px]"
+                  className="text-white hover:text-blue-200 transition-colors cursor-pointer flex items-center gap-1 font-mono text-[9px]"
                 >
                   <Bookmark
-                    className={`w-3 h-3 ${
+                    className={`w-2.5 h-2.5 ${
                       bookmarkedId === currentKegiatan.id ? "fill-white text-white" : ""
                     }`}
                   />
@@ -853,62 +735,34 @@ export default function BentoEcosystemTour() {
                 </button>
               </div>
             </div>
+          </div>
 
-            {/* Right Column: Work Simulation Showcase */}
-            <div className="p-3 rounded-xl bg-white/10 backdrop-blur-xs border border-white/20 flex flex-col justify-between min-h-[145px] sm:min-h-[150px] space-y-1.5">
-              <div>
-                <div className="flex items-center justify-between text-[8.5px] font-mono text-blue-100 mb-0.5">
-                  <span>STUDI KASUS SPESIALISASI</span>
-                  <span className="text-emerald-300 font-bold">100% RELEVAN</span>
-                </div>
-                <h4 className="text-xs sm:text-[13px] font-bold text-white truncate">
-                  Simulasi Penanganan Insiden Finansial
-                </h4>
-                <p className="text-[10.5px] text-blue-100/90 mt-0.5 leading-snug line-clamp-1">
-                  Menyelesaikan simulasi arsitektur sistem checkout skala tinggi &amp; analisis trade-off performa.
-                </p>
-                <div className="text-[9.5px] font-mono text-blue-200 mt-1 truncate">
-                  Luaran: Dokumen RFC + Script Pengujian Stres
-                </div>
-              </div>
-
-              <div className="pt-1.5 border-t border-white/15 flex items-center justify-between">
-                <span className="text-[9.5px] font-mono text-blue-100">
-                  Model Sertifikasi Mandiri
-                </span>
-                <Link
-                  href="/assessment"
-                  className="btn-press inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white text-brand-primary text-[11px] font-bold shadow-xs hover:bg-blue-50 transition-colors cursor-pointer group"
+          {/* Footer Bar inside Blue Card */}
+          <div className="pt-1.5 border-t border-white/20 flex items-center justify-between gap-1.5 text-[9.5px] text-blue-100">
+            <div className="flex items-center gap-1 font-mono text-[8.5px] sm:text-[9px]">
+              {KEGIATAN_PRESETS.map((k, i) => (
+                <button
+                  key={k.id}
+                  type="button"
+                  onClick={() => setActiveKegiatanIdx(i)}
+                  className={`px-1.5 py-0.2 rounded cursor-pointer transition-colors ${
+                    i === activeKegiatanIdx
+                      ? "bg-white text-brand-primary font-bold shadow-xs"
+                      : "text-blue-200 hover:text-white"
+                  }`}
                 >
-                  <span>Mulai Simulasi</span>
-                  <ArrowRight className="w-3 h-3 transition-transform group-hover:translate-x-0.5" />
-                </Link>
-              </div>
+                  Kegiatan {i + 1}
+                </button>
+              ))}
             </div>
-          </div>
-        </div>
 
-        {/* Footer Bar inside Blue Card */}
-        <div className="pt-1.5 border-t border-white/20 flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 text-[10.5px] text-blue-100">
-          <div className="flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-            <span>Terbuka untuk semua mahasiswa dengan akun terdaftar</span>
-          </div>
-
-          <div className="flex items-center gap-1 font-mono text-[9.5px]">
-            {KEGIATAN_PRESETS.map((k, i) => (
-              <button
-                key={k.id}
-                onClick={() => setActiveKegiatanIdx(i)}
-                className={`px-2 py-0.2 rounded cursor-pointer transition-colors ${
-                  i === activeKegiatanIdx
-                    ? "bg-white text-brand-primary font-bold shadow-xs"
-                    : "text-blue-200 hover:text-white"
-                }`}
-              >
-                Kegiatan {i + 1}
-              </button>
-            ))}
+            <Link
+              href="/assessment"
+              className="btn-press inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white text-brand-primary text-[10px] sm:text-[10.5px] font-bold shadow-xs hover:bg-blue-50 transition-colors cursor-pointer group shrink-0"
+            >
+              <span>Mulai Simulasi</span>
+              <ArrowRight className="w-3 h-3 transition-transform group-hover:translate-x-0.5" />
+            </Link>
           </div>
         </div>
       </div>
