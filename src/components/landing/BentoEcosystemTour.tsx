@@ -498,7 +498,7 @@ export default function BentoEcosystemTour() {
         </div>
 
         {/* Active Module Box (Clean, streamlined, no walls of text) */}
-        <div className="bg-white border border-blue-100 rounded-xl p-2.5 shadow-3xs space-y-1.5">
+        <div className="bg-white border border-blue-100 rounded-xl p-2.5 shadow-3xs space-y-1.5 min-h-[96px] flex flex-col justify-between">
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2">
               <span className="inline-flex items-center gap-1 px-2 py-0.2 rounded-full bg-blue-50 text-brand-primary text-[9.5px] font-bold uppercase tracking-wider border border-blue-100">
@@ -515,7 +515,7 @@ export default function BentoEcosystemTour() {
             </span>
           </div>
 
-          <h4 className="text-xs sm:text-[13px] font-bold text-slate-900 leading-snug">
+          <h4 className="text-xs sm:text-[13px] font-bold text-slate-900 leading-snug truncate">
             {currentRoadmap.activeModule.name}
           </h4>
 
@@ -805,24 +805,25 @@ export default function BentoEcosystemTour() {
           {/* 2-Column Split: Featured Curated Activity + Virtual Work Simulation */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
             {/* Left Column: Featured Curated Activity with Auto-Cycle */}
-            <div className="p-2.5 rounded-xl bg-white/10 backdrop-blur-xs border border-white/20 flex flex-col justify-between space-y-1.5">
+            <div className="p-3 rounded-xl bg-white/10 backdrop-blur-xs border border-white/20 flex flex-col justify-between min-h-[145px] sm:min-h-[150px] space-y-1.5">
               <div>
                 <div className="flex items-center justify-between text-[8.5px] font-mono text-blue-100 mb-0.5">
                   <span>KEGIATAN TERKURASI</span>
-                  <span className="text-white font-bold">{currentKegiatan.match}% Cocok</span>
+                  <span className="text-white font-bold tabular-nums">{currentKegiatan.match}% Cocok</span>
                 </div>
-                <h4 className="text-xs sm:text-[13px] font-bold text-white">
+                <h4 className="text-xs sm:text-[13px] font-bold text-white truncate">
                   {currentKegiatan.title}
                 </h4>
-                <div className="text-[10.5px] text-blue-100 mt-0.5">
+                <div className="text-[10.5px] text-blue-100 mt-0.5 truncate">
                   {currentKegiatan.organizer}
                 </div>
 
-                <div className="flex flex-wrap gap-1 mt-1">
+                {/* Tags in single row with stable height */}
+                <div className="flex items-center gap-1 mt-1.5 overflow-hidden h-[22px]">
                   {currentKegiatan.tags.map((tag) => (
                     <span
                       key={tag}
-                      className="text-[8.5px] px-1.5 py-0.2 bg-white/15 border border-white/20 rounded text-white"
+                      className="text-[8.5px] px-1.5 py-0.2 bg-white/15 border border-white/20 rounded text-white shrink-0 truncate max-w-[140px]"
                     >
                       {tag}
                     </span>
@@ -850,19 +851,19 @@ export default function BentoEcosystemTour() {
             </div>
 
             {/* Right Column: Work Simulation Showcase */}
-            <div className="p-2.5 rounded-xl bg-white/10 backdrop-blur-xs border border-white/20 flex flex-col justify-between space-y-1.5">
+            <div className="p-3 rounded-xl bg-white/10 backdrop-blur-xs border border-white/20 flex flex-col justify-between min-h-[145px] sm:min-h-[150px] space-y-1.5">
               <div>
                 <div className="flex items-center justify-between text-[8.5px] font-mono text-blue-100 mb-0.5">
                   <span>STUDI KASUS SPESIALISASI</span>
                   <span className="text-emerald-300 font-bold">100% RELEVAN</span>
                 </div>
-                <h4 className="text-xs sm:text-[13px] font-bold text-white">
+                <h4 className="text-xs sm:text-[13px] font-bold text-white truncate">
                   Simulasi Penanganan Insiden Finansial
                 </h4>
-                <p className="text-[10.5px] text-blue-100/90 mt-0.5 leading-snug">
+                <p className="text-[10.5px] text-blue-100/90 mt-0.5 leading-snug line-clamp-1">
                   Menyelesaikan simulasi arsitektur sistem checkout skala tinggi &amp; analisis trade-off performa.
                 </p>
-                <div className="text-[9.5px] font-mono text-blue-200 mt-0.5">
+                <div className="text-[9.5px] font-mono text-blue-200 mt-1 truncate">
                   Luaran: Dokumen RFC + Script Pengujian Stres
                 </div>
               </div>
