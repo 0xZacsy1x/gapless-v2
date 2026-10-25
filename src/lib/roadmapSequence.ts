@@ -1,6 +1,6 @@
 import { CareerProfile } from '@/data/gaplessData';
 
-export const MIN_STUDY_SECONDS = 300; // 5 menit waktu minimal belajar
+export const MIN_STUDY_SECONDS = 60; // 1 menit waktu minimal belajar
 
 export function slugify(text: string): string {
   return text
