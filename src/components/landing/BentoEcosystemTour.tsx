@@ -1,11 +1,11 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState } from "react";
+import Link from "next/link";
 import {
   GraduationCap,
   Calendar,
   Target,
-  Sparkles,
   CheckCircle2,
   Lock,
   Bookmark,
@@ -13,6 +13,10 @@ import {
   Clock,
   Award,
   BookOpen,
+  ArrowRight,
+  TrendingUp,
+  FileCheck,
+  Building,
 } from "lucide-react";
 
 // Career Roadmaps Data
@@ -169,7 +173,6 @@ const KEGIATAN_PRESETS = [
     id: "k1",
     title: "Bangkit Academy 2026",
     type: "Studi Independen",
-    typeColor: "bg-blue-50 text-blue-700 border-blue-200",
     match: 95,
     organizer: "Google, GoTo, Traveloka",
     tags: ["Cloud Computing", "AI/ML", "Konversi 20 SKS"],
@@ -179,7 +182,6 @@ const KEGIATAN_PRESETS = [
     id: "k2",
     title: "Hackathon Inovasi Nasional",
     type: "Kompetisi",
-    typeColor: "bg-amber-50 text-amber-700 border-amber-200",
     match: 92,
     organizer: "Kemenpora & BUMN",
     tags: ["Inovasi Digital", "Hadiah Rp50 Jt", "Tim 3 Orang"],
@@ -189,7 +191,6 @@ const KEGIATAN_PRESETS = [
     id: "k3",
     title: "Tech Talent Internship",
     type: "Magang",
-    typeColor: "bg-emerald-50 text-emerald-700 border-emerald-200",
     match: 88,
     organizer: "Top Tech Unicorn",
     tags: ["Full-time Hybrid", "Mentoring 1-on-1", "Paid"],
@@ -203,7 +204,6 @@ const MISI_PRESETS = [
     id: "m1",
     title: "Sampaikan Ide Tim Cross-Functional",
     competency: "Komunikasi",
-    compColor: "text-blue-700 bg-blue-50 border-blue-200",
     xp: 150,
     time: "15 Mnt",
     status: "completed",
@@ -212,7 +212,6 @@ const MISI_PRESETS = [
     id: "m2",
     title: "Negosiasi Prioritas Sprint Tim",
     competency: "Kolaborasi",
-    compColor: "text-emerald-700 bg-emerald-50 border-emerald-200",
     xp: 200,
     time: "20 Mnt",
     status: "in_progress",
@@ -221,7 +220,6 @@ const MISI_PRESETS = [
     id: "m3",
     title: "Evaluasi Risiko Rilis Aplikasi",
     competency: "Tanggung Jawab",
-    compColor: "text-amber-700 bg-amber-50 border-amber-200",
     xp: 250,
     time: "30 Mnt",
     status: "locked",
@@ -229,238 +227,146 @@ const MISI_PRESETS = [
 ];
 
 export default function BentoEcosystemTour() {
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  // States
   const [activeCareerIdx, setActiveCareerIdx] = useState<number>(0);
   const [activeKegiatanIdx, setActiveKegiatanIdx] = useState<number>(0);
   const [bookmarkedId, setBookmarkedId] = useState<string>("k1");
-  const [isInView, setIsInView] = useState<boolean>(true);
-  const [isTabActive, setIsTabActive] = useState<boolean>(true);
-  const [isUserInteracting, setIsUserInteracting] = useState<boolean>(false);
-  const [prefersReducedMotion, setPrefersReducedMotion] = useState<boolean>(() => {
-    if (typeof window !== "undefined") {
-      return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    }
-    return false;
-  });
+  const [sjtOptionChosen, setSjtOptionChosen] = useState<string | null>("A");
 
-  // Check prefers-reduced-motion
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const handleChange = () => setPrefersReducedMotion(mediaQuery.matches);
-    mediaQuery.addEventListener("change", handleChange);
-    return () => mediaQuery.removeEventListener("change", handleChange);
-  }, []);
-
-  // IntersectionObserver & Visibility handling
-  useEffect(() => {
-    const handleVisibility = () => {
-      setIsTabActive(!document.hidden);
-    };
-    document.addEventListener("visibilitychange", handleVisibility);
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        setIsInView(entry.isIntersecting);
-      },
-      { threshold: 0, rootMargin: "250px 0px 250px 0px" }
-    );
-
-    if (containerRef.current) {
-      observer.observe(containerRef.current);
-    }
-
-    return () => {
-      document.removeEventListener("visibilitychange", handleVisibility);
-      observer.disconnect();
-    };
-  }, []);
-
-  // Auto-cycle Career Roadmap every 4.5 seconds
-  useEffect(() => {
-    if (prefersReducedMotion || !isInView || !isTabActive || isUserInteracting) return;
-
-    const timer = setInterval(() => {
-      setActiveCareerIdx((prev) => (prev + 1) % ROADMAP_PRESETS.length);
-    }, 4500);
-
-    return () => clearInterval(timer);
-  }, [isInView, isTabActive, isUserInteracting, prefersReducedMotion]);
-
-  // Auto-cycle Kegiatan every 3.8 seconds
-  useEffect(() => {
-    if (prefersReducedMotion || !isInView || !isTabActive) return;
-
-    const timer = setInterval(() => {
-      setActiveKegiatanIdx((prev) => (prev + 1) % KEGIATAN_PRESETS.length);
-    }, 3800);
-
-    return () => clearInterval(timer);
-  }, [isInView, isTabActive, prefersReducedMotion]);
-
-  const handleSelectCareer = (idx: number) => {
-    setActiveCareerIdx(idx);
-    setIsUserInteracting(true);
-    const timeout = setTimeout(() => {
-      setIsUserInteracting(false);
-    }, 6000);
-    return () => clearTimeout(timeout);
-  };
+  const currentRoadmap = ROADMAP_PRESETS[activeCareerIdx];
+  const currentKegiatan = KEGIATAN_PRESETS[activeKegiatanIdx];
 
   const toggleBookmark = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
     setBookmarkedId((prev) => (prev === id ? "" : id));
   };
 
-  const currentRoadmap = ROADMAP_PRESETS[activeCareerIdx];
-  const currentKegiatan = KEGIATAN_PRESETS[activeKegiatanIdx];
-
   return (
-    <div
-      ref={containerRef}
-      className="grid grid-cols-1 lg:grid-cols-12 gap-3.5 sm:gap-4 relative select-none w-full items-stretch"
-    >
-
-
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 select-none w-full items-stretch">
       {/* =========================================================================
-          CARD 1: ROADMAP BELAJAR TERSTRUKTUR (lg:col-span-8 - Padat, Penuh & Pepet ke Bawah)
+          CARD 1: ROADMAP BELAJAR TERSTRUKTUR (lg:col-span-8 - Architectural Card)
       ========================================================================= */}
-      <div className="lg:col-span-8 p-4 sm:p-5 bg-gray-50/90 border border-gray-200/90 rounded-2xl sm:rounded-3xl flex flex-col justify-between hover:border-brand-primary/40 transition-all duration-300 relative overflow-hidden group shadow-xs">
-        {/* Subtle Ambient Glow */}
-        <div className="absolute top-0 right-0 w-72 h-72 bg-brand-primary/5 blur-[80px] pointer-events-none" />
-
-        {/* 1. Top Header */}
-        <div className="space-y-2">
-          <div className="flex items-center justify-between">
+      <div className="lg:col-span-8 p-5 sm:p-6 bg-white border border-zinc-200/90 rounded-2xl flex flex-col justify-between shadow-xs space-y-4">
+        {/* Top Header */}
+        <div className="space-y-3">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-lg bg-brand-primary/10 flex items-center justify-center text-brand-primary border border-brand-primary/20 shadow-3xs">
-                <GraduationCap className="w-4 h-4 text-brand-primary" />
+              <div className="w-8 h-8 rounded-lg bg-zinc-100 flex items-center justify-center text-zinc-900 border border-zinc-200">
+                <GraduationCap className="w-4 h-4 text-blue-700" />
               </div>
               <div>
-                <h3 className="text-base sm:text-lg font-black tracking-tight text-gray-900 leading-tight">
+                <h3 className="text-base sm:text-lg font-bold tracking-tight text-zinc-950 leading-tight">
                   Roadmap Belajar Terstruktur
                 </h3>
-                <p className="text-[11px] sm:text-xs text-gray-500 leading-tight">
-                  Kurikulum 4 fase progresif berbasis standar kesiapan industri.
+                <p className="text-xs text-zinc-500">
+                  Kurikulum 4 fase progresif terkalibrasi dengan standar lowongan industri.
                 </p>
               </div>
             </div>
 
-            {/* Live Interactive Tour Indicator */}
-            <div className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white border border-gray-200/90 shadow-3xs text-[10px] font-bold text-gray-600">
-              <span className="w-1.5 h-1.5 rounded-full bg-brand-primary animate-ping" />
-              <span className="text-brand-primary font-black">Live Roadmap</span>
+            {/* Interactive Career Selector Chips */}
+            <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
+              {ROADMAP_PRESETS.map((preset, idx) => {
+                const isSelected = idx === activeCareerIdx;
+                return (
+                  <button
+                    key={preset.id}
+                    onClick={() => setActiveCareerIdx(idx)}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer btn-press flex items-center gap-1.5 shrink-0 ${
+                      isSelected
+                        ? "bg-zinc-900 text-white shadow-xs"
+                        : "bg-zinc-100 hover:bg-zinc-200/70 text-zinc-700"
+                    }`}
+                  >
+                    <span>{preset.career}</span>
+                    <span
+                      className={`text-[10px] font-mono px-1 py-0.2 rounded ${
+                        isSelected ? "bg-white/20 text-white" : "bg-zinc-200 text-zinc-600"
+                      }`}
+                    >
+                      {preset.overallProgress}%
+                    </span>
+                  </button>
+                );
+              })}
             </div>
           </div>
 
-          {/* Interactive Career Selector Chips */}
-          <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
-            {ROADMAP_PRESETS.map((preset, idx) => {
-              const isSelected = idx === activeCareerIdx;
-              return (
-                <button
-                  key={preset.id}
-                  onClick={() => handleSelectCareer(idx)}
-                  className={`px-3 py-1 rounded-lg text-xs font-bold transition-all duration-200 cursor-pointer flex items-center gap-1.5 shrink-0 ${
-                    isSelected
-                      ? "bg-brand-primary text-white shadow-xs shadow-brand-primary/25 scale-[1.02]"
-                      : "bg-white hover:bg-gray-100 border border-gray-200 text-gray-700"
-                  }`}
-                >
-                  {isSelected && <Sparkles className="w-3 h-3 text-white" />}
-                  <span>{preset.career}</span>
-                  <span
-                    className={`text-[9px] px-1 py-0.2 rounded font-black ${
-                      isSelected ? "bg-white/20 text-white" : "bg-gray-100 text-gray-500"
-                    }`}
-                  >
-                    {preset.overallProgress}%
-                  </span>
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Active Career Track Banner with Progress Meter */}
-          <div className="bg-white border border-gray-200/90 rounded-xl p-2.5 px-3 shadow-3xs flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          {/* Active Career Track Banner */}
+          <div className="bg-zinc-50 border border-zinc-200/80 rounded-xl p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <div className="flex items-center gap-2">
-              <span className="text-[10px] font-black uppercase tracking-wider text-brand-primary px-2 py-0.5 rounded bg-brand-primary/10">
-                Track
+              <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-blue-700 px-2 py-0.5 rounded bg-blue-50 border border-blue-200">
+                TRACK
               </span>
-              <span className="text-xs font-bold text-gray-800">
+              <span className="text-xs font-semibold text-zinc-800">
                 {currentRoadmap.track}
               </span>
             </div>
             <div className="flex items-center gap-2.5">
-              <div className="w-24 sm:w-28 h-2 bg-gray-100 rounded-full overflow-hidden border border-gray-200/60">
+              <div className="w-24 sm:w-32 h-2 bg-zinc-200 rounded-full overflow-hidden">
                 <div
-                  className="h-full bg-brand-primary rounded-full transition-all duration-700 ease-out"
+                  className="h-full bg-blue-700 rounded-full transition-all duration-500"
                   style={{ width: `${currentRoadmap.overallProgress}%` }}
                 />
               </div>
-              <span className="text-[11px] font-black text-brand-primary tabular-nums">
+              <span className="text-xs font-mono font-bold text-zinc-900 tabular-nums">
                 {currentRoadmap.overallProgress}% Kesiapan
               </span>
             </div>
           </div>
         </div>
 
-        {/* 2. Middle Focus Module Box (Padat & Mengisi Ruang dengan Rapi) */}
-        <div className="bg-white border border-brand-primary/25 rounded-2xl p-3 sm:p-3.5 my-2.5 shadow-3xs relative overflow-hidden flex flex-col justify-between">
-          <div>
-            <div className="flex items-center justify-between gap-2 mb-1">
-              <div className="flex items-center gap-2">
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-brand-primary/10 text-brand-primary text-[9.5px] font-black uppercase tracking-wider">
-                  <BookOpen className="w-2.5 h-2.5" />
-                  {currentRoadmap.activeModule.phase}
-                </span>
-                <span className="hidden sm:inline-flex text-[10px] text-emerald-600 font-bold bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
-                  Target Selesai Minggu Ini
-                </span>
-              </div>
-              <span className="text-[10px] text-gray-500 font-semibold flex items-center gap-1 shrink-0">
-                <Clock className="w-3 h-3 text-brand-primary" />
-                {currentRoadmap.activeModule.pace}
+        {/* Active Module Box */}
+        <div className="bg-white border border-zinc-200/90 rounded-xl p-4 shadow-3xs space-y-2.5">
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2">
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-zinc-100 text-zinc-800 text-[10px] font-mono font-bold uppercase">
+                <BookOpen className="w-3 h-3 text-blue-700" />
+                {currentRoadmap.activeModule.phase}
+              </span>
+              <span className="text-[10px] text-emerald-700 font-mono font-bold bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                TARGET AKTIF
               </span>
             </div>
-
-            <h4 className="text-xs sm:text-sm font-black text-gray-900 leading-snug">
-              {currentRoadmap.activeModule.name}
-            </h4>
-            <p className="text-[11px] text-gray-500 leading-relaxed mt-0.5 line-clamp-2">
-              {currentRoadmap.activeModule.desc}
-            </p>
+            <span className="text-[11px] text-zinc-500 font-medium flex items-center gap-1">
+              <Clock className="w-3 h-3 text-zinc-400" />
+              {currentRoadmap.activeModule.pace}
+            </span>
           </div>
 
-          {/* Skill Badges & Project Capstone */}
-          <div className="flex flex-wrap items-center justify-between gap-2 pt-2 mt-2 border-t border-gray-100">
+          <h4 className="text-sm font-bold text-zinc-950 leading-snug">
+            {currentRoadmap.activeModule.name}
+          </h4>
+          <p className="text-xs text-zinc-600 leading-relaxed">
+            {currentRoadmap.activeModule.desc}
+          </p>
+
+          {/* Skill Keys & Project Capstone */}
+          <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-zinc-100">
             <div className="flex flex-wrap items-center gap-1.5">
-              <span className="text-[9.5px] font-bold text-gray-400 uppercase tracking-wider">
+              <span className="text-[10px] font-mono text-zinc-400 uppercase tracking-wider">
                 Skill Kunci:
               </span>
               {currentRoadmap.activeModule.skills.map((skill) => (
                 <span
                   key={skill}
-                  className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-gray-50 border border-gray-200/90 text-gray-700"
+                  className="text-[11px] font-medium px-2 py-0.5 rounded bg-zinc-50 border border-zinc-200 text-zinc-700"
                 >
                   {skill}
                 </span>
               ))}
             </div>
 
-            <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-brand-primary/5 border border-brand-primary/20 text-brand-primary text-[10px] font-bold">
-              <Award className="w-3 h-3 text-brand-primary shrink-0" />
-              <span className="truncate max-w-[200px]">
+            <div className="inline-flex items-center gap-1.5 text-xs text-zinc-700 font-medium">
+              <Award className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+              <span className="truncate max-w-[280px]">
                 {currentRoadmap.activeModule.project}
               </span>
             </div>
           </div>
         </div>
 
-        {/* 3. Bottom: 4 Phases Interactive Timeline (Pepet ke Bawah & Penuh) */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
+        {/* 4 Phases Timeline Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
           {currentRoadmap.phases.map((phase) => {
             const isCompleted = phase.status === "completed";
             const isInProgress = phase.status === "in_progress";
@@ -469,71 +375,64 @@ export default function BentoEcosystemTour() {
             return (
               <div
                 key={phase.phase}
-                className={`p-2.5 rounded-xl border transition-all duration-300 flex flex-col justify-between relative overflow-hidden min-h-[125px] ${
+                className={`p-3 rounded-xl border flex flex-col justify-between min-h-[130px] ${
                   isInProgress
-                    ? "bg-white border-brand-primary/50 shadow-xs ring-1 ring-brand-primary/20 scale-[1.01]"
+                    ? "bg-white border-blue-600/60 shadow-xs ring-1 ring-blue-600/10"
                     : isCompleted
-                    ? "bg-white/90 border-emerald-200 shadow-3xs"
+                    ? "bg-emerald-50/20 border-emerald-200/90"
                     : isReady
-                    ? "bg-white/60 border-gray-200"
-                    : "bg-gray-100/60 border-gray-200 opacity-60"
+                    ? "bg-zinc-50/60 border-zinc-200"
+                    : "bg-zinc-100/40 border-zinc-200 opacity-60"
                 }`}
               >
-                {/* Active Phase Glowing Header Bar */}
-                {isInProgress && (
-                  <div className="absolute top-0 left-0 right-0 h-0.5 bg-brand-primary/20 overflow-hidden">
-                    <div className="h-full bg-brand-primary animate-[progressFill_3s_linear_infinite]" />
-                  </div>
-                )}
-
                 <div>
-                  {/* Phase Status Badge */}
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-[9px] font-black uppercase tracking-wider text-gray-400">
+                  <div className="flex items-center justify-between mb-1.5">
+                    <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-zinc-400">
                       FASE 0{phase.phase}
                     </span>
                     {isCompleted ? (
-                      <span className="inline-flex items-center gap-1 text-[8.5px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.2 rounded-full border border-emerald-200">
+                      <span className="inline-flex items-center gap-1 text-[9px] font-mono font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.2 rounded border border-emerald-200">
                         <CheckCircle2 className="w-2.5 h-2.5" /> Selesai
                       </span>
                     ) : isInProgress ? (
-                      <span className="inline-flex items-center gap-1 text-[8.5px] font-bold text-brand-primary bg-brand-primary/10 px-1.5 py-0.2 rounded-full border border-brand-primary/20">
-                        <span className="w-1.5 h-1.5 rounded-full bg-brand-primary animate-ping" />
+                      <span className="inline-flex items-center gap-1 text-[9px] font-mono font-bold text-blue-700 bg-blue-50 px-1.5 py-0.2 rounded border border-blue-200">
                         Aktif
                       </span>
                     ) : isReady ? (
-                      <span className="text-[8.5px] font-bold text-gray-500 bg-gray-100 px-1.5 py-0.2 rounded-full border border-gray-200">
-                        Berikutnya
+                      <span className="text-[9px] font-mono font-medium text-zinc-500 bg-zinc-100 px-1.5 py-0.2 rounded border border-zinc-200">
+                        Siap
                       </span>
                     ) : (
-                      <span className="inline-flex items-center gap-1 text-[8.5px] font-bold text-gray-400">
-                        <Lock className="w-2.5 h-2.5" /> Terkunci
+                      <span className="inline-flex items-center gap-1 text-[9px] font-mono text-zinc-400">
+                        <Lock className="w-2.5 h-2.5" /> Kunci
                       </span>
                     )}
                   </div>
 
-                  <h4 className="text-xs font-black text-gray-900 leading-snug">
+                  <h4 className="text-xs font-bold text-zinc-950 leading-snug">
                     {phase.title}
                   </h4>
-                  <p className="text-[10px] text-gray-500 leading-tight mt-0.5 line-clamp-1">
+                  <p className="text-[11px] text-zinc-500 leading-tight mt-0.5 line-clamp-1">
                     {phase.desc}
                   </p>
                 </div>
 
-                {/* Modules Chips */}
-                <div className="pt-1.5 mt-1.5 border-t border-gray-100/90 space-y-0.5">
+                {/* Modules list */}
+                <div className="pt-2 mt-2 border-t border-zinc-100 space-y-1">
                   {phase.modules.map((mod) => (
                     <div
                       key={mod}
-                      className="text-[9px] font-medium text-gray-600 truncate flex items-center gap-1"
+                      className="text-[10px] font-medium text-zinc-600 truncate flex items-center gap-1.5"
                     >
-                      {isCompleted ? (
-                        <CheckCircle2 className="w-2.5 h-2.5 text-emerald-600 shrink-0" />
-                      ) : isInProgress ? (
-                        <span className="w-1.5 h-1.5 rounded-full bg-brand-primary shrink-0" />
-                      ) : (
-                        <span className="w-1.5 h-1.5 rounded-full bg-gray-300 shrink-0" />
-                      )}
+                      <span
+                        className={`w-1.5 h-1.5 rounded-full shrink-0 ${
+                          isCompleted
+                            ? "bg-emerald-600"
+                            : isInProgress
+                            ? "bg-blue-600"
+                            : "bg-zinc-300"
+                        }`}
+                      />
                       <span className="truncate">{mod}</span>
                     </div>
                   ))}
@@ -545,244 +444,334 @@ export default function BentoEcosystemTour() {
       </div>
 
       {/* =========================================================================
-          RIGHT COLUMN: Cards 2 & 3 (Stacked: Rekomendasi Kegiatan & Misi)
+          CARD 2: MISI SOFT SKILL & SJT (lg:col-span-4 - Interactive Simulation)
       ========================================================================= */}
-      <div className="lg:col-span-4 flex flex-col gap-3.5 sm:gap-4 h-full justify-between">
-        {/* =====================================================================
-            CARD 2: REKOMENDASI KEGIATAN (Kanan Atas)
-        ===================================================================== */}
-        <div className="p-4 sm:p-4.5 bg-gray-50/90 border border-gray-200/90 rounded-2xl sm:rounded-3xl flex flex-col justify-between hover:border-brand-primary/40 transition-all duration-300 relative group flex-1 shadow-xs min-h-[250px]">
-          <div>
-            <div className="flex items-center justify-between mb-1.5">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-blue-100/80 flex items-center justify-center text-blue-600 border border-blue-200 shadow-3xs">
-                  <Calendar className="w-4 h-4 text-blue-600" />
-                </div>
-                <div>
-                  <h3 className="text-sm sm:text-base font-black tracking-tight text-gray-900 leading-tight">
-                    Rekomendasi Kegiatan
-                  </h3>
-                  <p className="text-[10px] text-gray-500 leading-tight">
-                    Magang, kompetisi, & program terkurasi.
-                  </p>
-                </div>
+      <div className="lg:col-span-4 p-5 sm:p-6 bg-white border border-zinc-200/90 rounded-2xl flex flex-col justify-between shadow-xs space-y-4">
+        <div>
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-lg bg-zinc-100 flex items-center justify-center text-zinc-900 border border-zinc-200">
+                <Target className="w-4 h-4 text-emerald-600" />
               </div>
-
-              {/* Match Badge */}
-              <span className="inline-flex items-center gap-1 text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-brand-primary/10 text-brand-primary border border-brand-primary/20 shrink-0">
-                <Sparkles className="w-2.5 h-2.5" />
-                {currentKegiatan.match}% Cocok
-              </span>
+              <div>
+                <h3 className="text-base font-bold text-zinc-950 leading-tight">
+                  Misi Soft Skill
+                </h3>
+                <p className="text-xs text-zinc-500">
+                  Latihan situasional harian berhadiah XP.
+                </p>
+              </div>
             </div>
 
-            {/* Active Featured Activity Card */}
-            <div className="bg-white border border-gray-200/90 rounded-xl p-3 shadow-3xs mt-2 relative min-h-[145px] flex flex-col justify-between">
-              <div>
-                <div className="flex items-start justify-between gap-2">
-                  <div>
+            <span className="inline-flex items-center gap-1 text-[10px] font-mono font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+              <Zap className="w-3 h-3 text-emerald-600" />
+              LEVEL 3 • 450 XP
+            </span>
+          </div>
+
+          {/* Interactive Dilemma Choice Demo */}
+          <div className="mt-3 p-3 rounded-xl bg-zinc-50/80 border border-zinc-200/80 space-y-2">
+            <div className="text-[10px] font-mono text-zinc-400 uppercase tracking-wider">
+              SKENARIO HARI INI:
+            </div>
+            <p className="text-xs font-semibold text-zinc-900 leading-snug">
+              &quot;Sprint deadline mendadak maju 3 hari sementara ada bug kritis di staging. Apa langkah utamamu?&quot;
+            </p>
+
+            <div className="space-y-1.5 pt-1">
+              <button
+                onClick={() => setSjtOptionChosen("A")}
+                className={`w-full text-left p-2 rounded-lg text-[11px] font-medium border transition-all cursor-pointer btn-press ${
+                  sjtOptionChosen === "A"
+                    ? "bg-blue-50 border-blue-600 text-blue-900 font-semibold"
+                    : "bg-white border-zinc-200 text-zinc-700 hover:bg-zinc-50"
+                }`}
+              >
+                [A] Isolasi bug &amp; komunikasikan trade-off scope fitur ke tim.
+              </button>
+              <button
+                onClick={() => setSjtOptionChosen("B")}
+                className={`w-full text-left p-2 rounded-lg text-[11px] font-medium border transition-all cursor-pointer btn-press ${
+                  sjtOptionChosen === "B"
+                    ? "bg-blue-50 border-blue-600 text-blue-900 font-semibold"
+                    : "bg-white border-zinc-200 text-zinc-700 hover:bg-zinc-50"
+                }`}
+              >
+                [B] Deploy hotfix cepat tanpa pengujian menyeluruh.
+              </button>
+            </div>
+
+            {sjtOptionChosen && (
+              <div className="text-[10px] font-mono pt-1 text-emerald-700 flex items-center gap-1">
+                <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                <span>
+                  {sjtOptionChosen === "A"
+                    ? "+50 XP Adaptabilitas & Manajemen Risiko"
+                    : "Evaluasi: Risiko regresi sistem meningkat"}
+                </span>
+              </div>
+            )}
+          </div>
+
+          {/* Missions Checklist */}
+          <div className="space-y-2 pt-3">
+            <div className="text-[10px] font-mono text-zinc-400 uppercase tracking-wider">
+              DAFTAR MISI TERSEDIA:
+            </div>
+            {MISI_PRESETS.map((misi) => {
+              const isCompleted = misi.status === "completed";
+              const isInProgress = misi.status === "in_progress";
+
+              return (
+                <div
+                  key={misi.id}
+                  className={`flex items-center justify-between p-2.5 rounded-xl border text-xs ${
+                    isInProgress
+                      ? "bg-white border-blue-600/40 shadow-3xs"
+                      : isCompleted
+                      ? "bg-emerald-50/20 border-emerald-200/80"
+                      : "bg-zinc-50/60 border-zinc-200 opacity-60"
+                  }`}
+                >
+                  <div className="flex items-center gap-2 min-w-0">
                     <span
-                      className={`inline-block text-[9px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-full border mb-1 ${currentKegiatan.typeColor}`}
+                      className={`w-4 h-4 rounded-full flex items-center justify-center shrink-0 ${
+                        isCompleted
+                          ? "bg-emerald-100 text-emerald-700"
+                          : isInProgress
+                          ? "bg-blue-100 text-blue-700"
+                          : "bg-zinc-200 text-zinc-400"
+                      }`}
                     >
-                      {currentKegiatan.type}
+                      {isCompleted ? (
+                        <CheckCircle2 className="w-3 h-3" />
+                      ) : (
+                        <span className="w-1.5 h-1.5 rounded-full bg-blue-600" />
+                      )}
                     </span>
-                    <h4 className="text-xs sm:text-sm font-bold text-gray-900 leading-snug line-clamp-1">
-                      {currentKegiatan.title}
-                    </h4>
-                    <p className="text-[10px] text-gray-500 font-medium truncate">
-                      {currentKegiatan.organizer}
-                    </p>
+                    <div className="truncate">
+                      <div className="font-semibold text-zinc-900 truncate">
+                        {misi.title}
+                      </div>
+                      <div className="text-[10px] text-zinc-400">
+                        {misi.competency} • {misi.time}
+                      </div>
+                    </div>
                   </div>
 
-                  {/* Interactive Bookmark Button */}
-                  <button
-                    onClick={(e) => toggleBookmark(currentKegiatan.id, e)}
-                    aria-label="Simpan Kegiatan"
-                    className={`p-1.5 rounded-lg border transition-all cursor-pointer shrink-0 ${
-                      bookmarkedId === currentKegiatan.id
-                        ? "bg-brand-primary text-white border-brand-primary shadow-3xs"
-                        : "bg-gray-50 hover:bg-gray-100 border-gray-200 text-gray-400"
-                    }`}
-                  >
-                    <Bookmark
-                      className={`w-3.5 h-3.5 ${
-                        bookmarkedId === currentKegiatan.id ? "fill-white" : ""
-                      }`}
-                    />
-                  </button>
+                  <span className="font-mono text-[10px] font-bold text-zinc-700 bg-zinc-100 px-1.5 py-0.5 rounded shrink-0">
+                    +{misi.xp} XP
+                  </span>
                 </div>
-              </div>
+              );
+            })}
+          </div>
+        </div>
 
-              {/* Activity Tags & Deadline */}
-              <div className="pt-2 mt-auto border-t border-gray-100 flex items-center justify-between">
-                <div className="flex flex-wrap gap-1">
-                  {currentKegiatan.tags.slice(0, 2).map((tag) => (
+        {/* Daily Progress Meter */}
+        <div className="pt-2 border-t border-zinc-100">
+          <div className="flex items-center justify-between text-[11px] text-zinc-500 mb-1.5 font-mono">
+            <span>PROGRES MISI HARIAN</span>
+            <span className="font-bold text-emerald-700">2 / 3 Selesai (67%)</span>
+          </div>
+          <div className="w-full h-1.5 bg-zinc-100 rounded-full overflow-hidden">
+            <div
+              className="h-full bg-emerald-600 rounded-full"
+              style={{ width: "67%" }}
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* =========================================================================
+          CARD 3: VALIDASI RISET & 702+ LOWONGAN (lg:col-span-4 - Data Verification)
+      ========================================================================= */}
+      <div className="lg:col-span-4 p-5 sm:p-6 bg-white border border-zinc-200/90 rounded-2xl flex flex-col justify-between shadow-xs space-y-4">
+        <div>
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-zinc-400">
+              STANDAR VALIDASI EMPIRIS
+            </span>
+            <span className="text-[10px] font-mono font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
+              HOLLAND CODES
+            </span>
+          </div>
+
+          <div className="space-y-1">
+            <div className="text-3xl font-extrabold text-zinc-950 font-mono tracking-tight tabular-nums">
+              702+
+            </div>
+            <h4 className="text-sm font-bold text-zinc-900 leading-snug">
+              Lowongan Industri Dianalisis
+            </h4>
+            <p className="text-xs text-zinc-500 leading-relaxed mt-1">
+              Setiap modul roadmap diselaraskan dengan kebutuhan kompetensi nyata pada lowongan kerja perusahaan teknologi terkemuka di Indonesia.
+            </p>
+          </div>
+
+          {/* Holland Codes RIASEC mini vector breakdown */}
+          <div className="mt-4 space-y-2">
+            <div className="text-[10px] font-mono text-zinc-400 uppercase tracking-wider">
+              6 ORIENTASI MINAT RIASEC:
+            </div>
+            {[
+              { code: "R", name: "Realistic", val: 82 },
+              { code: "I", name: "Investigative", val: 94 },
+              { code: "A", name: "Artistic", val: 68 },
+              { code: "S", name: "Social", val: 75 },
+              { code: "E", name: "Enterprising", val: 86 },
+              { code: "C", name: "Conventional", val: 80 },
+            ].map((r) => (
+              <div key={r.code} className="flex items-center justify-between gap-3 text-xs">
+                <span className="font-mono text-zinc-600 font-semibold w-28 truncate">
+                  {r.code} · {r.name}
+                </span>
+                <div className="flex-1 h-1.5 bg-zinc-100 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-zinc-800 rounded-full"
+                    style={{ width: `${r.val}%` }}
+                  />
+                </div>
+                <span className="font-mono text-[10px] text-zinc-500 tabular-nums w-8 text-right">
+                  {r.val}%
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Micro note */}
+        <div className="pt-2 border-t border-zinc-100 text-[11px] text-zinc-500 font-medium">
+          Divalidasi dengan model psikometri psikologi okupasional John Holland.
+        </div>
+      </div>
+
+      {/* =========================================================================
+          CARD 4: HIGH-CONTRAST DARK SHOWCASE (lg:col-span-8 - Virtual Simulations)
+      ========================================================================= */}
+      <div className="lg:col-span-8 p-5 sm:p-6 bg-zinc-950 text-white border border-zinc-800 rounded-2xl flex flex-col justify-between shadow-md space-y-4">
+        <div>
+          {/* Header Eyebrow */}
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-zinc-400">
+              SIMULASI KERJA VIRTUAL &amp; VERIFIKASI INDUSTRI
+            </span>
+            <span className="text-[10px] font-mono font-bold text-emerald-400 bg-emerald-950/60 border border-emerald-800/80 px-2 py-0.5 rounded">
+              PORTOFOLIO TERVERIFIKASI
+            </span>
+          </div>
+
+          <h3 className="text-lg sm:text-xl font-bold tracking-tight text-white leading-tight">
+            Bangun Portofolio Teruji Sebelum Melamar Kerja
+          </h3>
+          <p className="text-xs sm:text-sm text-zinc-400 leading-relaxed mt-1 max-w-2xl">
+            Selesaikan studi kasus kerja riil dari skenario industri terkemuka. Hasil kerjamu dievaluasi dengan rubrik standar perekrut profesional.
+          </p>
+
+          {/* 2-Column Split: Featured Activity + Work Simulation */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4">
+            {/* Left: Featured Curated Activity */}
+            <div className="p-3.5 rounded-xl bg-zinc-900 border border-zinc-800 flex flex-col justify-between space-y-2">
+              <div>
+                <div className="flex items-center justify-between text-[10px] font-mono text-zinc-400 mb-1">
+                  <span>KEGIATAN TERKURASI</span>
+                  <span className="text-blue-400 font-bold">{currentKegiatan.match}% Cocok</span>
+                </div>
+                <h4 className="text-xs sm:text-sm font-bold text-white">
+                  {currentKegiatan.title}
+                </h4>
+                <div className="text-[11px] text-zinc-400 mt-0.5">
+                  {currentKegiatan.organizer}
+                </div>
+
+                <div className="flex flex-wrap gap-1 mt-2">
+                  {currentKegiatan.tags.map((tag) => (
                     <span
                       key={tag}
-                      className="text-[9px] font-semibold px-2 py-0.5 bg-gray-50 border border-gray-200/80 rounded text-gray-600 truncate max-w-[110px]"
+                      className="text-[9px] px-1.5 py-0.5 bg-zinc-800 border border-zinc-700/60 rounded text-zinc-300"
                     >
                       {tag}
                     </span>
                   ))}
                 </div>
-                <div className="text-[9px] font-bold text-amber-600 flex items-center gap-1 shrink-0">
-                  <Clock className="w-2.5 h-2.5 shrink-0" />
-                  <span>{currentKegiatan.deadline}</span>
-                </div>
+              </div>
+
+              <div className="flex items-center justify-between pt-2 border-t border-zinc-800/80 text-[10px]">
+                <span className="text-amber-400 font-mono font-semibold">
+                  {currentKegiatan.deadline}
+                </span>
+                <button
+                  onClick={(e) => toggleBookmark(currentKegiatan.id, e)}
+                  className="text-zinc-400 hover:text-white transition-colors cursor-pointer flex items-center gap-1 font-mono text-[10px]"
+                >
+                  <Bookmark
+                    className={`w-3 h-3 ${
+                      bookmarkedId === currentKegiatan.id ? "fill-white text-white" : ""
+                    }`}
+                  />
+                  <span>Simpan</span>
+                </button>
               </div>
             </div>
-          </div>
 
-          {/* Activity Mini Indicator Tickers */}
-          <div className="flex items-center justify-between pt-2">
-            <span className="text-[10px] text-gray-400 font-semibold">
-              Menampilkan {activeKegiatanIdx + 1} dari {KEGIATAN_PRESETS.length} kegiatan
-            </span>
-            <div className="flex items-center gap-1">
-              {KEGIATAN_PRESETS.map((_, i) => (
-                <button
-                  key={i}
-                  onClick={() => setActiveKegiatanIdx(i)}
-                  aria-label={`Lihat kegiatan ${i + 1}`}
-                  className={`h-1.5 rounded-full transition-all cursor-pointer ${
-                    i === activeKegiatanIdx
-                      ? "w-4 bg-brand-primary"
-                      : "w-1.5 bg-gray-200 hover:bg-gray-300"
-                  }`}
-                />
-              ))}
+            {/* Right: Simulation Partner Showcase */}
+            <div className="p-3.5 rounded-xl bg-zinc-900 border border-zinc-800 flex flex-col justify-between space-y-2">
+              <div>
+                <div className="flex items-center justify-between text-[10px] font-mono text-zinc-400 mb-1">
+                  <span>STUDI KASUS SPESIALISASI</span>
+                  <span className="text-emerald-400 font-bold">100% RELEVAN</span>
+                </div>
+                <h4 className="text-xs sm:text-sm font-bold text-white">
+                  Simulasi Penanganan Insiden Finansial
+                </h4>
+                <p className="text-[11px] text-zinc-400 mt-0.5 leading-relaxed">
+                  Menyelesaikan simulasi arsitektur sistem checkout skala tinggi &amp; analisis trade-off performa.
+                </p>
+                <div className="text-[10px] font-mono text-zinc-500 mt-2">
+                  Luaran: Dokumen RFC + Script Pengujian Stres
+                </div>
+              </div>
+
+              <div className="pt-2 border-t border-zinc-800/80 flex items-center justify-between">
+                <span className="text-[10px] font-mono text-zinc-400">
+                  Model Sertifikasi Mandiri
+                </span>
+                <Link
+                  href="/assessment"
+                  className="btn-press inline-flex items-center gap-1 text-xs font-bold text-blue-400 hover:text-blue-300 transition-colors cursor-pointer group"
+                >
+                  <span>Mulai Simulasi</span>
+                  <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" />
+                </Link>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* =====================================================================
-            CARD 3: MISI SOFT SKILL (Kanan Bawah)
-        ===================================================================== */}
-        <div className="p-4 sm:p-4.5 bg-gray-50/90 border border-gray-200/90 rounded-2xl sm:rounded-3xl flex flex-col justify-between hover:border-brand-primary/40 transition-all duration-300 relative group flex-1 shadow-xs min-h-[250px]">
-          <div>
-            <div className="flex items-center justify-between mb-1.5">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-emerald-100/80 flex items-center justify-center text-emerald-600 border border-emerald-200 shadow-3xs">
-                  <Target className="w-4 h-4 text-emerald-600" />
-                </div>
-                <div>
-                  <h3 className="text-sm sm:text-base font-black tracking-tight text-gray-900 leading-tight">
-                    Misi Soft Skill
-                  </h3>
-                  <p className="text-[10px] text-gray-500 leading-tight">
-                    Latihan situasional harian berhadiah XP.
-                  </p>
-                </div>
-              </div>
-
-              {/* Level XP Badge */}
-              <span className="inline-flex items-center gap-1 text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 shrink-0">
-                <Zap className="w-2.5 h-2.5 text-emerald-600" />
-                Level 3 • 450 XP
-              </span>
-            </div>
-
-            {/* Missions List */}
-            <div className="space-y-1.5 pt-1.5">
-              {MISI_PRESETS.map((misi) => {
-                const isCompleted = misi.status === "completed";
-                const isInProgress = misi.status === "in_progress";
-
-                return (
-                  <div
-                    key={misi.id}
-                    className={`flex items-center justify-between gap-2 p-2 px-2.5 rounded-xl border transition-all duration-300 h-[46px] ${
-                      isInProgress
-                        ? "bg-white border-brand-primary/40 shadow-3xs ring-1 ring-brand-primary/20"
-                        : isCompleted
-                        ? "bg-white/90 border-emerald-200"
-                        : "bg-gray-100/50 border-gray-200 opacity-60"
-                    }`}
-                  >
-                    <div className="flex items-center gap-2 min-w-0">
-                      <div
-                        className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 ${
-                          isCompleted
-                            ? "bg-emerald-100 text-emerald-600"
-                            : isInProgress
-                            ? "bg-brand-primary/10 text-brand-primary"
-                            : "bg-gray-200 text-gray-400"
-                        }`}
-                      >
-                        {isCompleted ? (
-                          <CheckCircle2 className="w-3.5 h-3.5" />
-                        ) : isInProgress ? (
-                          <span className="w-2 h-2 rounded-full bg-brand-primary animate-ping" />
-                        ) : (
-                          <Lock className="w-3 h-3" />
-                        )}
-                      </div>
-                      <div className="min-w-0">
-                        <div className="text-xs font-bold text-gray-900 truncate leading-tight">
-                          {misi.title}
-                        </div>
-                        <div className="flex items-center gap-1.5 mt-0.5">
-                          <span
-                            className={`text-[8.5px] font-bold px-1.5 py-0.2 rounded border ${misi.compColor}`}
-                          >
-                            {misi.competency}
-                          </span>
-                          <span className="text-[9px] text-gray-400">
-                            {misi.time}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <span
-                      className={`text-[10px] font-black shrink-0 px-1.5 py-0.5 rounded ${
-                        isCompleted
-                          ? "bg-emerald-50 text-emerald-700"
-                          : isInProgress
-                          ? "bg-brand-primary/10 text-brand-primary"
-                          : "text-gray-400"
-                      }`}
-                    >
-                      +{misi.xp} XP
-                    </span>
-                  </div>
-                );
-              })}
-            </div>
+        {/* Footer Bar inside Dark Card */}
+        <div className="pt-3 border-t border-zinc-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-zinc-400">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-emerald-500" />
+            <span>Terbuka untuk semua mahasiswa dengan akun terdaftar</span>
           </div>
 
-          {/* Daily Mission Progress Bar */}
-          <div className="pt-2 mt-auto">
-            <div className="flex items-center justify-between text-[10px] text-gray-500 font-semibold mb-1">
-              <span>Progres Misi Harian</span>
-              <span className="font-bold text-emerald-600">2 / 3 Selesai (67%)</span>
-            </div>
-            <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden border border-gray-200/60">
-              <div
-                className="h-full bg-emerald-500 rounded-full transition-all duration-500"
-                style={{ width: "67%" }}
-              />
-            </div>
+          <div className="flex items-center gap-1.5 font-mono text-[11px]">
+            {KEGIATAN_PRESETS.map((k, i) => (
+              <button
+                key={k.id}
+                onClick={() => setActiveKegiatanIdx(i)}
+                className={`px-2 py-0.5 rounded cursor-pointer transition-colors ${
+                  i === activeKegiatanIdx
+                    ? "bg-zinc-800 text-white font-bold"
+                    : "text-zinc-500 hover:text-zinc-300"
+                }`}
+              >
+                Kegiatan {i + 1}
+              </button>
+            ))}
           </div>
         </div>
       </div>
-
-      {/* Inline styles for animated progress shimmer */}
-      <style jsx>{`
-        @keyframes progressFill {
-          0% {
-            width: 0%;
-            opacity: 0.4;
-          }
-          50% {
-            width: 70%;
-            opacity: 1;
-          }
-          100% {
-            width: 100%;
-            opacity: 0.4;
-          }
-        }
-      `}</style>
     </div>
   );
 }
