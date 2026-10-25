@@ -441,6 +441,13 @@ export function ResultDetailClient({
             careerProfile.roadmap?.reduce((acc, p) => acc + (p.modules?.length || 0), 0) || 12
           }
           assessmentId={resultId}
+          isPurchased={isPurchased}
+          onUnlockClick={() => {
+            const el = document.getElementById('laporan-eksekutif-section');
+            if (el) {
+              el.scrollIntoView({ behavior: 'smooth' });
+            }
+          }}
         />
       </div>
 

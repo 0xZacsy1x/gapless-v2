@@ -119,50 +119,55 @@ export function AnalysisResultBlock({
   return (
     <div className="w-full flex flex-col print:p-0">
       {/* Top Banner when purchased */}
-      {/* Top Banner when purchased */}
+      {/* Top Executive Document Bar (Refactored: Clean Neutral Surface, No AI Slop) */}
       {isPurchased ? (
-        <div className="mb-6 p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-emerald-500/10 via-teal-500/10 to-blue-500/10 border border-emerald-200/80 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 print:hidden">
-          <div className="flex items-start sm:items-center gap-3 min-w-0 flex-1">
-            <span className="p-2 rounded-xl bg-emerald-100 text-emerald-700 shrink-0 mt-0.5 sm:mt-0">
-              <ShieldCheck className="w-5 h-5" />
-            </span>
+        <div className="mb-6 p-5 sm:p-6 rounded-2xl bg-white border border-zinc-200/90 shadow-2xs flex flex-col lg:flex-row items-start lg:items-center justify-between gap-5 print:hidden">
+          <div className="flex items-start sm:items-center gap-3.5 min-w-0 flex-1">
+            <div className="w-10 h-10 rounded-xl bg-zinc-100 text-zinc-800 border border-zinc-200/80 flex items-center justify-center shrink-0">
+              <FileText className="w-5 h-5 text-blue-600" />
+            </div>
             <div className="min-w-0">
-              <div className="flex flex-wrap items-center gap-2">
-                <h4 className="font-bold text-slate-900 text-sm">Laporan Lengkap Terbuka</h4>
-                <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300/60">
-                  Hard Skill + Soft Skill Terpadu
+              <div className="flex flex-wrap items-center gap-2 mb-1">
+                <h4 className="font-bold text-zinc-900 text-sm tracking-tight">Dokumen Laporan Konsultasi 11 Halaman</h4>
+                <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded border border-emerald-200 bg-emerald-50 text-[11px] font-mono text-emerald-800 font-medium">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                  Hard &amp; Soft Skill Terpadu
+                </span>
+                <span className="text-[11px] font-mono font-medium text-zinc-400">
+                  • Akses Terbuka
                 </span>
               </div>
-              <p className="text-xs text-slate-600 mt-1 leading-relaxed">
-                Satu dokumen konsultasi eksekutif 11 halaman terpadu siap diakses untuk {careerName} (mencakup evaluasi gap teknis, analisis 8 soft skill SJT, dan rencana aksi 30/60/90 hari).
+              <p className="text-xs text-zinc-600 leading-relaxed">
+                Satu dokumen konsultasi eksekutif siap diakses untuk <strong>{careerName}</strong> (mencakup evaluasi gap teknis, analisis 8 soft skill SJT, dan rencana aksi 30/60/90 hari).
               </p>
             </div>
           </div>
-          <div className="flex items-center gap-2 shrink-0 self-start lg:self-auto flex-wrap sm:flex-nowrap">
+
+          <div className="flex items-center gap-2.5 shrink-0 self-start lg:self-auto flex-wrap sm:flex-nowrap">
             {assessmentId && (
               <Link
                 href={`/report/${assessmentId}`}
                 target="_blank"
-                className="px-3.5 py-2 rounded-xl bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 text-xs font-semibold flex items-center justify-center gap-1.5 shadow-sm transition shrink-0"
+                className="px-3.5 py-2 rounded-xl bg-white hover:bg-zinc-50 text-zinc-700 border border-zinc-200 text-xs font-semibold flex items-center justify-center gap-1.5 shadow-2xs transition-colors shrink-0 btn-press"
               >
                 <FileText className="w-3.5 h-3.5 text-blue-600" />
                 <span>Buka Dokumen</span>
-                <ExternalLink className="w-3 h-3 text-slate-400" />
+                <ExternalLink className="w-3 h-3 text-zinc-400" />
               </Link>
             )}
             <button
               onClick={handleDownloadPdf}
               disabled={isDownloadingPdf}
-              className="px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 disabled:bg-slate-700 text-white text-xs font-semibold flex items-center justify-center gap-1.5 shadow-sm transition shrink-0 cursor-pointer"
+              className="px-4 py-2 rounded-xl bg-zinc-900 hover:bg-zinc-800 disabled:bg-zinc-700 text-white text-xs font-semibold flex items-center justify-center gap-1.5 shadow-2xs transition-colors shrink-0 cursor-pointer btn-press"
             >
               {isDownloadingPdf ? (
                 <>
                   <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                  <span>Menyiapkan PDF...</span>
+                  <span className="font-mono text-[11px]">Menyiapkan PDF...</span>
                 </>
               ) : (
                 <>
-                  <Download className="w-3.5 h-3.5" />
+                  <Download className="w-3.5 h-3.5 text-zinc-300" />
                   <span>Unduh PDF (11 Hal)</span>
                 </>
               )}
@@ -171,28 +176,28 @@ export function AnalysisResultBlock({
         </div>
       ) : (
         /* Top Banner when NOT purchased */
-        <div className="mb-6 p-4 sm:p-5 rounded-2xl bg-slate-50 border border-slate-200 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 print:hidden">
-          <div className="flex items-start sm:items-center gap-3 min-w-0 flex-1">
-            <span className="p-2 rounded-xl bg-slate-200/80 text-slate-700 shrink-0 mt-0.5 sm:mt-0">
-              <FileText className="w-5 h-5 text-blue-600" />
-            </span>
+        <div className="mb-6 p-5 sm:p-6 rounded-2xl bg-white border border-zinc-200/90 shadow-2xs flex flex-col lg:flex-row items-start lg:items-center justify-between gap-5 print:hidden">
+          <div className="flex items-start sm:items-center gap-3.5 min-w-0 flex-1">
+            <div className="w-10 h-10 rounded-xl bg-zinc-100 text-zinc-700 border border-zinc-200/80 flex items-center justify-center shrink-0">
+              <Lock className="w-5 h-5 text-amber-600" />
+            </div>
             <div className="min-w-0">
-              <div className="flex flex-wrap items-center gap-2">
-                <h4 className="font-bold text-slate-900 text-sm">Dokumen Laporan Konsultasi 11 Halaman (Hard &amp; Soft Skill)</h4>
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 border border-amber-200">
+              <div className="flex flex-wrap items-center gap-2 mb-1">
+                <h4 className="font-bold text-zinc-900 text-sm tracking-tight">Dokumen Laporan Konsultasi 11 Halaman (Hard &amp; Soft Skill)</h4>
+                <span className="text-[11px] font-mono font-semibold px-2 py-0.5 rounded bg-zinc-100 text-zinc-800 border border-zinc-200">
                   Rp 9.900
                 </span>
               </div>
-              <p className="text-xs text-slate-500 mt-1 leading-relaxed">
-                Akses satu dokumen PDF formal lengkap: analisis gap mendalam AI, evaluasi 8 dimensi soft skill (SJT 40 skenario), dan panduan interview STAR Method untuk target karier {careerName}.
+              <p className="text-xs text-zinc-500 leading-relaxed">
+                Akses dokumen PDF formal lengkap: analisis gap mendalam AI, evaluasi 8 dimensi soft skill (SJT 40 skenario), dan panduan interview STAR Method untuk target karier <strong>{careerName}</strong>.
               </p>
             </div>
           </div>
           <button
             onClick={() => setShowPaymentModal(true)}
-            className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold flex items-center justify-center gap-1.5 shadow-sm transition shrink-0 self-start lg:self-auto cursor-pointer"
+            className="px-4 py-2.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-white text-xs font-semibold flex items-center justify-center gap-1.5 shadow-2xs transition-colors shrink-0 self-start lg:self-auto cursor-pointer btn-press"
           >
-            <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+            <Lock className="w-3.5 h-3.5 text-amber-400" />
             <span>Buka Laporan Lengkap (Rp 9.900)</span>
           </button>
         </div>
