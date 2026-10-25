@@ -1,377 +1,737 @@
 "use client";
 
-import React, { useState } from "react";
-import Link from "next/link";
+import React, { useState, useEffect, useRef, useCallback } from "react";
+import { Brain, CheckCircle2, Sparkles, ChevronRight, AlertCircle } from "lucide-react";
+import FakeCursor from "./FakeCursor";
+import SkillReadiness from "./SkillReadiness";
 import {
-  Sparkles,
-  ArrowRight,
-  CheckCircle2,
-  AlertCircle,
-  HelpCircle,
-  BookOpen,
-  Award,
-  Layers,
-  Activity,
-} from "lucide-react";
-import {
-  CAREER_ROLES_DATA,
-  DEMO_QUESTIONS,
-  type CareerRoleData,
+    DEMO_QUESTIONS,
+    DEMO_ARCHETYPES,
+    CAREER_ROLES_DATA,
 } from "@/constants/assessmentDemoData";
 
-type PreviewTab = "readiness" | "sjt" | "roadmap";
+type ScreenPosition = "enter" | "active" | "exit" | "hidden";
 
 export default function AssessmentDemo() {
-  const [activeRole, setActiveRole] = useState<string>("Software Engineer");
-  const [activeTab, setActiveTab] = useState<PreviewTab>("readiness");
-  const [selectedChoiceId, setSelectedChoiceId] = useState<string>("B");
+    const stageRef = useRef<HTMLDivElement>(null);
 
-  const roleData: CareerRoleData =
-    CAREER_ROLES_DATA[activeRole] || CAREER_ROLES_DATA["Software Engineer"];
-  const currentQ = DEMO_QUESTIONS[0]; // Interactive SJT Question
+    // Targets for fake cursor calculation
+    const optRef = useRef<HTMLButtonElement>(null);
+    const nextBtnRef = useRef<HTMLButtonElement>(null);
+    const chipSeRef = useRef<HTMLButtonElement>(null);
+    const chipDaRef = useRef<HTMLButtonElement>(null);
+    const chipUiRef = useRef<HTMLButtonElement>(null);
+    const roadmapCardRef = useRef<HTMLDivElement>(null);
 
-  // Detailed rationale for interactive SJT demo choices
-  const choiceFeedbacks: Record<string, { label: string; note: string; tone: "positive" | "warning" | "neutral" }> = {
-    A: {
-      label: "Analitis & Sistemik (+30 XP)",
-      note: "Fokus pada akar arsitektur dan modularitas kode sebelum menulis baris pertama.",
-      tone: "positive",
-    },
-    B: {
-      label: "Pengalaman Pengguna & Interaksi (+45 XP)",
-      note: "Memastikan usability flow dan kepuasan pengguna akhir menjadi kompas utama produk.",
-      tone: "positive",
-    },
-    C: {
-      label: "Kepemimpinan Kolaboratif (+40 XP)",
-      note: "Menyelaraskan komunikasi lintas divisi dan ekspektasi pemangku kepentingan.",
-      tone: "positive",
-    },
-  };
+    // Screen Positions for Silky Upward Sliding Transitions
+    const [questionPos, setQuestionPos] = useState<ScreenPosition>("active");
+    const [analyzingPos, setAnalyzingPos] = useState<ScreenPosition>("hidden");
+    const [resultPos, setResultPos] = useState<ScreenPosition>("hidden");
+    const [isTransitioning, setIsTransitioning] = useState<boolean>(false);
 
-  const activeFeedback = choiceFeedbacks[selectedChoiceId] || choiceFeedbacks["B"];
+    // Question & Role State
+    const [questionCycle, setQuestionCycle] = useState<number>(0);
+    const [isOptionSelected, setIsOptionSelected] = useState<boolean>(false);
+    const [isBtnHovered, setIsBtnHovered] = useState<boolean>(false);
+    const [isBtnPressed, setIsBtnPressed] = useState<boolean>(false);
+    const [activeRole, setActiveRole] = useState<string>("Software Engineer");
 
-  return (
-    <div className="w-full max-w-[540px] bg-white rounded-2xl border border-zinc-200/90 shadow-sm overflow-hidden flex flex-col font-sans transition-all">
-      {/* Top Application Header Bar */}
-      <div className="px-4 py-3 bg-zinc-50/80 border-b border-zinc-200/80 flex items-center justify-between gap-3">
-        {/* Terminal / System Dots */}
-        <div className="flex items-center gap-2">
-          <div className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-zinc-300 inline-block" />
-            <span className="w-2.5 h-2.5 rounded-full bg-zinc-300 inline-block" />
-            <span className="w-2.5 h-2.5 rounded-full bg-zinc-300 inline-block" />
-          </div>
-          <span className="text-[11px] font-mono uppercase tracking-wider text-zinc-500 font-semibold pl-1">
-            Preview Interaktif
-          </span>
-        </div>
+    // Analyzing Stage Progress
+    const [analyzingProgress, setAnalyzingProgress] = useState<number>(0);
 
-        {/* Live Indicator */}
-        <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-50 border border-emerald-200/80 text-[10px] font-mono font-bold text-emerald-700">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse" />
-          <span>DATA AKTIF</span>
-        </div>
-      </div>
+    // Result Stage Staggered Entrance (1: Profile, 2: SkillReadiness, 3: Gap row, 4: Roadmap)
+    const [renderResult, setRenderResult] = useState<boolean>(false);
+    const [resultStaggerStep, setResultStaggerStep] = useState<number>(0);
 
-      {/* Role Switcher Tabs */}
-      <div className="px-3.5 pt-3 pb-2 bg-white border-b border-zinc-100 flex items-center justify-between gap-2 overflow-x-auto no-scrollbar">
-        <span className="text-[11px] font-medium text-zinc-400 shrink-0 uppercase tracking-wider font-mono">
-          Pilih Peran:
-        </span>
-        <div className="flex items-center gap-1.5 shrink-0">
-          {["Software Engineer", "Data Analyst", "UI/UX Designer"].map((role) => {
-            const isSelected = activeRole === role;
-            return (
-              <button
-                key={role}
-                onClick={() => setActiveRole(role)}
-                className={`px-2.5 py-1 text-xs font-semibold rounded-lg transition-all btn-press cursor-pointer ${
-                  isSelected
-                    ? "bg-zinc-900 text-white shadow-xs"
-                    : "bg-zinc-100/80 text-zinc-600 hover:bg-zinc-200/70"
-                }`}
-              >
-                {role}
-              </button>
-            );
-          })}
-        </div>
-      </div>
+    // Fake Cursor State
+    const [cursorPos, setCursorPos] = useState<{ x: number; y: number }>({ x: 90, y: 90 });
+    const [isClicking, setIsClicking] = useState<boolean>(false);
+    const [cursorVisible, setCursorVisible] = useState<boolean>(false);
 
-      {/* View Switcher Pills */}
-      <div className="grid grid-cols-3 p-1.5 mx-3.5 mt-3 bg-zinc-100/80 rounded-xl gap-1 text-xs font-medium text-zinc-600">
-        <button
-          onClick={() => setActiveTab("readiness")}
-          className={`py-1.5 px-2 rounded-lg text-center transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
-            activeTab === "readiness"
-              ? "bg-white text-zinc-900 font-bold shadow-xs"
-              : "hover:text-zinc-900"
-          }`}
+    // Observers & Accessibility
+    const [isInView, setIsInView] = useState<boolean>(true);
+    const [isTabActive, setIsTabActive] = useState<boolean>(true);
+    const [prefersReducedMotion, setPrefersReducedMotion] = useState<boolean>(() => {
+        if (typeof window !== "undefined") {
+            return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        }
+        return false;
+    });
+
+    // Check prefers-reduced-motion
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+            const listener = (e: MediaQueryListEvent) => setPrefersReducedMotion(e.matches);
+            mediaQuery.addEventListener("change", listener);
+            return () => mediaQuery.removeEventListener("change", listener);
+        }
+    }, []);
+
+    // Viewport & Tab Visibility listeners
+    useEffect(() => {
+        const handleVisibility = () => {
+            setIsTabActive(document.visibilityState === "visible");
+        };
+        document.addEventListener("visibilitychange", handleVisibility);
+
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                setIsInView(entry.isIntersecting);
+            },
+            { threshold: 0.15 }
+        );
+
+        if (stageRef.current) {
+            observer.observe(stageRef.current);
+        }
+
+        return () => {
+            document.removeEventListener("visibilitychange", handleVisibility);
+            observer.disconnect();
+        };
+    }, []);
+
+    // Calculate coordinates relative to stage container
+    const getCoordinates = useCallback(
+        (element: HTMLElement | null, offset?: { x?: number; y?: number }) => {
+            if (!element || !stageRef.current) return { x: 90, y: 90 };
+            const sRect = stageRef.current.getBoundingClientRect();
+            const eRect = element.getBoundingClientRect();
+            const centerX = eRect.left - sRect.left + eRect.width / 2 + (offset?.x ?? 0);
+            const centerY = eRect.top - sRect.top + eRect.height / 2 + (offset?.y ?? 0);
+            return {
+                x: centerX - 3,
+                y: centerY - 2,
+            };
+        },
+        []
+    );
+
+    // Current question data
+    const currentQ = DEMO_QUESTIONS[questionCycle % DEMO_QUESTIONS.length];
+    const roleData = CAREER_ROLES_DATA[activeRole] || CAREER_ROLES_DATA["Software Engineer"];
+
+    // Helper for Screen Styles with Velvety Deceleration and Depth Scaling
+    const getScreenStyle = (pos: ScreenPosition) => {
+        let transform = "translate3d(0, 0, 0) scale(1)";
+        let opacity = 1;
+        let visibility: "visible" | "hidden" = "visible";
+        let pointerEvents: "auto" | "none" = "auto";
+
+        if (pos === "enter") {
+            transform = "translate3d(0, 100%, 0) scale(0.97)";
+            opacity = 0;
+            visibility = "visible";
+            pointerEvents = "none";
+        } else if (pos === "exit") {
+            transform = "translate3d(0, -100%, 0) scale(0.97)";
+            opacity = 0;
+            visibility = "visible";
+            pointerEvents = "none";
+        } else if (pos === "hidden") {
+            transform = "translate3d(0, 100%, 0) scale(0.97)";
+            opacity = 0;
+            visibility = "hidden";
+            pointerEvents = "none";
+        }
+
+        return {
+            transform,
+            opacity,
+            visibility,
+            pointerEvents,
+            transition: isTransitioning
+                ? "transform 750ms cubic-bezier(0.16, 1, 0.3, 1), opacity 750ms cubic-bezier(0.16, 1, 0.3, 1)"
+                : "none",
+            willChange: isTransitioning ? "transform, opacity" : "auto",
+        };
+    };
+
+    // Helper for staggered items in Result Screen (gentle 12px float-up + soft fade)
+    const getResultStaggerStyle = (stepNumber: number) => {
+        const isRevealed = prefersReducedMotion || resultStaggerStep >= stepNumber;
+        return {
+            transform: isRevealed ? "translate3d(0, 0, 0)" : "translate3d(0, 12px, 0)",
+            opacity: isRevealed ? 1 : 0,
+            transition: "transform 480ms cubic-bezier(0.16, 1, 0.3, 1), opacity 480ms ease-out",
+            pointerEvents: isRevealed ? ("auto" as const) : ("none" as const),
+        };
+    };
+
+    // Main Animation State Machine Loop with Natural Human Pacing
+    useEffect(() => {
+        if (prefersReducedMotion || !isInView || !isTabActive) return;
+
+        let active = true;
+        const timerIds: NodeJS.Timeout[] = [];
+        let animFrameId: number;
+
+        const schedule = (fn: () => void, delayMs: number) => {
+            const id = setTimeout(() => {
+                if (active) fn();
+            }, delayMs);
+            timerIds.push(id);
+        };
+
+        const triggerClick = () => {
+            setIsClicking(true);
+            setTimeout(() => {
+                if (active) setIsClicking(false);
+            }, 350);
+        };
+
+        const runTimeline = () => {
+            // -------------------------------------------------------------
+            // PHASE 1: QUESTION STAGE
+            // -------------------------------------------------------------
+            setIsOptionSelected(false);
+            setIsBtnPressed(false);
+            setIsBtnHovered(false);
+            setActiveRole("Software Engineer");
+            setAnalyzingProgress(0);
+            setRenderResult(false);
+            setResultStaggerStep(0);
+
+            // 500ms: Reveal fake cursor smoothly
+            schedule(() => {
+                if (optRef.current) {
+                    setCursorPos(getCoordinates(optRef.current, { y: 22 }));
+                }
+                setCursorVisible(true);
+            }, 500);
+
+            // 900ms: Silky glide cursor to Option A
+            schedule(() => {
+                if (optRef.current) {
+                    setCursorPos(getCoordinates(optRef.current));
+                }
+            }, 900);
+
+            // 1800ms: Click Option A with organic ripple
+            schedule(() => {
+                triggerClick();
+                setIsOptionSelected(true);
+            }, 1800);
+
+            // 2500ms: Glide cursor to "Lihat Hasil Asesmen" button
+            schedule(() => {
+                if (nextBtnRef.current) {
+                    setCursorPos(getCoordinates(nextBtnRef.current, { y: -2 }));
+                }
+            }, 2500);
+
+            // 3300ms: Hover on button with soft glow
+            schedule(() => {
+                setIsBtnHovered(true);
+            }, 3300);
+
+            // 3800ms: Click button with tactile spring press
+            schedule(() => {
+                triggerClick();
+                setIsBtnPressed(true);
+            }, 3800);
+
+            // 4150ms: Softly fade out cursor before slide starts
+            schedule(() => {
+                setIsBtnPressed(false);
+                setIsBtnHovered(false);
+                setCursorVisible(false);
+            }, 4150);
+
+            // -------------------------------------------------------------
+            // TRANSITION 1: QUESTION -> ANALYZING (750ms Silky Upward Slide)
+            // -------------------------------------------------------------
+            schedule(() => {
+                setAnalyzingPos("enter");
+            }, 4250);
+
+            schedule(() => {
+                setIsTransitioning(true);
+                setQuestionPos("exit");
+                setAnalyzingPos("active");
+            }, 4300);
+
+            // 5050ms: Transition 1 completes. Question hidden and reset.
+            schedule(() => {
+                setIsTransitioning(false);
+                setQuestionPos("hidden");
+
+                // Start Analyzing Archetype Bars Animation with quartic deceleration (~2s)
+                const startTime = performance.now();
+                const duration = 2000;
+                const animateBars = (currentTime: number) => {
+                    if (!active) return;
+                    const elapsed = currentTime - startTime;
+                    const progress = Math.min(elapsed / duration, 1);
+                    // easeOutQuart
+                    const easeProgress = 1 - Math.pow(1 - progress, 4);
+                    setAnalyzingProgress(easeProgress);
+                    if (progress < 1) {
+                        animFrameId = requestAnimationFrame(animateBars);
+                    }
+                };
+                animFrameId = requestAnimationFrame(animateBars);
+            }, 5050);
+
+            // -------------------------------------------------------------
+            // TRANSITION 2: ANALYZING -> RESULT (750ms Silky Upward Slide)
+            // -------------------------------------------------------------
+            schedule(() => {
+                setRenderResult(true);
+                setResultPos("enter");
+            }, 7350);
+
+            schedule(() => {
+                setIsTransitioning(true);
+                setAnalyzingPos("exit");
+                setResultPos("active");
+            }, 7400);
+
+            // 8150ms: Transition 2 completes. Analyzing hidden.
+            schedule(() => {
+                setIsTransitioning(false);
+                setAnalyzingPos("hidden");
+            }, 8150);
+
+            // -------------------------------------------------------------
+            // PHASE 3: RESULT STAGE (Gentle Staggered Entrance)
+            // -------------------------------------------------------------
+            schedule(() => setResultStaggerStep(1), 8300);
+            schedule(() => setResultStaggerStep(2), 8550);
+            schedule(() => setResultStaggerStep(3), 8800);
+            schedule(() => setResultStaggerStep(4), 9050);
+
+            // 9600ms: Reveal fake cursor on Result Screen
+            schedule(() => {
+                if (chipDaRef.current) {
+                    setCursorPos(getCoordinates(chipDaRef.current, { y: 25 }));
+                }
+                setCursorVisible(true);
+            }, 9600);
+
+            // 10100ms: Silky glide cursor to "Data Analyst" chip
+            schedule(() => {
+                if (chipDaRef.current) {
+                    setCursorPos(getCoordinates(chipDaRef.current));
+                }
+            }, 10100);
+
+            // 10900ms: Click "Data Analyst" chip -> Smooth in-place transition to 54%
+            schedule(() => {
+                triggerClick();
+                setActiveRole("Data Analyst");
+            }, 10900);
+
+            // 11800ms: Glide cursor back to "Software Engineer" chip
+            schedule(() => {
+                if (chipSeRef.current) {
+                    setCursorPos(getCoordinates(chipSeRef.current));
+                }
+            }, 11800);
+
+            // 12650ms: Click "Software Engineer" chip -> Smooth in-place transition to 68%
+            schedule(() => {
+                triggerClick();
+                setActiveRole("Software Engineer");
+            }, 12650);
+
+            // 13550ms: Glide cursor down towards Roadmap card
+            schedule(() => {
+                if (roadmapCardRef.current) {
+                    setCursorPos(getCoordinates(roadmapCardRef.current));
+                }
+            }, 13550);
+
+            // 14450ms: Fade out cursor softly before reset transition
+            schedule(() => {
+                setCursorVisible(false);
+            }, 14450);
+
+            // -------------------------------------------------------------
+            // TRANSITION 3: RESULT -> NEXT QUESTION (750ms Upward Slide)
+            // -------------------------------------------------------------
+            schedule(() => {
+                setQuestionCycle((prev) => prev + 1);
+                setIsOptionSelected(false);
+                setQuestionPos("enter");
+            }, 14700);
+
+            schedule(() => {
+                setIsTransitioning(true);
+                setResultPos("exit");
+                setQuestionPos("active");
+            }, 14750);
+
+            // 15500ms: Transition 3 completes. Result hidden and loop restarts!
+            schedule(() => {
+                setIsTransitioning(false);
+                setResultPos("hidden");
+                setRenderResult(false);
+                setResultStaggerStep(0);
+                runTimeline();
+            }, 15500);
+        };
+
+        runTimeline();
+
+        return () => {
+            active = false;
+            timerIds.forEach(clearTimeout);
+            if (animFrameId) cancelAnimationFrame(animFrameId);
+        };
+    }, [isInView, isTabActive, prefersReducedMotion, getCoordinates]);
+
+    return (
+        <div
+            className="w-full max-w-[440px] xl:max-w-[480px] min-h-[620px] sm:min-h-[630px] mx-auto rounded-[32px] bg-white border border-blue-100/90 shadow-[0_20px_50px_-12px_rgba(0,102,255,0.09),0_4px_16px_-4px_rgba(0,102,255,0.04)] p-5 sm:p-6 flex flex-col justify-between relative select-none [contain:layout] font-sans"
+            aria-hidden="true"
         >
-          <Activity className="w-3.5 h-3.5 text-blue-600" />
-          <span className="truncate">Skill Gap</span>
-        </button>
-        <button
-          onClick={() => setActiveTab("sjt")}
-          className={`py-1.5 px-2 rounded-lg text-center transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
-            activeTab === "sjt"
-              ? "bg-white text-zinc-900 font-bold shadow-xs"
-              : "hover:text-zinc-900"
-          }`}
-        >
-          <HelpCircle className="w-3.5 h-3.5 text-indigo-600" />
-          <span className="truncate">Simulasi SJT</span>
-        </button>
-        <button
-          onClick={() => setActiveTab("roadmap")}
-          className={`py-1.5 px-2 rounded-lg text-center transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
-            activeTab === "roadmap"
-              ? "bg-white text-zinc-900 font-bold shadow-xs"
-              : "hover:text-zinc-900"
-          }`}
-        >
-          <Layers className="w-3.5 h-3.5 text-emerald-600" />
-          <span className="truncate">4 Fase</span>
-        </button>
-      </div>
+            {/* Ambient Blue Glow */}
+            <div className="absolute top-0 right-0 w-48 h-48 bg-brand-primary/5 blur-2xl rounded-full pointer-events-none" />
 
-      {/* Interactive Main Body Content */}
-      <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between min-h-[340px]">
-        {/* TAB 1: SKILL GAP & READINESS */}
-        {activeTab === "readiness" && (
-          <div className="space-y-4">
-            {/* Top Metric Header */}
-            <div className="p-3.5 rounded-xl bg-zinc-50/90 border border-zinc-200/80 flex items-center justify-between">
-              <div>
-                <span className="text-[10px] font-mono uppercase tracking-wider text-zinc-500 font-semibold block">
-                  Estimasi Kesiapan Industri
-                </span>
-                <div className="text-base font-bold text-zinc-900 mt-0.5">
-                  {roleData.role}
-                </div>
-                <div className="flex items-center gap-1.5 mt-1 text-xs text-zinc-500">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-600" />
-                  <span>3 Kompetensi Kunci Terpantau</span>
-                </div>
-              </div>
-              <div className="text-right">
-                <span className="text-3xl font-extrabold text-zinc-900 font-mono tracking-tight tabular-nums">
-                  {roleData.readinessScore}%
-                </span>
-                <span className="block text-[10px] font-mono text-blue-600 font-semibold">
-                  STATUS: {roleData.status.toUpperCase()}
-                </span>
-              </div>
-            </div>
-
-            {/* 3-Tier Visual Skill Comparison Diagram */}
-            <div className="space-y-2.5">
-              <div className="flex items-center justify-between text-[11px] text-zinc-500 font-mono">
-                <span>SKILL &amp; LEVEL KAMU</span>
-                <span>TARGET INDUSTRI</span>
-              </div>
-
-              {roleData.skills.map((skill) => {
-                const isMet = skill.userLevel >= skill.requiredLevel;
-                return (
-                  <div
-                    key={skill.name}
-                    className="p-2.5 rounded-xl border border-zinc-200/70 bg-white space-y-1.5 hover:border-zinc-300 transition-colors"
-                  >
-                    <div className="flex items-center justify-between text-xs">
-                      <span className="font-semibold text-zinc-900 truncate">
-                        {skill.name}
-                      </span>
-                      <div className="flex items-center gap-2 font-mono text-[11px] tabular-nums">
-                        <span className={isMet ? "text-emerald-700 font-bold" : "text-amber-700 font-bold"}>
-                          {skill.userLevel}%
-                        </span>
-                        <span className="text-zinc-300">/</span>
-                        <span className="text-zinc-500">{skill.requiredLevel}% target</span>
-                      </div>
+            {/* Top Meta Header (Fixed - never moves) */}
+            <div className="flex items-center justify-between border-b border-blue-50 pb-3 relative z-10 shrink-0">
+                <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-xl bg-blue-50 flex items-center justify-center text-brand-primary border border-blue-100">
+                        <Brain className="w-4 h-4 text-brand-primary" />
                     </div>
-
-                    {/* Progress Bar with Target Marker */}
-                    <div className="relative w-full h-2 bg-zinc-100 rounded-full overflow-hidden">
-                      {/* User Level Fill */}
-                      <div
-                        className={`h-full rounded-full transition-all duration-500 ${
-                          isMet ? "bg-emerald-600" : "bg-amber-500"
-                        }`}
-                        style={{ width: `${skill.userLevel}%` }}
-                      />
-                      {/* Target Indicator Line */}
-                      <div
-                        className="absolute top-0 bottom-0 w-0.5 bg-zinc-900 z-10"
-                        style={{ left: `${skill.requiredLevel}%` }}
-                        title={`Target: ${skill.requiredLevel}%`}
-                      />
+                    <div>
+                        <div className="text-xs font-bold text-slate-900 font-sans">Simulasi Asesmen Minat</div>
+                        <div className="text-[10px] text-slate-400 font-medium transition-colors duration-300">
+                            {analyzingPos === "active"
+                                ? "Menganalisis matriks psikometri..."
+                                : resultPos === "active" || prefersReducedMotion
+                                    ? "Hasil Terverifikasi"
+                                    : currentQ.stepLabel}
+                        </div>
                     </div>
-                  </div>
-                );
-              })}
+                </div>
+                <span className="text-[10px] uppercase font-bold tracking-wider px-2.5 py-1 rounded-full bg-blue-50 text-brand-primary border border-blue-100">
+                    Live Demo
+                </span>
             </div>
 
-            {/* Priority Gap Notice */}
-            <div className="p-2.5 rounded-lg bg-amber-50/70 border border-amber-200/80 flex items-start gap-2 text-xs text-amber-900">
-              <AlertCircle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
-              <p className="leading-snug">
-                <strong className="font-bold">Prioritas Belajar:</strong> {roleData.gapNote}
-              </p>
-            </div>
-          </div>
-        )}
-
-        {/* TAB 2: SITUATIONAL JUDGEMENT TEST (SJT) */}
-        {activeTab === "sjt" && (
-          <div className="space-y-3.5">
-            <div>
-              <div className="flex items-center justify-between text-[10px] font-mono text-zinc-400 uppercase tracking-wider mb-1">
-                <span>SIMULASI KASUS SITUASIONAL</span>
-                <span className="font-bold text-indigo-600 font-mono">03 DARI 15 KASUS</span>
-              </div>
-              <h4 className="text-xs sm:text-sm font-bold text-zinc-900 leading-snug">
-                {currentQ.questionText}
-              </h4>
-            </div>
-
-            {/* Choices */}
-            <div className="space-y-2">
-              {currentQ.choices.map((choice) => {
-                const isSelected = selectedChoiceId === choice.id;
-                return (
-                  <button
-                    key={choice.id}
-                    onClick={() => setSelectedChoiceId(choice.id)}
-                    className={`w-full p-2.5 rounded-xl border text-left text-xs transition-all flex items-start gap-2.5 cursor-pointer btn-press ${
-                      isSelected
-                        ? "border-blue-600 bg-blue-50/50 shadow-xs ring-1 ring-blue-600/20"
-                        : "border-zinc-200/80 bg-white hover:bg-zinc-50"
-                    }`}
-                  >
-                    <span
-                      className={`w-5 h-5 rounded-md flex items-center justify-center font-mono text-xs font-bold shrink-0 ${
-                        isSelected
-                          ? "bg-blue-600 text-white"
-                          : "bg-zinc-100 text-zinc-600"
-                      }`}
-                    >
-                      {choice.id}
-                    </span>
-                    <span className="text-zinc-800 leading-snug pt-0.5">
-                      {choice.text}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-
-            {/* Instant Behavioral Feedback */}
-            <div className="p-3 rounded-xl bg-zinc-50 border border-zinc-200/90 text-xs space-y-1">
-              <div className="flex items-center gap-1.5 font-bold text-zinc-900 font-mono text-[11px]">
-                <CheckCircle2 className="w-3.5 h-3.5 text-blue-600" />
-                <span>POLA PERILAKU: {activeFeedback.label}</span>
-              </div>
-              <p className="text-zinc-600 text-[11px] leading-relaxed">
-                {activeFeedback.note}
-              </p>
-            </div>
-          </div>
-        )}
-
-        {/* TAB 3: 4-PHASE ROADMAP */}
-        {activeTab === "roadmap" && (
-          <div className="space-y-3.5">
-            <div className="flex items-center justify-between text-xs">
-              <span className="font-mono text-[10px] text-zinc-400 uppercase tracking-wider">
-                STRUKTUR KURIKULUM 4 FASE
-              </span>
-              <span className="text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded text-[10px] font-mono font-bold">
-                STANDAR INDUSTRI
-              </span>
-            </div>
-
-            {/* Phase Stepper */}
-            <div className="space-y-2">
-              {[
-                { phase: 1, title: "Fondasi Sistem", desc: "Algoritma & Struktur Data", status: "completed" },
-                { phase: 2, title: "Praktik Industri & API", desc: "Framework Modern & Database", status: "active" },
-                { phase: 3, title: "Spesialisasi Cloud", desc: "Docker & CI/CD Pipeline", status: "ready" },
-                { phase: 4, title: "Kesiapan Kerja", desc: "Capstone Project & Mock Tech Interview", status: "locked" },
-              ].map((item) => (
+            {/* STAGE CONTAINER (Fixed Height, Overflow Hidden - Clips Screen Slides & Fake Cursor) */}
+            <div
+                ref={stageRef}
+                className="relative w-full h-[470px] sm:h-[480px] overflow-hidden my-auto"
+            >
+                {/* ===================================================================
+                    SCREEN 1: QUESTION SCREEN
+                =================================================================== */}
                 <div
-                  key={item.phase}
-                  className={`p-2.5 rounded-xl border flex items-center justify-between gap-3 text-xs ${
-                    item.status === "active"
-                      ? "border-blue-600 bg-blue-50/40 shadow-xs ring-1 ring-blue-600/20"
-                      : item.status === "completed"
-                      ? "border-emerald-200 bg-emerald-50/30"
-                      : "border-zinc-200/80 bg-zinc-50/60 opacity-75"
-                  }`}
+                    style={prefersReducedMotion ? { display: "none" } : getScreenStyle(questionPos)}
+                    className="absolute inset-0 w-full h-full flex flex-col justify-center space-y-3.5 px-0.5"
                 >
-                  <div className="flex items-center gap-2.5 min-w-0">
-                    <span
-                      className={`w-6 h-6 rounded-lg font-mono text-xs font-bold flex items-center justify-center shrink-0 ${
-                        item.status === "active"
-                          ? "bg-blue-600 text-white"
-                          : item.status === "completed"
-                          ? "bg-emerald-600 text-white"
-                          : "bg-zinc-200 text-zinc-600"
-                      }`}
-                    >
-                      0{item.phase}
-                    </span>
-                    <div className="truncate">
-                      <div className="font-bold text-zinc-900 leading-tight truncate">
-                        {item.title}
-                      </div>
-                      <div className="text-[11px] text-zinc-500 truncate mt-0.5">
-                        {item.desc}
-                      </div>
+                    {/* Progress Bar */}
+                    <div className="space-y-1.5">
+                        <div className="flex justify-between text-[11px] font-semibold text-slate-400">
+                            <span>Progres Evaluasi</span>
+                            <span className="text-brand-primary font-bold tabular-nums">
+                                {!isOptionSelected ? currentQ.progressLabel : `${currentQ.progressPercent + 7}% Selesai`}
+                            </span>
+                        </div>
+                        <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
+                            <div
+                                className="h-full bg-brand-primary rounded-full transition-all duration-700 ease-out"
+                                style={{
+                                    width: !isOptionSelected
+                                        ? `${currentQ.progressPercent}%`
+                                        : `${currentQ.progressPercent + 7}%`,
+                                }}
+                            />
+                        </div>
                     </div>
-                  </div>
 
-                  <span
-                    className={`font-mono text-[10px] font-bold px-2 py-0.5 rounded shrink-0 ${
-                      item.status === "active"
-                        ? "bg-blue-100 text-blue-800"
-                        : item.status === "completed"
-                        ? "bg-emerald-100 text-emerald-800"
-                        : "bg-zinc-100 text-zinc-500"
-                    }`}
-                  >
-                    {item.status === "active"
-                      ? "SEDANG AKTIF"
-                      : item.status === "completed"
-                      ? "SELESAI"
-                      : "TERKUNCI"}
-                  </span>
+                    {/* Question Box */}
+                    <div className="p-4 rounded-2xl bg-blue-50/40 border border-blue-100/80 space-y-3">
+                        <div className="flex items-center justify-between">
+                            <span className="text-[10px] font-bold uppercase tracking-widest text-brand-primary">
+                                {currentQ.scenarioTitle}
+                            </span>
+                            <span className="text-[10px] text-slate-400 font-semibold font-mono">
+                                {currentQ.questionNumber}
+                            </span>
+                        </div>
+
+                        <p className="text-xs sm:text-sm font-semibold text-slate-800 leading-relaxed min-h-[38px]">
+                            {currentQ.questionText}
+                        </p>
+
+                        {/* Choices */}
+                        <div className="space-y-2 pt-1">
+                            {currentQ.choices.map((choice, idx) => {
+                                const isSelected = idx === 0 && isOptionSelected;
+                                return (
+                                    <button
+                                        key={choice.id}
+                                        ref={idx === 0 ? optRef : undefined}
+                                        type="button"
+                                        tabIndex={-1}
+                                        className={`w-full flex items-center gap-3 p-3 rounded-xl border text-left transition-all duration-300 ${isSelected
+                                                ? "bg-white border-2 border-brand-primary shadow-xs ring-2 ring-brand-primary/10"
+                                                : "bg-white border-slate-200/80 text-slate-700 hover:border-blue-200"
+                                            }`}
+                                        style={{
+                                            transition: "all 300ms cubic-bezier(0.16, 1, 0.3, 1)",
+                                        }}
+                                    >
+                                        <div
+                                            className={`w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors duration-300 ${isSelected ? "border-brand-primary" : "border-slate-300"
+                                                }`}
+                                        >
+                                            {isSelected && (
+                                                <span className="w-2 h-2 rounded-full bg-brand-primary" />
+                                            )}
+                                        </div>
+                                        <span className="text-xs font-medium leading-snug">
+                                            {choice.text}
+                                        </span>
+                                    </button>
+                                );
+                            })}
+                        </div>
+                    </div>
+
+                    {/* Action Button */}
+                    <div className="pt-1">
+                        <button
+                            ref={nextBtnRef}
+                            type="button"
+                            tabIndex={-1}
+                            className={`w-full h-11 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-2 transition-all duration-300 ${isOptionSelected
+                                    ? isBtnPressed
+                                        ? "bg-brand-primary/80 text-white scale-[0.98]"
+                                        : isBtnHovered
+                                            ? "bg-brand-primary text-white shadow-md shadow-brand-primary/25 scale-[1.01]"
+                                            : "bg-brand-primary text-white shadow-xs"
+                                    : "bg-slate-100 text-slate-400 cursor-not-allowed"
+                                }`}
+                            style={{
+                                transition: "all 200ms cubic-bezier(0.16, 1, 0.3, 1)",
+                            }}
+                        >
+                            <span>Lihat Hasil Asesmen</span>
+                            <ChevronRight className="w-4 h-4" />
+                        </button>
+                    </div>
                 </div>
-              ))}
+
+                {/* ===================================================================
+                    SCREEN 2: ANALYZING SCREEN
+                =================================================================== */}
+                <div
+                    style={getScreenStyle(analyzingPos)}
+                    className="absolute inset-0 w-full h-full flex flex-col justify-center items-center space-y-6 px-4"
+                >
+                    <div className="relative flex items-center justify-center">
+                        <div className="w-16 h-16 rounded-full border-3 border-blue-100 border-t-brand-primary animate-spin" />
+                        <Brain className="w-7 h-7 text-brand-primary absolute" />
+                    </div>
+
+                    <div className="text-center space-y-1">
+                        <h4 className="text-sm font-bold text-slate-900">
+                            Menganalisis Pola Responsmu...
+                        </h4>
+                        <p className="text-xs text-slate-400">
+                            Memetakan orientasi psikometri RIASEC &amp; kompetensi industri.
+                        </p>
+                    </div>
+
+                    {/* Archetype Bars Filling Up */}
+                    <div className="w-full max-w-xs space-y-2.5 bg-blue-50/50 p-4 rounded-2xl border border-blue-100">
+                        {DEMO_ARCHETYPES.map((arch) => {
+                            const currentVal = Math.round(arch.val * analyzingProgress);
+                            return (
+                                <div key={arch.label} className="space-y-1">
+                                    <div className="flex justify-between text-[11px] font-semibold text-slate-600">
+                                        <span>{arch.label}</span>
+                                        <span className="font-mono tabular-nums text-brand-primary font-bold">{currentVal}%</span>
+                                    </div>
+                                    <div className="h-1.5 w-full bg-blue-100/60 rounded-full overflow-hidden">
+                                        <div
+                                            className="h-full bg-brand-primary rounded-full"
+                                            style={{
+                                                width: `${currentVal}%`,
+                                                transition: "width 80ms linear",
+                                            }}
+                                        />
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+                </div>
+
+                {/* ===================================================================
+                    SCREEN 3: RESULT SCREEN (Staggered Entrance)
+                =================================================================== */}
+                {(renderResult || prefersReducedMotion) && (
+                    <div
+                        style={getScreenStyle(resultPos)}
+                        className="absolute inset-0 w-full h-full flex flex-col justify-between py-1 px-0.5 space-y-2"
+                    >
+                        {/* ITEM 1: Profile Top Match & Role Switcher Chips (Stagger Step 1) */}
+                        <div style={getResultStaggerStyle(1)} className="space-y-2">
+                            <div className="flex items-center justify-between">
+                                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-blue-50 text-brand-primary text-[10px] font-bold border border-blue-200">
+                                    <Sparkles className="w-3 h-3 text-brand-primary" />
+                                    Kecocokan Tertinggi (94%)
+                                </span>
+                                <span className="text-[10px] font-bold text-slate-400">
+                                    Profil Terverifikasi
+                                </span>
+                            </div>
+
+                            <div className="p-3 rounded-2xl bg-blue-50/50 border border-blue-100/90 space-y-2">
+                                <div className="text-xs font-bold text-slate-800">
+                                    Kamu adalah <span className="text-brand-primary">The Builder</span>
+                                </div>
+                                <div className="text-[11px] text-slate-500 leading-snug">
+                                    Berbakat merancang arsitektur sistem logis, memecahkan problematis teknikal, dan eksekusi presisi.
+                                </div>
+
+                                {/* Dynamic Career Role Chips */}
+                                <div className="flex items-center gap-1.5 pt-1 overflow-x-auto no-scrollbar">
+                                    <button
+                                        ref={chipSeRef}
+                                        type="button"
+                                        tabIndex={-1}
+                                        onClick={() => setActiveRole("Software Engineer")}
+                                        className={`px-2.5 py-1 rounded-xl text-xs font-bold transition-all duration-300 cursor-pointer ${activeRole === "Software Engineer"
+                                                ? "bg-brand-primary text-white shadow-xs scale-105"
+                                                : "bg-white border border-slate-200 text-slate-700 hover:border-brand-primary/50"
+                                            }`}
+                                        style={{
+                                            transition: "all 250ms cubic-bezier(0.16, 1, 0.3, 1)",
+                                        }}
+                                    >
+                                        <span className="flex items-center gap-1">
+                                            {activeRole === "Software Engineer" && (
+                                                <CheckCircle2 className="w-3 h-3" />
+                                            )}
+                                            Software Engineer
+                                        </span>
+                                    </button>
+
+                                    <button
+                                        ref={chipDaRef}
+                                        type="button"
+                                        tabIndex={-1}
+                                        onClick={() => setActiveRole("Data Analyst")}
+                                        className={`px-2.5 py-1 rounded-xl text-xs font-bold transition-all duration-300 cursor-pointer ${activeRole === "Data Analyst"
+                                                ? "bg-brand-primary text-white shadow-xs scale-105"
+                                                : "bg-white border border-slate-200 text-slate-700 hover:border-brand-primary/50"
+                                            }`}
+                                        style={{
+                                            transition: "all 250ms cubic-bezier(0.16, 1, 0.3, 1)",
+                                        }}
+                                    >
+                                        <span className="flex items-center gap-1">
+                                            {activeRole === "Data Analyst" && (
+                                                <CheckCircle2 className="w-3 h-3" />
+                                            )}
+                                            Data Analyst
+                                        </span>
+                                    </button>
+
+                                    <button
+                                        ref={chipUiRef}
+                                        type="button"
+                                        tabIndex={-1}
+                                        onClick={() => setActiveRole("UI/UX Designer")}
+                                        className={`px-2.5 py-1 rounded-xl text-xs font-bold transition-all duration-300 cursor-pointer ${activeRole === "UI/UX Designer"
+                                                ? "bg-brand-primary text-white shadow-xs scale-105"
+                                                : "bg-white border border-slate-200 text-slate-700 hover:border-brand-primary/50"
+                                            }`}
+                                        style={{
+                                            transition: "all 250ms cubic-bezier(0.16, 1, 0.3, 1)",
+                                        }}
+                                    >
+                                        <span className="flex items-center gap-1">
+                                            {activeRole === "UI/UX Designer" && (
+                                                <CheckCircle2 className="w-3 h-3" />
+                                            )}
+                                            UI/UX Designer
+                                        </span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* ITEM 2: SKILL READINESS Component (Stagger Step 2) */}
+                        <div style={getResultStaggerStyle(2)}>
+                            <SkillReadiness
+                                data={roleData}
+                                isAnimated={!prefersReducedMotion}
+                                triggerAnimation={prefersReducedMotion || resultStaggerStep >= 2}
+                            />
+                        </div>
+
+                        {/* ITEM 3: Gap Terbesar Callout Row (Stagger Step 3) */}
+                        <div
+                            style={getResultStaggerStyle(3)}
+                            className="p-2 sm:p-2.5 rounded-xl bg-blue-50/80 border border-blue-200/80 text-[11px] text-slate-700 flex items-center gap-2"
+                        >
+                            <AlertCircle className="w-3.5 h-3.5 text-brand-primary shrink-0" />
+                            <span className="truncate">
+                                <strong className="text-brand-primary font-bold">Gap terbesar:</strong>{" "}
+                                {roleData.biggestGap}. Roadmap belajarmu mulai dari sini.
+                            </span>
+                        </div>
+
+                        {/* ITEM 4: Roadmap Ready Notification Card (Stagger Step 4) */}
+                        <div
+                            ref={roadmapCardRef}
+                            style={getResultStaggerStyle(4)}
+                            className="p-2.5 sm:p-3 rounded-2xl bg-white border border-blue-100 shadow-xs flex items-center gap-2.5"
+                        >
+                            <div className="w-7 h-7 rounded-lg bg-blue-50 text-brand-primary flex items-center justify-center shrink-0 border border-blue-100">
+                                <Sparkles className="w-3.5 h-3.5 text-brand-primary" />
+                            </div>
+                            <div className="min-w-0 flex-1">
+                                <div className="text-xs font-bold text-slate-900">Roadmap belajarmu siap!</div>
+                                <div className="text-[10px] text-slate-400">
+                                    Kurikulum 4 fase terstruktur untuk mempercepat kesiapan kariermu.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* Virtual Animated Cursor (Clipped inside stage container) */}
+                {!prefersReducedMotion && (
+                    <FakeCursor
+                        x={cursorPos.x}
+                        y={cursorPos.y}
+                        isClicking={isClicking}
+                        visible={cursorVisible}
+                    />
+                )}
             </div>
 
-            {/* Note */}
-            <p className="text-[11px] text-zinc-500 leading-relaxed font-sans pt-1">
-              Setiap modul dilengkapi latihan kode interaktif, mini-proyek nyata, dan evaluasi berkala.
-            </p>
-          </div>
-        )}
-
-        {/* Card Footer: Conversion Callout */}
-        <div className="pt-3.5 mt-3 border-t border-zinc-100 flex items-center justify-between gap-3">
-          <div className="text-[11px] text-zinc-500">
-            Data berbasis <span className="font-semibold text-zinc-800">702+ lowongan industri</span>
-          </div>
-          <Link
-            href="/assessment?quizType=belum_tahu_minat"
-            className="inline-flex items-center gap-1.5 text-xs font-bold text-blue-700 hover:text-blue-800 transition-colors cursor-pointer group"
-          >
-            <span>Mulai Asesmen</span>
-            <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" />
-          </Link>
+            {/* Bottom Assistant Snapshot Preview (Fixed - never moves) */}
+            <div className="p-3 rounded-2xl bg-blue-50/50 border border-blue-100 flex items-center justify-between gap-4 relative z-10 shrink-0">
+                <div className="flex items-center gap-2.5 min-w-0">
+                    <div className="w-7 h-7 rounded-lg bg-brand-primary/10 text-brand-primary flex items-center justify-center shrink-0">
+                        <Sparkles className="w-3.5 h-3.5" />
+                    </div>
+                    <div className="min-w-0">
+                        <div className="text-[10px] font-bold uppercase tracking-wider text-brand-primary">
+                            AI Persona Compass
+                        </div>
+                        <div className="text-[11px] font-bold text-slate-800 truncate transition-colors duration-300">
+                            {resultPos === "active" || prefersReducedMotion
+                                ? "Hasil siap dieksplorasi"
+                                : "Memetakan kepribadian ke karier nyata"}
+                        </div>
+                    </div>
+                </div>
+                <span className="text-[10px] font-bold text-slate-400 flex items-center gap-0.5 shrink-0">
+                    Ilustrasi <ChevronRight className="w-3 h-3" />
+                </span>
+            </div>
         </div>
-      </div>
-    </div>
-  );
+    );
 }
