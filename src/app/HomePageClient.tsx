@@ -16,8 +16,8 @@ export function HomePageClient() {
       <HeroSection />
 
       {/* Bento Grid Features — "Ekosistem Karir Terpadu" (Biru-Putih Brand Theme with Live Auto-Tour) */}
-      <section className="w-full max-w-7xl mx-auto px-6 md:px-12 py-10 md:py-14 space-y-6 md:space-y-8 border-t border-blue-50">
-        <div className="space-y-2 max-w-2xl">
+      <section className="w-full max-w-7xl mx-auto px-6 md:px-12 py-8 md:py-10 space-y-5 md:space-y-6 border-t border-blue-50">
+        <div className="space-y-1.5 max-w-2xl">
           <div className="text-[11px] font-mono font-bold text-brand-primary tracking-widest uppercase">
             FITUR UTAMA · ARSITEKTUR EKOSISTEM
           </div>

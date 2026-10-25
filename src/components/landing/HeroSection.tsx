@@ -9,8 +9,8 @@ export default function HeroSection() {
   return (
     <header className="w-full max-w-7xl mx-auto px-6 md:px-12 lg:px-16 pt-6 pb-12 md:pt-10 md:pb-16 lg:pt-12 lg:pb-20 grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-start font-sans">
       {/* Left Column: Hero Editorial Copy & Methodology Cards */}
-      <div className="lg:col-span-7 flex flex-col justify-between self-start text-left space-y-8 lg:space-y-10">
-        <div className="space-y-6">
+      <div className="lg:col-span-7 flex flex-col justify-between self-start text-left space-y-5 lg:space-y-6">
+        <div className="space-y-5">
           {/* Proof Strip Chip */}
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-200/80 shadow-3xs">
             <span className="w-2 h-2 rounded-full bg-brand-primary animate-pulse" />
@@ -31,7 +31,7 @@ export default function HeroSection() {
           </p>
 
           {/* Tactile Action Buttons */}
-          <div className="space-y-3 pt-1">
+          <div className="space-y-2.5 pt-1">
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
               <Link
                 href="/assessment?quizType=belum_tahu_minat"
@@ -49,7 +49,7 @@ export default function HeroSection() {
             </div>
 
             {/* Micro Trust Proof */}
-            <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 pt-1 text-xs text-slate-500 font-medium">
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 pt-0.5 text-xs text-slate-500 font-medium">
               <span className="inline-flex items-center gap-1.5">
                 <Check className="w-3.5 h-3.5 text-emerald-600" />
                 Gratis untuk mahasiswa
@@ -67,8 +67,8 @@ export default function HeroSection() {
         </div>
 
         {/* Cara Kerjanya — 3 Fondasi Riset & Standar Industri */}
-        <div className="pt-6 border-t border-slate-100">
-          <div className="flex items-center justify-between mb-4">
+        <div className="pt-3.5 border-t border-slate-200/70">
+          <div className="flex items-center justify-between mb-3">
             <div className="text-[11px] font-extrabold uppercase tracking-[0.25em] text-slate-400">
               CARA KERJA &amp; STANDAR RISET
             </div>

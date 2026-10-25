@@ -4,7 +4,6 @@ import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import {
   GraduationCap,
-  Calendar,
   Target,
   CheckCircle2,
   Lock,
@@ -15,7 +14,6 @@ import {
   BookOpen,
   ArrowRight,
   Sparkles,
-  TrendingUp,
 } from "lucide-react";
 
 // Career Roadmaps Data
@@ -197,6 +195,32 @@ const KEGIATAN_PRESETS = [
   },
 ];
 
+// Live Scenarios for Right Card Live Preview
+const SCENARIO_PRESETS = [
+  {
+    id: "s1",
+    question: "Sprint deadline mendadak maju 3 hari sementara ada bug kritis di staging. Apa langkah utamamu?",
+    choiceA: "[A] Isolasi bug & komunikasikan trade-off scope fitur ke tim.",
+    choiceB: "[B] Deploy hotfix cepat tanpa pengujian menyeluruh.",
+    correctChoice: "A",
+    reward: "+50 XP Adaptabilitas & Manajemen Risiko",
+    activeMissionId: "m2",
+    progressPercent: 67,
+    progressLabel: "2 / 3 Selesai (67%)",
+  },
+  {
+    id: "s2",
+    question: "Stakeholder meminta penambahan 3 fitur besar di tengah sprint tanpa mengubah deadline rilis.",
+    choiceA: "[A] Terima semua permintaan tanpa validasi kapasitas tim.",
+    choiceB: "[B] Analisis trade-off teknis dan tawarkan rilis modular bertahap.",
+    correctChoice: "B",
+    reward: "+75 XP Negosiasi & Komunikasi Efektif",
+    activeMissionId: "m3",
+    progressPercent: 100,
+    progressLabel: "3 / 3 Selesai (100%)",
+  },
+];
+
 // Misi Soft Skill Data
 const MISI_PRESETS = [
   {
@@ -231,11 +255,11 @@ export default function BentoEcosystemTour() {
   // States
   const [activeCareerIdx, setActiveCareerIdx] = useState<number>(0);
   const [activeKegiatanIdx, setActiveKegiatanIdx] = useState<number>(0);
+  const [activeScenarioIdx, setActiveScenarioIdx] = useState<number>(0);
   const [bookmarkedId, setBookmarkedId] = useState<string>("k1");
   const [isInView, setIsInView] = useState<boolean>(true);
   const [isTabActive, setIsTabActive] = useState<boolean>(true);
   const [isUserInteracting, setIsUserInteracting] = useState<boolean>(false);
-  const [sjtOptionChosen, setSjtOptionChosen] = useState<string | null>("A");
 
   const [prefersReducedMotion, setPrefersReducedMotion] = useState<boolean>(() => {
     if (typeof window !== "undefined") {
@@ -299,6 +323,17 @@ export default function BentoEcosystemTour() {
     return () => clearInterval(timer);
   }, [isInView, isTabActive, prefersReducedMotion]);
 
+  // Auto-cycle Misi Soft Skill Scenarios every 4.0 seconds (Live preview section kanan)
+  useEffect(() => {
+    if (prefersReducedMotion || !isInView || !isTabActive) return;
+
+    const timer = setInterval(() => {
+      setActiveScenarioIdx((prev) => (prev + 1) % SCENARIO_PRESETS.length);
+    }, 4000);
+
+    return () => clearInterval(timer);
+  }, [isInView, isTabActive, prefersReducedMotion]);
+
   const handleSelectCareer = (idx: number) => {
     setActiveCareerIdx(idx);
     setIsUserInteracting(true);
@@ -315,16 +350,17 @@ export default function BentoEcosystemTour() {
 
   const currentRoadmap = ROADMAP_PRESETS[activeCareerIdx];
   const currentKegiatan = KEGIATAN_PRESETS[activeKegiatanIdx];
+  const currentScenario = SCENARIO_PRESETS[activeScenarioIdx];
 
   return (
     <div
       ref={containerRef}
-      className="grid grid-cols-1 lg:grid-cols-12 gap-4 select-none w-full items-stretch font-sans"
+      className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-5 select-none w-full items-stretch font-sans"
     >
       {/* =========================================================================
-          CARD 1: ROADMAP BELAJAR TERSTRUKTUR (lg:col-span-8 - Biru Putih Theme)
+          ROW 1, CARD 1: ROADMAP BELAJAR TERSTRUKTUR (lg:col-span-8 - Black Shadow)
       ========================================================================= */}
-      <div className="lg:col-span-8 p-5 sm:p-6 bg-white border border-blue-100/90 rounded-2xl flex flex-col justify-between shadow-xs space-y-4">
+      <div className="lg:col-span-8 p-5 sm:p-6 bg-white border border-slate-200/90 rounded-2xl flex flex-col justify-between shadow-[0_16px_36px_-10px_rgba(0,0,0,0.12),0_4px_12px_-2px_rgba(0,0,0,0.06)] space-y-4">
         {/* Top Header */}
         <div className="space-y-3">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
@@ -461,7 +497,7 @@ export default function BentoEcosystemTour() {
             return (
               <div
                 key={phase.phase}
-                className={`p-3 rounded-xl border transition-all duration-300 flex flex-col justify-between min-h-[130px] ${
+                className={`p-3 rounded-xl border transition-all duration-300 flex flex-col justify-between min-h-[125px] ${
                   isInProgress
                     ? "bg-white border-brand-primary shadow-xs ring-1 ring-brand-primary/20 scale-[1.01]"
                     : isCompleted
@@ -531,9 +567,9 @@ export default function BentoEcosystemTour() {
       </div>
 
       {/* =========================================================================
-          CARD 2: MISI SOFT SKILL & SJT (lg:col-span-4 - Biru Putih Theme)
+          ROW 1, CARD 2: MISI SOFT SKILL & SJT (lg:col-span-4 - Live Preview Otomatis)
       ========================================================================= */}
-      <div className="lg:col-span-4 p-5 sm:p-6 bg-white border border-blue-100/90 rounded-2xl flex flex-col justify-between shadow-xs space-y-4">
+      <div className="lg:col-span-4 p-5 sm:p-6 bg-white border border-slate-200/90 rounded-2xl flex flex-col justify-between shadow-[0_16px_36px_-10px_rgba(0,0,0,0.12),0_4px_12px_-2px_rgba(0,0,0,0.06)] space-y-4">
         <div>
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-2">
@@ -550,71 +586,65 @@ export default function BentoEcosystemTour() {
               </div>
             </div>
 
-            <span className="inline-flex items-center gap-1 text-[10px] font-mono font-bold text-brand-primary bg-blue-50 px-2 py-0.5 rounded-full border border-blue-200">
-              <Zap className="w-3 h-3 text-brand-primary" />
-              LEVEL 3 • 450 XP
-            </span>
+            {/* Live Indicator Chip */}
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-blue-50 border border-blue-200 text-[10px] font-bold text-brand-primary">
+              <span className="w-1.5 h-1.5 rounded-full bg-brand-primary animate-ping" />
+              <span>Live Simulasi</span>
+            </div>
           </div>
 
-          {/* Interactive Dilemma Choice Demo */}
-          <div className="mt-3 p-3 rounded-xl bg-blue-50/50 border border-blue-100 space-y-2">
-            <div className="text-[10px] font-mono text-slate-400 uppercase tracking-wider">
-              SKENARIO HARI INI:
+          {/* Interactive Dilemma Choice Demo with Auto-Cycling Live Transition */}
+          <div className="mt-3 p-3.5 rounded-xl bg-blue-50/50 border border-blue-100 space-y-2.5 transition-all duration-300">
+            <div className="flex items-center justify-between text-[10px] font-mono text-slate-400 uppercase tracking-wider">
+              <span>SKENARIO HARI INI</span>
+              <span className="text-brand-primary font-bold">LEVEL 3 • 450 XP</span>
             </div>
-            <p className="text-xs font-semibold text-slate-900 leading-snug">
-              &quot;Sprint deadline mendadak maju 3 hari sementara ada bug kritis di staging. Apa langkah utamamu?&quot;
+            <p className="text-xs font-semibold text-slate-900 leading-snug min-h-[38px] transition-all duration-300">
+              &quot;{currentScenario.question}&quot;
             </p>
 
-            <div className="space-y-1.5 pt-1">
-              <button
-                onClick={() => setSjtOptionChosen("A")}
-                className={`w-full text-left p-2 rounded-lg text-[11px] font-medium border transition-all cursor-pointer btn-press ${
-                  sjtOptionChosen === "A"
-                    ? "bg-white border-brand-primary text-brand-primary font-bold shadow-xs ring-1 ring-brand-primary/10"
-                    : "bg-white border-slate-200 text-slate-700 hover:bg-slate-50"
+            <div className="space-y-1.5 pt-0.5">
+              <div
+                className={`w-full text-left p-2 rounded-lg text-[11px] font-medium border transition-all duration-300 ${
+                  currentScenario.correctChoice === "A"
+                    ? "bg-white border-brand-primary text-brand-primary font-bold shadow-xs ring-2 ring-brand-primary/15"
+                    : "bg-white/80 border-slate-200 text-slate-600"
                 }`}
               >
-                [A] Isolasi bug &amp; komunikasikan trade-off scope fitur ke tim.
-              </button>
-              <button
-                onClick={() => setSjtOptionChosen("B")}
-                className={`w-full text-left p-2 rounded-lg text-[11px] font-medium border transition-all cursor-pointer btn-press ${
-                  sjtOptionChosen === "B"
-                    ? "bg-white border-brand-primary text-brand-primary font-bold shadow-xs ring-1 ring-brand-primary/10"
-                    : "bg-white border-slate-200 text-slate-700 hover:bg-slate-50"
+                {currentScenario.choiceA}
+              </div>
+              <div
+                className={`w-full text-left p-2 rounded-lg text-[11px] font-medium border transition-all duration-300 ${
+                  currentScenario.correctChoice === "B"
+                    ? "bg-white border-brand-primary text-brand-primary font-bold shadow-xs ring-2 ring-brand-primary/15"
+                    : "bg-white/80 border-slate-200 text-slate-600"
                 }`}
               >
-                [B] Deploy hotfix cepat tanpa pengujian menyeluruh.
-              </button>
+                {currentScenario.choiceB}
+              </div>
             </div>
 
-            {sjtOptionChosen && (
-              <div className="text-[10px] font-mono pt-1 text-emerald-700 flex items-center gap-1 font-semibold">
-                <CheckCircle2 className="w-3 h-3 text-emerald-600" />
-                <span>
-                  {sjtOptionChosen === "A"
-                    ? "+50 XP Adaptabilitas & Manajemen Risiko"
-                    : "Evaluasi: Risiko regresi sistem meningkat"}
-                </span>
-              </div>
-            )}
+            <div className="text-[10px] font-mono pt-1 text-emerald-700 flex items-center gap-1.5 font-bold animate-fadeIn">
+              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+              <span>{currentScenario.reward}</span>
+            </div>
           </div>
 
-          {/* Missions Checklist */}
+          {/* Missions Checklist with Live Active Highlight */}
           <div className="space-y-2 pt-3">
             <div className="text-[10px] font-mono text-slate-400 uppercase tracking-wider">
               DAFTAR MISI TERSEDIA:
             </div>
             {MISI_PRESETS.map((misi) => {
-              const isCompleted = misi.status === "completed";
-              const isInProgress = misi.status === "in_progress";
+              const isSimulatedActive = misi.id === currentScenario.activeMissionId;
+              const isCompleted = misi.status === "completed" || (isSimulatedActive && currentScenario.progressPercent === 100);
 
               return (
                 <div
                   key={misi.id}
-                  className={`flex items-center justify-between p-2.5 rounded-xl border text-xs transition-all ${
-                    isInProgress
-                      ? "bg-white border-brand-primary shadow-3xs ring-1 ring-brand-primary/10"
+                  className={`flex items-center justify-between p-2.5 rounded-xl border text-xs transition-all duration-300 ${
+                    isSimulatedActive
+                      ? "bg-white border-brand-primary shadow-xs ring-1 ring-brand-primary/20 scale-[1.01]"
                       : isCompleted
                       ? "bg-emerald-50/20 border-emerald-200"
                       : "bg-slate-50/60 border-slate-200 opacity-60"
@@ -625,7 +655,7 @@ export default function BentoEcosystemTour() {
                       className={`w-4 h-4 rounded-full flex items-center justify-center shrink-0 ${
                         isCompleted
                           ? "bg-emerald-100 text-emerald-700"
-                          : isInProgress
+                          : isSimulatedActive
                           ? "bg-blue-100 text-brand-primary"
                           : "bg-slate-200 text-slate-400"
                       }`}
@@ -655,95 +685,34 @@ export default function BentoEcosystemTour() {
           </div>
         </div>
 
-        {/* Daily Progress Meter */}
+        {/* Daily Progress Meter with Live Fill Transition */}
         <div className="pt-2 border-t border-slate-100">
           <div className="flex items-center justify-between text-[11px] text-slate-500 mb-1.5 font-mono">
             <span>PROGRES MISI HARIAN</span>
-            <span className="font-bold text-emerald-700">2 / 3 Selesai (67%)</span>
+            <span className="font-bold text-emerald-700 transition-all">
+              {currentScenario.progressLabel}
+            </span>
           </div>
           <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
             <div
-              className="h-full bg-emerald-500 rounded-full transition-all duration-500"
-              style={{ width: "67%" }}
+              className="h-full bg-emerald-500 rounded-full transition-all duration-700 ease-out"
+              style={{ width: `${currentScenario.progressPercent}%` }}
             />
           </div>
         </div>
       </div>
 
       {/* =========================================================================
-          CARD 3: VALIDASI RISET & 702+ LOWONGAN (lg:col-span-4 - Biru Putih Theme)
+          ROW 2, CARD 3: FULL WIDTH ROYAL BLUE SECTION (lg:col-span-12 - Black Shadow)
       ========================================================================= */}
-      <div className="lg:col-span-4 p-5 sm:p-6 bg-white border border-blue-100/90 rounded-2xl flex flex-col justify-between shadow-xs space-y-4">
-        <div>
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-400">
-              STANDAR VALIDASI EMPIRIS
-            </span>
-            <span className="text-[10px] font-mono font-bold text-brand-primary bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
-              HOLLAND CODES
-            </span>
-          </div>
-
-          <div className="space-y-1">
-            <div className="text-3xl font-black text-brand-primary font-mono tracking-tight tabular-nums">
-              702+
-            </div>
-            <h4 className="text-sm font-bold text-slate-900 leading-snug">
-              Lowongan Industri Dianalisis
-            </h4>
-            <p className="text-xs text-slate-500 leading-relaxed mt-1">
-              Setiap modul roadmap diselaraskan dengan kebutuhan kompetensi nyata pada lowongan kerja perusahaan teknologi terkemuka di Indonesia.
-            </p>
-          </div>
-
-          {/* Holland Codes RIASEC mini vector breakdown */}
-          <div className="mt-4 space-y-2">
-            <div className="text-[10px] font-mono text-slate-400 uppercase tracking-wider">
-              6 ORIENTASI MINAT RIASEC:
-            </div>
-            {[
-              { code: "R", name: "Realistic", val: 82 },
-              { code: "I", name: "Investigative", val: 94 },
-              { code: "A", name: "Artistic", val: 68 },
-              { code: "S", name: "Social", val: 75 },
-              { code: "E", name: "Enterprising", val: 86 },
-              { code: "C", name: "Conventional", val: 80 },
-            ].map((r) => (
-              <div key={r.code} className="flex items-center justify-between gap-3 text-xs">
-                <span className="font-mono text-slate-600 font-semibold w-28 truncate">
-                  {r.code} · {r.name}
-                </span>
-                <div className="flex-1 h-1.5 bg-blue-50 rounded-full overflow-hidden border border-blue-100">
-                  <div
-                    className="h-full bg-brand-primary rounded-full"
-                    style={{ width: `${r.val}%` }}
-                  />
-                </div>
-                <span className="font-mono text-[10px] text-brand-primary font-bold tabular-nums w-8 text-right">
-                  {r.val}%
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Micro note */}
-        <div className="pt-2 border-t border-slate-100 text-[11px] text-slate-500 font-medium">
-          Divalidasi dengan model psikometri psikologi okupasional John Holland.
-        </div>
-      </div>
-
-      {/* =========================================================================
-          CARD 4: ROYAL BRAND BLUE SHOWCASE (lg:col-span-8 - Virtual Simulations)
-      ========================================================================= */}
-      <div className="lg:col-span-8 p-5 sm:p-6 bg-gradient-to-br from-[#0066FF] to-[#004ecc] text-white border border-blue-400/40 rounded-2xl flex flex-col justify-between shadow-md shadow-brand-primary/10 space-y-4">
+      <div className="lg:col-span-12 p-6 sm:p-7 bg-gradient-to-br from-[#0066FF] to-[#004ecc] text-white rounded-2xl flex flex-col justify-between shadow-[0_24px_50px_-10px_rgba(0,0,0,0.22),0_6px_20px_-4px_rgba(0,0,0,0.1)] space-y-4">
         <div>
           {/* Header Eyebrow */}
           <div className="flex items-center justify-between mb-2">
             <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-blue-100">
               SIMULASI KERJA VIRTUAL &amp; VERIFIKASI INDUSTRI
             </span>
-            <span className="text-[10px] font-mono font-bold text-white bg-white/20 border border-white/30 px-2 py-0.5 rounded-full">
+            <span className="text-[10px] font-mono font-bold text-white bg-white/20 border border-white/30 px-2.5 py-0.5 rounded-full">
               PORTOFOLIO TERVERIFIKASI
             </span>
           </div>
@@ -751,31 +720,31 @@ export default function BentoEcosystemTour() {
           <h3 className="text-lg sm:text-xl font-bold tracking-tight text-white leading-tight">
             Bangun Portofolio Teruji Sebelum Melamar Kerja
           </h3>
-          <p className="text-xs sm:text-sm text-blue-100/90 leading-relaxed mt-1 max-w-2xl">
-            Selesaikan studi kasus kerja riil dari skenario industri terkemuka. Hasil kerjamu dievaluasi dengan rubrik standar perekrut profesional.
+          <p className="text-xs sm:text-sm text-blue-100/90 leading-relaxed mt-1 max-w-3xl">
+            Selesaikan studi kasus kerja nyata yang divalidasi standar industri, lengkapi dengan program magang dan kompetisi terkurasi.
           </p>
 
-          {/* 2-Column Split: Featured Activity + Work Simulation */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4">
-            {/* Left: Featured Curated Activity */}
-            <div className="p-3.5 rounded-xl bg-white/10 backdrop-blur-xs border border-white/20 flex flex-col justify-between space-y-2">
+          {/* 2-Column Split: Featured Curated Activity + Virtual Work Simulation */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+            {/* Left Column: Featured Curated Activity with Auto-Cycle */}
+            <div className="p-4 rounded-xl bg-white/10 backdrop-blur-xs border border-white/20 flex flex-col justify-between space-y-3">
               <div>
                 <div className="flex items-center justify-between text-[10px] font-mono text-blue-100 mb-1">
                   <span>KEGIATAN TERKURASI</span>
                   <span className="text-white font-bold">{currentKegiatan.match}% Cocok</span>
                 </div>
-                <h4 className="text-xs sm:text-sm font-bold text-white">
+                <h4 className="text-sm sm:text-base font-bold text-white">
                   {currentKegiatan.title}
                 </h4>
-                <div className="text-[11px] text-blue-100 mt-0.5">
+                <div className="text-xs text-blue-100 mt-0.5">
                   {currentKegiatan.organizer}
                 </div>
 
-                <div className="flex flex-wrap gap-1 mt-2">
+                <div className="flex flex-wrap gap-1.5 mt-2.5">
                   {currentKegiatan.tags.map((tag) => (
                     <span
                       key={tag}
-                      className="text-[9px] px-1.5 py-0.5 bg-white/15 border border-white/20 rounded text-white"
+                      className="text-[10px] px-2 py-0.5 bg-white/15 border border-white/20 rounded text-white"
                     >
                       {tag}
                     </span>
@@ -783,17 +752,17 @@ export default function BentoEcosystemTour() {
                 </div>
               </div>
 
-              <div className="flex items-center justify-between pt-2 border-t border-white/15 text-[10px]">
+              <div className="flex items-center justify-between pt-2.5 border-t border-white/15 text-[11px]">
                 <span className="text-amber-200 font-mono font-semibold flex items-center gap-1">
-                  <Clock className="w-3 h-3 text-amber-200" />
+                  <Clock className="w-3.5 h-3.5 text-amber-200" />
                   {currentKegiatan.deadline}
                 </span>
                 <button
                   onClick={(e) => toggleBookmark(currentKegiatan.id, e)}
-                  className="text-white hover:text-blue-200 transition-colors cursor-pointer flex items-center gap-1 font-mono text-[10px]"
+                  className="text-white hover:text-blue-200 transition-colors cursor-pointer flex items-center gap-1.5 font-mono text-[11px]"
                 >
                   <Bookmark
-                    className={`w-3 h-3 ${
+                    className={`w-3.5 h-3.5 ${
                       bookmarkedId === currentKegiatan.id ? "fill-white text-white" : ""
                     }`}
                   />
@@ -802,31 +771,31 @@ export default function BentoEcosystemTour() {
               </div>
             </div>
 
-            {/* Right: Simulation Partner Showcase */}
-            <div className="p-3.5 rounded-xl bg-white/10 backdrop-blur-xs border border-white/20 flex flex-col justify-between space-y-2">
+            {/* Right Column: Work Simulation Showcase */}
+            <div className="p-4 rounded-xl bg-white/10 backdrop-blur-xs border border-white/20 flex flex-col justify-between space-y-3">
               <div>
                 <div className="flex items-center justify-between text-[10px] font-mono text-blue-100 mb-1">
                   <span>STUDI KASUS SPESIALISASI</span>
                   <span className="text-emerald-300 font-bold">100% RELEVAN</span>
                 </div>
-                <h4 className="text-xs sm:text-sm font-bold text-white">
+                <h4 className="text-sm sm:text-base font-bold text-white">
                   Simulasi Penanganan Insiden Finansial
                 </h4>
-                <p className="text-[11px] text-blue-100/90 mt-0.5 leading-relaxed">
+                <p className="text-xs text-blue-100/90 mt-1 leading-relaxed">
                   Menyelesaikan simulasi arsitektur sistem checkout skala tinggi &amp; analisis trade-off performa.
                 </p>
-                <div className="text-[10px] font-mono text-blue-200 mt-2">
+                <div className="text-[11px] font-mono text-blue-200 mt-2">
                   Luaran: Dokumen RFC + Script Pengujian Stres
                 </div>
               </div>
 
-              <div className="pt-2 border-t border-white/15 flex items-center justify-between">
-                <span className="text-[10px] font-mono text-blue-100">
+              <div className="pt-2.5 border-t border-white/15 flex items-center justify-between">
+                <span className="text-[11px] font-mono text-blue-100">
                   Model Sertifikasi Mandiri
                 </span>
                 <Link
                   href="/assessment"
-                  className="btn-press inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-white text-brand-primary text-xs font-bold shadow-xs hover:bg-blue-50 transition-colors cursor-pointer group"
+                  className="btn-press inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-white text-brand-primary text-xs font-bold shadow-xs hover:bg-blue-50 transition-colors cursor-pointer group"
                 >
                   <span>Mulai Simulasi</span>
                   <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" />
@@ -848,9 +817,9 @@ export default function BentoEcosystemTour() {
               <button
                 key={k.id}
                 onClick={() => setActiveKegiatanIdx(i)}
-                className={`px-2 py-0.5 rounded cursor-pointer transition-colors ${
+                className={`px-2.5 py-1 rounded cursor-pointer transition-colors ${
                   i === activeKegiatanIdx
-                    ? "bg-white text-brand-primary font-bold"
+                    ? "bg-white text-brand-primary font-bold shadow-xs"
                     : "text-blue-200 hover:text-white"
                 }`}
               >
