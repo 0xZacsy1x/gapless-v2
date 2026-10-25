@@ -38,6 +38,7 @@ export default function AssessmentDemo() {
 
     // Analyzing Stage Progress
     const [analyzingProgress, setAnalyzingProgress] = useState<number>(0);
+    const [analyzingBarsActive, setAnalyzingBarsActive] = useState<boolean>(false);
 
     // Result Stage Staggered Entrance (1: Profile, 2: SkillReadiness, 3: Gap row, 4: Roadmap)
     const [renderResult, setRenderResult] = useState<boolean>(false);
@@ -190,6 +191,7 @@ export default function AssessmentDemo() {
             setIsBtnHovered(false);
             setActiveRole("Software Engineer");
             setAnalyzingProgress(0);
+            setAnalyzingBarsActive(false);
             setRenderResult(false);
             setResultStaggerStep(0);
 
@@ -256,16 +258,17 @@ export default function AssessmentDemo() {
             schedule(() => {
                 setIsTransitioning(false);
                 setQuestionPos("hidden");
+                setAnalyzingBarsActive(true);
 
-                // Start Analyzing Archetype Bars Animation with quartic deceleration (~2s)
+                // Start Analyzing Archetype Bars Animation with cubic deceleration (~1.8s)
                 const startTime = performance.now();
-                const duration = 2000;
+                const duration = 1800;
                 const animateBars = (currentTime: number) => {
                     if (!active) return;
                     const elapsed = currentTime - startTime;
                     const progress = Math.min(elapsed / duration, 1);
-                    // easeOutQuart
-                    const easeProgress = 1 - Math.pow(1 - progress, 4);
+                    // easeOutCubic
+                    const easeProgress = 1 - Math.pow(1 - progress, 3);
                     setAnalyzingProgress(easeProgress);
                     if (progress < 1) {
                         animFrameId = requestAnimationFrame(animateBars);
@@ -292,6 +295,8 @@ export default function AssessmentDemo() {
             schedule(() => {
                 setIsTransitioning(false);
                 setAnalyzingPos("hidden");
+                setAnalyzingBarsActive(false);
+                setAnalyzingProgress(0);
             }, 8150);
 
             // -------------------------------------------------------------
@@ -384,7 +389,7 @@ export default function AssessmentDemo() {
 
     return (
         <div
-            className="w-full max-w-[440px] xl:max-w-[480px] min-h-[620px] sm:min-h-[630px] mx-auto rounded-[32px] bg-white border border-blue-100/90 shadow-[0_20px_50px_-12px_rgba(0,102,255,0.09),0_4px_16px_-4px_rgba(0,102,255,0.04)] p-5 sm:p-6 flex flex-col justify-between relative select-none [contain:layout] font-sans"
+            className="w-full max-w-[440px] xl:max-w-[480px] min-h-[620px] sm:min-h-[630px] mx-auto rounded-[32px] bg-white border border-slate-200/90 shadow-[0_24px_50px_-12px_rgba(0,0,0,0.18),0_8px_24px_-4px_rgba(0,0,0,0.08)] p-5 sm:p-6 flex flex-col justify-between relative select-none [contain:layout] font-sans"
             aria-hidden="true"
         >
             {/* Ambient Blue Glow */}
@@ -540,8 +545,8 @@ export default function AssessmentDemo() {
                     </div>
 
                     {/* Archetype Bars Filling Up */}
-                    <div className="w-full max-w-xs space-y-2.5 bg-blue-50/50 p-4 rounded-2xl border border-blue-100">
-                        {DEMO_ARCHETYPES.map((arch) => {
+                    <div className="w-full max-w-xs space-y-2.5 bg-blue-50/50 p-4 rounded-2xl border border-blue-100 shadow-xs">
+                        {DEMO_ARCHETYPES.map((arch, idx) => {
                             const currentVal = Math.round(arch.val * analyzingProgress);
                             return (
                                 <div key={arch.label} className="space-y-1">
@@ -549,12 +554,15 @@ export default function AssessmentDemo() {
                                         <span>{arch.label}</span>
                                         <span className="font-mono tabular-nums text-brand-primary font-bold">{currentVal}%</span>
                                     </div>
-                                    <div className="h-1.5 w-full bg-blue-100/60 rounded-full overflow-hidden">
+                                    <div className="h-1.5 w-full bg-blue-100/70 rounded-full overflow-hidden">
                                         <div
                                             className="h-full bg-brand-primary rounded-full"
                                             style={{
-                                                width: `${currentVal}%`,
-                                                transition: "width 80ms linear",
+                                                width: analyzingBarsActive ? `${arch.val}%` : "0%",
+                                                transition: analyzingBarsActive
+                                                    ? `width 1800ms cubic-bezier(0.16, 1, 0.3, 1) ${idx * 40}ms`
+                                                    : "none",
+                                                willChange: "width",
                                             }}
                                         />
                                     </div>
