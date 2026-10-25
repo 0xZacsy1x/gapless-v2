@@ -109,17 +109,17 @@ export const CAREER_ROLES_DATA: Record<string, CareerRoleData> = {
         biggestGap: "Data Modeling",
         gapNote: "Gap terbesar: Data Modeling. Roadmap belajarmu mulai dari sini.",
     },
-    "Technical Lead": {
-        role: "Technical Lead",
-        readinessScore: 41,
+    "UI/UX Designer": {
+        role: "UI/UX Designer",
+        readinessScore: 74,
         status: "Cukup siap",
         skills: [
-            { name: "Arsitektur Sistem", userLevel: 55, requiredLevel: 85 },
-            { name: "Engineering Management", userLevel: 35, requiredLevel: 75, isPriority: true },
-            { name: "Code Review & Quality", userLevel: 65, requiredLevel: 80 },
+            { name: "Figma Auto-Layout & UI Systems", userLevel: 85, requiredLevel: 85 },
+            { name: "Design Tokens & Handoff", userLevel: 65, requiredLevel: 80 },
+            { name: "Usability Testing & Metrics", userLevel: 45, requiredLevel: 75, isPriority: true },
         ],
-        biggestGap: "Engineering Management",
-        gapNote: "Gap terbesar: Engineering Management. Roadmap belajarmu mulai dari sini.",
+        biggestGap: "Usability Testing & Metrics",
+        gapNote: "Gap terbesar: Usability Testing & Metrics. Roadmap belajarmu mulai dari sini.",
     },
 };
 

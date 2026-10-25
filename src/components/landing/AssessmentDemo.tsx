@@ -20,6 +20,7 @@ export default function AssessmentDemo() {
     const nextBtnRef = useRef<HTMLButtonElement>(null);
     const chipSeRef = useRef<HTMLButtonElement>(null);
     const chipDaRef = useRef<HTMLButtonElement>(null);
+    const chipUiRef = useRef<HTMLButtonElement>(null);
     const roadmapCardRef = useRef<HTMLDivElement>(null);
 
     // Screen Positions for Silky Upward Sliding Transitions
@@ -37,6 +38,7 @@ export default function AssessmentDemo() {
 
     // Analyzing Stage Progress
     const [analyzingProgress, setAnalyzingProgress] = useState<number>(0);
+    const [analyzingBarsActive, setAnalyzingBarsActive] = useState<boolean>(false);
 
     // Result Stage Staggered Entrance (1: Profile, 2: SkillReadiness, 3: Gap row, 4: Roadmap)
     const [renderResult, setRenderResult] = useState<boolean>(false);
@@ -189,6 +191,7 @@ export default function AssessmentDemo() {
             setIsBtnHovered(false);
             setActiveRole("Software Engineer");
             setAnalyzingProgress(0);
+            setAnalyzingBarsActive(false);
             setRenderResult(false);
             setResultStaggerStep(0);
 
@@ -255,16 +258,17 @@ export default function AssessmentDemo() {
             schedule(() => {
                 setIsTransitioning(false);
                 setQuestionPos("hidden");
+                setAnalyzingBarsActive(true);
 
-                // Start Analyzing Archetype Bars Animation with quartic deceleration (~2s)
+                // Start Analyzing Archetype Bars Animation with cubic deceleration (~1.8s)
                 const startTime = performance.now();
-                const duration = 2000; // ms
+                const duration = 1800;
                 const animateBars = (currentTime: number) => {
                     if (!active) return;
                     const elapsed = currentTime - startTime;
                     const progress = Math.min(elapsed / duration, 1);
-                    // easeOutQuart
-                    const easeProgress = 1 - Math.pow(1 - progress, 4);
+                    // easeOutCubic
+                    const easeProgress = 1 - Math.pow(1 - progress, 3);
                     setAnalyzingProgress(easeProgress);
                     if (progress < 1) {
                         animFrameId = requestAnimationFrame(animateBars);
@@ -276,7 +280,6 @@ export default function AssessmentDemo() {
             // -------------------------------------------------------------
             // TRANSITION 2: ANALYZING -> RESULT (750ms Silky Upward Slide)
             // -------------------------------------------------------------
-            // Mount result screen at "enter" position right before transition
             schedule(() => {
                 setRenderResult(true);
                 setResultPos("enter");
@@ -292,56 +295,40 @@ export default function AssessmentDemo() {
             schedule(() => {
                 setIsTransitioning(false);
                 setAnalyzingPos("hidden");
+                setAnalyzingBarsActive(false);
+                setAnalyzingProgress(0);
             }, 8150);
 
             // -------------------------------------------------------------
             // PHASE 3: RESULT STAGE (Gentle Staggered Entrance)
             // -------------------------------------------------------------
-            // 8300ms: 1. Profile card floats in
-            schedule(() => {
-                setResultStaggerStep(1);
-            }, 8300);
+            schedule(() => setResultStaggerStep(1), 8300);
+            schedule(() => setResultStaggerStep(2), 8550);
+            schedule(() => setResultStaggerStep(3), 8800);
+            schedule(() => setResultStaggerStep(4), 9050);
 
-            // 8480ms: 2. Skill Readiness card floats in & count-up begins
-            schedule(() => {
-                setResultStaggerStep(2);
-            }, 8480);
-
-            // 8660ms: 3. Gap terbesar row floats in
-            schedule(() => {
-                setResultStaggerStep(3);
-            }, 8660);
-
-            // 8840ms: 4. Roadmap notification card floats in
-            schedule(() => {
-                setResultStaggerStep(4);
-            }, 8840);
-
-            // -------------------------------------------------------------
-            // CURSOR INTERACTION ON RESULT SCREEN
-            // -------------------------------------------------------------
-            // 9500ms: Recalculate coordinates and reveal cursor smoothly
+            // 9600ms: Reveal fake cursor on Result Screen
             schedule(() => {
                 if (chipDaRef.current) {
-                    setCursorPos(getCoordinates(chipDaRef.current, { y: 24 }));
+                    setCursorPos(getCoordinates(chipDaRef.current, { y: 25 }));
                 }
                 setCursorVisible(true);
-            }, 9500);
+            }, 9600);
 
-            // 9850ms: Silky glide cursor to "Data Analyst" chip
+            // 10100ms: Silky glide cursor to "Data Analyst" chip
             schedule(() => {
                 if (chipDaRef.current) {
                     setCursorPos(getCoordinates(chipDaRef.current));
                 }
-            }, 9850);
+            }, 10100);
 
-            // 10700ms: Click "Data Analyst" chip -> Smooth liquid in-place transition to 54%
+            // 10900ms: Click "Data Analyst" chip -> Smooth in-place transition to 54%
             schedule(() => {
                 triggerClick();
                 setActiveRole("Data Analyst");
-            }, 10700);
+            }, 10900);
 
-            // 11800ms: Glide cursor to "Software Engineer" chip
+            // 11800ms: Glide cursor back to "Software Engineer" chip
             schedule(() => {
                 if (chipSeRef.current) {
                     setCursorPos(getCoordinates(chipSeRef.current));
@@ -402,31 +389,31 @@ export default function AssessmentDemo() {
 
     return (
         <div
-            className="w-full max-w-[440px] xl:max-w-[480px] min-h-[620px] sm:min-h-[630px] mx-auto rounded-[32px] bg-white border border-gray-100 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.09),0_4px_16px_-4px_rgba(0,0,0,0.04)] p-5 sm:p-6 flex flex-col justify-between relative select-none [contain:layout]"
+            className="w-full max-w-[440px] xl:max-w-[480px] min-h-[620px] sm:min-h-[630px] mx-auto rounded-[32px] bg-white border border-slate-200/90 shadow-[0_24px_50px_-12px_rgba(0,0,0,0.18),0_8px_24px_-4px_rgba(0,0,0,0.08)] p-5 sm:p-6 flex flex-col justify-between relative select-none [contain:layout] font-sans"
             aria-hidden="true"
         >
-            {/* Ambient Gradient Glow */}
+            {/* Ambient Blue Glow */}
             <div className="absolute top-0 right-0 w-48 h-48 bg-brand-primary/5 blur-2xl rounded-full pointer-events-none" />
 
             {/* Top Meta Header (Fixed - never moves) */}
-            <div className="flex items-center justify-between border-b border-gray-100 pb-3 relative z-10 shrink-0">
+            <div className="flex items-center justify-between border-b border-blue-50 pb-3 relative z-10 shrink-0">
                 <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-xl bg-brand-primary/10 flex items-center justify-center text-brand-primary">
-                        <Brain className="w-4 h-4" />
+                    <div className="w-8 h-8 rounded-xl bg-blue-50 flex items-center justify-center text-brand-primary border border-blue-100">
+                        <Brain className="w-4 h-4 text-brand-primary" />
                     </div>
                     <div>
-                        <div className="text-xs font-bold text-gray-900">Simulasi Asesmen Minat</div>
-                        <div className="text-[10px] text-gray-400 font-medium transition-colors duration-300">
+                        <div className="text-xs font-bold text-slate-900 font-sans">Simulasi Asesmen Minat</div>
+                        <div className="text-[10px] text-slate-400 font-medium transition-colors duration-300">
                             {analyzingPos === "active"
-                                ? "Menganalisis matriks..."
+                                ? "Menganalisis matriks psikometri..."
                                 : resultPos === "active" || prefersReducedMotion
                                     ? "Hasil Terverifikasi"
                                     : currentQ.stepLabel}
                         </div>
                     </div>
                 </div>
-                <span className="text-[10px] uppercase font-bold tracking-wider px-2.5 py-1 rounded-full bg-gray-100 text-gray-500">
-                    Contoh tampilan
+                <span className="text-[10px] uppercase font-bold tracking-wider px-2.5 py-1 rounded-full bg-blue-50 text-brand-primary border border-blue-100">
+                    Live Demo
                 </span>
             </div>
 
@@ -436,21 +423,21 @@ export default function AssessmentDemo() {
                 className="relative w-full h-[470px] sm:h-[480px] overflow-hidden my-auto"
             >
                 {/* ===================================================================
-            SCREEN 1: QUESTION SCREEN
-        =================================================================== */}
+                    SCREEN 1: QUESTION SCREEN
+                =================================================================== */}
                 <div
                     style={prefersReducedMotion ? { display: "none" } : getScreenStyle(questionPos)}
                     className="absolute inset-0 w-full h-full flex flex-col justify-center space-y-3.5 px-0.5"
                 >
                     {/* Progress Bar */}
                     <div className="space-y-1.5">
-                        <div className="flex justify-between text-[11px] font-semibold text-gray-400">
+                        <div className="flex justify-between text-[11px] font-semibold text-slate-400">
                             <span>Progres Evaluasi</span>
                             <span className="text-brand-primary font-bold tabular-nums">
                                 {!isOptionSelected ? currentQ.progressLabel : `${currentQ.progressPercent + 7}% Selesai`}
                             </span>
                         </div>
-                        <div className="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
+                        <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
                             <div
                                 className="h-full bg-brand-primary rounded-full transition-all duration-700 ease-out"
                                 style={{
@@ -463,17 +450,17 @@ export default function AssessmentDemo() {
                     </div>
 
                     {/* Question Box */}
-                    <div className="p-4 rounded-2xl bg-gray-50/90 border border-gray-100 space-y-3">
+                    <div className="p-4 rounded-2xl bg-blue-50/40 border border-blue-100/80 space-y-3">
                         <div className="flex items-center justify-between">
-                            <span className="text-[10px] font-black uppercase tracking-widest text-brand-primary">
+                            <span className="text-[10px] font-bold uppercase tracking-widest text-brand-primary">
                                 {currentQ.scenarioTitle}
                             </span>
-                            <span className="text-[10px] text-gray-400 font-semibold">
+                            <span className="text-[10px] text-slate-400 font-semibold font-mono">
                                 {currentQ.questionNumber}
                             </span>
                         </div>
 
-                        <p className="text-xs sm:text-sm font-semibold text-gray-800 leading-relaxed min-h-[38px]">
+                        <p className="text-xs sm:text-sm font-semibold text-slate-800 leading-relaxed min-h-[38px]">
                             {currentQ.questionText}
                         </p>
 
@@ -489,25 +476,21 @@ export default function AssessmentDemo() {
                                         tabIndex={-1}
                                         className={`w-full flex items-center gap-3 p-3 rounded-xl border text-left transition-all duration-300 ${isSelected
                                                 ? "bg-white border-2 border-brand-primary shadow-xs ring-2 ring-brand-primary/10"
-                                                : "bg-white border-gray-200/80 text-gray-700 hover:border-gray-300"
+                                                : "bg-white border-slate-200/80 text-slate-700 hover:border-blue-200"
                                             }`}
                                         style={{
                                             transition: "all 300ms cubic-bezier(0.16, 1, 0.3, 1)",
                                         }}
                                     >
                                         <div
-                                            className={`w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors duration-300 ${isSelected ? "border-brand-primary" : "border-gray-300"
+                                            className={`w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors duration-300 ${isSelected ? "border-brand-primary" : "border-slate-300"
                                                 }`}
                                         >
-                                            <div
-                                                className={`w-2 h-2 rounded-full bg-brand-primary transition-transform duration-300 ${isSelected ? "scale-100" : "scale-0"
-                                                    }`}
-                                                style={{
-                                                    transitionTimingFunction: "cubic-bezier(0.34, 1.56, 0.64, 1)",
-                                                }}
-                                            />
+                                            {isSelected && (
+                                                <span className="w-2 h-2 rounded-full bg-brand-primary" />
+                                            )}
                                         </div>
-                                        <span className="text-xs font-semibold text-gray-900 leading-snug">
+                                        <span className="text-xs font-medium leading-snug">
                                             {choice.text}
                                         </span>
                                     </button>
@@ -516,66 +499,71 @@ export default function AssessmentDemo() {
                         </div>
                     </div>
 
-                    {/* Action Trigger Button */}
-                    <div className="pt-2 flex justify-end">
+                    {/* Action Button */}
+                    <div className="pt-1">
                         <button
                             ref={nextBtnRef}
                             type="button"
                             tabIndex={-1}
-                            className={`px-5 py-2.5 rounded-full text-xs font-bold transition-all duration-300 flex items-center gap-1.5 shadow-sm ${isBtnPressed
-                                    ? "bg-[#004ECC] text-white scale-[0.96] ring-4 ring-brand-primary/40 shadow-inner"
-                                    : isBtnHovered
-                                        ? "bg-brand-primary text-white scale-[1.04] shadow-lg shadow-brand-primary/30 ring-4 ring-brand-primary/20"
-                                        : isOptionSelected
-                                            ? "bg-brand-primary text-white scale-[1.01] shadow-brand-primary/20"
-                                            : "bg-gray-100 text-gray-400 cursor-not-allowed opacity-60"
+                            className={`w-full h-11 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-2 transition-all duration-300 ${isOptionSelected
+                                    ? isBtnPressed
+                                        ? "bg-brand-primary/80 text-white scale-[0.98]"
+                                        : isBtnHovered
+                                            ? "bg-brand-primary text-white shadow-md shadow-brand-primary/25 scale-[1.01]"
+                                            : "bg-brand-primary text-white shadow-xs"
+                                    : "bg-slate-100 text-slate-400 cursor-not-allowed"
                                 }`}
                             style={{
-                                transition: "all 280ms cubic-bezier(0.16, 1, 0.3, 1)",
+                                transition: "all 200ms cubic-bezier(0.16, 1, 0.3, 1)",
                             }}
                         >
-                            Lihat Hasil Asesmen <ChevronRight className="w-3.5 h-3.5" />
+                            <span>Lihat Hasil Asesmen</span>
+                            <ChevronRight className="w-4 h-4" />
                         </button>
                     </div>
                 </div>
 
                 {/* ===================================================================
-            SCREEN 2: ANALYZING SCREEN
-        =================================================================== */}
+                    SCREEN 2: ANALYZING SCREEN
+                =================================================================== */}
                 <div
-                    style={prefersReducedMotion ? { display: "none" } : getScreenStyle(analyzingPos)}
-                    className="absolute inset-0 w-full h-full flex flex-col justify-center space-y-4 text-center px-0.5"
+                    style={getScreenStyle(analyzingPos)}
+                    className="absolute inset-0 w-full h-full flex flex-col justify-center items-center space-y-6 px-4"
                 >
-                    <div className="relative w-14 h-14 mx-auto">
-                        <div className="absolute inset-0 rounded-2xl bg-brand-primary/20 animate-ping opacity-40" />
-                        <div className="relative w-14 h-14 rounded-2xl bg-brand-primary text-white flex items-center justify-center shadow-lg shadow-brand-primary/30">
-                            <Brain className="w-7 h-7 animate-pulse" />
-                        </div>
+                    <div className="relative flex items-center justify-center">
+                        <div className="w-16 h-16 rounded-full border-3 border-blue-100 border-t-brand-primary animate-spin" />
+                        <Brain className="w-7 h-7 text-brand-primary absolute" />
                     </div>
 
-                    <div className="space-y-1">
-                        <h4 className="text-base font-black text-gray-900 tracking-tight">
-                            Menganalisis Matriks Perilaku...
+                    <div className="text-center space-y-1">
+                        <h4 className="text-sm font-bold text-slate-900">
+                            Menganalisis Pola Responsmu...
                         </h4>
-                        <p className="text-xs text-gray-400">
-                            Menghitung keselarasan pola pikir dengan 4 Archetype nyata.
+                        <p className="text-xs text-slate-400">
+                            Memetakan orientasi psikometri RIASEC &amp; kompetensi industri.
                         </p>
                     </div>
 
-                    {/* Sequential Archetype Progress Bars with Live Quartic Count-up */}
-                    <div className="space-y-2.5 p-3.5 rounded-2xl bg-gray-50 border border-gray-100 text-left max-w-sm mx-auto w-full">
-                        {DEMO_ARCHETYPES.map((bar) => {
-                            const liveVal = Math.round(bar.val * analyzingProgress);
+                    {/* Archetype Bars Filling Up */}
+                    <div className="w-full max-w-xs space-y-2.5 bg-blue-50/50 p-4 rounded-2xl border border-blue-100 shadow-xs">
+                        {DEMO_ARCHETYPES.map((arch, idx) => {
+                            const currentVal = Math.round(arch.val * analyzingProgress);
                             return (
-                                <div key={bar.label} className="space-y-1">
-                                    <div className="flex justify-between text-[10px] font-bold text-gray-600">
-                                        <span>{bar.label}</span>
-                                        <span className="text-brand-primary tabular-nums font-bold">{liveVal}%</span>
+                                <div key={arch.label} className="space-y-1">
+                                    <div className="flex justify-between text-[11px] font-semibold text-slate-600">
+                                        <span>{arch.label}</span>
+                                        <span className="font-mono tabular-nums text-brand-primary font-bold">{currentVal}%</span>
                                     </div>
-                                    <div className="h-1.5 w-full bg-gray-200 rounded-full overflow-hidden">
+                                    <div className="h-1.5 w-full bg-blue-100/70 rounded-full overflow-hidden">
                                         <div
-                                            className="h-full bg-brand-primary rounded-full transition-all duration-300 ease-out"
-                                            style={{ width: `${liveVal}%` }}
+                                            className="h-full bg-brand-primary rounded-full"
+                                            style={{
+                                                width: analyzingBarsActive ? `${arch.val}%` : "0%",
+                                                transition: analyzingBarsActive
+                                                    ? `width 1800ms cubic-bezier(0.16, 1, 0.3, 1) ${idx * 40}ms`
+                                                    : "none",
+                                                willChange: "width",
+                                            }}
                                         />
                                     </div>
                                 </div>
@@ -585,54 +573,43 @@ export default function AssessmentDemo() {
                 </div>
 
                 {/* ===================================================================
-            SCREEN 3: RESULT SCREEN (STAGGERED ITEMS)
-        =================================================================== */}
+                    SCREEN 3: RESULT SCREEN (Staggered Entrance)
+                =================================================================== */}
                 {(renderResult || prefersReducedMotion) && (
                     <div
-                        style={
-                            prefersReducedMotion
-                                ? { position: "relative", width: "100%", height: "100%" }
-                                : getScreenStyle(resultPos)
-                        }
-                        className="absolute inset-0 w-full h-full flex flex-col justify-center space-y-2.5 px-0.5"
+                        style={getScreenStyle(resultPos)}
+                        className="absolute inset-0 w-full h-full flex flex-col justify-between py-1 px-0.5 space-y-2"
                     >
-                        {/* ITEM 1: Profile Card + Career Chips (Stagger Step 1) */}
-                        <div
-                            style={getResultStaggerStyle(1)}
-                            className="p-3 sm:p-3.5 rounded-2xl bg-brand-primary/5 border border-brand-primary/20 space-y-2"
-                        >
+                        {/* ITEM 1: Profile Top Match & Role Switcher Chips (Stagger Step 1) */}
+                        <div style={getResultStaggerStyle(1)} className="space-y-2">
                             <div className="flex items-center justify-between">
-                                <span className="text-[10px] font-black uppercase tracking-widest text-brand-primary">
-                                    Profil Teridentifikasi
+                                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-blue-50 text-brand-primary text-[10px] font-bold border border-blue-200">
+                                    <Sparkles className="w-3 h-3 text-brand-primary" />
+                                    Kecocokan Tertinggi (94%)
                                 </span>
-                                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-brand-primary text-white">
-                                    Cocok 95%
+                                <span className="text-[10px] font-bold text-slate-400">
+                                    Profil Terverifikasi
                                 </span>
                             </div>
 
-                            <div>
-                                <h4 className="text-base sm:text-lg font-black tracking-tight text-gray-900 leading-snug">
+                            <div className="p-3 rounded-2xl bg-blue-50/50 border border-blue-100/90 space-y-2">
+                                <div className="text-xs font-bold text-slate-800">
                                     Kamu adalah <span className="text-brand-primary">The Builder</span>
-                                </h4>
-                                <p className="text-[11px] text-gray-600 leading-relaxed mt-0.5">
-                                    Kekuatan alamimu terletak pada pemecahan masalah logis, pembangunan sistem yang andal, dan eksekusi terstruktur.
-                                </p>
-                            </div>
-
-                            {/* Career Role Chips */}
-                            <div className="pt-0.5">
-                                <div className="text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1">
-                                    Pilih Peran untuk Cek Kesiapan:
                                 </div>
-                                <div className="flex flex-wrap gap-1.5">
+                                <div className="text-[11px] text-slate-500 leading-snug">
+                                    Berbakat merancang arsitektur sistem logis, memecahkan problematis teknikal, dan eksekusi presisi.
+                                </div>
+
+                                {/* Dynamic Career Role Chips */}
+                                <div className="flex items-center gap-1.5 pt-1 overflow-x-auto no-scrollbar">
                                     <button
                                         ref={chipSeRef}
                                         type="button"
                                         tabIndex={-1}
                                         onClick={() => setActiveRole("Software Engineer")}
-                                        className={`px-2.5 py-1 rounded-xl text-xs font-bold transition-all duration-300 ${activeRole === "Software Engineer"
+                                        className={`px-2.5 py-1 rounded-xl text-xs font-bold transition-all duration-300 cursor-pointer ${activeRole === "Software Engineer"
                                                 ? "bg-brand-primary text-white shadow-xs scale-105"
-                                                : "bg-white border border-gray-200 text-gray-700 hover:border-brand-primary/50"
+                                                : "bg-white border border-slate-200 text-slate-700 hover:border-brand-primary/50"
                                             }`}
                                         style={{
                                             transition: "all 250ms cubic-bezier(0.16, 1, 0.3, 1)",
@@ -651,9 +628,9 @@ export default function AssessmentDemo() {
                                         type="button"
                                         tabIndex={-1}
                                         onClick={() => setActiveRole("Data Analyst")}
-                                        className={`px-2.5 py-1 rounded-xl text-xs font-bold transition-all duration-300 ${activeRole === "Data Analyst"
+                                        className={`px-2.5 py-1 rounded-xl text-xs font-bold transition-all duration-300 cursor-pointer ${activeRole === "Data Analyst"
                                                 ? "bg-brand-primary text-white shadow-xs scale-105"
-                                                : "bg-white border border-gray-200 text-gray-700 hover:border-brand-primary/50"
+                                                : "bg-white border border-slate-200 text-slate-700 hover:border-brand-primary/50"
                                             }`}
                                         style={{
                                             transition: "all 250ms cubic-bezier(0.16, 1, 0.3, 1)",
@@ -668,22 +645,23 @@ export default function AssessmentDemo() {
                                     </button>
 
                                     <button
+                                        ref={chipUiRef}
                                         type="button"
                                         tabIndex={-1}
-                                        onClick={() => setActiveRole("Technical Lead")}
-                                        className={`px-2.5 py-1 rounded-xl text-xs font-bold transition-all duration-300 ${activeRole === "Technical Lead"
+                                        onClick={() => setActiveRole("UI/UX Designer")}
+                                        className={`px-2.5 py-1 rounded-xl text-xs font-bold transition-all duration-300 cursor-pointer ${activeRole === "UI/UX Designer"
                                                 ? "bg-brand-primary text-white shadow-xs scale-105"
-                                                : "bg-white border border-gray-200 text-gray-700 hover:border-brand-primary/50"
+                                                : "bg-white border border-slate-200 text-slate-700 hover:border-brand-primary/50"
                                             }`}
                                         style={{
                                             transition: "all 250ms cubic-bezier(0.16, 1, 0.3, 1)",
                                         }}
                                     >
                                         <span className="flex items-center gap-1">
-                                            {activeRole === "Technical Lead" && (
+                                            {activeRole === "UI/UX Designer" && (
                                                 <CheckCircle2 className="w-3 h-3" />
                                             )}
-                                            Technical Lead
+                                            UI/UX Designer
                                         </span>
                                     </button>
                                 </div>
@@ -702,7 +680,7 @@ export default function AssessmentDemo() {
                         {/* ITEM 3: Gap Terbesar Callout Row (Stagger Step 3) */}
                         <div
                             style={getResultStaggerStyle(3)}
-                            className="p-2 sm:p-2.5 rounded-xl bg-brand-primary/5 border border-brand-primary/15 text-[11px] text-gray-700 flex items-center gap-2"
+                            className="p-2 sm:p-2.5 rounded-xl bg-blue-50/80 border border-blue-200/80 text-[11px] text-slate-700 flex items-center gap-2"
                         >
                             <AlertCircle className="w-3.5 h-3.5 text-brand-primary shrink-0" />
                             <span className="truncate">
@@ -715,15 +693,15 @@ export default function AssessmentDemo() {
                         <div
                             ref={roadmapCardRef}
                             style={getResultStaggerStyle(4)}
-                            className="p-2.5 sm:p-3 rounded-2xl bg-white border border-gray-200/80 shadow-xs flex items-center gap-2.5"
+                            className="p-2.5 sm:p-3 rounded-2xl bg-white border border-blue-100 shadow-xs flex items-center gap-2.5"
                         >
-                            <div className="w-7 h-7 rounded-lg bg-brand-primary/10 text-brand-primary flex items-center justify-center shrink-0">
-                                <Sparkles className="w-3.5 h-3.5" />
+                            <div className="w-7 h-7 rounded-lg bg-blue-50 text-brand-primary flex items-center justify-center shrink-0 border border-blue-100">
+                                <Sparkles className="w-3.5 h-3.5 text-brand-primary" />
                             </div>
                             <div className="min-w-0 flex-1">
-                                <div className="text-xs font-bold text-gray-900">Roadmap belajarmu siap!</div>
-                                <div className="text-[10px] text-gray-400">
-                                    Kurikulum terstruktur untuk mempercepat kesiapan kariermu.
+                                <div className="text-xs font-bold text-slate-900">Roadmap belajarmu siap!</div>
+                                <div className="text-[10px] text-slate-400">
+                                    Kurikulum 4 fase terstruktur untuk mempercepat kesiapan kariermu.
                                 </div>
                             </div>
                         </div>
@@ -742,7 +720,7 @@ export default function AssessmentDemo() {
             </div>
 
             {/* Bottom Assistant Snapshot Preview (Fixed - never moves) */}
-            <div className="p-3 rounded-2xl bg-gray-50 border border-gray-100 flex items-center justify-between gap-4 relative z-10 shrink-0">
+            <div className="p-3 rounded-2xl bg-blue-50/50 border border-blue-100 flex items-center justify-between gap-4 relative z-10 shrink-0">
                 <div className="flex items-center gap-2.5 min-w-0">
                     <div className="w-7 h-7 rounded-lg bg-brand-primary/10 text-brand-primary flex items-center justify-center shrink-0">
                         <Sparkles className="w-3.5 h-3.5" />
@@ -751,14 +729,14 @@ export default function AssessmentDemo() {
                         <div className="text-[10px] font-bold uppercase tracking-wider text-brand-primary">
                             AI Persona Compass
                         </div>
-                        <div className="text-[11px] font-bold text-gray-800 truncate transition-colors duration-300">
+                        <div className="text-[11px] font-bold text-slate-800 truncate transition-colors duration-300">
                             {resultPos === "active" || prefersReducedMotion
                                 ? "Hasil siap dieksplorasi"
                                 : "Memetakan kepribadian ke karier nyata"}
                         </div>
                     </div>
                 </div>
-                <span className="text-[10px] font-bold text-gray-400 flex items-center gap-0.5 shrink-0">
+                <span className="text-[10px] font-bold text-slate-400 flex items-center gap-0.5 shrink-0">
                     Ilustrasi <ChevronRight className="w-3 h-3" />
                 </span>
             </div>
