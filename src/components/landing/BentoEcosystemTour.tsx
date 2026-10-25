@@ -658,23 +658,23 @@ export default function BentoEcosystemTour() {
             </div>
           </div>
 
-          {/* Interactive Dilemma Choice Demo with Live Cursor Motion (Locked Height: 146px) */}
-          <div className="p-2.5 rounded-xl bg-blue-50/50 border border-blue-100 space-y-1.5 min-h-[146px] h-[146px] flex flex-col justify-between transition-all duration-300">
+          {/* Interactive Dilemma Choice Demo with Live Cursor Motion (Comfortably Contained: 192px) */}
+          <div className="p-3 rounded-xl bg-blue-50/50 border border-blue-100 min-h-[192px] h-[192px] flex flex-col justify-between overflow-hidden transition-all duration-300">
             <div>
-              <div className="flex items-center justify-between text-[8.5px] font-mono text-slate-400 uppercase tracking-wider mb-0.5">
+              <div className="flex items-center justify-between text-[8.5px] font-mono text-slate-400 uppercase tracking-wider mb-1">
                 <span>SKENARIO HARI INI</span>
                 <span className="text-brand-primary font-bold">LEVEL 3 • 450 XP</span>
               </div>
-              <p className="text-[11.5px] font-semibold text-slate-900 leading-snug line-clamp-2 h-[32px]">
+              <p className="text-[11.5px] font-semibold text-slate-900 leading-snug line-clamp-2 h-[34px]">
                 &quot;{currentScenario.question}&quot;
               </p>
             </div>
 
-            <div className="space-y-1">
+            <div className="space-y-1.5">
               <button
                 ref={choiceARef}
                 type="button"
-                className={`w-full text-left px-2 h-[32px] flex items-center rounded-lg text-[10px] font-medium border transition-all duration-200 ${
+                className={`w-full text-left px-2.5 h-[34px] flex items-center rounded-lg text-[10.5px] font-medium border transition-all duration-200 ${
                   selectedChoice === "A"
                     ? "bg-white border-brand-primary text-brand-primary font-bold shadow-xs ring-2 ring-brand-primary/20"
                     : "bg-white/80 border-slate-200 text-slate-600 hover:border-blue-200"
@@ -686,7 +686,7 @@ export default function BentoEcosystemTour() {
               <button
                 ref={choiceBRef}
                 type="button"
-                className={`w-full text-left px-2 h-[32px] flex items-center rounded-lg text-[10px] font-medium border transition-all duration-200 ${
+                className={`w-full text-left px-2.5 h-[34px] flex items-center rounded-lg text-[10.5px] font-medium border transition-all duration-200 ${
                   selectedChoice === "B"
                     ? "bg-white border-brand-primary text-brand-primary font-bold shadow-xs ring-2 ring-brand-primary/20"
                     : "bg-white/80 border-slate-200 text-slate-600 hover:border-blue-200"
@@ -696,14 +696,14 @@ export default function BentoEcosystemTour() {
               </button>
             </div>
 
-            {/* XP Award Micro-Animation (Fixed Height: 18px) */}
-            <div className="h-[18px] flex items-center">
+            {/* XP Award Micro-Animation (Securely inside the scenario box) */}
+            <div className="h-[24px] flex items-center pt-1 border-t border-blue-100/70">
               <div
-                className={`text-[9.5px] font-mono text-emerald-700 flex items-center gap-1.5 font-bold transition-opacity duration-300 ${
-                  isRewardAwarded ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-1"
+                className={`text-[10px] font-mono text-emerald-700 flex items-center gap-1.5 font-bold transition-all duration-300 ${
+                  isRewardAwarded ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-1 pointer-events-none"
                 }`}
               >
-                <CheckCircle2 className="w-3 h-3 text-emerald-600 shrink-0" />
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
                 <span className="truncate">{currentScenario.reward}</span>
               </div>
             </div>
