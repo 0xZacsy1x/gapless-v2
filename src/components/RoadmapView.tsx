@@ -386,6 +386,7 @@ export function RoadmapView({ overrideData, isPro: propIsPro }: RoadmapViewProps
                         completedModulesCount={completedModules}
                         totalModulesCount={totalModules}
                         assessmentId={overrideData?.id || context.currentAssessmentId || undefined}
+                        isPurchased={isPro}
                       />
                     </div>
                   )}
