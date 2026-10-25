@@ -168,7 +168,7 @@ const KEGIATAN_PRESETS = [
   },
 ];
 
-// Interactive Live Scenarios for Right Card Live Preview
+// Interactive Live Scenarios for Right Card Live Preview (Single-line choices)
 const SCENARIO_PRESETS = [
   {
     id: "s1",
@@ -185,7 +185,7 @@ const SCENARIO_PRESETS = [
     id: "s2",
     question: "Stakeholder meminta penambahan 3 fitur besar di tengah sprint tanpa mengubah deadline rilis.",
     choiceA: "[A] Terima semua permintaan tanpa validasi kapasitas tim.",
-    choiceB: "[B] Analisis trade-off teknis dan tawarkan rilis modular bertahap.",
+    choiceB: "[B] Analisis trade-off teknis & tawarkan rilis modular.",
     correctChoice: "B" as const,
     reward: "+75 XP Negosiasi & Komunikasi Efektif",
     activeMissionId: "m3",
@@ -420,7 +420,7 @@ export default function BentoEcosystemTour() {
       {/* =========================================================================
           ROW 1, CARD 1: ROADMAP BELAJAR TERSTRUKTUR (lg:col-span-8 - Black Shadow)
       ========================================================================= */}
-      <div className="lg:col-span-8 p-3.5 sm:p-4.5 bg-white border border-slate-200/90 rounded-2xl flex flex-col justify-between shadow-[0_16px_36px_-8px_rgba(0,0,0,0.18),0_4px_12px_-2px_rgba(0,0,0,0.08)] space-y-2.5">
+      <div className="lg:col-span-8 p-3.5 sm:p-4.5 bg-white border border-slate-200/90 rounded-2xl flex flex-col justify-between shadow-[0_16px_36px_-8px_rgba(0,0,0,0.18),0_4px_12px_-2px_rgba(0,0,0,0.08)] space-y-2.5 min-h-[465px] h-full">
         {/* Top Header */}
         <div className="space-y-2">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
@@ -625,7 +625,7 @@ export default function BentoEcosystemTour() {
       ========================================================================= */}
       <div
         ref={rightCardRef}
-        className="relative lg:col-span-4 p-3.5 sm:p-4.5 bg-white border border-slate-200/90 rounded-2xl flex flex-col justify-between shadow-[0_16px_36px_-8px_rgba(0,0,0,0.18),0_4px_12px_-2px_rgba(0,0,0,0.08)] space-y-2.5 overflow-hidden"
+        className="relative lg:col-span-4 p-3.5 sm:p-4.5 bg-white border border-slate-200/90 rounded-2xl flex flex-col justify-between shadow-[0_16px_36px_-8px_rgba(0,0,0,0.18),0_4px_12px_-2px_rgba(0,0,0,0.08)] space-y-2.5 overflow-hidden min-h-[465px] h-full"
       >
         {/* Animated Virtual Mouse Cursor */}
         <FakeCursor
@@ -658,54 +658,58 @@ export default function BentoEcosystemTour() {
             </div>
           </div>
 
-          {/* Interactive Dilemma Choice Demo with Live Cursor Motion */}
-          <div className="p-2.5 rounded-xl bg-blue-50/50 border border-blue-100 space-y-1.5 transition-all duration-300">
-            <div className="flex items-center justify-between text-[8.5px] font-mono text-slate-400 uppercase tracking-wider">
-              <span>SKENARIO HARI INI</span>
-              <span className="text-brand-primary font-bold">LEVEL 3 • 450 XP</span>
+          {/* Interactive Dilemma Choice Demo with Live Cursor Motion (Locked Height: 146px) */}
+          <div className="p-2.5 rounded-xl bg-blue-50/50 border border-blue-100 space-y-1.5 min-h-[146px] h-[146px] flex flex-col justify-between transition-all duration-300">
+            <div>
+              <div className="flex items-center justify-between text-[8.5px] font-mono text-slate-400 uppercase tracking-wider mb-0.5">
+                <span>SKENARIO HARI INI</span>
+                <span className="text-brand-primary font-bold">LEVEL 3 • 450 XP</span>
+              </div>
+              <p className="text-[11.5px] font-semibold text-slate-900 leading-snug line-clamp-2 h-[32px]">
+                &quot;{currentScenario.question}&quot;
+              </p>
             </div>
-            <p className="text-[11.5px] font-semibold text-slate-900 leading-snug min-h-[30px] transition-all duration-300">
-              &quot;{currentScenario.question}&quot;
-            </p>
 
-            <div className="space-y-1 pt-0.5">
+            <div className="space-y-1">
               <button
                 ref={choiceARef}
                 type="button"
-                className={`w-full text-left px-2 py-1.5 rounded-lg text-[10px] leading-snug font-medium border transition-all duration-200 ${
+                className={`w-full text-left px-2 h-[32px] flex items-center rounded-lg text-[10px] font-medium border transition-all duration-200 ${
                   selectedChoice === "A"
-                    ? "bg-white border-brand-primary text-brand-primary font-bold shadow-xs ring-2 ring-brand-primary/20 scale-[0.99]"
+                    ? "bg-white border-brand-primary text-brand-primary font-bold shadow-xs ring-2 ring-brand-primary/20"
                     : "bg-white/80 border-slate-200 text-slate-600 hover:border-blue-200"
                 }`}
               >
-                {currentScenario.choiceA}
+                <span className="truncate">{currentScenario.choiceA}</span>
               </button>
 
               <button
                 ref={choiceBRef}
                 type="button"
-                className={`w-full text-left px-2 py-1.5 rounded-lg text-[10px] leading-snug font-medium border transition-all duration-200 ${
+                className={`w-full text-left px-2 h-[32px] flex items-center rounded-lg text-[10px] font-medium border transition-all duration-200 ${
                   selectedChoice === "B"
-                    ? "bg-white border-brand-primary text-brand-primary font-bold shadow-xs ring-2 ring-brand-primary/20 scale-[0.99]"
+                    ? "bg-white border-brand-primary text-brand-primary font-bold shadow-xs ring-2 ring-brand-primary/20"
                     : "bg-white/80 border-slate-200 text-slate-600 hover:border-blue-200"
                 }`}
               >
-                {currentScenario.choiceB}
+                <span className="truncate">{currentScenario.choiceB}</span>
               </button>
             </div>
 
-            {/* XP Award Micro-Animation */}
-            <div
-              className={`text-[9.5px] font-mono pt-0.5 text-emerald-700 flex items-center gap-1.5 font-bold transition-opacity duration-300 ${
-                isRewardAwarded ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-1"
-              }`}
-            >
-              <CheckCircle2 className="w-3 h-3 text-emerald-600 shrink-0" />
-              <span>{currentScenario.reward}</span>
+            {/* XP Award Micro-Animation (Fixed Height: 18px) */}
+            <div className="h-[18px] flex items-center">
+              <div
+                className={`text-[9.5px] font-mono text-emerald-700 flex items-center gap-1.5 font-bold transition-opacity duration-300 ${
+                  isRewardAwarded ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-1"
+                }`}
+              >
+                <CheckCircle2 className="w-3 h-3 text-emerald-600 shrink-0" />
+                <span className="truncate">{currentScenario.reward}</span>
+              </div>
             </div>
           </div>
 
-          {/* Missions Checklist with Live Active Highlight */}
+          {/* Missions Checklist with Live Active Highlight (Locked Height: 34px per item) */}
           <div className="space-y-1 pt-0.5">
             <div className="text-[8.5px] font-mono text-slate-400 uppercase tracking-wider">
               DAFTAR MISI TERSEDIA:
@@ -718,9 +722,9 @@ export default function BentoEcosystemTour() {
               return (
                 <div
                   key={misi.id}
-                  className={`flex items-center justify-between px-2 py-1.5 rounded-lg border text-xs transition-all duration-300 ${
+                  className={`flex items-center justify-between px-2 h-[34px] rounded-lg border text-xs transition-all duration-300 ${
                     isSimulatedActive
-                      ? "bg-white border-brand-primary shadow-xs ring-1 ring-brand-primary/20 scale-[1.01]"
+                      ? "bg-white border-brand-primary shadow-xs ring-1 ring-brand-primary/20"
                       : isCompleted
                       ? "bg-emerald-50/25 border-emerald-200"
                       : "bg-slate-50/60 border-slate-200 opacity-60"
@@ -746,7 +750,7 @@ export default function BentoEcosystemTour() {
                       <div className="font-semibold text-slate-900 text-[10.5px] truncate">
                         {misi.title}
                       </div>
-                      <div className="text-[8.5px] text-slate-400">
+                      <div className="text-[8.5px] text-slate-400 leading-none">
                         {misi.competency} • {misi.time}
                       </div>
                     </div>
@@ -761,9 +765,9 @@ export default function BentoEcosystemTour() {
           </div>
         </div>
 
-        {/* Daily Progress Meter with Live Fill Transition */}
-        <div className="pt-1.5 border-t border-slate-100">
-          <div className="flex items-center justify-between text-[9.5px] text-slate-500 mb-0.5 font-mono">
+        {/* Daily Progress Meter with Live Fill Transition (Locked Height: 28px) */}
+        <div className="pt-1.5 border-t border-slate-100 h-[28px] flex flex-col justify-between">
+          <div className="flex items-center justify-between text-[9.5px] text-slate-500 font-mono">
             <span>PROGRES MISI HARIAN</span>
             <span className="font-bold text-emerald-700 transition-all">
               {liveProgressLabel}
