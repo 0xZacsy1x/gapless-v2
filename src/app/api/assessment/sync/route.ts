@@ -75,13 +75,28 @@ export async function POST(req: Request) {
 
     if (assessmentId) {
       // Update existing
+      const existing = await db.query.assessmentResults.findFirst({
+        where: and(eq(assessmentResults.id, assessmentId), eq(assessmentResults.userId, userId))
+      });
+
+      let updatedTraitScores = existing?.traitScores as Record<string, number> | undefined;
+      if (!updatedTraitScores || quizType === 'belum_tahu_minat') {
+        const computed = computeTraitScores(rawAnswers);
+        const hasValidComputed = Object.values(computed).some(val => typeof val === 'number' && val > 0);
+        if (hasValidComputed) {
+          updatedTraitScores = computed;
+        } else if (!updatedTraitScores) {
+          updatedTraitScores = { 'The Thinker': 0, 'The Creator': 0, 'The Connector': 0, 'The Builder': 0 };
+        }
+      }
+
       const [updated] = await db.update(assessmentResults).set({
         rawAnswers,
-        traitScores: quizType === 'belum_tahu_minat' ? computeTraitScores(rawAnswers) : { 'The Thinker': 0, 'The Creator': 0, 'The Connector': 0, 'The Builder': 0 },
-        dominantTrait: finalDominantTrait,
-        selectedCareer: selectedCareer || null,
-        careerSlug: careerSlug,
-        skillRatings: skillRatings || null,
+        traitScores: updatedTraitScores,
+        dominantTrait: finalDominantTrait || existing?.dominantTrait || 'The Thinker',
+        selectedCareer: selectedCareer || existing?.selectedCareer || null,
+        careerSlug: careerSlug || existing?.careerSlug || null,
+        skillRatings: skillRatings || existing?.skillRatings || null,
       }).where(and(eq(assessmentResults.id, assessmentId), eq(assessmentResults.userId, userId))).returning();
       newResult = updated;
     } else {

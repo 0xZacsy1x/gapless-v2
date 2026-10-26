@@ -192,7 +192,32 @@ export function GaplessProvider({ children }: { children: ReactNode }) {
 
   // ── Assessment answers ──
   const [answers, setAnswersState] = useState<Record<number, number>>({});
-  const [currentAssessmentId, setCurrentAssessmentId] = useState<string | null>(null);
+  const [currentAssessmentId, setCurrentAssessmentIdState] = useState<string | null>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const urlParams = new URLSearchParams(window.location.search);
+        const aId = urlParams.get('assessmentId');
+        if (aId) return aId;
+        const saved = localStorage.getItem('gapless:current_assessment_id');
+        if (saved) return saved;
+      } catch (e) {}
+    }
+    return null;
+  });
+
+  const setCurrentAssessmentId = useCallback((id: string | null) => {
+    setCurrentAssessmentIdState(id);
+    if (typeof window !== 'undefined') {
+      try {
+        if (id) {
+          localStorage.setItem('gapless:current_assessment_id', id);
+        } else {
+          localStorage.removeItem('gapless:current_assessment_id');
+        }
+      } catch (e) {}
+    }
+  }, []);
+
   const [quizType, setQuizType] = useState<string>(() => {
     if (typeof window !== 'undefined') {
       try {
@@ -210,7 +235,7 @@ export function GaplessProvider({ children }: { children: ReactNode }) {
     if (Object.keys(newAnswers).length === 0) {
       setCurrentAssessmentId(null);
     }
-  }, []);
+  }, [setCurrentAssessmentId]);
 
   // ── Career selection (Assessment flow) ──
   const [selectedCareer, setSelectedCareer] = useState<CareerProfile | null>(() => {
@@ -521,9 +546,10 @@ export function GaplessProvider({ children }: { children: ReactNode }) {
         localStorage.removeItem('gapless:active_role_slug');
         localStorage.removeItem('gapless:selected_role');
         localStorage.removeItem('gapless:selected_career');
+        localStorage.removeItem('gapless:current_assessment_id');
       } catch (e) {}
     }
-  }, [setAnswers]);
+  }, [setAnswers, setCurrentAssessmentId]);
 
   const resetProgress = useCallback(async () => {
     setSkillRatingsState({});

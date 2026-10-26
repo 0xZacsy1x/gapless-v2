@@ -190,10 +190,20 @@ export function ResultDetailClient({
   const handleSelectCareer = (career: CareerProfile) => {
     setSelectingCareerId(career.id);
     setCurrentAssessmentId(resultId);
-    selectCareer(career);
-    setQuizType(quizType || "belum_tahu_minat");
-    setCurrentView("skills");
-    router.push("/assessment");
+    selectCareer(career, 'case-study');
+    setQuizType("sudah_tahu_minat");
+    setCurrentView("case-study");
+
+    const roleSlug = career.id || career.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+
+    try {
+      localStorage.setItem('gapless:active_quiz_type', 'sudah_tahu_minat');
+      localStorage.setItem('gapless:active_role_slug', roleSlug);
+      localStorage.setItem('gapless:selected_career', JSON.stringify(career));
+      localStorage.setItem('gapless:current_assessment_id', resultId);
+    } catch (e) {}
+
+    router.push(`/assessment?quizType=sudah_tahu_minat&role=${encodeURIComponent(roleSlug)}&assessmentId=${encodeURIComponent(resultId)}`);
   };
 
   // ── Render Tampilan Jika Belum Memilih Karier Spesifik ──

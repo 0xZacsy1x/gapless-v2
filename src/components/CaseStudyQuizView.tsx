@@ -149,7 +149,7 @@ export function CaseStudyQuizView() {
   const rawRoleSlug = selectedRole
     ? slugify(selectedRole.roleName)
     : selectedCareer
-    ? slugify(selectedCareer.title)
+    ? (selectedCareer.id || slugify(selectedCareer.title))
     : urlRole || localRole;
   const roleSlug = ROLE_ALIASES[rawRoleSlug] || rawRoleSlug;
 
