@@ -15,12 +15,14 @@ export function AssessmentPageClient() {
     selectedCareer,
     selectedRole,
     setQuizType,
+    setCurrentAssessmentId,
   } = useGaplessContext();
   const searchParams = useSearchParams();
 
   useEffect(() => {
     const quizTypeParam = searchParams.get('quizType');
     const roleParam = searchParams.get('role');
+    const assessmentIdParam = searchParams.get('assessmentId');
 
     // Hanya masuk ke jalur 'sudah_tahu_minat' jika eksplisit ditentukan di query parameter
     const isSudahTahu = quizTypeParam === 'sudah_tahu_minat';
@@ -28,8 +30,14 @@ export function AssessmentPageClient() {
     if (isSudahTahu) {
       setQuizType('sudah_tahu_minat');
       setCurrentView('case-study');
+      if (assessmentIdParam) {
+        setCurrentAssessmentId(assessmentIdParam);
+      }
       try {
         localStorage.setItem('gapless:active_quiz_type', 'sudah_tahu_minat');
+        if (assessmentIdParam) {
+          localStorage.setItem('gapless:current_assessment_id', assessmentIdParam);
+        }
       } catch (e) {}
 
       // Hydrate selectedCareer if not in state
@@ -37,12 +45,14 @@ export function AssessmentPageClient() {
         try {
           const savedCareer = localStorage.getItem('gapless:selected_career');
           if (savedCareer) {
-            selectCareer(JSON.parse(savedCareer));
+            selectCareer(JSON.parse(savedCareer), 'case-study');
           } else if (roleParam) {
             const found = findCareerProfile(roleParam);
-            if (found) selectCareer(found);
+            if (found) selectCareer(found, 'case-study');
           }
         } catch (e) {}
+      } else {
+        setCurrentView('case-study');
       }
 
       // Hydrate selectedRole if not in state
@@ -61,11 +71,13 @@ export function AssessmentPageClient() {
       setCurrentView('assessment');
       setSelectedRole(null);
       selectCareer(null);
+      setCurrentAssessmentId(null);
       try {
         localStorage.setItem('gapless:active_quiz_type', 'belum_tahu_minat');
         localStorage.removeItem('gapless:selected_career');
         localStorage.removeItem('gapless:selected_role');
         localStorage.removeItem('gapless:active_role_slug');
+        localStorage.removeItem('gapless:current_assessment_id');
       } catch (e) {}
     }
   }, [
@@ -76,6 +88,7 @@ export function AssessmentPageClient() {
     selectedRole,
     selectCareer,
     setSelectedRole,
+    setCurrentAssessmentId,
   ]);
 
   return <GaplessApp />;
