@@ -33,38 +33,7 @@ export default function AssessmentDemo() {
     const [isBtnPressed, setIsBtnPressed] = useState(false);
     const [activeRole, setActiveRole] = useState("Software Engineer");
 
-    const [isInView, setIsInView] = useState(true);
-    const [isTabActive, setIsTabActive] = useState(true);
-    const [prefersReducedMotion, setPrefersReducedMotion] = useState(() => {
-        if (typeof window !== "undefined") {
-            return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-        }
-        return false;
-    });
-
-    useEffect(() => {
-        const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-        const handler = (e: MediaQueryListEvent) => setPrefersReducedMotion(e.matches);
-        mq.addEventListener("change", handler);
-        return () => mq.removeEventListener("change", handler);
-    }, []);
-
-    useEffect(() => {
-        const onVis = () => setIsTabActive(document.visibilityState === "visible");
-        document.addEventListener("visibilitychange", onVis);
-
-        const io = new IntersectionObserver(
-            ([e]) => setIsInView(e.isIntersecting),
-            { threshold: 0 }
-        );
-        if (stageRef.current) io.observe(stageRef.current);
-
-        return () => {
-            document.removeEventListener("visibilitychange", onVis);
-            io.disconnect();
-        };
-    }, []);
-
+    // Coordinate calculation helper relative to stage container
     const getCoords = useCallback(
         (el: HTMLElement | null, off?: { x?: number; y?: number }) => {
             if (!el || !stageRef.current) return { x: 120, y: 150 };
@@ -78,6 +47,7 @@ export default function AssessmentDemo() {
         []
     );
 
+    // Ripple click pulse on cursor
     const triggerClickPulse = useCallback(() => {
         if (cursorRef.current) {
             gsap.to(cursorRef.current, {
@@ -92,9 +62,44 @@ export default function AssessmentDemo() {
             gsap.fromTo(
                 clickPulseRef.current,
                 { scale: 0.3, opacity: 0.7 },
-                { scale: 2.2, opacity: 0, duration: 0.35, ease: "power2.out" }
+                { scale: 2.2, opacity: 0, duration: 0.35, ease: "power2.out", immediateRender: false }
             );
         }
+    }, []);
+
+    // Pause/resume when tab visibility changes or when scrolled far out of view
+    useEffect(() => {
+        const onVis = () => {
+            const isVisible = document.visibilityState === "visible";
+            if (!tlRef.current) return;
+            if (isVisible) {
+                tlRef.current.resume();
+            } else {
+                tlRef.current.pause();
+            }
+        };
+        document.addEventListener("visibilitychange", onVis);
+
+        let io: IntersectionObserver | null = null;
+        if (stageRef.current) {
+            io = new IntersectionObserver(
+                ([entry]) => {
+                    if (!tlRef.current) return;
+                    if (entry.intersectionRatio < 0.15) {
+                        tlRef.current.pause();
+                    } else if (document.visibilityState === "visible") {
+                        tlRef.current.resume();
+                    }
+                },
+                { threshold: [0, 0.2] }
+            );
+            io.observe(stageRef.current);
+        }
+
+        return () => {
+            document.removeEventListener("visibilitychange", onVis);
+            if (io) io.disconnect();
+        };
     }, []);
 
     const currentQ = DEMO_QUESTIONS[questionCycle % DEMO_QUESTIONS.length];
@@ -109,30 +114,19 @@ export default function AssessmentDemo() {
 
         if (!qScreen || !aScreen || !rScreen || !cursor) return;
 
-        // Reduced motion: static result view
-        if (prefersReducedMotion) {
-            gsap.set(qScreen, { opacity: 0, display: "none" });
-            gsap.set(aScreen, { opacity: 0, display: "none" });
-            gsap.set(rScreen, { opacity: 1, yPercent: 0, scale: 1, display: "flex" });
-            const items = rScreen.querySelectorAll<HTMLElement>(".result-stagger-item");
-            gsap.set(items, { opacity: 1, y: 0 });
-            gsap.set(cursor, { opacity: 0, display: "none" });
-            setCurrentScreen("result");
-            return;
-        }
-
         let isCancelled = false;
 
-        // Reset positions for this cycle
-        gsap.set(qScreen, { yPercent: 0, opacity: 1, scale: 1, display: "flex" });
-        gsap.set(aScreen, { yPercent: 100, opacity: 0, scale: 0.97, display: "flex" });
-        gsap.set(rScreen, { yPercent: 100, opacity: 0, scale: 0.97, display: "flex" });
+        // Reset elements for this cycle.
+        // NOTE: qScreen stays at yPercent: 0, opacity: 1 so it is immediately visible!
+        gsap.set(qScreen, { yPercent: 0, opacity: 1, scale: 1, pointerEvents: "auto" });
+        gsap.set(aScreen, { yPercent: 100, opacity: 0, scale: 0.97, pointerEvents: "none" });
+        gsap.set(rScreen, { yPercent: 100, opacity: 0, scale: 0.97, pointerEvents: "none" });
 
         // Position cursor slightly offset from Option A
         const startCoords = getCoords(optRef.current, { x: 30, y: 22 });
         gsap.set(cursor, { opacity: 0, scale: 1, x: startCoords.x, y: startCoords.y });
 
-        // Build cycle timeline with natural, visible pacing
+        // Build cycle timeline with natural pacing
         const tl = gsap.timeline({
             onComplete: () => {
                 if (!isCancelled) {
@@ -151,14 +145,14 @@ export default function AssessmentDemo() {
             setActiveRole("Software Engineer");
         });
 
-        // 0.15s: Fade in cursor smoothly
+        // 0.2s: Fade in cursor smoothly
         tl.to(cursor, {
             opacity: 1,
             duration: 0.3,
             ease: "power2.out",
-        }, "+=0.15");
+        }, "+=0.2");
 
-        // 0.45s: Silky glide cursor to Option A center
+        // 0.5s: Silky glide cursor to Option A center
         tl.to(cursor, {
             duration: 0.55,
             ease: "power2.out",
@@ -178,48 +172,57 @@ export default function AssessmentDemo() {
             ease: "power2.out",
             x: () => getCoords(nextBtnRef.current).x,
             y: () => getCoords(nextBtnRef.current).y,
-        }, "+=0.4");
+        }, "+=0.45");
 
-        // 2.4s: Hover on submit button
+        // 2.35s: Hover on submit button
         tl.call(() => {
             setIsBtnHovered(true);
         }, undefined, "+=0.1");
 
-        // 2.7s: Click button with spring compression
+        // 2.6s: Click button with spring compression
         tl.call(() => {
             setIsBtnPressed(true);
             triggerClickPulse();
         }, undefined, "+=0.15");
 
-        // 2.95s: Release button press
+        // 2.85s: Release button press
         tl.call(() => {
             setIsBtnPressed(false);
             setIsBtnHovered(false);
         }, undefined, "+=0.1");
 
-        // 3.1s: Fade out cursor before stage transition
+        // 3.0s: Fade out cursor before stage transition
         tl.to(cursor, {
             opacity: 0,
             duration: 0.2,
             ease: "power2.in",
         }, "+=0.05");
 
-        // ── TRANSITION 1: QUESTION -> ANALYZING (0.55s Silky Slide) ──
-        tl.call(() => setCurrentScreen("analyzing"), undefined, "+=0.05");
+        // ── TRANSITION 1: QUESTION -> ANALYZING (0.6s Silky Slide) ──
+        tl.call(() => {
+            setCurrentScreen("analyzing");
+            if (qScreen) qScreen.style.pointerEvents = "none";
+            if (aScreen) aScreen.style.pointerEvents = "auto";
+        }, undefined, "+=0.05");
+
+        // Prepare aScreen below before slide
+        tl.set(aScreen, { yPercent: 100, opacity: 0, scale: 0.97 });
 
         tl.to(qScreen, {
             yPercent: -100,
             opacity: 0,
             scale: 0.97,
-            duration: 0.55,
+            duration: 0.6,
             ease: "power2.inOut",
         });
 
-        tl.fromTo(aScreen,
-            { yPercent: 100, opacity: 0, scale: 0.97 },
-            { yPercent: 0, opacity: 1, scale: 1, duration: 0.55, ease: "power2.inOut" },
-            "<"
-        );
+        tl.to(aScreen, {
+            yPercent: 0,
+            opacity: 1,
+            scale: 1,
+            duration: 0.6,
+            ease: "power2.inOut",
+        }, "<");
 
         // ── PHASE 2: ANALYZING STAGE (Visible ~2.5s) ──
         tl.call(() => {
@@ -227,14 +230,14 @@ export default function AssessmentDemo() {
             const nums = aScreen.querySelectorAll<HTMLElement>(".demo-arch-num");
             bars.forEach((bar) => {
                 gsap.set(bar, { width: "0%" });
-                gsap.to(bar, { width: bar.dataset.target || "0%", duration: 1.1, ease: "power2.out" });
+                gsap.to(bar, { width: bar.dataset.target || "0%", duration: 1.2, ease: "power2.out" });
             });
             nums.forEach((num) => {
                 const targetVal = parseInt(num.dataset.target || "0", 10);
                 const obj = { val: 0 };
                 gsap.to(obj, {
                     val: targetVal,
-                    duration: 1.1,
+                    duration: 1.2,
                     ease: "power2.out",
                     onUpdate: () => {
                         num.textContent = `${Math.round(obj.val)}%`;
@@ -244,32 +247,43 @@ export default function AssessmentDemo() {
         }, undefined, "+=0.1");
 
         // Hold analyzing screen so user can clearly view the progress
-        tl.set({}, {}, "+=1.3");
+        tl.set({}, {}, "+=1.4");
 
-        // ── TRANSITION 2: ANALYZING -> RESULT (0.55s Silky Slide) ──
-        tl.call(() => setCurrentScreen("result"));
+        // ── TRANSITION 2: ANALYZING -> RESULT (0.6s Silky Slide) ──
+        tl.call(() => {
+            setCurrentScreen("result");
+            if (aScreen) aScreen.style.pointerEvents = "none";
+            if (rScreen) rScreen.style.pointerEvents = "auto";
+        });
+
+        // Prepare rScreen below before slide
+        tl.set(rScreen, { yPercent: 100, opacity: 0, scale: 0.97 });
 
         tl.to(aScreen, {
             yPercent: -100,
             opacity: 0,
             scale: 0.97,
-            duration: 0.55,
+            duration: 0.6,
             ease: "power2.inOut",
         });
 
-        tl.fromTo(rScreen,
-            { yPercent: 100, opacity: 0, scale: 0.97 },
-            { yPercent: 0, opacity: 1, scale: 1, duration: 0.55, ease: "power2.inOut" },
-            "<"
-        );
+        tl.to(rScreen, {
+            yPercent: 0,
+            opacity: 1,
+            scale: 1,
+            duration: 0.6,
+            ease: "power2.inOut",
+        }, "<");
 
         // Stagger reveal result card items
-        tl.fromTo(
-            rScreen.querySelectorAll(".result-stagger-item"),
-            { opacity: 0, y: 12 },
-            { opacity: 1, y: 0, stagger: 0.08, duration: 0.35, ease: "power2.out" },
-            "-=0.1"
-        );
+        tl.call(() => {
+            const items = rScreen.querySelectorAll<HTMLElement>(".result-stagger-item");
+            gsap.fromTo(
+                items,
+                { opacity: 0, y: 12 },
+                { opacity: 1, y: 0, stagger: 0.08, duration: 0.35, ease: "power2.out", immediateRender: false }
+            );
+        }, undefined, "-=0.1");
 
         // ── PHASE 3: RESULT STAGE (Visible ~4.5s) ──
         // Reveal cursor near role chips
@@ -281,11 +295,11 @@ export default function AssessmentDemo() {
                 const c = getCoords(chipDaRef.current, { y: 18 });
                 gsap.set(cursor, { x: c.x, y: c.y });
             },
-        }, "+=0.15");
+        }, "+=0.2");
 
         // Glide cursor to "Data Analyst" chip
         tl.to(cursor, {
-            duration: 0.4,
+            duration: 0.45,
             ease: "power2.out",
             x: () => getCoords(chipDaRef.current).x,
             y: () => getCoords(chipDaRef.current).y,
@@ -299,11 +313,11 @@ export default function AssessmentDemo() {
 
         // Glide cursor to "Software Engineer" chip
         tl.to(cursor, {
-            duration: 0.4,
+            duration: 0.45,
             ease: "power2.out",
             x: () => getCoords(chipSeRef.current).x,
             y: () => getCoords(chipSeRef.current).y,
-        }, "+=0.4");
+        }, "+=0.5");
 
         // Click "Software Engineer" -> switch back
         tl.call(() => {
@@ -329,47 +343,34 @@ export default function AssessmentDemo() {
             ease: "power2.in",
         });
 
-        // ── TRANSITION 3: RESULT -> NEXT QUESTION (0.55s Upward Slide) ──
+        // ── TRANSITION 3: RESULT -> NEXT QUESTION (0.6s Upward Slide) ──
+        tl.set(qScreen, { yPercent: 100, opacity: 0, scale: 0.97 }, "+=0.05");
+
         tl.to(rScreen, {
             yPercent: -100,
             opacity: 0,
             scale: 0.97,
-            duration: 0.55,
+            duration: 0.6,
             ease: "power2.inOut",
-        }, "+=0.05");
+        });
 
-        tl.fromTo(qScreen,
-            { yPercent: 100, opacity: 0, scale: 0.97 },
-            { yPercent: 0, opacity: 1, scale: 1, duration: 0.55, ease: "power2.inOut" },
-            "<"
-        );
+        tl.to(qScreen, {
+            yPercent: 0,
+            opacity: 1,
+            scale: 1,
+            duration: 0.6,
+            ease: "power2.inOut",
+        }, "<");
 
         tl.set({}, {}, "+=0.1");
-
-        // If tab is not active or not in view on start, pause immediately
-        if (!isInView || !isTabActive) {
-            tl.pause();
-        }
 
         return () => {
             isCancelled = true;
             tl.kill();
             tlRef.current = null;
         };
-    // Re-run cycle whenever questionCycle or prefersReducedMotion updates
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [questionCycle, prefersReducedMotion]);
-
-    // Play / pause timeline based on tab visibility and viewport intersection
-    useEffect(() => {
-        const tl = tlRef.current;
-        if (!tl) return;
-        if (!isInView || !isTabActive) {
-            tl.pause();
-        } else {
-            tl.resume();
-        }
-    }, [isInView, isTabActive]);
+    // Re-run cycle whenever questionCycle updates
+    }, [questionCycle, getCoords, triggerClickPulse]);
 
     return (
         <div
@@ -506,7 +507,8 @@ export default function AssessmentDemo() {
                 =================================================================== */}
                 <div
                     ref={analyzingScreenRef}
-                    className="absolute inset-0 w-full h-full flex flex-col justify-center items-center space-y-6 px-4 z-10 opacity-0 pointer-events-none"
+                    className="absolute inset-0 w-full h-full flex flex-col justify-center items-center space-y-6 px-4 z-10"
+                    style={{ transform: "translateY(100%)", opacity: 0, pointerEvents: "none" }}
                 >
                     <div className="relative flex items-center justify-center">
                         <div className="w-16 h-16 rounded-full border-3 border-blue-100 border-t-brand-primary animate-spin" />
@@ -537,7 +539,8 @@ export default function AssessmentDemo() {
                                 </div>
                                 <div className="h-1.5 w-full bg-blue-100/70 rounded-full overflow-hidden">
                                     <div
-                                        className="demo-arch-bar h-full bg-brand-primary rounded-full w-0"
+                                        className="demo-arch-bar h-full bg-brand-primary rounded-full"
+                                        style={{ width: "0%" }}
                                         data-target={`${arch.val}%`}
                                     />
                                 </div>
@@ -551,7 +554,8 @@ export default function AssessmentDemo() {
                 =================================================================== */}
                 <div
                     ref={resultScreenRef}
-                    className="absolute inset-0 w-full h-full flex flex-col justify-between py-1 px-0.5 space-y-2 z-10 opacity-0 pointer-events-none"
+                    className="absolute inset-0 w-full h-full flex flex-col justify-between py-1 px-0.5 space-y-2 z-10"
+                    style={{ transform: "translateY(100%)", opacity: 0, pointerEvents: "none" }}
                 >
                     {/* ITEM 1: Profile Top Match & Role Switcher Chips (Stagger Step 1) */}
                     <div className="result-stagger-item space-y-2">
@@ -636,7 +640,7 @@ export default function AssessmentDemo() {
                     <div className="result-stagger-item">
                         <SkillReadiness
                             data={roleData}
-                            isAnimated={!prefersReducedMotion}
+                            isAnimated={true}
                             triggerAnimation={true}
                         />
                     </div>
@@ -672,8 +676,9 @@ export default function AssessmentDemo() {
                 {/* Virtual Animated Cursor (Clipped inside stage container) */}
                 <div
                     ref={cursorRef}
-                    className="absolute pointer-events-none z-50 top-0 left-0 opacity-0"
+                    className="absolute pointer-events-none z-50 top-0 left-0"
                     style={{
+                        opacity: 0,
                         transformOrigin: "3px 2px",
                         willChange: "transform, opacity",
                     }}
