@@ -1,7 +1,8 @@
 'use client';
 
-import { useEffect, useState, useMemo } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { useEffect, useState, useMemo, useRef } from 'react';
+import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
 import { Layers, ChevronRight, ChevronLeft, Home, Loader2, RotateCcw } from 'lucide-react';
 import Link from 'next/link';
 import { TRAIT_META } from '@/data/gaplessData';
@@ -10,6 +11,7 @@ import { useGaplessContext } from '@/contexts/CareerContext';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 import { Navbar } from '@/components/Navbar';
 import { quizBank } from '@/data/quizBank';
+import { CareerIcon } from '@/components/ui/AppIcons';
 import {
   saveAssessmentDraft,
   loadAssessmentDraft,
@@ -62,6 +64,20 @@ export function SkillGapView() {
   const [isSyncing, setIsSyncing] = useState(false);
   const [syncError, setSyncError] = useState<string | null>(null);
   const [isRestoredFromDraft, setIsRestoredFromDraft] = useState(false);
+  const questionCardRef = useRef<HTMLDivElement>(null);
+  const stepContainerRef = useRef<HTMLDivElement>(null);
+
+  useGSAP(() => {
+    if (stepContainerRef.current) {
+      gsap.fromTo(stepContainerRef.current, { opacity: 0, x: step === 1 ? -20 : 20 }, { opacity: 1, x: 0, duration: 0.3, ease: 'power2.out' });
+    }
+  }, [step]);
+
+  useGSAP(() => {
+    if (questionCardRef.current) {
+      gsap.fromTo(questionCardRef.current, { opacity: 0, x: 20 }, { opacity: 1, x: 0, duration: 0.25, ease: 'power2.out' });
+    }
+  }, [currentIndex]);
 
   // Attempt to get the quiz questions
   const quizKey = selectedCareer ? getQuizKey(selectedCareer.title) : '';
@@ -223,43 +239,36 @@ export function SkillGapView() {
           </div>
 
           {/* Header */}
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-center mb-8"
-          >
-          <div
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-4"
-            style={{
-              background: `${traitMeta.color}10`,
-              border: `1px solid ${traitMeta.color}25`,
-            }}
-          >
-            <Layers size={14} style={{ color: traitMeta.color }} />
-            <span className="text-xs font-semibold" style={{ color: traitMeta.color }}>
-              Analisis Kesenjangan Skill
-            </span>
+          <div className="text-center mb-8">
+            <div
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-4"
+              style={{
+                background: `${traitMeta.color}10`,
+                border: `1px solid ${traitMeta.color}25`,
+              }}
+            >
+              <Layers size={14} style={{ color: traitMeta.color }} />
+              <span className="text-xs font-semibold" style={{ color: traitMeta.color }}>
+                Analisis Kesenjangan Skill
+              </span>
+            </div>
+            <h1 className="text-3xl md:text-4xl font-bold text-slate-900 mb-2 flex items-center justify-center gap-3">
+              <CareerIcon careerId={selectedCareer.id} name={selectedCareer.icon} className="w-8 h-8 text-slate-900" strokeWidth={1.75} />
+              <span>{selectedCareer.title}</span>
+            </h1>
+            <p className="text-gray-500 text-sm sm:text-base max-w-lg mx-auto">
+              Jawab 10 pertanyaan studi kasus industri untuk mengukur kesiapan skill aktualmu.
+            </p>
           </div>
-          <h1 className="text-3xl md:text-4xl font-bold text-slate-900 mb-2">
-            {selectedCareer.icon} {selectedCareer.title}
-          </h1>
-          <p className="text-gray-500 text-sm sm:text-base max-w-lg mx-auto">
-            Jawab 10 pertanyaan studi kasus industri untuk mengukur kesiapan skill aktualmu.
-          </p>
-        </motion.div>
 
         {/* Wizard Steps */}
         <div className="mb-10 w-full relative">
-          <AnimatePresence mode="wait">
-            {step === 1 && (
-              <motion.div
-                key="step1"
-                initial={{ opacity: 0, x: -30 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -30 }}
-                transition={{ duration: 0.3 }}
-                className="w-full"
-              >
+          {step === 1 && (
+            <div
+              ref={stepContainerRef}
+              key="step1"
+              className="w-full"
+            >
                 <div className="glass-card p-6 sm:p-8">
                   {(!questions || questions.length === 0) ? (
                     <div className="text-center py-8">
@@ -303,26 +312,22 @@ export function SkillGapView() {
 
                       {/* Progress bar */}
                       <div className="w-full bg-gray-200 h-1.5 rounded-full mb-8 overflow-hidden">
-                        <motion.div
-                          className="h-full rounded-full"
-                          style={{ background: traitMeta.color }}
-                          initial={{ width: 0 }}
-                          animate={{ width: `${((currentIndex + 1) / questions.length) * 100}%` }}
-                          transition={{ duration: 0.3 }}
+                        <div
+                          className="h-full rounded-full transition-all duration-300"
+                          style={{
+                            background: traitMeta.color,
+                            width: `${((currentIndex + 1) / questions.length) * 100}%`,
+                          }}
                         />
                       </div>
 
-                      <AnimatePresence mode="wait">
-                        <motion.div
-                          key={currentIndex}
-                          initial={{ opacity: 0, x: 20 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          exit={{ opacity: 0, x: -20 }}
-                          transition={{ duration: 0.2 }}
-                        >
-                          <h3 className="text-lg sm:text-xl font-semibold text-slate-900 mb-6 leading-relaxed">
-                            {currentQuestion.question}
-                          </h3>
+                      <div
+                        ref={questionCardRef}
+                        key={currentIndex}
+                      >
+                        <h3 className="text-lg sm:text-xl font-semibold text-slate-900 mb-6 leading-relaxed">
+                          {currentQuestion.question}
+                        </h3>
 
                           <div className="space-y-3">
                             {currentQuestion.options.map((option, idx) => {
@@ -394,19 +399,13 @@ export function SkillGapView() {
                               </button>
                             )}
                           </div>
-                        </motion.div>
-                      </AnimatePresence>
+                        </div>
                     </>
                   )}
                 </div>
 
                 {/* Footer Navigation Back */}
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.5 }}
-                  className="flex items-center justify-between mt-8"
-                >
+                <div className="flex items-center justify-between mt-8">
                   <div className="flex items-center gap-2 sm:gap-4">
                     <Link href="/" className="btn-ghost flex items-center gap-1 text-sm text-gray-500 hover:text-gray-900">
                       <Home size={16} /> Home
@@ -415,17 +414,14 @@ export function SkillGapView() {
                       <ChevronLeft size={16} /> Hasil
                     </button>
                   </div>
-                </motion.div>
-              </motion.div>
+                </div>
+              </div>
             )}
 
             {step === 2 && (
-              <motion.div
+              <div
+                ref={stepContainerRef}
                 key="step2"
-                initial={{ opacity: 0, x: 30 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 30 }}
-                transition={{ duration: 0.3 }}
                 className="w-full"
               >
                 <div className="glass-card p-12 flex flex-col items-center justify-center gap-4 text-center">
@@ -459,9 +455,8 @@ export function SkillGapView() {
                     </>
                   )}
                 </div>
-              </motion.div>
+              </div>
             )}
-          </AnimatePresence>
         </div>
       </div>
     </main>

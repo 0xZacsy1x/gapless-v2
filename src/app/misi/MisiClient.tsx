@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { useState, useRef, useEffect } from 'react';
+import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
 import {
   Target, CheckCircle2, Clock, Lock, ChevronRight,
   Zap, Users, Shield, Handshake, RefreshCw, MessageSquare,
@@ -126,8 +127,48 @@ export function MisiClient({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [lockedMissionModal, setLockedMissionModal] = useState<Mission | null>(null);
+  const [isLockedModalRendered, setIsLockedModalRendered] = useState(false);
   const [feedbacks, setFeedbacks] = useState<Record<string, string>>(feedbackMap);
   const [progress, setProgress] = useState<Record<string, MissionProgress>>(progressMap);
+
+  const lockedModalBackdropRef = useRef<HTMLDivElement>(null);
+  const lockedModalCardRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (lockedMissionModal) {
+      setIsLockedModalRendered(true);
+    } else if (isLockedModalRendered && lockedModalBackdropRef.current && lockedModalCardRef.current) {
+      gsap.killTweensOf([lockedModalBackdropRef.current, lockedModalCardRef.current]);
+      gsap.to(lockedModalBackdropRef.current, {
+        opacity: 0,
+        duration: 0.2,
+        ease: 'power2.in',
+      });
+      gsap.to(lockedModalCardRef.current, {
+        scale: 0.95,
+        opacity: 0,
+        duration: 0.2,
+        ease: 'power2.in',
+        onComplete: () => setIsLockedModalRendered(false),
+      });
+    }
+  }, [lockedMissionModal]);
+
+  useGSAP(() => {
+    if (isLockedModalRendered && lockedMissionModal && lockedModalBackdropRef.current && lockedModalCardRef.current) {
+      gsap.killTweensOf([lockedModalBackdropRef.current, lockedModalCardRef.current]);
+      gsap.fromTo(
+        lockedModalBackdropRef.current,
+        { opacity: 0 },
+        { opacity: 1, duration: 0.25, ease: 'power2.out' }
+      );
+      gsap.fromTo(
+        lockedModalCardRef.current,
+        { scale: 0.95, opacity: 0 },
+        { scale: 1, opacity: 1, duration: 0.25, ease: 'back.out(1.4)' }
+      );
+    }
+  }, [isLockedModalRendered, lockedMissionModal]);
 
   const groups = groupByCompetency(missions);
   const allCompetencies = Object.keys(COMPETENCY_CONFIG);
@@ -229,11 +270,9 @@ export function MisiClient({
                       <span className="text-slate-500">{done}/{misiList.length}</span>
                     </div>
                     <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
-                      <motion.div
-                        className="h-full bg-blue-600 rounded-full"
-                        initial={{ width: 0 }}
-                        animate={{ width: `${pct}%` }}
-                        transition={{ duration: 0.6, ease: 'easeOut' }}
+                      <div
+                        className="h-full bg-blue-600 rounded-full transition-[width] duration-500 ease-out"
+                        style={{ width: `${pct}%` }}
                       />
                     </div>
                   </div>
@@ -268,9 +307,8 @@ export function MisiClient({
                 const diffCfg = DIFFICULTY_CONFIG[mission.difficultyLevel || 'medium'];
 
                 return (
-                  <motion.div
+                  <div
                     key={mission.id}
-                    layout
                     className={`border rounded-2xl overflow-hidden transition-shadow ${
                       isLocked
                         ? 'bg-slate-50/70 border-slate-200/80 hover:border-indigo-300'
@@ -317,7 +355,10 @@ export function MisiClient({
                             }`}>
                               {mission.title}
                               {!isLocked && isCompleted && (
-                                <span className="ml-2 text-xs font-normal text-emerald-600">✓ Selesai (Diisi sendiri)</span>
+                                <span className="ml-2 inline-flex items-center gap-1 text-xs font-normal text-emerald-600">
+                                  <CheckCircle2 className="w-3.5 h-3.5" strokeWidth={1.75} />
+                                  <span>Selesai (Diisi sendiri)</span>
+                                </span>
                               )}
                             </p>
                             {isLocked && (
@@ -345,16 +386,13 @@ export function MisiClient({
                       </div>
                     </button>
 
-                    <AnimatePresence>
-                      {isExpanded && !isLocked && (
-                        <motion.div
-                          initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: 'auto', opacity: 1 }}
-                          exit={{ height: 0, opacity: 0 }}
-                          transition={{ duration: 0.25 }}
-                          className="overflow-hidden"
-                        >
-                          {isCompleted ? (
+                    <div
+                      className={`grid transition-[grid-template-rows,opacity] duration-200 ease-out overflow-hidden ${
+                        isExpanded && !isLocked ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'
+                      }`}
+                    >
+                      <div className="overflow-hidden">
+                        {isCompleted ? (
                             <div className="px-4 pb-4 border-t border-slate-100 pt-3 space-y-3">
                               <div className="flex items-center gap-2 text-xs font-semibold text-emerald-700 bg-emerald-50 px-3 py-2 rounded-xl border border-emerald-200/60">
                                 <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
@@ -470,10 +508,9 @@ export function MisiClient({
                               </div>
                             </div>
                           )}
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </motion.div>
+                        </div>
+                      </div>
+                    </div>
                 );
               })}
             </div>
@@ -482,56 +519,50 @@ export function MisiClient({
       })}
 
       {/* Modal Upgrade untuk Misi Terkunci */}
-      <AnimatePresence>
-        {lockedMissionModal && (
-          <motion.div
-            className="fixed inset-0 bg-slate-900/60 z-50 flex items-center justify-center p-4 backdrop-blur-xs"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setLockedMissionModal(null)}
+      {isLockedModalRendered && lockedMissionModal && (
+        <div
+          ref={lockedModalBackdropRef}
+          className="fixed inset-0 bg-slate-900/60 z-50 flex items-center justify-center p-4 backdrop-blur-xs"
+          onClick={() => setLockedMissionModal(null)}
+        >
+          <div
+            ref={lockedModalCardRef}
+            className="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl border border-slate-100 text-center relative overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
           >
-            <motion.div
-              className="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl border border-slate-100 text-center relative overflow-hidden"
-              initial={{ scale: 0.95, opacity: 0, y: 10 }}
-              animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.95, opacity: 0, y: 10 }}
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="w-14 h-14 rounded-2xl bg-linear-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center mx-auto mb-4 shadow-md">
-                <Lock className="w-7 h-7" />
-              </div>
+            <div className="w-14 h-14 rounded-2xl bg-linear-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center mx-auto mb-4 shadow-md">
+              <Lock className="w-7 h-7" />
+            </div>
 
-              <span className="text-[11px] font-extrabold uppercase tracking-wider text-indigo-600 bg-indigo-50 border border-indigo-100 px-3 py-1 rounded-full mb-3 inline-block">
-                Fitur Eksklusif Pro
-              </span>
+            <span className="text-[11px] font-extrabold uppercase tracking-wider text-indigo-600 bg-indigo-50 border border-indigo-100 px-3 py-1 rounded-full mb-3 inline-block">
+              Fitur Eksklusif Pro
+            </span>
 
-              <h3 className="text-xl font-bold text-slate-900 mb-2">
-                Upgrade ke Gapless Pro untuk Mengakses Semua Misi
-              </h3>
+            <h3 className="text-xl font-bold text-slate-900 mb-2">
+              Upgrade ke Gapless Pro untuk Mengakses Semua Misi
+            </h3>
 
-              <p className="text-sm text-slate-600 mb-6 leading-relaxed">
-                Misi <strong className="text-slate-800">"{lockedMissionModal.title}"</strong> dan misi tingkat lanjut lainnya dirancang untuk melatih kompetensi dunia kerja riil. Dapatkan akses ke seluruh paket misi bulanan & feedback AI dengan Gapless Pro.
-              </p>
+            <p className="text-sm text-slate-600 mb-6 leading-relaxed">
+              Misi <strong className="text-slate-800">&quot;{lockedMissionModal.title}&quot;</strong> dan misi tingkat lanjut lainnya dirancang untuk melatih kompetensi dunia kerja riil. Dapatkan akses ke seluruh paket misi bulanan &amp; feedback AI dengan Gapless Pro.
+            </p>
 
-              <div className="flex flex-col sm:flex-row gap-3">
-                <button
-                  onClick={() => setLockedMissionModal(null)}
-                  className="flex-1 py-3 px-4 rounded-xl border border-slate-200 text-slate-600 text-xs font-bold hover:bg-slate-50 transition cursor-pointer"
-                >
-                  Nanti Saja
-                </button>
-                <Link
-                  href="/pricing"
-                  className="flex-1 py-3 px-4 rounded-xl bg-linear-to-r from-blue-600 via-indigo-600 to-sky-500 hover:opacity-95 text-white text-xs font-bold shadow-md transition flex items-center justify-center gap-1.5 cursor-pointer"
-                >
-                  <span>Mulai Pro (Rp29k)</span>
-                </Link>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <button
+                onClick={() => setLockedMissionModal(null)}
+                className="flex-1 py-3 px-4 rounded-xl border border-slate-200 text-slate-600 text-xs font-bold hover:bg-slate-50 transition cursor-pointer"
+              >
+                Nanti Saja
+              </button>
+              <Link
+                href="/pricing"
+                className="flex-1 py-3 px-4 rounded-xl bg-linear-to-r from-blue-600 via-indigo-600 to-sky-500 hover:opacity-95 text-white text-xs font-bold shadow-md transition flex items-center justify-center gap-1.5 cursor-pointer"
+              >
+                <span>Mulai Pro (Rp29k)</span>
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

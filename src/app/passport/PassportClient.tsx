@@ -240,7 +240,11 @@ export function PassportClient({
                         : 'bg-slate-50 text-slate-700 hover:bg-slate-100 border border-slate-200'
                     }`}
                   >
-                    <span>{isExploration ? '🧭' : '🎯'}</span>
+                    {isExploration ? (
+                      <Compass className="w-3.5 h-3.5 shrink-0" strokeWidth={1.75} />
+                    ) : (
+                      <Target className="w-3.5 h-3.5 shrink-0" strokeWidth={1.75} />
+                    )}
                     <span>{isExploration ? 'Eksplorasi' : 'Terarah'} • {formatShortCareer(a.careerTitle)}</span>
                   </button>
                 );

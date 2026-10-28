@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { useState, useRef, useEffect } from 'react';
+import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
 import { 
   Award, 
   Download, 
@@ -50,6 +51,58 @@ export default function CertificateClient({
   const [copiedCaption, setCopiedCaption] = useState(false);
   const [copiedLink, setCopiedLink] = useState(false);
   const [showCaptionModal, setShowCaptionModal] = useState(false);
+  const [isCaptionModalRendered, setIsCaptionModalRendered] = useState(false);
+
+  const certContainerRef = useRef<HTMLDivElement>(null);
+  const certCardRef = useRef<HTMLDivElement>(null);
+  const captionBackdropRef = useRef<HTMLDivElement>(null);
+  const captionModalRef = useRef<HTMLDivElement>(null);
+
+  useGSAP(() => {
+    if (certCardRef.current) {
+      gsap.fromTo(
+        certCardRef.current,
+        { opacity: 0, scale: 0.98 },
+        { opacity: 1, scale: 1, duration: 0.5, ease: 'power2.out' }
+      );
+    }
+  }, { scope: certContainerRef });
+
+  useEffect(() => {
+    if (showCaptionModal) {
+      setIsCaptionModalRendered(true);
+    } else if (isCaptionModalRendered && captionBackdropRef.current && captionModalRef.current) {
+      gsap.killTweensOf([captionBackdropRef.current, captionModalRef.current]);
+      gsap.to(captionBackdropRef.current, {
+        opacity: 0,
+        duration: 0.2,
+        ease: 'power2.in',
+      });
+      gsap.to(captionModalRef.current, {
+        scale: 0.95,
+        opacity: 0,
+        duration: 0.2,
+        ease: 'power2.in',
+        onComplete: () => setIsCaptionModalRendered(false),
+      });
+    }
+  }, [showCaptionModal]);
+
+  useGSAP(() => {
+    if (isCaptionModalRendered && showCaptionModal && captionBackdropRef.current && captionModalRef.current) {
+      gsap.killTweensOf([captionBackdropRef.current, captionModalRef.current]);
+      gsap.fromTo(
+        captionBackdropRef.current,
+        { opacity: 0 },
+        { opacity: 1, duration: 0.25, ease: 'power2.out' }
+      );
+      gsap.fromTo(
+        captionModalRef.current,
+        { scale: 0.95, opacity: 0 },
+        { scale: 1, opacity: 1, duration: 0.25, ease: 'back.out(1.4)' }
+      );
+    }
+  }, [isCaptionModalRendered, showCaptionModal]);
 
   const linkedinCaption = `🎉 Proud to announce that I have successfully completed the Virtual Job Simulation for ${careerTitle} in collaboration with ${companyName} via Gapless! 🚀
 
@@ -125,11 +178,9 @@ Big thanks to Gapless and ${companyName} for providing this immersive learning e
       </div>
 
       {/* Certificate Frame (Printable Container) */}
-      <div className="certificate-container flex justify-center">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.98 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5 }}
+      <div ref={certContainerRef} className="certificate-container flex justify-center">
+        <div
+          ref={certCardRef}
           className="w-full max-w-4xl bg-[#FCFBF7] text-slate-900 rounded-3xl p-8 sm:p-14 border-8 border-double border-[#D4AF37] shadow-2xl relative overflow-hidden print:border-4 print:p-8 print:shadow-none print:m-0"
           style={{
             backgroundImage: 'radial-gradient(rgba(212, 175, 55, 0.04) 1px, transparent 0)',
@@ -206,9 +257,10 @@ Big thanks to Gapless and ${companyName} for providing this immersive learning e
                 {skillsValidated.map((skill) => (
                   <span
                     key={skill}
-                    className="text-xs font-semibold px-3 py-1 rounded-lg bg-slate-100 text-slate-700 border border-slate-200"
+                    className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1 rounded-lg bg-slate-100 text-slate-700 border border-slate-200"
                   >
-                    ✓ {skill}
+                    <Check className="w-3.5 h-3.5 text-emerald-600" strokeWidth={2} />
+                    <span>{skill}</span>
                   </span>
                 ))}
               </div>
@@ -247,67 +299,61 @@ Big thanks to Gapless and ${companyName} for providing this immersive learning e
               <p className="text-[9px] text-slate-400">Gapless Career Network</p>
             </div>
           </div>
-        </motion.div>
+        </div>
       </div>
 
       {/* LINKEDIN CAPTION MODAL */}
-      <AnimatePresence>
-        {showCaptionModal && (
-          <motion.div
-            className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4 backdrop-blur-xs"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+      {isCaptionModalRendered && (
+        <div
+          ref={captionBackdropRef}
+          className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4 backdrop-blur-xs"
+        >
+          <div
+            ref={captionModalRef}
+            className="bg-slate-900 border border-slate-700 p-6 sm:p-8 rounded-3xl max-w-lg w-full shadow-2xl text-slate-100 relative"
           >
-            <motion.div
-              className="bg-slate-900 border border-slate-700 p-6 sm:p-8 rounded-3xl max-w-lg w-full shadow-2xl text-slate-100 relative"
-              initial={{ scale: 0.95, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.95, opacity: 0 }}
-            >
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-xl bg-[#0A66C2] text-white flex items-center justify-center">
-                  <LinkedInIcon className="w-5 h-5" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-bold text-white">Template Postingan LinkedIn</h3>
-                  <p className="text-xs text-slate-400">Siap dipaste langsung ke feed LinkedIn kamu</p>
-                </div>
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-xl bg-[#0A66C2] text-white flex items-center justify-center">
+                <LinkedInIcon className="w-5 h-5" />
               </div>
-
-              <div className="bg-slate-950 p-4 rounded-2xl border border-slate-800 text-xs font-mono text-slate-300 whitespace-pre-line max-h-60 overflow-y-auto mb-6">
-                {linkedinCaption}
+              <div>
+                <h3 className="text-lg font-bold text-white">Template Postingan LinkedIn</h3>
+                <p className="text-xs text-slate-400">Siap dipaste langsung ke feed LinkedIn kamu</p>
               </div>
+            </div>
 
-              <div className="flex flex-col sm:flex-row gap-3">
-                <button
-                  onClick={handleCopyCaption}
-                  className="flex-1 flex items-center justify-center gap-2 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-sm font-bold transition-all shadow-md cursor-pointer"
-                >
-                  {copiedCaption ? (
-                    <>
-                      <Check className="w-4 h-4 text-emerald-300" />
-                      <span>Teks Tersalin!</span>
-                    </>
-                  ) : (
-                    <>
-                      <Copy className="w-4 h-4" />
-                      <span>Salin Caption LinkedIn</span>
-                    </>
-                  )}
-                </button>
+            <div className="bg-slate-950 p-4 rounded-2xl border border-slate-800 text-xs font-mono text-slate-300 whitespace-pre-line max-h-60 overflow-y-auto mb-6">
+              {linkedinCaption}
+            </div>
 
-                <button
-                  onClick={() => setShowCaptionModal(false)}
-                  className="px-6 py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-sm font-semibold transition-colors cursor-pointer"
-                >
-                  Tutup
-                </button>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <button
+                onClick={handleCopyCaption}
+                className="flex-1 flex items-center justify-center gap-2 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-sm font-bold transition-all shadow-md cursor-pointer"
+              >
+                {copiedCaption ? (
+                  <>
+                    <Check className="w-4 h-4 text-emerald-300" />
+                    <span>Teks Tersalin!</span>
+                  </>
+                ) : (
+                  <>
+                    <Copy className="w-4 h-4" />
+                    <span>Salin Caption LinkedIn</span>
+                  </>
+                )}
+              </button>
+
+              <button
+                onClick={() => setShowCaptionModal(false)}
+                className="px-6 py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-sm font-semibold transition-colors cursor-pointer"
+              >
+                Tutup
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

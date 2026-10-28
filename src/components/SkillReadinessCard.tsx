@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { useState, useRef, useEffect } from 'react';
+import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
 import { 
   Target, 
   BookOpen, 
@@ -47,7 +48,47 @@ export function SkillReadinessCard({
 }: SkillReadinessCardProps) {
   const [showBreakdown, setShowBreakdown] = useState(false);
   const [showExplanationModal, setShowExplanationModal] = useState(false);
+  const [isExplanationModalRendered, setIsExplanationModalRendered] = useState(false);
   const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
+
+  const explanationBackdropRef = useRef<HTMLDivElement>(null);
+  const explanationModalRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (showExplanationModal) {
+      setIsExplanationModalRendered(true);
+    } else if (isExplanationModalRendered && explanationBackdropRef.current && explanationModalRef.current) {
+      gsap.killTweensOf([explanationBackdropRef.current, explanationModalRef.current]);
+      gsap.to(explanationBackdropRef.current, {
+        opacity: 0,
+        duration: 0.16,
+        ease: 'power2.in',
+      });
+      gsap.to(explanationModalRef.current, {
+        scale: 0.95,
+        opacity: 0,
+        duration: 0.16,
+        ease: 'power2.in',
+        onComplete: () => setIsExplanationModalRendered(false),
+      });
+    }
+  }, [showExplanationModal]);
+
+  useGSAP(() => {
+    if (isExplanationModalRendered && showExplanationModal && explanationBackdropRef.current && explanationModalRef.current) {
+      gsap.killTweensOf([explanationBackdropRef.current, explanationModalRef.current]);
+      gsap.fromTo(
+        explanationBackdropRef.current,
+        { opacity: 0 },
+        { opacity: 1, duration: 0.2, ease: 'power2.out' }
+      );
+      gsap.fromTo(
+        explanationModalRef.current,
+        { scale: 0.95, opacity: 0 },
+        { scale: 1, opacity: 1, duration: 0.2, ease: 'back.out(1.4)' }
+      );
+    }
+  }, [isExplanationModalRendered, showExplanationModal]);
 
   const simulation = getSimulationForCareer(career.title, career.id);
 
@@ -217,11 +258,9 @@ export function SkillReadinessCard({
               {/* Progress Bar for Readiness */}
               <div className="space-y-2 mt-2">
                 <div className="h-2.5 w-full bg-zinc-100 rounded-full overflow-hidden p-0.5 border border-zinc-200/60">
-                  <motion.div
-                    initial={{ width: 0 }}
-                    animate={{ width: `${readinessPercentage}%` }}
-                    transition={{ duration: 0.8, ease: [0.23, 1, 0.32, 1] }}
-                    className={`h-full rounded-full ${
+                  <div
+                    style={{ width: `${readinessPercentage}%` }}
+                    className={`h-full rounded-full transition-[width] duration-700 ease-out ${
                       isHighReadiness
                         ? 'bg-emerald-500'
                         : isMediumReadiness
@@ -274,11 +313,9 @@ export function SkillReadinessCard({
                     const phaseProgress = Math.min(100, Math.max(0, (completionPercentage - phaseIdx * 25) * 4));
                     return (
                       <div key={phaseIdx} className="h-full bg-zinc-200 rounded-full overflow-hidden relative">
-                        <motion.div
-                          initial={{ width: 0 }}
-                          animate={{ width: `${phaseProgress}%` }}
-                          transition={{ duration: 0.6, delay: 0.1 * phaseIdx, ease: [0.23, 1, 0.32, 1] }}
-                          className="h-full bg-indigo-600 rounded-full"
+                        <div
+                          style={{ width: `${phaseProgress}%` }}
+                          className="h-full bg-indigo-600 rounded-full transition-[width] duration-500 ease-out"
                         />
                       </div>
                     );
@@ -297,10 +334,8 @@ export function SkillReadinessCard({
 
           {/* Special Educational Notice: 100% Completion but <100% Readiness (Bg Yuda Scenario) */}
           {showBgYudaGapNotice && (
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="mt-6 p-5 rounded-2xl bg-amber-50/70 border border-amber-200/70 text-zinc-800 relative overflow-hidden"
+            <div
+              className="mt-6 p-5 rounded-2xl bg-amber-50/70 border border-amber-200/70 text-zinc-800 relative overflow-hidden transition-all duration-300"
             >
               <div className="flex items-start gap-3.5">
                 <div className="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-600 flex items-center justify-center shrink-0 mt-0.5">
@@ -341,28 +376,26 @@ export function SkillReadinessCard({
                   </div>
                 </div>
               </div>
-            </motion.div>
+            </div>
           )}
 
           {/* Full Readiness Notice */}
           {isCompletionFull && !isReadinessNotFull && (
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="mt-6 p-5 rounded-2xl bg-emerald-50/70 border border-emerald-200/80 text-zinc-900 flex items-start gap-3.5"
+            <div
+              className="mt-6 p-5 rounded-2xl bg-emerald-50/70 border border-emerald-200/80 text-zinc-900 flex items-start gap-3.5 transition-all duration-300"
             >
               <div className="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-600 flex items-center justify-center shrink-0 mt-0.5">
                 <CheckCircle2 className="w-4 h-4" />
               </div>
               <div>
                 <h4 className="font-bold text-sm md:text-base mb-1 text-emerald-950">
-                  🎉 Kesiapan Sempurna! Kamu Sudah Memenuhi Standar Industri
+                  Kesiapan Sempurna! Kamu Sudah Memenuhi Standar Industri
                 </h4>
                 <p className="text-xs md:text-sm text-emerald-900/90 leading-relaxed">
                   Kamu telah menyelesaikan seluruh materi belajar dan memiliki tingkat kesiapan skill 100% untuk berkarier sebagai <strong>{career.title}</strong>. Terus asah portofoliomu dan mulai lamar pekerjaan impian!
                 </p>
               </div>
-            </motion.div>
+            </div>
           )}
 
           {/* ── Skill Breakdown Accordion (2-Category 3-Tier Horizontal Proficiency Bar Diagram) ── */}
@@ -386,16 +419,13 @@ export function SkillReadinessCard({
               </div>
             </button>
 
-            <AnimatePresence>
-              {showBreakdown && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
-                  exit={{ opacity: 0, height: 0 }}
-                  transition={{ duration: 0.22, ease: [0.32, 0.72, 0, 1] }}
-                  className="overflow-hidden"
-                >
-                  <div className="bg-zinc-50/60 rounded-2xl p-4 sm:p-5 border border-zinc-200/70 mt-4 space-y-6">
+            <div
+              className={`grid transition-[grid-template-rows,opacity] duration-200 ease-out overflow-hidden ${
+                showBreakdown ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'
+              }`}
+            >
+              <div className="overflow-hidden">
+                <div className="bg-zinc-50/60 rounded-2xl p-4 sm:p-5 border border-zinc-200/70 mt-4 space-y-6">
                     {/* Visual Diagram Legend */}
                     <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-zinc-200/60 text-xs">
                       <span className="text-zinc-600 font-medium">
@@ -586,10 +616,9 @@ export function SkillReadinessCard({
                       </div>
                     </div>
                   </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
+                </div>
+              </div>
+            </div>
 
           {/* ── Virtual Job Simulation & LinkedIn Certificate Banner (Moved to the very bottom) ── */}
           <div className="mt-8 p-5 sm:p-6 rounded-2xl bg-zinc-950 text-white flex flex-col md:flex-row items-start md:items-center justify-between gap-5 relative overflow-hidden shadow-sm border border-zinc-800">
@@ -631,66 +660,59 @@ export function SkillReadinessCard({
       </div>
 
       {/* Origin-Aware Explanation Modal: Readiness vs Completion */}
-      <AnimatePresence>
-        {showExplanationModal && (
-          <motion.div
-            className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 backdrop-blur-xs"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setShowExplanationModal(false)}
+      {isExplanationModalRendered && (
+        <div
+          ref={explanationBackdropRef}
+          className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 backdrop-blur-xs"
+          onClick={() => setShowExplanationModal(false)}
+        >
+          <div
+            ref={explanationModalRef}
+            className="bg-white border border-zinc-200 p-6 md:p-8 rounded-3xl max-w-lg w-full shadow-xl relative"
+            onClick={(e) => e.stopPropagation()}
           >
-            <motion.div
-              className="bg-white border border-zinc-200 p-6 md:p-8 rounded-3xl max-w-lg w-full shadow-xl relative"
-              initial={{ scale: 0.95, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.95, opacity: 0 }}
-              transition={{ duration: 0.16, ease: [0.23, 1, 0.32, 1] }}
-              onClick={(e) => e.stopPropagation()}
+            <div className="w-10 h-10 bg-zinc-100 text-zinc-900 rounded-xl flex items-center justify-center mb-4 border border-zinc-200/80">
+              <HelpCircle className="w-5 h-5 text-blue-600" />
+            </div>
+            <h3 className="text-lg md:text-xl font-bold text-zinc-900 mb-1.5 tracking-tight">
+              Memahami Dua Metrik Progres Gapless
+            </h3>
+            <p className="text-xs md:text-sm text-zinc-500 mb-5 leading-relaxed">
+              Di Gapless, kami memisahkan antara <strong>aktivitas belajar</strong> dengan <strong>tingkat penguasaan nyata</strong> agar kamu memiliki gambaran karier yang transparan dan akurat.
+            </p>
+
+            <div className="space-y-3 mb-6">
+              <div className="p-4 rounded-xl bg-zinc-50 border border-zinc-200/70">
+                <div className="flex items-center gap-2 font-bold text-zinc-900 text-xs sm:text-sm mb-1">
+                  <Target className="w-4 h-4 text-blue-600" />
+                  <span>1. Skill Readiness (%) — Kesiapan Kompetensi</span>
+                </div>
+                <p className="text-xs text-zinc-600 leading-relaxed">
+                  Dihitung dari perbandingan level skill aktualmu terhadap standar requirement industri untuk posisi <strong>{career.title}</strong>. Angka ini hanya naik jika kamu memvalidasi peningkatan kemampuan melalui evaluasi atau asesmen ulang.
+                </p>
+              </div>
+
+              <div className="p-4 rounded-xl bg-zinc-50 border border-zinc-200/70">
+                <div className="flex items-center gap-2 font-bold text-zinc-900 text-xs sm:text-sm mb-1">
+                  <BookOpen className="w-4 h-4 text-indigo-600" />
+                  <span>2. Progres Materi Belajar (%) — Roadmap Completion</span>
+                </div>
+                <p className="text-xs text-zinc-600 leading-relaxed">
+                  Menghitung berapa banyak modul kurikulum yang telah kamu buka dan pelajari. Selesai 100% berarti kamu sudah menuntaskan seluruh materi panduan belajar.
+                </p>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setShowExplanationModal(false)}
+              className="w-full py-2.5 bg-zinc-900 hover:bg-zinc-800 text-white rounded-xl text-xs sm:text-sm font-semibold transition-colors cursor-pointer btn-press"
             >
-              <div className="w-10 h-10 bg-zinc-100 text-zinc-900 rounded-xl flex items-center justify-center mb-4 border border-zinc-200/80">
-                <HelpCircle className="w-5 h-5 text-blue-600" />
-              </div>
-              <h3 className="text-lg md:text-xl font-bold text-zinc-900 mb-1.5 tracking-tight">
-                Memahami Dua Metrik Progres Gapless
-              </h3>
-              <p className="text-xs md:text-sm text-zinc-500 mb-5 leading-relaxed">
-                Di Gapless, kami memisahkan antara <strong>aktivitas belajar</strong> dengan <strong>tingkat penguasaan nyata</strong> agar kamu memiliki gambaran karier yang transparan dan akurat.
-              </p>
-
-              <div className="space-y-3 mb-6">
-                <div className="p-4 rounded-xl bg-zinc-50 border border-zinc-200/70">
-                  <div className="flex items-center gap-2 font-bold text-zinc-900 text-xs sm:text-sm mb-1">
-                    <Target className="w-4 h-4 text-blue-600" />
-                    <span>1. Skill Readiness (%) — Kesiapan Kompetensi</span>
-                  </div>
-                  <p className="text-xs text-zinc-600 leading-relaxed">
-                    Dihitung dari perbandingan level skill aktualmu terhadap standar requirement industri untuk posisi <strong>{career.title}</strong>. Angka ini hanya naik jika kamu memvalidasi peningkatan kemampuan melalui evaluasi atau asesmen ulang.
-                  </p>
-                </div>
-
-                <div className="p-4 rounded-xl bg-zinc-50 border border-zinc-200/70">
-                  <div className="flex items-center gap-2 font-bold text-zinc-900 text-xs sm:text-sm mb-1">
-                    <BookOpen className="w-4 h-4 text-indigo-600" />
-                    <span>2. Progres Materi Belajar (%) — Roadmap Completion</span>
-                  </div>
-                  <p className="text-xs text-zinc-600 leading-relaxed">
-                    Menghitung berapa banyak modul kurikulum yang telah kamu buka dan pelajari. Selesai 100% berarti kamu sudah menuntaskan seluruh materi panduan belajar.
-                  </p>
-                </div>
-              </div>
-
-              <button
-                type="button"
-                onClick={() => setShowExplanationModal(false)}
-                className="w-full py-2.5 bg-zinc-900 hover:bg-zinc-800 text-white rounded-xl text-xs sm:text-sm font-semibold transition-colors cursor-pointer btn-press"
-              >
-                Saya Mengerti
-              </button>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+              Saya Mengerti
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

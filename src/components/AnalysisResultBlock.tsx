@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { useState, useRef, useEffect } from 'react';
+import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
 import { ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Tooltip, Radar, Legend } from 'recharts';
 import { Sparkles, CheckCircle2, AlertTriangle, Lock, Check, ShieldCheck, ArrowRight, X, FileText, Download, Loader2, ExternalLink } from 'lucide-react';
 import { GapInsight } from '@/contexts/CareerContext';
@@ -51,9 +52,49 @@ export function AnalysisResultBlock({
   roadmapHref,
 }: AnalysisResultBlockProps) {
   const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [isPaymentModalRendered, setIsPaymentModalRendered] = useState(false);
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
   const [paymentSuccess, setPaymentSuccess] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  const paymentBackdropRef = useRef<HTMLDivElement>(null);
+  const paymentCardRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (showPaymentModal) {
+      setIsPaymentModalRendered(true);
+    } else if (isPaymentModalRendered && paymentBackdropRef.current && paymentCardRef.current) {
+      gsap.killTweensOf([paymentBackdropRef.current, paymentCardRef.current]);
+      gsap.to(paymentBackdropRef.current, {
+        opacity: 0,
+        duration: 0.2,
+        ease: 'power2.in',
+      });
+      gsap.to(paymentCardRef.current, {
+        scale: 0.95,
+        opacity: 0,
+        duration: 0.2,
+        ease: 'power2.in',
+        onComplete: () => setIsPaymentModalRendered(false),
+      });
+    }
+  }, [showPaymentModal]);
+
+  useGSAP(() => {
+    if (isPaymentModalRendered && showPaymentModal && paymentBackdropRef.current && paymentCardRef.current) {
+      gsap.killTweensOf([paymentBackdropRef.current, paymentCardRef.current]);
+      gsap.fromTo(
+        paymentBackdropRef.current,
+        { opacity: 0 },
+        { opacity: 1, duration: 0.25, ease: 'power2.out' }
+      );
+      gsap.fromTo(
+        paymentCardRef.current,
+        { scale: 0.95, opacity: 0 },
+        { scale: 1, opacity: 1, duration: 0.25, ease: 'back.out(1.4)' }
+      );
+    }
+  }, [isPaymentModalRendered, showPaymentModal]);
 
   const handleMockPayment = async () => {
     setIsProcessingPayment(true);
@@ -219,13 +260,10 @@ export function AnalysisResultBlock({
 
           <div className="relative w-full flex items-center justify-center min-h-[320px]">
             {/* Chart Area: Selalu Jelas Tanpa Blur */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{
-                opacity: chartReady ? 1 : 0,
-                scale: chartReady ? 1 : 0.8,
-              }}
-              className="w-full transition-all duration-500"
+            <div
+              className={`w-full transition-all duration-500 ease-out ${
+                chartReady ? 'opacity-100 scale-100' : 'opacity-0 scale-90'
+              }`}
               style={{ maxWidth: 450, aspectRatio: '1' }}
             >
               <ResponsiveContainer width="100%" height="100%" minWidth={1} minHeight={1}>
@@ -268,7 +306,7 @@ export function AnalysisResultBlock({
                   />
                 </RadarChart>
               </ResponsiveContainer>
-            </motion.div>
+            </div>
           </div>
         </div>
 
@@ -438,83 +476,82 @@ export function AnalysisResultBlock({
       </div>
 
       {/* Modal Pembayaran (Mock Payment Dialog) */}
-      <AnimatePresence>
-        {showPaymentModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs print:hidden">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl border border-slate-100 relative"
+      {isPaymentModalRendered && (
+        <div
+          ref={paymentBackdropRef}
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs print:hidden"
+        >
+          <div
+            ref={paymentCardRef}
+            className="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl border border-slate-100 relative"
+          >
+            <button
+              onClick={() => setShowPaymentModal(false)}
+              className="absolute top-5 right-5 p-1 rounded-lg hover:bg-slate-100 text-slate-400 cursor-pointer"
             >
-              <button
-                onClick={() => setShowPaymentModal(false)}
-                className="absolute top-5 right-5 p-1 rounded-lg hover:bg-slate-100 text-slate-400 cursor-pointer"
-              >
-                <X className="w-5 h-5" />
-              </button>
+              <X className="w-5 h-5" />
+            </button>
 
-              <div className="text-center mb-6">
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center mx-auto mb-3 shadow-md">
-                  <Sparkles className="w-7 h-7" />
-                </div>
-                <h3 className="text-xl font-bold text-slate-900">Buka Laporan Analisis Gap</h3>
-                <p className="text-xs text-slate-500 mt-1">
-                  Target Karier: <strong className="text-slate-800">{careerName}</strong>
-                </p>
+            <div className="text-center mb-6">
+              <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center mx-auto mb-3 shadow-md">
+                <Sparkles className="w-7 h-7" />
               </div>
-
-              <div className="bg-slate-50 rounded-2xl p-4 border border-slate-200 mb-6 text-xs space-y-2">
-                <div className="flex justify-between text-slate-600">
-                  <span>Produk:</span>
-                  <span className="font-semibold text-slate-900">Laporan Gap &amp; PDF</span>
-                </div>
-                <div className="flex justify-between text-slate-600">
-                  <span>Masa Berlaku:</span>
-                  <span className="font-semibold text-slate-900">Permanen (Selamanya)</span>
-                </div>
-                <div className="flex justify-between text-slate-900 font-bold pt-2 border-t border-slate-200 text-sm">
-                  <span>Total Pembayaran:</span>
-                  <span className="text-blue-600">Rp 9.900</span>
-                </div>
-              </div>
-
-              {errorMsg && (
-                <p className="text-xs text-rose-600 bg-rose-50 p-3 rounded-xl mb-4 text-center">
-                  {errorMsg}
-                </p>
-              )}
-
-              {paymentSuccess ? (
-                <div className="p-4 rounded-xl bg-emerald-50 text-emerald-700 text-center font-bold text-xs flex items-center justify-center gap-2">
-                  <Check className="w-4 h-4 text-emerald-600" />
-                  Pembayaran Berhasil! Membuka laporan...
-                </div>
-              ) : (
-                <div className="flex gap-3">
-                  <button
-                    onClick={() => setShowPaymentModal(false)}
-                    className="flex-1 py-2.5 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 text-xs font-semibold cursor-pointer"
-                  >
-                    Batal
-                  </button>
-                  <button
-                    onClick={handleMockPayment}
-                    disabled={isProcessingPayment}
-                    className="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-xs font-semibold shadow-md transition disabled:opacity-50 cursor-pointer"
-                  >
-                    {isProcessingPayment ? 'Memproses...' : 'Konfirmasi Bayar'}
-                  </button>
-                </div>
-              )}
-
-              <p className="text-[10px] text-slate-400 text-center mt-4">
-                Simulasi Pembayaran Mock untuk Hackathon/Demo. Langsung aktif seketika.
+              <h3 className="text-xl font-bold text-slate-900">Buka Laporan Analisis Gap</h3>
+              <p className="text-xs text-slate-500 mt-1">
+                Target Karier: <strong className="text-slate-800">{careerName}</strong>
               </p>
-            </motion.div>
+            </div>
+
+            <div className="bg-slate-50 rounded-2xl p-4 border border-slate-200 mb-6 text-xs space-y-2">
+              <div className="flex justify-between text-slate-600">
+                <span>Produk:</span>
+                <span className="font-semibold text-slate-900">Laporan Gap &amp; PDF</span>
+              </div>
+              <div className="flex justify-between text-slate-600">
+                <span>Masa Berlaku:</span>
+                <span className="font-semibold text-slate-900">Permanen (Selamanya)</span>
+              </div>
+              <div className="flex justify-between text-slate-900 font-bold pt-2 border-t border-slate-200 text-sm">
+                <span>Total Pembayaran:</span>
+                <span className="text-blue-600">Rp 9.900</span>
+              </div>
+            </div>
+
+            {errorMsg && (
+              <p className="text-xs text-rose-600 bg-rose-50 p-3 rounded-xl mb-4 text-center">
+                {errorMsg}
+              </p>
+            )}
+
+            {paymentSuccess ? (
+              <div className="p-4 rounded-xl bg-emerald-50 text-emerald-700 text-center font-bold text-xs flex items-center justify-center gap-2">
+                <Check className="w-4 h-4 text-emerald-600" />
+                Pembayaran Berhasil! Membuka laporan...
+              </div>
+            ) : (
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setShowPaymentModal(false)}
+                  className="flex-1 py-2.5 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 text-xs font-semibold cursor-pointer"
+                >
+                  Batal
+                </button>
+                <button
+                  onClick={handleMockPayment}
+                  disabled={isProcessingPayment}
+                  className="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-xs font-semibold shadow-md transition disabled:opacity-50 cursor-pointer"
+                >
+                  {isProcessingPayment ? 'Memproses...' : 'Konfirmasi Bayar'}
+                </button>
+              </div>
+            )}
+
+            <p className="text-[10px] text-slate-400 text-center mt-4">
+              Simulasi Pembayaran Mock untuk Hackathon/Demo. Langsung aktif seketika.
+            </p>
           </div>
-        )}
-      </AnimatePresence>
+        </div>
+      )}
     </div>
   );
 }

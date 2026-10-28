@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { useState, useRef, useEffect } from 'react';
+import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
 import {
   Check, Sparkles, Lock, ArrowRight, Crown, Shield, FileText,
   HelpCircle, Calendar, Zap, CheckCircle2, Clock, X, AlertCircle
@@ -28,6 +29,58 @@ export function PricingClient({ isLoggedIn, isPro: initialIsPro, periodEnd: init
   const [isSubscribing, setIsSubscribing] = useState(false);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const [isProModalRendered, setIsProModalRendered] = useState(false);
+
+  const containerRef = useRef<HTMLDivElement>(null);
+  const proModalBackdropRef = useRef<HTMLDivElement>(null);
+  const proModalCardRef = useRef<HTMLDivElement>(null);
+
+  useGSAP(() => {
+    const cards = containerRef.current?.querySelectorAll('.pricing-card');
+    if (cards && cards.length > 0) {
+      gsap.fromTo(
+        cards,
+        { opacity: 0, y: 20 },
+        { opacity: 1, y: 0, duration: 0.5, stagger: 0.1, ease: 'power2.out' }
+      );
+    }
+  }, { scope: containerRef });
+
+  useEffect(() => {
+    if (showProModal) {
+      setIsProModalRendered(true);
+    } else if (isProModalRendered && proModalBackdropRef.current && proModalCardRef.current) {
+      gsap.killTweensOf([proModalBackdropRef.current, proModalCardRef.current]);
+      gsap.to(proModalBackdropRef.current, {
+        opacity: 0,
+        duration: 0.2,
+        ease: 'power2.in',
+      });
+      gsap.to(proModalCardRef.current, {
+        scale: 0.95,
+        opacity: 0,
+        duration: 0.2,
+        ease: 'power2.in',
+        onComplete: () => setIsProModalRendered(false),
+      });
+    }
+  }, [showProModal]);
+
+  useGSAP(() => {
+    if (isProModalRendered && showProModal && proModalBackdropRef.current && proModalCardRef.current) {
+      gsap.killTweensOf([proModalBackdropRef.current, proModalCardRef.current]);
+      gsap.fromTo(
+        proModalBackdropRef.current,
+        { opacity: 0 },
+        { opacity: 1, duration: 0.25, ease: 'power2.out' }
+      );
+      gsap.fromTo(
+        proModalCardRef.current,
+        { scale: 0.95, opacity: 0 },
+        { scale: 1, opacity: 1, duration: 0.25, ease: 'back.out(1.4)' }
+      );
+    }
+  }, [isProModalRendered, showProModal]);
 
   const handleSubscribePro = async () => {
     if (!isLoggedIn) {
@@ -96,7 +149,7 @@ export function PricingClient({ isLoggedIn, isPro: initialIsPro, periodEnd: init
   ];
 
   return (
-    <div className="space-y-16">
+    <div ref={containerRef} className="space-y-16">
       {/* Header Section */}
       <div className="text-center max-w-3xl mx-auto">
         <h1 className="text-3xl sm:text-5xl font-extrabold text-slate-900 tracking-tight leading-tight">
@@ -113,10 +166,8 @@ export function PricingClient({ isLoggedIn, isPro: initialIsPro, periodEnd: init
       {/* 2 Main Pricing Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto items-stretch">
         {/* Card 1: Free Plan */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-3xl p-8 border border-slate-200 shadow-sm flex flex-col justify-between hover:shadow-md transition relative"
+        <div
+          className="pricing-card bg-white rounded-3xl p-8 border border-slate-200 shadow-sm flex flex-col justify-between hover:shadow-md transition relative"
         >
           <div>
             <div className="flex items-center justify-between mb-4">
@@ -171,8 +222,9 @@ export function PricingClient({ isLoggedIn, isPro: initialIsPro, periodEnd: init
                 <ArrowRight className="w-3.5 h-3.5" />
               </button>
             ) : !isPro ? (
-              <div className="w-full py-3 px-4 rounded-xl bg-slate-50 border border-slate-200 text-slate-600 text-xs font-semibold text-center">
-                ✓ Paket Aktif Kamu Saat Ini
+              <div className="w-full py-3 px-4 rounded-xl bg-slate-50 border border-slate-200 text-slate-600 text-xs font-semibold flex items-center justify-center gap-1.5">
+                <Check className="w-3.5 h-3.5 text-emerald-600" strokeWidth={2} />
+                <span>Paket Aktif Kamu Saat Ini</span>
               </div>
             ) : (
               <Link
@@ -183,14 +235,11 @@ export function PricingClient({ isLoggedIn, isPro: initialIsPro, periodEnd: init
               </Link>
             )}
           </div>
-        </motion.div>
+        </div>
 
         {/* Card 2: Gapless Pro Plan */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="bg-linear-to-br from-slate-900 via-slate-900 to-indigo-950 text-white rounded-3xl p-8 shadow-2xl border-2 border-indigo-500/40 flex flex-col justify-between relative overflow-hidden ring-4 ring-blue-500/10"
+        <div
+          className="pricing-card bg-linear-to-br from-slate-900 via-slate-900 to-indigo-950 text-white rounded-3xl p-8 shadow-2xl border-2 border-indigo-500/40 flex flex-col justify-between relative overflow-hidden ring-4 ring-blue-500/10"
         >
           <div className="absolute top-0 right-0 transform translate-x-8 -translate-y-8 w-48 h-48 bg-linear-to-br from-blue-500/30 to-indigo-500/30 rounded-full blur-2xl pointer-events-none" />
 
@@ -256,7 +305,7 @@ export function PricingClient({ isLoggedIn, isPro: initialIsPro, periodEnd: init
               {isPro ? 'Perpanjang Pro (+30 Hari)' : 'Mulai Gapless Pro (Rp 29.000)'}
             </button>
           </div>
-        </motion.div>
+        </div>
       </div>
 
       {/* Section Terpisah: Laporan Gap Mendalam (Rp9.900) */}
@@ -319,79 +368,78 @@ export function PricingClient({ isLoggedIn, isPro: initialIsPro, periodEnd: init
       </div>
 
       {/* Modal Langganan Pro (Mock Payment Dialog) */}
-      <AnimatePresence>
-        {showProModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl border border-slate-100 relative"
+      {isProModalRendered && (
+        <div
+          ref={proModalBackdropRef}
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs"
+        >
+          <div
+            ref={proModalCardRef}
+            className="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl border border-slate-100 relative"
+          >
+            <button
+              onClick={() => setShowProModal(false)}
+              className="absolute top-5 right-5 p-1 rounded-lg hover:bg-slate-100 text-slate-400 cursor-pointer"
             >
-              <button
-                onClick={() => setShowProModal(false)}
-                className="absolute top-5 right-5 p-1 rounded-lg hover:bg-slate-100 text-slate-400 cursor-pointer"
-              >
-                <X className="w-5 h-5" />
-              </button>
+              <X className="w-5 h-5" />
+            </button>
 
-              <div className="text-center mb-6">
-                <div className="w-14 h-14 rounded-2xl bg-linear-to-tr from-blue-600 via-indigo-600 to-sky-500 text-white flex items-center justify-center mx-auto mb-3 shadow-md">
-                  <Crown className="w-7 h-7" />
-                </div>
-                <h3 className="text-xl font-bold text-slate-900">
-                  {isPro ? 'Perpanjang Gapless Pro' : 'Aktifkan Gapless Pro'}
-                </h3>
-                <p className="text-xs text-slate-500 mt-1">
-                  Akses penuh ke seluruh kurikulum dan fitur akselerasi karier
-                </p>
+            <div className="text-center mb-6">
+              <div className="w-14 h-14 rounded-2xl bg-linear-to-tr from-blue-600 via-indigo-600 to-sky-500 text-white flex items-center justify-center mx-auto mb-3 shadow-md">
+                <Crown className="w-7 h-7" />
               </div>
-
-              <div className="bg-slate-50 rounded-2xl p-4 border border-slate-200 mb-6 text-xs space-y-2">
-                <div className="flex justify-between text-slate-600">
-                  <span>Paket:</span>
-                  <span className="font-semibold text-slate-900">Gapless Pro (Bulanan)</span>
-                </div>
-                <div className="flex justify-between text-slate-600">
-                  <span>Durasi:</span>
-                  <span className="font-semibold text-slate-900">30 Hari</span>
-                </div>
-                <div className="flex justify-between text-slate-900 font-bold pt-2 border-t border-slate-200 text-sm">
-                  <span>Total Tagihan:</span>
-                  <span className="text-blue-600">Rp 29.000</span>
-                </div>
-              </div>
-
-              {successMsg ? (
-                <div className="p-4 rounded-xl bg-emerald-50 text-emerald-700 text-center font-bold text-xs flex items-center justify-center gap-2">
-                  <Check className="w-4 h-4 text-emerald-600" />
-                  {successMsg}
-                </div>
-              ) : (
-                <div className="flex gap-3">
-                  <button
-                    onClick={() => setShowProModal(false)}
-                    className="flex-1 py-2.5 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 text-xs font-semibold cursor-pointer"
-                  >
-                    Batal
-                  </button>
-                  <button
-                    onClick={handleSubscribePro}
-                    disabled={isSubscribing}
-                    className="flex-1 py-2.5 rounded-xl bg-linear-to-r from-blue-600 via-indigo-600 to-sky-500 hover:opacity-95 text-white text-xs font-semibold shadow-md transition disabled:opacity-50 cursor-pointer"
-                  >
-                    {isSubscribing ? 'Memproses...' : 'Konfirmasi Bayar'}
-                  </button>
-                </div>
-              )}
-
-              <p className="text-[10px] text-slate-400 text-center mt-4">
-                Simulasi Pembayaran Mock untuk Hackathon/Demo. Langsung aktif seketika.
+              <h3 className="text-xl font-bold text-slate-900">
+                {isPro ? 'Perpanjang Gapless Pro' : 'Aktifkan Gapless Pro'}
+              </h3>
+              <p className="text-xs text-slate-500 mt-1">
+                Akses penuh ke seluruh kurikulum dan fitur akselerasi karier
               </p>
-            </motion.div>
+            </div>
+
+            <div className="bg-slate-50 rounded-2xl p-4 border border-slate-200 mb-6 text-xs space-y-2">
+              <div className="flex justify-between text-slate-600">
+                <span>Paket:</span>
+                <span className="font-semibold text-slate-900">Gapless Pro (Bulanan)</span>
+              </div>
+              <div className="flex justify-between text-slate-600">
+                <span>Durasi:</span>
+                <span className="font-semibold text-slate-900">30 Hari</span>
+              </div>
+              <div className="flex justify-between text-slate-900 font-bold pt-2 border-t border-slate-200 text-sm">
+                <span>Total Tagihan:</span>
+                <span className="text-blue-600">Rp 29.000</span>
+              </div>
+            </div>
+
+            {successMsg ? (
+              <div className="p-4 rounded-xl bg-emerald-50 text-emerald-700 text-center font-bold text-xs flex items-center justify-center gap-2">
+                <Check className="w-4 h-4 text-emerald-600" />
+                {successMsg}
+              </div>
+            ) : (
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setShowProModal(false)}
+                  className="flex-1 py-2.5 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 text-xs font-semibold cursor-pointer"
+                >
+                  Batal
+                </button>
+                <button
+                  onClick={handleSubscribePro}
+                  disabled={isSubscribing}
+                  className="flex-1 py-2.5 rounded-xl bg-linear-to-r from-blue-600 via-indigo-600 to-sky-500 hover:opacity-95 text-white text-xs font-semibold shadow-md transition disabled:opacity-50 cursor-pointer"
+                >
+                  {isSubscribing ? 'Memproses...' : 'Konfirmasi Bayar'}
+                </button>
+              </div>
+            )}
+
+            <p className="text-[10px] text-slate-400 text-center mt-4">
+              Simulasi Pembayaran Mock untuk Hackathon/Demo. Langsung aktif seketika.
+            </p>
           </div>
-        )}
-      </AnimatePresence>
+        </div>
+      )}
     </div>
   );
 }

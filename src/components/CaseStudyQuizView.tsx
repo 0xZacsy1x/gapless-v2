@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useEffect, useMemo, useCallback } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
+import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
 import {
   ChevronRight,
   ChevronLeft,
@@ -16,6 +17,10 @@ import {
   Compass,
   Briefcase,
   Layers,
+  Users2,
+  SearchCheck,
+  Crosshair,
+  Flame,
 } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useGaplessContext } from '@/contexts/CareerContext';
@@ -445,7 +450,7 @@ export function CaseStudyQuizView() {
       return {
         number: 1,
         title: 'Kolaborasi Tim & Komunikasi',
-        icon: '🤝',
+        icon: Users2,
         color: 'from-blue-600 to-indigo-600',
         badgeBg: 'bg-blue-50 text-blue-700 border-blue-200',
       };
@@ -453,7 +458,7 @@ export function CaseStudyQuizView() {
       return {
         number: 2,
         title: 'Analisis & Pemecahan Masalah',
-        icon: '🔍',
+        icon: SearchCheck,
         color: 'from-emerald-600 to-teal-600',
         badgeBg: 'bg-emerald-50 text-emerald-700 border-emerald-200',
       };
@@ -461,7 +466,7 @@ export function CaseStudyQuizView() {
       return {
         number: 3,
         title: 'Ketelitian & Rasa Ingin Tahu',
-        icon: '🎯',
+        icon: Crosshair,
         color: 'from-violet-600 to-purple-600',
         badgeBg: 'bg-violet-50 text-violet-700 border-violet-200',
       };
@@ -469,7 +474,7 @@ export function CaseStudyQuizView() {
       return {
         number: 4,
         title: 'Inisiatif & Adaptabilitas Kerja',
-        icon: '🌱',
+        icon: Flame,
         color: 'from-amber-600 to-orange-600',
         badgeBg: 'bg-amber-50 text-amber-700 border-amber-200',
       };
@@ -481,22 +486,33 @@ export function CaseStudyQuizView() {
     : 100;
   const sjtProgress = ((sjtIndex + 1) / sjtBank.length) * 100;
 
+  const phaseContainerRef = useRef<HTMLDivElement>(null);
+  const sjtCardRef = useRef<HTMLDivElement>(null);
+
+  useGSAP(() => {
+    if (phaseContainerRef.current) {
+      gsap.fromTo(phaseContainerRef.current, { opacity: 0, y: 15 }, { opacity: 1, y: 0, duration: 0.3, ease: 'power2.out' });
+    }
+  }, [phase]);
+
+  useGSAP(() => {
+    if (sjtCardRef.current) {
+      gsap.fromTo(sjtCardRef.current, { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.2, ease: 'power2.out' });
+    }
+  }, [currentSjtQ?.id]);
+
   return (
     <div className="min-h-screen bg-space flex flex-col justify-between">
       <Navbar />
       <div className="flex-1 flex flex-col items-center justify-center px-4 sm:px-6 py-8">
         <div className="w-full max-w-4xl mx-auto flex flex-col items-center">
-        <AnimatePresence mode="wait">
           {/* ══════════════════════════════════════════════════
               PHASE 1: STUDI KASUS TEKNIS (HARDSKILL)
              ══════════════════════════════════════════════════ */}
           {phase === 'hardskill' && currentHardskillQ && (
-            <motion.div
+            <div
+              ref={phaseContainerRef}
               key="hardskill"
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              transition={{ duration: 0.25 }}
               className="w-full max-w-2xl"
             >
               {/* Restored Draft Banner */}
@@ -532,14 +548,12 @@ export function CaseStudyQuizView() {
 
               {/* Progress bar */}
               <div className="w-full bg-gray-200 h-2 rounded-full mb-8 overflow-hidden">
-                <motion.div
-                  className="h-full rounded-full"
+                <div
+                  className="h-full rounded-full transition-all duration-300"
                   style={{
                     background: 'linear-gradient(90deg, #1d4ed8, #3b82f6, #22d3ee)',
+                    width: `${hardskillProgress}%`,
                   }}
-                  initial={{ width: 0 }}
-                  animate={{ width: `${hardskillProgress}%` }}
-                  transition={{ duration: 0.3 }}
                 />
               </div>
 
@@ -611,19 +625,16 @@ export function CaseStudyQuizView() {
                   </button>
                 </div>
               </div>
-            </motion.div>
+            </div>
           )}
 
           {/* ══════════════════════════════════════════════════
               PHASE 1.5: TRANSITION INTERSTITIAL
              ══════════════════════════════════════════════════ */}
           {phase === 'transition' && (
-            <motion.div
+            <div
+              ref={phaseContainerRef}
               key="transition"
-              initial={{ opacity: 0, scale: 0.96 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.96 }}
-              transition={{ duration: 0.3 }}
               className="w-full max-w-xl glass-card p-8 sm:p-10 text-center relative overflow-hidden"
             >
               <div className="w-16 h-16 rounded-3xl bg-linear-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center mx-auto mb-5 shadow-lg shadow-blue-500/25">
@@ -699,19 +710,16 @@ export function CaseStudyQuizView() {
                   <ArrowRight size={16} />
                 </button>
               </div>
-            </motion.div>
+            </div>
           )}
 
           {/* ══════════════════════════════════════════════════
               PHASE 2: 40 SOAL SJT (SOFT SKILLS)
              ══════════════════════════════════════════════════ */}
           {phase === 'sjt' && currentSjtQ && (
-            <motion.div
+            <div
+              ref={phaseContainerRef}
               key="sjt"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 20 }}
-              transition={{ duration: 0.25 }}
               className="w-full max-w-2xl"
             >
               {syncError && (
@@ -732,7 +740,7 @@ export function CaseStudyQuizView() {
                     color: '#1d4ed8'
                   }}
                 >
-                  <span>{sjtStage.icon}</span>
+                  <sjtStage.icon className="w-3.5 h-3.5 shrink-0" strokeWidth={1.75} />
                   <span>{sjtStage.title}</span>
                 </div>
 
@@ -746,27 +754,21 @@ export function CaseStudyQuizView() {
 
               {/* Progress bar */}
               <div className="w-full bg-gray-200 h-2 rounded-full mb-8 overflow-hidden">
-                <motion.div
-                  className="h-full rounded-full"
+                <div
+                  className="h-full rounded-full transition-all duration-200"
                   style={{
                     background: 'linear-gradient(90deg, #2563eb, #6366f1, #a855f7)',
+                    width: `${sjtProgress}%`,
                   }}
-                  initial={{ width: 0 }}
-                  animate={{ width: `${sjtProgress}%` }}
-                  transition={{ duration: 0.2 }}
                 />
               </div>
 
               {/* Scenario & Options Card */}
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={currentSjtQ.id}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.2 }}
-                  className="glass-card p-6 sm:p-8"
-                >
+              <div
+                ref={sjtCardRef}
+                key={currentSjtQ.id}
+                className="glass-card p-6 sm:p-8"
+              >
                   {/* Scenario Box */}
                   <div className="p-4 sm:p-5 rounded-2xl bg-slate-50/90 border border-slate-200/90 mb-6">
                     <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
@@ -860,19 +862,17 @@ export function CaseStudyQuizView() {
                       </button>
                     )}
                   </div>
-                </motion.div>
-              </AnimatePresence>
-            </motion.div>
+                </div>
+            </div>
           )}
 
           {/* ══════════════════════════════════════════════════
               PHASE 3: SAVING SCREEN
              ══════════════════════════════════════════════════ */}
           {phase === 'saving' && (
-            <motion.div
+            <div
+              ref={phaseContainerRef}
               key="saving"
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
               className="w-full flex flex-col items-center justify-center py-24 text-center"
             >
               <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center shadow-lg border border-slate-100 mb-6">
@@ -884,11 +884,10 @@ export function CaseStudyQuizView() {
               <p className="text-slate-500 max-w-sm mx-auto text-sm">
                 Mengintegrasikan hasil studi kasus teknis dan 40 simulasi situasi kerja untuk laporan kesiapan kariermu.
               </p>
-            </motion.div>
+            </div>
           )}
-        </AnimatePresence>
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
 }

@@ -17,7 +17,11 @@ import {
   Target,
   Zap,
   TrendingUp,
+  Check,
+  XCircle,
+  Lightbulb,
 } from 'lucide-react';
+import { SkillIcon } from '@/components/ui/AppIcons';
 import { ComprehensiveReportData } from '@/lib/report_generator';
 import { ReportSvgRadar } from '@/components/ReportSvgRadar';
 import { downloadBlobFile } from '@/lib/download-helper';
@@ -200,7 +204,8 @@ export function ReportDocumentClient({ report, assessmentId }: Props) {
 
             <div className="pt-4">
               <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-slate-100 border border-slate-300 text-slate-800 text-sm font-bold shadow-xs">
-                <span>🎯 Target Peran:</span>
+                <Target className="w-4 h-4 text-[#2d4a8a]" strokeWidth={1.75} />
+                <span>Target Peran:</span>
                 <span className="text-[#2d4a8a]">{report.targetRole}</span>
               </div>
             </div>
@@ -390,14 +395,16 @@ export function ReportDocumentClient({ report, assessmentId }: Props) {
                         </span>
                       </td>
                       <td className="py-2 px-3 text-center">
-                        <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-bold ${
+                        <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[11px] font-bold border ${
                           item.priority === 'Kritis'
-                            ? 'bg-rose-100 text-rose-800'
+                            ? 'bg-rose-50 text-rose-800 border-rose-200'
                             : item.priority === 'Penting'
-                            ? 'bg-amber-100 text-amber-800'
-                            : 'bg-emerald-100 text-emerald-800'
+                            ? 'bg-amber-50 text-amber-800 border-amber-200'
+                            : 'bg-emerald-50 text-emerald-800 border-emerald-200'
                         }`}>
-                          <span>{item.priorityIcon}</span>
+                          <span className={`w-1.5 h-1.5 rounded-full ${
+                            item.priority === 'Kritis' ? 'bg-rose-500' : item.priority === 'Penting' ? 'bg-amber-500' : 'bg-emerald-500'
+                          }`} />
                           <span>{item.priority}</span>
                         </span>
                       </td>
@@ -411,9 +418,9 @@ export function ReportDocumentClient({ report, assessmentId }: Props) {
             </div>
 
             <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 text-[10px] text-slate-600 flex items-center justify-between gap-2 mb-4">
-              <span><strong>🔴 Kritis:</strong> Selisih ≥ 2 level atau skill berbobot tinggi.</span>
-              <span><strong>🟡 Penting:</strong> Selisih 1 level pada target menengah.</span>
-              <span><strong>🟢 Sesuai:</strong> Telah memenuhi atau melampaui level industri.</span>
+              <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-rose-500 shrink-0" /><span><strong>Kritis:</strong> Selisih ≥ 2 level atau skill berbobot tinggi.</span></span>
+              <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-amber-500 shrink-0" /><span><strong>Penting:</strong> Selisih 1 level pada target menengah.</span></span>
+              <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" /><span><strong>Sesuai:</strong> Telah memenuhi atau melampaui level industri.</span></span>
             </div>
 
             <div className="pt-2">
@@ -462,7 +469,7 @@ export function ReportDocumentClient({ report, assessmentId }: Props) {
                   {softSkills.map((item, idx) => (
                     <tr key={item.skill} className={idx % 2 === 0 ? 'bg-white' : 'bg-slate-50/50'}>
                       <td className="py-2 px-3 font-semibold text-slate-900 flex items-center gap-1.5">
-                        <span className="text-base">{item.icon}</span>
+                        <SkillIcon skill={item.skill} name={item.icon} className="w-4 h-4 text-slate-700" strokeWidth={1.75} />
                         <span>{item.shortLabel}</span>
                       </td>
                       <td className="py-2 px-2 text-center">
@@ -505,7 +512,7 @@ export function ReportDocumentClient({ report, assessmentId }: Props) {
                   >
                     <div className="flex items-center justify-between">
                       <span className="font-bold text-slate-900 flex items-center gap-1.5">
-                        <span>{str.icon}</span>
+                        <SkillIcon skill={str.skill} name={str.icon} className="w-3.5 h-3.5 text-emerald-700" strokeWidth={1.75} />
                         <span>{str.label}</span>
                       </span>
                       <span className="text-[10px] font-bold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-full">
@@ -522,7 +529,7 @@ export function ReportDocumentClient({ report, assessmentId }: Props) {
                       <ul className="space-y-0.5 text-[10.5px] text-emerald-950">
                         {str.workplaceStrengths.slice(0, 2).map((ws, i) => (
                           <li key={i} className="flex items-start gap-1">
-                            <span className="text-emerald-600 font-bold">✓</span>
+                            <Check className="w-3 h-3 text-emerald-600 shrink-0 mt-0.5" strokeWidth={2.5} />
                             <span>{ws}</span>
                           </li>
                         ))}
@@ -570,7 +577,7 @@ export function ReportDocumentClient({ report, assessmentId }: Props) {
                   >
                     <div className="flex items-center justify-between">
                       <span className="font-bold text-slate-900 flex items-center gap-1.5">
-                        <span>{dev.icon}</span>
+                        <SkillIcon skill={dev.skill} name={dev.icon} className="w-3.5 h-3.5 text-rose-700" strokeWidth={1.75} />
                         <span>{dev.label}</span>
                       </span>
                       <span className="text-[10px] font-bold text-rose-800 bg-rose-100 px-2 py-0.5 rounded-full">
@@ -614,7 +621,7 @@ export function ReportDocumentClient({ report, assessmentId }: Props) {
                   >
                     <div className="flex items-center justify-between">
                       <span className="font-bold text-slate-900 flex items-center gap-1.5">
-                        <span>{item.icon}</span>
+                        <SkillIcon skill={item.skill} name={item.icon} className="w-3.5 h-3.5 text-slate-700" strokeWidth={1.75} />
                         <span>{item.label}</span>
                       </span>
                       <span className="text-[10px] font-mono text-slate-500">
@@ -685,8 +692,9 @@ export function ReportDocumentClient({ report, assessmentId }: Props) {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1">
                       <div>
-                        <span className="text-[11px] font-bold text-emerald-800 block mb-1">
-                          ✓ Di Level {item.currentLevel} Kamu Sudah Mampu:
+                        <span className="text-[11px] font-bold text-emerald-800 flex items-center gap-1.5 mb-1">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" strokeWidth={1.75} />
+                          <span>Di Level {item.currentLevel} Kamu Sudah Mampu:</span>
                         </span>
                         <ul className="list-disc pl-4 space-y-1 text-slate-700 text-[11px]">
                           {item.canDo.map((c, i) => (
@@ -696,8 +704,9 @@ export function ReportDocumentClient({ report, assessmentId }: Props) {
                       </div>
 
                       <div>
-                        <span className="text-[11px] font-bold text-rose-800 block mb-1">
-                          ✗ Yang Belum Dikuasai (Kebutuhan Level {item.targetLevel}):
+                        <span className="text-[11px] font-bold text-rose-800 flex items-center gap-1.5 mb-1">
+                          <XCircle className="w-3.5 h-3.5 text-rose-600 shrink-0" strokeWidth={1.75} />
+                          <span>Yang Belum Dikuasai (Kebutuhan Level {item.targetLevel}):</span>
                         </span>
                         <ul className="list-disc pl-4 space-y-1 text-slate-700 text-[11px]">
                           {item.cannotDo.map((c, i) => (
@@ -879,8 +888,9 @@ export function ReportDocumentClient({ report, assessmentId }: Props) {
                     <span className="text-slate-600">{day30.weeksSecondHalf}</span>
                   </div>
                 </div>
-                <div className="pt-2 border-t border-blue-200/80 text-[11px] text-blue-900 font-medium">
-                  🎯 <strong>Milestone Akhir 30 Hari:</strong> {day30.milestone}
+                <div className="pt-2 border-t border-blue-200/80 text-[11px] text-blue-900 font-medium flex items-center gap-1.5">
+                  <Target className="w-3.5 h-3.5 text-blue-600 shrink-0" strokeWidth={1.75} />
+                  <span><strong>Milestone Akhir 30 Hari:</strong> {day30.milestone}</span>
                 </div>
               </div>
 
@@ -905,8 +915,9 @@ export function ReportDocumentClient({ report, assessmentId }: Props) {
                     <span className="text-slate-600">{day60.weeksSecondHalf}</span>
                   </div>
                 </div>
-                <div className="pt-2 border-t border-indigo-200/80 text-[11px] text-indigo-900 font-medium">
-                  🎯 <strong>Milestone Akhir 60 Hari:</strong> {day60.milestone}
+                <div className="pt-2 border-t border-indigo-200/80 text-[11px] text-indigo-900 font-medium flex items-center gap-1.5">
+                  <Target className="w-3.5 h-3.5 text-indigo-600 shrink-0" strokeWidth={1.75} />
+                  <span><strong>Milestone Akhir 60 Hari:</strong> {day60.milestone}</span>
                 </div>
               </div>
 
@@ -931,8 +942,9 @@ export function ReportDocumentClient({ report, assessmentId }: Props) {
                     <span className="text-slate-600">{day90.weeksSecondHalf}</span>
                   </div>
                 </div>
-                <div className="pt-2 border-t border-emerald-200/80 text-[11px] text-emerald-900 font-medium">
-                  🎯 <strong>Milestone Akhir 90 Hari:</strong> {day90.milestone}
+                <div className="pt-2 border-t border-emerald-200/80 text-[11px] text-emerald-900 font-medium flex items-center gap-1.5">
+                  <Target className="w-3.5 h-3.5 text-emerald-600 shrink-0" strokeWidth={1.75} />
+                  <span><strong>Milestone Akhir 90 Hari:</strong> {day90.milestone}</span>
                 </div>
               </div>
             </div>
@@ -992,8 +1004,11 @@ export function ReportDocumentClient({ report, assessmentId }: Props) {
               )}
             </div>
 
-            <div className="mt-6 p-3 rounded-xl bg-slate-100 border border-slate-200 text-[10.5px] text-slate-600">
-              💡 <strong>Catatan:</strong> Daftar kurikulum dan materi sumber belajar terus diperbarui secara berkala oleh tim pakar industri Gapless. Kunjungi <code>gapless.id/roadmap</code> untuk modul interaktif dan latihan mandiri.
+            <div className="mt-6 p-3 rounded-xl bg-slate-100 border border-slate-200 text-[10.5px] text-slate-600 flex items-start gap-2">
+              <Lightbulb className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" strokeWidth={1.75} />
+              <div>
+                <strong>Catatan:</strong> Daftar kurikulum dan materi sumber belajar terus diperbarui secara berkala oleh tim pakar industri Gapless. Kunjungi <code>gapless.id/roadmap</code> untuk modul interaktif dan latihan mandiri.
+              </div>
             </div>
           </div>
 

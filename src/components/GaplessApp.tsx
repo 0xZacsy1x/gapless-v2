@@ -1,7 +1,9 @@
 'use client';
 
+import { useRef } from 'react';
 import dynamic from 'next/dynamic';
-import { AnimatePresence, motion } from 'motion/react';
+import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
 import { AssessmentFlow } from '@/components/AssessmentFlow';
 import { useGaplessContext } from '@/contexts/CareerContext';
 
@@ -56,30 +58,32 @@ import { Navbar } from '@/components/Navbar';
 
 export function GaplessApp() {
   const { currentView } = useGaplessContext();
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useGSAP(() => {
+    if (!containerRef.current) return;
+    gsap.fromTo(
+      containerRef.current,
+      { opacity: 0 },
+      { opacity: 1, duration: 0.25, ease: 'power2.out' }
+    );
+  }, [currentView]);
 
   return (
-    <AnimatePresence mode="wait">
-      <motion.div
-        key={currentView}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        transition={{ duration: 0.25 }}
-      >
-        {currentView === 'assessment' && <AssessmentFlow />}
-        {currentView === 'results' && <ResultsView />}
-        {currentView === 'skills' && <SkillGapView />}
-        {currentView === 'case-study' && <CaseStudyQuizView />}
-        {currentView === 'roadmap' && (
-          <div className="min-h-screen bg-space flex flex-col">
-            <Navbar />
-            <main className="flex-1">
-              <RoadmapView />
-            </main>
-          </div>
-        )}
-        {currentView === 'module-detail' && <GuestModuleDetailView />}
-      </motion.div>
-    </AnimatePresence>
+    <div ref={containerRef} key={currentView}>
+      {currentView === 'assessment' && <AssessmentFlow />}
+      {currentView === 'results' && <ResultsView />}
+      {currentView === 'skills' && <SkillGapView />}
+      {currentView === 'case-study' && <CaseStudyQuizView />}
+      {currentView === 'roadmap' && (
+        <div className="min-h-screen bg-space flex flex-col">
+          <Navbar />
+          <main className="flex-1">
+            <RoadmapView />
+          </main>
+        </div>
+      )}
+      {currentView === 'module-detail' && <GuestModuleDetailView />}
+    </div>
   );
 }

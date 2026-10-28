@@ -17,7 +17,8 @@ import {
   ExternalLink,
   Clock,
   Check,
-  X
+  X,
+  Lightbulb,
 } from 'lucide-react';
 import type { CareerProfile, CurriculumPhase, ModuleDetail } from '@/data/gaplessData';
 import { getCuratedModuleDetail } from '@/lib/curatedLearningResources';
@@ -108,13 +109,13 @@ export default function ModuleDetailClient({
           setIsStudying(false);
           setActiveStudyingResources([]);
           setStudyNotice(null);
-          setToastMessage('Selamat! Seluruh materi selesai dan modul ini telah tuntas ✓');
+          setToastMessage('Selamat! Seluruh materi selesai dan modul ini telah tuntas');
           router.refresh();
         } else if (data.newlyCompletedResource) {
           setIsCompleted(false);
           setIsStudying(data.isStudying || false);
           setStudyNotice(null);
-          setToastMessage('Materi selesai! Silakan lanjutkan ke materi berikutnya ✓');
+          setToastMessage('Materi selesai! Silakan lanjutkan ke materi berikutnya');
         } else if (data.isStudying) {
           setIsStudying(true);
           if (showNoticeOnIncomplete) {
@@ -566,7 +567,7 @@ export default function ModuleDetailClient({
 
             {/* Info Box Alur Belajar Otomatis */}
             <div className="bg-slate-50 border border-slate-200/80 rounded-2xl p-4 text-xs text-slate-600 flex items-start gap-2.5 mt-4 leading-relaxed">
-              <span className="text-base shrink-0">💡</span>
+              <Lightbulb size={16} className="text-amber-500 shrink-0 mt-0.5" strokeWidth={1.75} />
               <span>
                 <strong>Cara menyelesaikan modul:</strong> Pelajari setiap materi di atas secara berurutan dari atas ke bawah. Saat kamu kembali ke tab Gapless ini setelah mempelajari suatu materi, materi tersebut akan otomatis tercentang dan materi selanjutnya akan terbuka. Selesaikan seluruh ke-4 materi untuk menuntaskan modul ini dan membuka modul berikutnya di roadmap.
               </span>
@@ -587,7 +588,7 @@ export default function ModuleDetailClient({
         {isAllResourcesDone || isCompleted ? (
           <div className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-emerald-50 text-emerald-800 font-bold border border-emerald-200 text-xs sm:text-sm">
             <CheckCircle2 size={16} className="text-emerald-600" />
-            <span>Modul Ini Telah Selesai ✓</span>
+            <span>Modul Ini Telah Selesai</span>
           </div>
         ) : isStudying ? (
           <div className="w-full sm:w-auto flex items-center justify-center gap-2.5 px-6 py-3 rounded-xl bg-blue-50 text-blue-800 font-bold border border-blue-200 text-xs sm:text-sm shadow-xs">

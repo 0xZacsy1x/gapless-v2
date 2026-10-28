@@ -16,7 +16,7 @@ export interface SkillGapItem {
   required: number;
   gap: number; // current - required
   priority: 'Kritis' | 'Penting' | 'Sesuai';
-  priorityIcon: '🔴' | '🟡' | '🟢';
+  priorityIcon: string;
   hoursMin: number;
   hoursMax: number;
   weeksMin: number;
@@ -119,17 +119,17 @@ export function calculateSkillGapItems(
     const gap = current - required; // 0, -1, -2, -3, or +1
 
     let priority: 'Kritis' | 'Penting' | 'Sesuai' = 'Sesuai';
-    let priorityIcon: '🔴' | '🟡' | '🟢' = '🟢';
+    let priorityIcon = 'sesuai';
 
     if (gap <= -2 || (gap <= -1 && required >= 3)) {
       priority = 'Kritis';
-      priorityIcon = '🔴';
+      priorityIcon = 'kritis';
     } else if (gap === -1) {
       priority = 'Penting';
-      priorityIcon = '🟡';
+      priorityIcon = 'penting';
     } else {
       priority = 'Sesuai';
-      priorityIcon = '🟢';
+      priorityIcon = 'sesuai';
     }
 
     // Estimasi jam belajar deterministik berdasarkan gap size

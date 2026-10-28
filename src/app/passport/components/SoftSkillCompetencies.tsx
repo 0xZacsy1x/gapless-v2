@@ -2,7 +2,6 @@
 
 import { useMemo, useState } from 'react';
 import Link from 'next/link';
-import { motion, AnimatePresence } from 'motion/react';
 import {
   ShieldCheck,
   Brain,
@@ -12,6 +11,7 @@ import {
   Sparkles,
   Info,
 } from 'lucide-react';
+import { SkillIcon } from '@/components/ui/AppIcons';
 import { COMPETENCIES, CompetencyItem } from '../types';
 
 interface SoftSkillCompetenciesProps {
@@ -95,8 +95,8 @@ export function SoftSkillCompetencies({
         {/* Top: Icon + Name + Badge + Score */}
         <div className="flex items-start justify-between gap-2 mb-2">
           <div className="flex items-center gap-2.5 min-w-0">
-            <div className="w-8 h-8 rounded-xl bg-white border border-slate-200/80 flex items-center justify-center text-base shrink-0 shadow-2xs">
-              {comp.icon || '🎯'}
+            <div className="w-8 h-8 rounded-xl bg-white border border-slate-200/80 flex items-center justify-center text-slate-700 shrink-0 shadow-2xs">
+              <SkillIcon skillId={comp.id} name={comp.icon} className="w-4 h-4 text-slate-700" strokeWidth={1.75} />
             </div>
             <div className="min-w-0">
               <h3 className="font-bold text-slate-900 text-xs sm:text-sm truncate">
@@ -154,27 +154,22 @@ export function SoftSkillCompetencies({
               />
             </button>
 
-            <AnimatePresence initial={false}>
-              {isExpanded && (
-                <motion.div
-                  key="feedback-content"
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
-                  exit={{ opacity: 0, height: 0 }}
-                  transition={{ duration: 0.22, ease: 'easeInOut' }}
-                  className="overflow-hidden"
-                >
-                  <div className="mt-2.5 space-y-1.5 p-3 rounded-xl bg-white border border-blue-100 text-[11px] text-slate-600 shadow-2xs">
-                    {comp.feedbackList!.map((fb, idx) => (
-                      <div key={idx} className="flex items-start gap-1.5">
-                        <span className="text-blue-500 font-bold shrink-0 mt-0.5">•</span>
-                        <span className="leading-snug">{fb}</span>
-                      </div>
-                    ))}
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
+            <div
+              className={`grid transition-[grid-template-rows,opacity] duration-200 ease-out overflow-hidden ${
+                isExpanded ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'
+              }`}
+            >
+              <div className="overflow-hidden">
+                <div className="mt-2.5 space-y-1.5 p-3 rounded-xl bg-white border border-blue-100 text-[11px] text-slate-600 shadow-2xs">
+                  {comp.feedbackList!.map((fb, idx) => (
+                    <div key={idx} className="flex items-start gap-1.5">
+                      <span className="text-blue-500 font-bold shrink-0 mt-0.5">•</span>
+                      <span className="leading-snug">{fb}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
         )}
       </div>
