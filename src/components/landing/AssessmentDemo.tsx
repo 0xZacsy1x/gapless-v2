@@ -116,15 +116,14 @@ export default function AssessmentDemo() {
 
         let isCancelled = false;
 
-        // Reset elements for this cycle.
-        // NOTE: qScreen stays at yPercent: 0, opacity: 1 so it is immediately visible!
+        // Reset elements for this cycle using GSAP exclusively (no React inline style fighting)
         gsap.set(qScreen, { yPercent: 0, opacity: 1, scale: 1, pointerEvents: "auto" });
         gsap.set(aScreen, { yPercent: 100, opacity: 0, scale: 0.97, pointerEvents: "none" });
         gsap.set(rScreen, { yPercent: 100, opacity: 0, scale: 0.97, pointerEvents: "none" });
 
         // Position cursor slightly offset from Option A
         const startCoords = getCoords(optRef.current, { x: 30, y: 22 });
-        gsap.set(cursor, { opacity: 0, scale: 1, x: startCoords.x, y: startCoords.y });
+        gsap.set(cursor, { opacity: 0, scale: 1, x: startCoords.x, y: startCoords.y, transformOrigin: "3px 2px" });
 
         // Build cycle timeline with natural pacing
         const tl = gsap.timeline({
@@ -201,8 +200,8 @@ export default function AssessmentDemo() {
         // ── TRANSITION 1: QUESTION -> ANALYZING (0.6s Silky Slide) ──
         tl.call(() => {
             setCurrentScreen("analyzing");
-            if (qScreen) qScreen.style.pointerEvents = "none";
-            if (aScreen) aScreen.style.pointerEvents = "auto";
+            gsap.set(qScreen, { pointerEvents: "none" });
+            gsap.set(aScreen, { pointerEvents: "auto" });
         }, undefined, "+=0.05");
 
         // Prepare aScreen below before slide
@@ -224,7 +223,7 @@ export default function AssessmentDemo() {
             ease: "power2.inOut",
         }, "<");
 
-        // ── PHASE 2: ANALYZING STAGE (Visible ~2.5s) ──
+        // ── PHASE 2: ANALYZING STAGE (Visible ~2.8s) ──
         tl.call(() => {
             const bars = aScreen.querySelectorAll<HTMLElement>(".demo-arch-bar");
             const nums = aScreen.querySelectorAll<HTMLElement>(".demo-arch-num");
@@ -246,14 +245,14 @@ export default function AssessmentDemo() {
             });
         }, undefined, "+=0.1");
 
-        // Hold analyzing screen so user can clearly view the progress
-        tl.set({}, {}, "+=1.4");
+        // Hold analyzing screen so user can clearly view the RIASEC calculation
+        tl.set({}, {}, "+=1.6");
 
         // ── TRANSITION 2: ANALYZING -> RESULT (0.6s Silky Slide) ──
         tl.call(() => {
             setCurrentScreen("result");
-            if (aScreen) aScreen.style.pointerEvents = "none";
-            if (rScreen) rScreen.style.pointerEvents = "auto";
+            gsap.set(aScreen, { pointerEvents: "none" });
+            gsap.set(rScreen, { pointerEvents: "auto" });
         });
 
         // Prepare rScreen below before slide
@@ -333,8 +332,8 @@ export default function AssessmentDemo() {
             y: () => getCoords(roadmapCardRef.current).y,
         }, "+=0.35");
 
-        // Hold on result screen so user can clearly read roadmap details (~1.8s)
-        tl.set({}, {}, "+=1.8");
+        // Hold on result screen so user can clearly read roadmap details (~2.0s)
+        tl.set({}, {}, "+=2.0");
 
         // Fade out cursor before reset
         tl.to(cursor, {
@@ -412,7 +411,7 @@ export default function AssessmentDemo() {
                 =================================================================== */}
                 <div
                     ref={questionScreenRef}
-                    className="absolute inset-0 w-full h-full flex flex-col justify-center space-y-3.5 px-0.5 z-20"
+                    className="absolute inset-0 w-full h-full flex flex-col justify-center space-y-3.5 px-0.5 z-20 pointer-events-auto"
                 >
                     {/* Progress Bar */}
                     <div className="space-y-1.5">
@@ -507,8 +506,7 @@ export default function AssessmentDemo() {
                 =================================================================== */}
                 <div
                     ref={analyzingScreenRef}
-                    className="absolute inset-0 w-full h-full flex flex-col justify-center items-center space-y-6 px-4 z-10"
-                    style={{ transform: "translateY(100%)", opacity: 0, pointerEvents: "none" }}
+                    className="absolute inset-0 w-full h-full flex flex-col justify-center items-center space-y-6 px-4 z-10 pointer-events-none"
                 >
                     <div className="relative flex items-center justify-center">
                         <div className="w-16 h-16 rounded-full border-3 border-blue-100 border-t-brand-primary animate-spin" />
@@ -539,8 +537,7 @@ export default function AssessmentDemo() {
                                 </div>
                                 <div className="h-1.5 w-full bg-blue-100/70 rounded-full overflow-hidden">
                                     <div
-                                        className="demo-arch-bar h-full bg-brand-primary rounded-full"
-                                        style={{ width: "0%" }}
+                                        className="demo-arch-bar h-full bg-brand-primary rounded-full w-0"
                                         data-target={`${arch.val}%`}
                                     />
                                 </div>
@@ -554,8 +551,7 @@ export default function AssessmentDemo() {
                 =================================================================== */}
                 <div
                     ref={resultScreenRef}
-                    className="absolute inset-0 w-full h-full flex flex-col justify-between py-1 px-0.5 space-y-2 z-10"
-                    style={{ transform: "translateY(100%)", opacity: 0, pointerEvents: "none" }}
+                    className="absolute inset-0 w-full h-full flex flex-col justify-between py-1 px-0.5 space-y-2 z-10 pointer-events-none"
                 >
                     {/* ITEM 1: Profile Top Match & Role Switcher Chips (Stagger Step 1) */}
                     <div className="result-stagger-item space-y-2">
@@ -676,12 +672,7 @@ export default function AssessmentDemo() {
                 {/* Virtual Animated Cursor (Clipped inside stage container) */}
                 <div
                     ref={cursorRef}
-                    className="absolute pointer-events-none z-50 top-0 left-0"
-                    style={{
-                        opacity: 0,
-                        transformOrigin: "3px 2px",
-                        willChange: "transform, opacity",
-                    }}
+                    className="absolute pointer-events-none z-50 top-0 left-0 opacity-0 will-change-transform"
                     aria-hidden="true"
                 >
                     <div className="relative">
@@ -702,11 +693,7 @@ export default function AssessmentDemo() {
                         </svg>
                         <span
                             ref={clickPulseRef}
-                            className="absolute w-12 h-12 rounded-full bg-brand-primary/25 border-2 border-brand-primary pointer-events-none opacity-0"
-                            style={{
-                                left: "-19px",
-                                top: "-20px",
-                            }}
+                            className="absolute w-12 h-12 rounded-full bg-brand-primary/25 border-2 border-brand-primary pointer-events-none opacity-0 -left-[19px] -top-[20px]"
                         />
                     </div>
                 </div>
