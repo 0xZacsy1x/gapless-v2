@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { useState, useRef, useEffect } from 'react';
+import gsap from 'gsap';
 import { Award, Sparkles, AlertCircle, UploadCloud, FileCheck, X } from 'lucide-react';
 import { CertificateData } from '../types';
 
@@ -24,6 +24,47 @@ export function CertificateUploadModal({
   const [formCatatan, setFormCatatan] = useState('');
   const [isSubmittingCert, setIsSubmittingCert] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
+  const [isRendered, setIsRendered] = useState(isOpen);
+  const backdropRef = useRef<HTMLDivElement>(null);
+  const modalRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (isOpen) {
+      setIsRendered(true);
+    } else if (isRendered && backdropRef.current && modalRef.current) {
+      gsap.killTweensOf([backdropRef.current, modalRef.current]);
+      gsap.to(backdropRef.current, {
+        opacity: 0,
+        duration: 0.2,
+        ease: 'power2.in',
+      });
+      gsap.to(modalRef.current, {
+        opacity: 0,
+        scale: 0.95,
+        duration: 0.2,
+        ease: 'power2.in',
+        onComplete: () => {
+          setIsRendered(false);
+        },
+      });
+    }
+  }, [isOpen, isRendered]);
+
+  useEffect(() => {
+    if (isOpen && isRendered && backdropRef.current && modalRef.current) {
+      gsap.killTweensOf([backdropRef.current, modalRef.current]);
+      gsap.fromTo(
+        backdropRef.current,
+        { opacity: 0 },
+        { opacity: 1, duration: 0.25, ease: 'power2.out' }
+      );
+      gsap.fromTo(
+        modalRef.current,
+        { opacity: 0, scale: 0.95 },
+        { opacity: 1, scale: 1, duration: 0.25, ease: 'power2.out' }
+      );
+    }
+  }, [isOpen, isRendered]);
 
   const resetForm = () => {
     setUploadFile(null);
@@ -83,16 +124,17 @@ export function CertificateUploadModal({
     }
   };
 
+  if (!isRendered) return null;
+
   return (
-    <AnimatePresence>
-      {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            className="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl border border-slate-100 space-y-4"
-          >
+    <div
+      ref={backdropRef}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs"
+    >
+      <div
+        ref={modalRef}
+        className="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl border border-slate-100 space-y-4"
+      >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <span className="p-2 rounded-xl bg-blue-50 text-blue-600">
@@ -267,9 +309,7 @@ export function CertificateUploadModal({
                 </button>
               </div>
             </form>
-          </motion.div>
+          </div>
         </div>
-      )}
-    </AnimatePresence>
   );
 }
