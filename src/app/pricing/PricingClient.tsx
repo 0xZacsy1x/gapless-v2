@@ -171,7 +171,7 @@ export function PricingClient({ isLoggedIn, isPro: initialIsPro, periodEnd: init
         >
           <div>
             <div className="flex items-center justify-between mb-4">
-              <span className="px-3 py-1 rounded-full bg-slate-100 text-slate-700 text-xs font-bold tracking-wider uppercase">
+              <span className="text-xs font-mono font-bold tracking-wider uppercase text-slate-500 pl-2 border-l-2 border-slate-300">
                 {PLAN_CONFIG.free.badge}
               </span>
               <span className="text-xs text-slate-500 font-medium">Selamanya</span>
@@ -245,16 +245,17 @@ export function PricingClient({ isLoggedIn, isPro: initialIsPro, periodEnd: init
 
           <div>
             <div className="flex items-center justify-between mb-4">
-              <span className="px-3.5 py-1 rounded-full bg-linear-to-r from-blue-500 via-indigo-500 to-sky-400 text-white text-xs font-extrabold tracking-wider uppercase shadow-sm flex items-center gap-1.5">
-                <Crown className="w-3.5 h-3.5" />
-                {PLAN_CONFIG.pro.displayName}
-              </span>
+              <div className="flex items-center gap-1.5 text-xs font-mono font-bold tracking-wider uppercase text-blue-300 pl-2 border-l-2 border-blue-400">
+                <Crown className="w-3.5 h-3.5 text-blue-300" />
+                <span>{PLAN_CONFIG.pro.displayName}</span>
+              </div>
               {isPro ? (
-                <span className="text-xs font-bold text-emerald-400 flex items-center gap-1 bg-emerald-500/10 px-2.5 py-0.5 rounded-full border border-emerald-500/30">
-                  <CheckCircle2 className="w-3 h-3" /> Langganan Aktif
+                <span className="text-[11px] font-semibold text-emerald-300 flex items-center gap-1.5 bg-emerald-500/10 px-2 py-0.5 rounded-md border border-emerald-500/30">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                  Langganan Aktif
                 </span>
               ) : (
-                <span className="text-xs text-indigo-200/80 font-medium">Rekomendasi</span>
+                <span className="text-xs text-indigo-200/80 font-medium font-mono">Rekomendasi</span>
               )}
             </div>
 

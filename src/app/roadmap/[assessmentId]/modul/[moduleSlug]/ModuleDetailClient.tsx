@@ -257,17 +257,18 @@ export default function ModuleDetailClient({
   };
 
   const badgeStatus = isCompleted ? (
-    <span className="inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-700 border border-emerald-200 px-3 py-1 rounded-full text-xs font-bold shadow-xs">
+    <span className="inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-800 border border-emerald-200 px-2.5 py-1 rounded-md text-xs font-semibold">
       <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
       Selesai
     </span>
   ) : isStudying ? (
-    <span className="inline-flex items-center gap-1.5 bg-blue-50 text-blue-700 border border-blue-200 px-3 py-1 rounded-full text-xs font-bold shadow-xs animate-pulse">
-      <Clock className="w-3.5 h-3.5 text-blue-600" />
+    <span className="inline-flex items-center gap-1.5 bg-blue-50 text-brand-primary border border-blue-200 px-2.5 py-1 rounded-md text-xs font-semibold">
+      <span className="w-1.5 h-1.5 rounded-full bg-brand-primary animate-pulse" />
       Sedang Dipelajari
     </span>
   ) : (
-    <span className="bg-slate-100 text-slate-600 border border-slate-200 px-3 py-1 rounded-full text-xs font-bold shadow-xs">
+    <span className="inline-flex items-center gap-1.5 bg-slate-50 text-slate-600 border border-slate-200 px-2.5 py-1 rounded-md text-xs font-semibold">
+      <span className="w-1.5 h-1.5 rounded-full bg-slate-400" />
       Belum Selesai
     </span>
   );
@@ -319,9 +320,9 @@ export default function ModuleDetailClient({
       </div>
 
       {/* Header */}
-      <div className="flex flex-col gap-3">
-        <div className="w-max bg-slate-100 text-slate-700 px-3.5 py-1 rounded-full text-xs font-bold border border-slate-200">
-          Fase {phaseIndex + 1}: {phaseData.title}
+      <div className="flex flex-col gap-2.5">
+        <div className="flex items-center gap-2 text-xs font-semibold text-slate-500 pl-2.5 border-l-2 border-brand-primary">
+          <span>Fase {phaseIndex + 1}: {phaseData.title}</span>
         </div>
         <h1 className="text-2xl sm:text-4xl font-extrabold text-slate-900 tracking-tight leading-tight">
           {detailData.title}
@@ -330,9 +331,11 @@ export default function ModuleDetailClient({
           Pahami konsep ini dan pelajari sumber referensi pilihan untuk meningkatkan kesiapan kariermu.
         </p>
         <div className="flex items-center gap-3 mt-1">
-          <span className="bg-blue-50 text-blue-700 border border-blue-200 px-3 py-1 rounded-full text-xs font-semibold">
-            {detailData.duration}
-          </span>
+          <div className="flex items-center gap-1.5 text-xs text-slate-500 font-medium">
+            <Clock className="w-3.5 h-3.5 text-slate-400" />
+            <span>Estimasi {detailData.duration}</span>
+          </div>
+          <span className="text-slate-300">·</span>
           {badgeStatus}
         </div>
       </div>

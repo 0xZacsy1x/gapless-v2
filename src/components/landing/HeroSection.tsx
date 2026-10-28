@@ -11,9 +11,8 @@ export default function HeroSection() {
       {/* Left Column: Hero Editorial Copy & Methodology Cards */}
       <div className="lg:col-span-7 flex flex-col justify-between self-start text-left space-y-5 lg:space-y-6">
         <div className="space-y-5">
-          {/* Eyebrow Label (Editorial, not a loud pill) */}
-          <div className="flex items-center gap-2 text-xs font-semibold text-slate-500">
-            <span className="w-1.5 h-1.5 rounded-full bg-brand-primary" />
+          {/* Eyebrow Label (Editorial accent line, sentence case, anti-slop) */}
+          <div className="flex items-center gap-2 text-xs font-semibold text-slate-500 pl-2.5 border-l-2 border-brand-primary">
             <span>Riset Berbasis Standar 702+ Lowongan Industri</span>
           </div>
 
@@ -66,8 +65,8 @@ export default function HeroSection() {
 
         {/* Cara Kerjanya — 3 Fondasi Riset & Standar Industri */}
         <div className="pt-3 sm:pt-3.5 border-t border-slate-200/80">
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-mono font-bold tracking-widest uppercase text-slate-400">
+          <div className="flex items-center justify-between mb-4">
+            <span className="text-xs font-mono font-bold tracking-widest uppercase text-slate-400 pl-2 border-l-2 border-slate-300">
               Cara Kerja &amp; Metodologi
             </span>
             <span className="text-xs text-slate-400 font-medium font-mono">
@@ -77,11 +76,11 @@ export default function HeroSection() {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 md:gap-6">
             {/* Step 01: RIASEC */}
             <div className="flex flex-col">
-              <div className="flex items-center gap-3 mb-2">
-                <span className="text-3xl lg:text-4xl font-bold font-mono text-slate-300 tracking-tight select-none">
+              <div className="flex items-baseline justify-between mb-2">
+                <span className="text-4xl lg:text-5xl font-black font-mono text-slate-200 tracking-tighter select-none leading-none">
                   01
                 </span>
-                <Compass className="w-7 h-7 text-blue-600 stroke-[1.6]" />
+                <Compass className="w-6 h-6 text-blue-600 stroke-[1.6]" />
               </div>
               <div className="text-sm font-bold text-slate-900 leading-snug">
                 RIASEC Model
@@ -96,11 +95,11 @@ export default function HeroSection() {
 
             {/* Step 02: SJT */}
             <div className="flex flex-col">
-              <div className="flex items-center gap-3 mb-2">
-                <span className="text-3xl lg:text-4xl font-bold font-mono text-slate-300 tracking-tight select-none">
+              <div className="flex items-baseline justify-between mb-2">
+                <span className="text-4xl lg:text-5xl font-black font-mono text-slate-200 tracking-tighter select-none leading-none">
                   02
                 </span>
-                <FileSearch className="w-7 h-7 text-indigo-600 stroke-[1.6]" />
+                <FileSearch className="w-6 h-6 text-indigo-600 stroke-[1.6]" />
               </div>
               <div className="text-sm font-bold text-slate-900 leading-snug">
                 Situational Judgement
@@ -115,11 +114,11 @@ export default function HeroSection() {
 
             {/* Step 03: Asesmen Skill Gap */}
             <div className="flex flex-col">
-              <div className="flex items-center gap-3 mb-2">
-                <span className="text-3xl lg:text-4xl font-bold font-mono text-slate-300 tracking-tight select-none">
+              <div className="flex items-baseline justify-between mb-2">
+                <span className="text-4xl lg:text-5xl font-black font-mono text-slate-200 tracking-tighter select-none leading-none">
                   03
                 </span>
-                <Briefcase className="w-7 h-7 text-emerald-600 stroke-[1.6]" />
+                <Briefcase className="w-6 h-6 text-emerald-600 stroke-[1.6]" />
               </div>
               <div className="text-sm font-bold text-slate-900 leading-snug">
                 Asesmen Skill Gap

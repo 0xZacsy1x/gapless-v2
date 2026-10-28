@@ -463,80 +463,82 @@ export default function BentoEcosystemTour() {
           </div>
         </div>
 
-        {/* 4 Phases Timeline Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-          {currentRoadmap.phases.map((phase) => {
-            const isCompleted = phase.status === "completed";
-            const isInProgress = phase.status === "in_progress";
-            const isReady = phase.status === "ready";
+        {/* 4 Phases Horizontal Stepper Timeline (Progress Motif) */}
+        <div className="bg-slate-50/70 border border-slate-200/80 rounded-xl p-3 sm:p-3.5">
+          <div className="relative flex items-start justify-between px-2 sm:px-6">
+            {/* Background connecting rail */}
+            <div className="absolute left-8 right-8 top-3 h-0.5 bg-slate-200" aria-hidden="true" />
+            {/* Active completed segment rail */}
+            <div
+              className="absolute left-8 top-3 h-0.5 bg-emerald-500 transition-all duration-500"
+              style={{ width: "33%" }}
+              aria-hidden="true"
+            />
 
-            return (
-              <div
-                key={phase.phase}
-                className={`p-2.5 rounded-xl border transition-all duration-300 flex flex-col justify-between ${
-                  isInProgress
-                    ? "bg-white border-brand-primary shadow-xs ring-1 ring-brand-primary/20"
-                    : isCompleted
-                    ? "bg-emerald-50/20 border-emerald-200"
-                    : isReady
-                    ? "bg-slate-50/60 border-slate-200"
-                    : "bg-slate-50/40 border-slate-200/80 opacity-70"
-                }`}
-              >
-                <div>
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-[9px] font-mono font-bold uppercase tracking-wider text-slate-400">
-                      FASE 0{phase.phase}
-                    </span>
-                    {/* Unified 4px Status Badges */}
+            {currentRoadmap.phases.map((phase) => {
+              const isCompleted = phase.status === "completed";
+              const isInProgress = phase.status === "in_progress";
+              const isReady = phase.status === "ready";
+
+              return (
+                <div key={phase.phase} className="relative z-10 flex flex-col items-center text-center group">
+                  {/* Stepper Node Dot */}
+                  <div
+                    className={`w-6 h-6 rounded-full flex items-center justify-center transition-all duration-300 ${
+                      isCompleted
+                        ? "bg-emerald-600 text-white shadow-2xs"
+                        : isInProgress
+                        ? "bg-brand-primary text-white ring-4 ring-blue-100 shadow-xs"
+                        : isReady
+                        ? "bg-white border-2 border-slate-300 text-slate-500"
+                        : "bg-slate-100 border-2 border-slate-200 text-slate-300"
+                    }`}
+                  >
                     {isCompleted ? (
-                      <span className="inline-flex items-center gap-0.5 text-[8.5px] font-semibold text-emerald-800 bg-emerald-50 px-1.5 py-0.2 rounded-md border border-emerald-200">
-                        <Check className="w-2 h-2 text-emerald-600 stroke-[2.5]" /> Selesai
-                      </span>
+                      <Check className="w-3 h-3 text-white stroke-[2.5]" />
                     ) : isInProgress ? (
-                      <span className="inline-flex items-center gap-1 text-[8.5px] font-semibold text-brand-primary bg-blue-50 px-1.5 py-0.2 rounded-md border border-blue-200">
-                        <span className="w-1.5 h-1.5 rounded-full bg-brand-primary animate-pulse" />
-                        Aktif
-                      </span>
+                      <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
                     ) : isReady ? (
-                      <span className="text-[8.5px] font-semibold text-slate-600 bg-slate-50 px-1.5 py-0.2 rounded-md border border-slate-200">
-                        Tersedia
-                      </span>
+                      <span className="w-1.5 h-1.5 rounded-full bg-slate-400" />
                     ) : (
-                      <span className="inline-flex items-center gap-1 text-[8.5px] text-slate-400 font-medium">
-                        <Lock className="w-2.5 h-2.5" /> Kunci
-                      </span>
+                      <Lock className="w-2.5 h-2.5 text-slate-400" />
                     )}
                   </div>
 
-                  <h4 className="text-[11px] font-bold text-slate-900 leading-snug">
-                    {phase.title}
-                  </h4>
-                </div>
-
-                {/* Modules list */}
-                <div className="pt-1.5 mt-1.5 border-t border-slate-100 space-y-0.5">
-                  {phase.modules.slice(0, 2).map((mod) => (
-                    <div
-                      key={mod}
-                      className="text-[9.5px] font-medium text-slate-600 truncate flex items-center gap-1.5"
+                  {/* Phase Label & Status under Node */}
+                  <div className="mt-1.5 space-y-0.5">
+                    <span
+                      className={`text-[9px] font-mono font-bold uppercase tracking-wider block ${
+                        isInProgress
+                          ? "text-brand-primary"
+                          : isCompleted
+                          ? "text-emerald-700"
+                          : "text-slate-400"
+                      }`}
                     >
-                      <span
-                        className={`w-1 h-1 rounded-full shrink-0 ${
-                          isCompleted
-                            ? "bg-emerald-600"
-                            : isInProgress
-                            ? "bg-brand-primary"
-                            : "bg-slate-300"
-                        }`}
-                      />
-                      <span className="truncate">{mod}</span>
-                    </div>
-                  ))}
+                      Fase 0{phase.phase}
+                    </span>
+                    <h4 className="text-[10.5px] font-bold text-slate-900 block truncate max-w-[65px] sm:max-w-[85px] leading-tight">
+                      {phase.title}
+                    </h4>
+                    <span
+                      className={`inline-block text-[8.5px] font-semibold px-1.5 py-0.2 rounded-md ${
+                        isCompleted
+                          ? "text-emerald-800 bg-emerald-50 border border-emerald-200"
+                          : isInProgress
+                          ? "text-brand-primary bg-blue-50 border border-blue-200"
+                          : isReady
+                          ? "text-slate-600 bg-white border border-slate-200"
+                          : "text-slate-400 bg-transparent"
+                      }`}
+                    >
+                      {isCompleted ? "Selesai" : isInProgress ? "Aktif" : isReady ? "Tersedia" : "Terkunci"}
+                    </span>
+                  </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
       </div>
 
@@ -562,13 +564,18 @@ export default function BentoEcosystemTour() {
               </div>
             </div>
 
-            {/* Level & XP: Pure Typography with High Visual Hierarchy (No lightning bolt pill) */}
-            <div className="text-right">
-              <div className="font-mono text-sm sm:text-base font-extrabold text-slate-900 tabular-nums">
-                450 <span className="text-xs font-bold text-emerald-600">XP</span>
-              </div>
-              <div className="text-[10px] font-mono text-slate-400 font-medium">
-                Level 3 · Mahir
+            {/* Level & XP: Game-like thin progress bar + bold typography */}
+            <div className="text-right flex items-center gap-3">
+              <div className="flex flex-col items-end">
+                <div className="font-mono text-sm sm:text-base font-extrabold text-slate-900 tabular-nums">
+                  450 <span className="text-xs font-bold text-emerald-600">XP</span>
+                </div>
+                <div className="flex items-center gap-1.5 mt-0.5">
+                  <div className="w-14 sm:w-16 h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                    <div className="h-full bg-emerald-500 rounded-full w-[75%]" />
+                  </div>
+                  <span className="text-[10px] font-mono text-slate-500 font-bold">Lv. 3</span>
+                </div>
               </div>
             </div>
           </div>

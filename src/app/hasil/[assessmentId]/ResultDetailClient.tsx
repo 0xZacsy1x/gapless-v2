@@ -223,7 +223,7 @@ export function ResultDetailClient({
         <div className="mb-8 bg-linear-to-r from-blue-600 via-indigo-600 to-cyan-500 rounded-3xl p-6 sm:p-8 text-white shadow-lg relative overflow-hidden">
           <div className="absolute top-0 right-0 w-80 h-80 bg-white/10 rounded-full blur-2xl pointer-events-none transform translate-x-20 -translate-y-20" />
           <div className="relative z-10 max-w-3xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-xs font-semibold mb-3 border border-white/30">
+            <div className="flex items-center gap-2 text-xs font-semibold text-blue-100 mb-3 pl-2.5 border-l-2 border-white/60">
               <Sparkles className="w-3.5 h-3.5 text-amber-300" />
               <span>Langkah Selanjutnya: Validasi Karier</span>
             </div>
@@ -249,8 +249,8 @@ export function ResultDetailClient({
             <div>
               <h2 className="text-xl sm:text-2xl font-bold text-slate-900 flex items-center gap-2">
                 <span>Rekomendasi Karier Terbaik</span>
-                <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
-                  {recommendedCareers.length} Pilihan
+                <span className="text-xs font-mono font-bold text-slate-500 tabular-nums">
+                  ({recommendedCareers.length} Pilihan)
                 </span>
               </h2>
               <p className="text-xs sm:text-sm text-slate-500 mt-1">
@@ -275,8 +275,8 @@ export function ResultDetailClient({
                     {/* Header Baris: Badge Pilihan Teratas dalam Alur Dokumen */}
                     <div className="min-h-7 flex items-center mb-3">
                       {isFirst ? (
-                        <span className="inline-flex items-center gap-1 bg-linear-to-r from-blue-600 to-indigo-600 text-white text-[11px] font-bold px-3 py-1 rounded-full shadow-xs">
-                          <Sparkles className="w-3 h-3 text-amber-300" />
+                        <span className="inline-flex items-center gap-1.5 bg-blue-50 text-brand-primary text-[10.5px] font-bold px-2 py-0.5 rounded-md border border-blue-200">
+                          <span className="w-1.5 h-1.5 rounded-full bg-brand-primary" />
                           Pilihan Teratas
                         </span>
                       ) : (
@@ -295,7 +295,7 @@ export function ResultDetailClient({
                         <h3 className="text-base sm:text-lg font-bold text-slate-900 leading-snug break-words">
                           {career.title}
                         </h3>
-                        <span className="inline-block text-[11px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200/60 px-2.5 py-0.5 rounded-full mt-1.5">
+                        <span className="block text-xs font-medium text-slate-500 mt-1 font-mono">
                           {career.salaryRange}
                         </span>
                       </div>
@@ -395,19 +395,13 @@ export function ResultDetailClient({
                 />
               </div>
               <div>
-                <div className="flex flex-wrap items-center gap-2 mb-2">
-                  <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200/60">
-                    <Target className="w-3.5 h-3.5" />
-                    Validasi Kompetensi Karier
+                <div className="flex flex-wrap items-center gap-3 mb-2 text-xs font-semibold">
+                  <span className="flex items-center gap-1.5 text-slate-700 pl-2.5 border-l-2 border-brand-primary">
+                    <Target className="w-3.5 h-3.5 text-brand-primary" strokeWidth={1.75} />
+                    <span>Validasi Kompetensi Karier</span>
                   </span>
-                  <span
-                    className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1 rounded-full"
-                    style={{
-                      background: `${traitMetaColor}12`,
-                      color: traitMetaColor,
-                      border: `1px solid ${traitMetaColor}30`,
-                    }}
-                  >
+                  <span className="text-slate-300">·</span>
+                  <span className="flex items-center gap-1.5" style={{ color: traitMetaColor }}>
                     <TraitIcon trait={careerProfile.trait} className="w-3.5 h-3.5" strokeWidth={1.75} />
                     <span>Archetype: {careerProfile.trait}</span>
                   </span>

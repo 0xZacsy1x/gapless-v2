@@ -427,9 +427,9 @@ export function KegiatanClient({
         <div className="relative rounded-3xl p-6 md:p-8 bg-gradient-to-r from-slate-900 via-slate-900 to-indigo-950 text-white overflow-hidden shadow-xl border border-indigo-900/50">
           <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
             <div>
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-500/20 text-indigo-300 text-xs font-semibold border border-indigo-400/30 mb-3">
-                <Lock className="w-3.5 h-3.5" />
-                +{lockedCount} Kegiatan Terkurasi Lainnya di Gapless Pro
+              <div className="flex items-center gap-1.5 text-xs font-semibold text-indigo-300 pl-2.5 border-l-2 border-indigo-400 mb-2.5">
+                <Lock className="w-3.5 h-3.5 text-indigo-300" />
+                <span>+{lockedCount} Kegiatan Terkurasi Lainnya di Gapless Pro</span>
               </div>
               <h3 className="text-xl font-bold">Buka Seluruh Rekomendasi Kegiatan & Urutan Gap</h3>
               <p className="text-xs text-indigo-200/80 max-w-xl mt-1.5 leading-relaxed">

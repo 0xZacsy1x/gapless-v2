@@ -13,10 +13,10 @@ export default function PrivacyPolicyPage() {
       <main className="flex-1 max-w-4xl mx-auto w-full px-4 sm:px-6 py-12 pb-24">
         <div className="bg-white rounded-2xl border border-slate-200 p-8 sm:p-12 shadow-xs space-y-8">
           <div>
-            <span className="text-xs font-bold uppercase tracking-wider text-blue-600 bg-blue-50 px-3 py-1 rounded-full border border-blue-100">
-              Legal & Ketentuan
-            </span>
-            <h1 className="text-3xl font-extrabold text-slate-900 mt-4 tracking-tight">
+            <div className="flex items-center gap-2 text-xs font-semibold text-slate-500 pl-2.5 border-l-2 border-brand-primary">
+              <span>Legal &amp; Kebijakan Privasi</span>
+            </div>
+            <h1 className="text-3xl font-extrabold text-slate-900 mt-3 tracking-tight">
               Kebijakan Privasi (Privacy Policy)
             </h1>
             <p className="text-sm text-slate-500 mt-2">Terakhir diperbarui: 11 Oktober 2026</p>
