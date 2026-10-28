@@ -1,11 +1,14 @@
 'use client';
 
-import { motion } from 'motion/react';
-import { useMemo } from 'react';
+import { useMemo, useRef } from 'react';
+import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
 
 const COLORS = ['#FFD700', '#3B82F6', '#10B981', '#EC4899', '#8B5CF6', '#F59E0B', '#06B6D4'];
 
 export function ConfettiEffect({ count = 50 }: { count?: number }) {
+  const containerRef = useRef<HTMLDivElement>(null);
+
   const particles = useMemo(() => {
     return Array.from({ length: count }).map((_, i) => ({
       id: i,
@@ -20,30 +23,60 @@ export function ConfettiEffect({ count = 50 }: { count?: number }) {
     }));
   }, [count]);
 
+  useGSAP(() => {
+    if (!containerRef.current) return;
+    const items = containerRef.current.querySelectorAll<HTMLDivElement>('.confetti-particle');
+
+    items.forEach((item, idx) => {
+      const p = particles[idx];
+      if (!p) return;
+
+      const tl = gsap.timeline({ delay: p.delay });
+      tl.fromTo(
+        item,
+        {
+          opacity: 1,
+          x: 0,
+          y: 0,
+          scale: 0,
+          rotation: 0,
+        },
+        {
+          x: p.x,
+          rotation: p.rot,
+          duration: p.duration,
+          ease: 'power2.out',
+        },
+        0
+      ).to(
+        item,
+        {
+          keyframes: [
+            { y: p.y, scale: p.scale, duration: p.duration * 0.4, ease: 'power2.out' },
+            { y: p.y + 400, scale: p.scale * 0.8, opacity: 0, duration: p.duration * 0.6, ease: 'power2.in' },
+          ],
+        },
+        0
+      );
+    });
+  }, { scope: containerRef, dependencies: [particles] });
+
   return (
-    <div className="absolute inset-0 pointer-events-none overflow-hidden flex items-center justify-center z-50">
+    <div
+      ref={containerRef}
+      className="absolute inset-0 pointer-events-none overflow-hidden flex items-center justify-center z-50"
+    >
       {particles.map((p) => (
-        <motion.div
+        <div
           key={p.id}
-          initial={{ opacity: 1, x: 0, y: 0, scale: 0, rotate: 0 }}
-          animate={{
-            opacity: [1, 1, 0],
-            x: p.x,
-            y: [0, p.y, p.y + 400],
-            scale: [0, p.scale, p.scale * 0.8],
-            rotate: p.rot,
-          }}
-          transition={{
-            duration: p.duration,
-            delay: p.delay,
-            ease: [0.25, 0.46, 0.45, 0.94],
-          }}
+          className="confetti-particle"
           style={{
             position: 'absolute',
             width: p.size === 'rect' ? 10 : 8,
             height: p.size === 'rect' ? 14 : 8,
             backgroundColor: p.color,
             borderRadius: p.size === 'circle' ? '50%' : '2px',
+            opacity: 0,
           }}
         />
       ))}

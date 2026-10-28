@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { motion } from 'motion/react';
 import {
   Calendar, Award, Bookmark, ExternalLink, Filter,
   CheckCircle2, Clock, Sparkles, Lock, ArrowUpRight,
@@ -248,9 +247,8 @@ export function KegiatanClient({
           const evidence = evidenceMap[act.id];
 
           return (
-            <motion.div
+            <div
               key={act.id}
-              layout
               className={`bg-white rounded-2xl p-5 border shadow-sm flex flex-col justify-between transition-all group ${
                 act.isRoleMatch
                   ? 'border-indigo-200 hover:border-indigo-300 ring-1 ring-indigo-100'
@@ -408,7 +406,7 @@ export function KegiatanClient({
                   <ExternalLink className="w-3 h-3" />
                 </button>
               </div>
-            </motion.div>
+            </div>
           );
         })}
       </div>

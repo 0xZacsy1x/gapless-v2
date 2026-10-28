@@ -1,7 +1,8 @@
 'use client';
 
-import { useEffect, useState, useMemo } from 'react';
-import { motion } from 'motion/react';
+import { useEffect, useState, useMemo, useRef } from 'react';
+import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
 import { Star, Sparkles } from 'lucide-react';
 import {
   RadarChart,
@@ -24,6 +25,8 @@ interface Props {
 
 export function ArchetypeReasoningBlock({ dominantTrait, traitScores, keyTraits, hideTitle }: Props) {
   const [chartReady, setChartReady] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const radarRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const t = setTimeout(() => setChartReady(true), 300);
@@ -38,16 +41,65 @@ export function ArchetypeReasoningBlock({ dominantTrait, traitScores, keyTraits,
     return TRAITS.map(t => ({ trait: t, value: traitScores[t] || 0 }));
   }, [traitScores]);
 
+  useGSAP(() => {
+    if (!containerRef.current) return;
+
+    // Header entrance
+    gsap.fromTo(
+      '.archetype-header',
+      { opacity: 0, y: -20 },
+      { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' }
+    );
+
+    // Left & right card entrance
+    gsap.fromTo(
+      '.archetype-left-card',
+      { opacity: 0, y: 30 },
+      { opacity: 1, y: 0, duration: 0.6, delay: 0.1, ease: 'power2.out' }
+    );
+
+    gsap.fromTo(
+      '.archetype-right-card',
+      { opacity: 0, y: 30 },
+      { opacity: 1, y: 0, duration: 0.6, delay: 0.2, ease: 'power2.out' }
+    );
+
+    // Progress bars
+    const bars = containerRef.current.querySelectorAll<HTMLElement>('.trait-score-bar');
+    bars.forEach((bar) => {
+      const targetWidth = bar.dataset.targetWidth || '0%';
+      gsap.fromTo(
+        bar,
+        { width: '0%' },
+        { width: targetWidth, duration: 0.8, delay: 0.3, ease: 'power2.out' }
+      );
+    });
+
+    // Key traits
+    gsap.fromTo(
+      '.key-traits-container',
+      { opacity: 0, y: 10 },
+      { opacity: 1, y: 0, duration: 0.5, delay: 1, ease: 'power2.out' }
+    );
+  }, { scope: containerRef });
+
+  useGSAP(() => {
+    if (!radarRef.current) return;
+    if (chartReady) {
+      gsap.fromTo(
+        radarRef.current,
+        { opacity: 0, scale: 0.7 },
+        { opacity: 1, scale: 1, duration: 0.6, ease: 'back.out(1.5)' }
+      );
+    }
+  }, [chartReady]);
+
   if (!meta) return null;
 
   return (
-    <div className="mb-12">
+    <div ref={containerRef} className="mb-12">
       {/* ── Header ── */}
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="text-center mb-12"
-      >
+      <div className="archetype-header text-center mb-12">
         {!hideTitle && (
           <>
             <div className="text-5xl mb-4">{meta.emoji}</div>
@@ -82,17 +134,12 @@ export function ArchetypeReasoningBlock({ dominantTrait, traitScores, keyTraits,
             </p>
           </div>
         </div>
-      </motion.div>
+      </div>
 
       {/* ── Two Column: Trait Breakdown + Radar ── */}
       <div className="grid lg:grid-cols-2 gap-6">
         {/* Left — Trait Breakdown */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="glass-card p-8"
-        >
+        <div className="archetype-left-card glass-card p-8">
           <h2 className="text-xl font-bold text-slate-900 mb-6">Rincian Trait</h2>
           <div className="space-y-5">
             {TRAITS.map((trait) => {
@@ -128,14 +175,14 @@ export function ArchetypeReasoningBlock({ dominantTrait, traitScores, keyTraits,
                     </span>
                   </div>
                   <div className="score-bar-track overflow-hidden bg-slate-100 rounded-full h-2">
-                    <motion.div
-                      initial={{ width: 0 }}
-                      animate={{ width: `${pct}%` }}
-                      transition={{ duration: 0.8, delay: 0.3, ease: 'easeOut' }}
+                    <div
+                      className="trait-score-bar"
+                      data-target-width={`${pct}%`}
                       style={{
                         height: '100%',
                         borderRadius: 99,
                         background: tMeta.color,
+                        width: '0%',
                       }}
                     />
                   </div>
@@ -143,28 +190,18 @@ export function ArchetypeReasoningBlock({ dominantTrait, traitScores, keyTraits,
               );
             })}
           </div>
-        </motion.div>
+        </div>
 
         {/* Right — Radar Chart */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="glass-card p-8 flex flex-col items-center"
-        >
+        <div className="archetype-right-card glass-card p-8 flex flex-col items-center">
           <h2 className="text-xl font-bold text-slate-900 mb-2 self-start">Radar Trait</h2>
           <p className="text-xs text-gray-500 mb-6 self-start">
             Distribusi kepribadianmu di 4 dimensi
           </p>
-          <motion.div
-            initial={{ opacity: 0, scale: 0.7 }}
-            animate={{
-              opacity: chartReady ? 1 : 0,
-              scale: chartReady ? 1 : 0.7,
-            }}
-            transition={{ type: 'spring', stiffness: 100, damping: 15 }}
+          <div
+            ref={radarRef}
             className="w-full"
-            style={{ maxWidth: 360, aspectRatio: '1' }}
+            style={{ maxWidth: 360, aspectRatio: '1', opacity: 0 }}
           >
             <ResponsiveContainer width="100%" height="100%" minWidth={1} minHeight={1}>
               <RadarChart cx="50%" cy="50%" outerRadius="72%" data={traitRadarData}>
@@ -205,18 +242,16 @@ export function ArchetypeReasoningBlock({ dominantTrait, traitScores, keyTraits,
                 />
               </RadarChart>
             </ResponsiveContainer>
-          </motion.div>
+          </div>
 
           {/* Key Traits badges */}
           {keyTraits && keyTraits.length > 0 && (
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1 }}
-              className="mt-4 w-full p-4 rounded-xl"
+            <div
+              className="key-traits-container mt-4 w-full p-4 rounded-xl"
               style={{
                 background: `${meta.color}08`,
                 border: `1px solid ${meta.color}20`,
+                opacity: 0,
               }}
             >
               <p className="text-xs text-gray-500 mb-2">Sifat Utama (Key Traits)</p>
@@ -234,9 +269,9 @@ export function ArchetypeReasoningBlock({ dominantTrait, traitScores, keyTraits,
                   </span>
                 ))}
               </div>
-            </motion.div>
+            </div>
           )}
-        </motion.div>
+        </div>
       </div>
     </div>
   );
