@@ -1,8 +1,10 @@
 'use client';
 
+import { useRef } from 'react';
 import Link from 'next/link';
 import { BrainCircuit, Briefcase, Calendar, ChevronRight, Map } from 'lucide-react';
-import { motion, Variants } from 'motion/react';
+import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
 
 // --- Tipe Data ---
 export type ResultType = {
@@ -88,41 +90,41 @@ const ResultCard = ({ title, description, result, quizType, Icon }: { title: str
 
 // --- KOMPONEN ANIMASI UTAMA ---
 export default function AnimatedResultsClient({ belumTahu, sudahTahu }: { belumTahu: ResultType, sudahTahu: ResultType }) {
-  // Varian animasi dari bawah ke atas + blur ke full
-  const itemFadeBlur: Variants = {
-    hidden: { opacity: 0, y: 40, filter: 'blur(8px)' },
-    visible: { opacity: 1, y: 0, filter: 'blur(0px)', transition: { duration: 0.7, ease: 'easeOut' } }
-  };
+  const containerRef = useRef<HTMLElement>(null);
+
+  useGSAP(() => {
+    if (!containerRef.current) return;
+    gsap.fromTo(
+      containerRef.current.querySelectorAll('.stagger-result-item'),
+      { opacity: 0, y: 40, filter: 'blur(8px)' },
+      {
+        opacity: 1,
+        y: 0,
+        filter: 'blur(0px)',
+        duration: 0.7,
+        ease: 'power2.out',
+        stagger: 0.2,
+        delay: 0.1,
+      }
+    );
+  }, { scope: containerRef });
 
   return (
-    <motion.main
+    <main
+      ref={containerRef}
       className="flex-1 container mx-auto px-4 py-12 max-w-4xl"
-      // Kontainer utama yang nyuruh anak-anaknya antre 1 per 1 (stagger)
-      initial="hidden"
-      animate="visible"
-      variants={{
-        hidden: { opacity: 0 },
-        visible: {
-          opacity: 1,
-          transition: {
-            staggerChildren: 0.2, // Jeda 0.2s: Judul -> Paragraf -> Card Kiri -> Card Kanan
-            delayChildren: 0.1
-          }
-        }
-      }}
     >
-      {/* Hapus sm:text-left biar rata tengah di semua layar */}
       <div className="mb-10 text-center">
-        <motion.h1 variants={itemFadeBlur} className="text-3xl font-bold text-slate-900 mb-2">
+        <h1 className="stagger-result-item text-3xl font-bold text-slate-900 mb-2" style={{ opacity: 0 }}>
           Riwayat Asesmen
-        </motion.h1>
-        <motion.p variants={itemFadeBlur} className="text-slate-600">
+        </h1>
+        <p className="stagger-result-item text-slate-600" style={{ opacity: 0 }}>
           Lihat hasil analisis profil karirmu dari kedua jalur yang tersedia.
-        </motion.p>
+        </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
-        <motion.div variants={itemFadeBlur} className="h-full">
+        <div className="stagger-result-item h-full" style={{ opacity: 0 }}>
           <ResultCard
             title="Hasil Eksplorasi (Belum Tahu Minat)"
             description="Kamu belum tahu ingin jadi apa? Tes ini menganalisis kepribadian kerjamu untuk menemukan opsi karir terbaik."
@@ -130,9 +132,9 @@ export default function AnimatedResultsClient({ belumTahu, sudahTahu }: { belumT
             result={belumTahu}
             Icon={BrainCircuit}
           />
-        </motion.div>
+        </div>
 
-        <motion.div variants={itemFadeBlur} className="h-full">
+        <div className="stagger-result-item h-full" style={{ opacity: 0 }}>
           <ResultCard
             title="Hasil Validasi (Sudah Tahu Minat)"
             description="Sudah punya incaran karir? Tes ini memvalidasi kecocokan potensimu dengan karir yang kamu tuju."
@@ -140,8 +142,8 @@ export default function AnimatedResultsClient({ belumTahu, sudahTahu }: { belumT
             result={sudahTahu}
             Icon={Map}
           />
-        </motion.div>
+        </div>
       </div>
-    </motion.main>
+    </main>
   );
 }

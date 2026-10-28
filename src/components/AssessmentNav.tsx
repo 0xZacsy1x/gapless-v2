@@ -1,32 +1,31 @@
 'use client';
 
+import { useRef } from 'react';
 import Link from 'next/link';
 import { useGaplessContext } from '@/contexts/CareerContext';
-import { motion, Variants } from 'motion/react';
+import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
 
 export function AssessmentNav() {
     const { setSelectedRole, setCurrentView, setQuizType } = useGaplessContext();
+    const containerRef = useRef<HTMLDivElement>(null);
 
-    // Varian animasi blur ke full (dari bawah ke atas)
-    const buttonVariants: Variants = {
-        hidden: { opacity: 0, y: 30, filter: 'blur(8px)' },
-        visible: { opacity: 1, y: 0, filter: 'blur(0px)', transition: { duration: 0.6, ease: 'easeOut' } }
-    };
+    useGSAP(() => {
+        if (!containerRef.current) return;
+        gsap.fromTo(
+            containerRef.current.children,
+            { opacity: 0, y: 30, filter: 'blur(8px)' },
+            { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.6, ease: 'power2.out', stagger: 0.2 }
+        );
+    }, { scope: containerRef });
 
     return (
-        <motion.div 
+        <div 
+            ref={containerRef}
             className="flex flex-col sm:flex-row gap-4 justify-center items-center"
-            // Mengatur antrean: Tombol kiri jalan, tunggu 0.2 detik, baru tombol kanan
-            variants={{
-                hidden: { opacity: 0 },
-                visible: {
-                    opacity: 1,
-                    transition: { staggerChildren: 0.2 }
-                }
-            }}
         >
             {/* Left: AI Assessment (Tombol Biru) */}
-            <motion.div variants={buttonVariants} className="w-full sm:w-auto">
+            <div className="w-full sm:w-auto" style={{ opacity: 0 }}>
                 <Link
                     href="/assessment?quizType=belum_tahu_minat"
                     onClick={() => {
@@ -46,10 +45,10 @@ export function AssessmentNav() {
                         Saya Belum Tahu Minat Saya
                     </button>
                 </Link>
-            </motion.div>
+            </div>
 
             {/* Right: Career Test (Tombol Putih) */}
-            <motion.div variants={buttonVariants} className="w-full sm:w-auto">
+            <div className="w-full sm:w-auto" style={{ opacity: 0 }}>
                 <Link 
                     href="/career-test" 
                     onClick={() => {
@@ -62,7 +61,7 @@ export function AssessmentNav() {
                         Saya Sudah Tahu Minat Saya
                     </button>
                 </Link>
-            </motion.div>
-        </motion.div>
+            </div>
+        </div>
     );
 }
