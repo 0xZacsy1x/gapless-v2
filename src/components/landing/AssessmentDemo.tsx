@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import gsap from "gsap";
-import { Brain, CheckCircle2, Sparkles, ChevronRight, AlertCircle } from "lucide-react";
+import { Brain, CheckCircle2, Compass, ChevronRight, AlertCircle } from "lucide-react";
 import SkillReadiness from "./SkillReadiness";
 import {
     DEMO_QUESTIONS,
@@ -396,9 +396,10 @@ export default function AssessmentDemo() {
                         </div>
                     </div>
                 </div>
-                <span className="text-[10px] uppercase font-bold tracking-wider px-2.5 py-1 rounded-full bg-blue-50 text-brand-primary border border-blue-100">
-                    Live Demo
-                </span>
+                <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-slate-50 border border-slate-200/80 text-[10.5px] font-semibold text-slate-600">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                    <span>Demo Interaktif</span>
+                </div>
             </div>
 
             {/* Stage Container (Fixed Height, Overflow Hidden - Clips Screen Slides & Fake Cursor) */}
@@ -555,12 +556,12 @@ export default function AssessmentDemo() {
                 >
                     {/* ITEM 1: Profile Top Match & Role Switcher Chips (Stagger Step 1) */}
                     <div className="result-stagger-item space-y-2">
-                        <div className="flex items-center justify-between">
-                            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-blue-50 text-brand-primary text-[10px] font-bold border border-blue-200">
-                                <Sparkles className="w-3 h-3 text-brand-primary" />
-                                Kecocokan Tertinggi (94%)
-                            </span>
-                            <span className="text-[10px] font-bold text-slate-400">
+                        <div className="flex items-center justify-between pb-0.5">
+                            <div className="flex items-baseline gap-1.5">
+                                <span className="text-[11px] font-bold text-slate-900">Kecocokan Tertinggi</span>
+                                <span className="font-mono text-xs font-bold text-brand-primary tabular-nums">94%</span>
+                            </div>
+                            <span className="text-[10px] font-mono text-slate-400 font-medium">
                                 Profil Terverifikasi
                             </span>
                         </div>
@@ -658,7 +659,7 @@ export default function AssessmentDemo() {
                         className="result-stagger-item p-2.5 sm:p-3 rounded-2xl bg-white border border-blue-100 shadow-xs flex items-center gap-2.5"
                     >
                         <div className="w-7 h-7 rounded-lg bg-blue-50 text-brand-primary flex items-center justify-center shrink-0 border border-blue-100">
-                            <Sparkles className="w-3.5 h-3.5 text-brand-primary" />
+                            <Compass className="w-3.5 h-3.5 text-brand-primary" />
                         </div>
                         <div className="min-w-0 flex-1">
                             <div className="text-xs font-bold text-slate-900">Roadmap belajarmu siap!</div>
@@ -703,7 +704,7 @@ export default function AssessmentDemo() {
             <div className="mt-auto pt-3 border-t border-blue-50 relative z-10 shrink-0">
                 <div className="flex items-center gap-3 p-2.5 rounded-2xl bg-blue-50/50 border border-blue-100/80">
                     <div className="w-7 h-7 rounded-lg bg-blue-100 text-brand-primary flex items-center justify-center shrink-0">
-                        <Sparkles className="w-4 h-4 text-brand-primary" />
+                        <Compass className="w-4 h-4 text-brand-primary" />
                     </div>
                     <div className="min-w-0 flex-1">
                         <div className="text-[9px] font-bold tracking-wider text-brand-primary uppercase">

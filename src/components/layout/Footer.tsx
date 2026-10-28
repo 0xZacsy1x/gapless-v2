@@ -38,20 +38,9 @@ export default function Footer() {
               Platform evaluasi kesiapan karier dan roadmap belajar berbasis AI untuk mahasiswa &amp; fresh graduate.
             </p>
 
-            <div className="space-y-2 pt-1 text-xs text-gray-500 font-medium">
-              <div className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-brand-primary"></span>
-                <span>Standar 702+ Pekerjaan Industri Terkemuka</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                <span>Psikometri RIASEC + SJT Terintegrasi</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
-                <span>Dibuat Khusus untuk Mahasiswa Indonesia</span>
-              </div>
-            </div>
+            <p className="text-xs text-gray-500 leading-relaxed pt-1 border-t border-gray-200/60 font-medium">
+              Berbasis data 702+ lowongan industri nyata, model psikometri RIASEC, dan 15 skenario Situational Judgement Test (SJT) kerja terapan.
+            </p>
           </div>
 
           {/* Kolom Navigasi Kanan (Produk & Legal) */}
