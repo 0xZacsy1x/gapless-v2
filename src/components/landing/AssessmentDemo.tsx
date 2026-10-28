@@ -85,13 +85,14 @@ export default function AssessmentDemo() {
             io = new IntersectionObserver(
                 ([entry]) => {
                     if (!tlRef.current) return;
-                    if (entry.intersectionRatio < 0.15) {
+                    // Only pause if strictly scrolled out of viewport
+                    if (!entry.isIntersecting && window.scrollY > 200) {
                         tlRef.current.pause();
-                    } else if (document.visibilityState === "visible") {
+                    } else if (entry.isIntersecting && document.visibilityState === "visible") {
                         tlRef.current.resume();
                     }
                 },
-                { threshold: [0, 0.2] }
+                { threshold: 0.1 }
             );
             io.observe(stageRef.current);
         }
@@ -246,7 +247,7 @@ export default function AssessmentDemo() {
         }, undefined, "+=0.1");
 
         // Hold analyzing screen so user can clearly view the RIASEC calculation
-        tl.set({}, {}, "+=1.6");
+        tl.to({}, { duration: 2.2 });
 
         // ── TRANSITION 2: ANALYZING -> RESULT (0.6s Silky Slide) ──
         tl.call(() => {
@@ -284,7 +285,7 @@ export default function AssessmentDemo() {
             );
         }, undefined, "-=0.1");
 
-        // ── PHASE 3: RESULT STAGE (Visible ~4.5s) ──
+        // ── PHASE 3: RESULT STAGE (Visible ~5.0s) ──
         // Reveal cursor near role chips
         tl.to(cursor, {
             opacity: 1,
@@ -294,7 +295,7 @@ export default function AssessmentDemo() {
                 const c = getCoords(chipDaRef.current, { y: 18 });
                 gsap.set(cursor, { x: c.x, y: c.y });
             },
-        }, "+=0.2");
+        }, "+=0.3");
 
         // Glide cursor to "Data Analyst" chip
         tl.to(cursor, {
@@ -316,7 +317,7 @@ export default function AssessmentDemo() {
             ease: "power2.out",
             x: () => getCoords(chipSeRef.current).x,
             y: () => getCoords(chipSeRef.current).y,
-        }, "+=0.5");
+        }, "+=0.7");
 
         // Click "Software Engineer" -> switch back
         tl.call(() => {
@@ -332,18 +333,28 @@ export default function AssessmentDemo() {
             y: () => getCoords(roadmapCardRef.current).y,
         }, "+=0.35");
 
-        // Hold on result screen so user can clearly read roadmap details (~2.0s)
-        tl.set({}, {}, "+=2.0");
-
-        // Fade out cursor before reset
+        // Fade out cursor before hold
         tl.to(cursor, {
             opacity: 0,
             duration: 0.25,
             ease: "power2.in",
-        });
+        }, "+=0.4");
+
+        // Hold on result screen so user can clearly read roadmap and gap details (~2.2s)
+        tl.to({}, { duration: 2.2 });
 
         // ── TRANSITION 3: RESULT -> NEXT QUESTION (0.6s Upward Slide) ──
-        tl.set(qScreen, { yPercent: 100, opacity: 0, scale: 0.97 }, "+=0.05");
+        tl.call(() => {
+            setCurrentScreen("question");
+            setIsOptionSelected(false);
+            setIsBtnHovered(false);
+            setIsBtnPressed(false);
+            setActiveRole("Software Engineer");
+            gsap.set(rScreen, { pointerEvents: "none" });
+            gsap.set(qScreen, { pointerEvents: "auto" });
+        });
+
+        tl.set(qScreen, { yPercent: 100, opacity: 0, scale: 0.97 });
 
         tl.to(rScreen, {
             yPercent: -100,
@@ -361,12 +372,15 @@ export default function AssessmentDemo() {
             ease: "power2.inOut",
         }, "<");
 
-        tl.set({}, {}, "+=0.1");
+        tl.to({}, { duration: 0.2 });
 
         return () => {
             isCancelled = true;
-            tl.kill();
-            tlRef.current = null;
+            if (tlRef.current) {
+                tlRef.current.kill();
+                tlRef.current = null;
+            }
+            gsap.killTweensOf([qScreen, aScreen, rScreen, cursor]);
         };
     // Re-run cycle whenever questionCycle updates
     }, [questionCycle, getCoords, triggerClickPulse]);
