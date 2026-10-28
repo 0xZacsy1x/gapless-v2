@@ -207,28 +207,6 @@ export default function BentoEcosystemTour() {
   const [isTabActive, setIsTabActive] = useState<boolean>(true);
   const [isUserInteracting, setIsUserInteracting] = useState<boolean>(false);
 
-  // Smooth crossfade on career change
-  useGSAP(() => {
-    if (roadmapBodyRef.current && !prefersReducedMotion) {
-      gsap.fromTo(
-        roadmapBodyRef.current,
-        { opacity: 0.5, y: 3 },
-        { opacity: 1, y: 0, duration: 0.35, ease: "power2.out" }
-      );
-    }
-  }, [activeCareerIdx]);
-
-  // Smooth crossfade on kegiatan change
-  useGSAP(() => {
-    if (kegiatanBodyRef.current && !prefersReducedMotion) {
-      gsap.fromTo(
-        kegiatanBodyRef.current,
-        { opacity: 0.5, y: 3 },
-        { opacity: 1, y: 0, duration: 0.35, ease: "power2.out" }
-      );
-    }
-  }, [activeKegiatanIdx]);
-
   const [prefersReducedMotion, setPrefersReducedMotion] = useState<boolean>(() => {
     if (typeof window !== "undefined") {
       return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -244,6 +222,28 @@ export default function BentoEcosystemTour() {
     mediaQuery.addEventListener("change", handleChange);
     return () => mediaQuery.removeEventListener("change", handleChange);
   }, []);
+
+  // Smooth crossfade on career change
+  useGSAP(() => {
+    if (roadmapBodyRef.current && !prefersReducedMotion) {
+      gsap.fromTo(
+        roadmapBodyRef.current,
+        { opacity: 0.5, y: 3 },
+        { opacity: 1, y: 0, duration: 0.35, ease: "power2.out" }
+      );
+    }
+  }, [activeCareerIdx, prefersReducedMotion]);
+
+  // Smooth crossfade on kegiatan change
+  useGSAP(() => {
+    if (kegiatanBodyRef.current && !prefersReducedMotion) {
+      gsap.fromTo(
+        kegiatanBodyRef.current,
+        { opacity: 0.5, y: 3 },
+        { opacity: 1, y: 0, duration: 0.35, ease: "power2.out" }
+      );
+    }
+  }, [activeKegiatanIdx, prefersReducedMotion]);
 
   // IntersectionObserver & Visibility handling
   useEffect(() => {
