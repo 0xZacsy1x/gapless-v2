@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import gsap from "gsap";
-import { useGSAP } from "@gsap/react";
 import { Brain, CheckCircle2, Sparkles, ChevronRight, AlertCircle } from "lucide-react";
 import SkillReadiness from "./SkillReadiness";
 import {
@@ -20,7 +19,6 @@ export default function AssessmentDemo() {
     const clickPulseRef = useRef<HTMLSpanElement>(null);
     const tlRef = useRef<gsap.core.Timeline | null>(null);
 
-    // Targets for fake cursor calculation
     const optRef = useRef<HTMLButtonElement>(null);
     const nextBtnRef = useRef<HTMLButtonElement>(null);
     const chipSeRef = useRef<HTMLButtonElement>(null);
@@ -28,135 +26,115 @@ export default function AssessmentDemo() {
     const chipUiRef = useRef<HTMLButtonElement>(null);
     const roadmapCardRef = useRef<HTMLDivElement>(null);
 
-    // Active screen tracking for meta label
     const [currentScreen, setCurrentScreen] = useState<"question" | "analyzing" | "result">("question");
+    const [questionCycle, setQuestionCycle] = useState(0);
+    const [isOptionSelected, setIsOptionSelected] = useState(false);
+    const [isBtnHovered, setIsBtnHovered] = useState(false);
+    const [isBtnPressed, setIsBtnPressed] = useState(false);
+    const [activeRole, setActiveRole] = useState("Software Engineer");
 
-    // Question & Role State
-    const [questionCycle, setQuestionCycle] = useState<number>(0);
-    const [isOptionSelected, setIsOptionSelected] = useState<boolean>(false);
-    const [isBtnHovered, setIsBtnHovered] = useState<boolean>(false);
-    const [isBtnPressed, setIsBtnPressed] = useState<boolean>(false);
-    const [activeRole, setActiveRole] = useState<string>("Software Engineer");
-
-    // Observers & Accessibility
-    const [isInView, setIsInView] = useState<boolean>(true);
-    const [isTabActive, setIsTabActive] = useState<boolean>(true);
-    const [prefersReducedMotion, setPrefersReducedMotion] = useState<boolean>(() => {
+    const [isInView, setIsInView] = useState(true);
+    const [isTabActive, setIsTabActive] = useState(true);
+    const [prefersReducedMotion, setPrefersReducedMotion] = useState(() => {
         if (typeof window !== "undefined") {
             return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
         }
         return false;
     });
 
-    // Check prefers-reduced-motion
     useEffect(() => {
-        if (typeof window !== "undefined") {
-            const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-            const listener = (e: MediaQueryListEvent) => setPrefersReducedMotion(e.matches);
-            mediaQuery.addEventListener("change", listener);
-            return () => mediaQuery.removeEventListener("change", listener);
-        }
+        const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+        const handler = (e: MediaQueryListEvent) => setPrefersReducedMotion(e.matches);
+        mq.addEventListener("change", handler);
+        return () => mq.removeEventListener("change", handler);
     }, []);
 
-    // Viewport & Tab Visibility listeners
     useEffect(() => {
-        const handleVisibility = () => {
-            setIsTabActive(document.visibilityState === "visible");
-        };
-        document.addEventListener("visibilitychange", handleVisibility);
+        const onVis = () => setIsTabActive(document.visibilityState === "visible");
+        document.addEventListener("visibilitychange", onVis);
 
-        const observer = new IntersectionObserver(
-            ([entry]) => {
-                setIsInView(entry.isIntersecting);
-            },
+        const io = new IntersectionObserver(
+            ([e]) => setIsInView(e.isIntersecting),
             { threshold: 0 }
         );
-
-        if (stageRef.current) {
-            observer.observe(stageRef.current);
-        }
+        if (stageRef.current) io.observe(stageRef.current);
 
         return () => {
-            document.removeEventListener("visibilitychange", handleVisibility);
-            observer.disconnect();
+            document.removeEventListener("visibilitychange", onVis);
+            io.disconnect();
         };
     }, []);
 
-    // Helper: calculate coordinates relative to stage container
     const getCoords = useCallback(
-        (element: HTMLElement | null, offset?: { x?: number; y?: number }) => {
-            if (!element || !stageRef.current) return { x: 120, y: 150 };
-            const sRect = stageRef.current.getBoundingClientRect();
-            const eRect = element.getBoundingClientRect();
-            const centerX = eRect.left - sRect.left + eRect.width / 2 + (offset?.x ?? 0);
-            const centerY = eRect.top - sRect.top + eRect.height / 2 + (offset?.y ?? 0);
+        (el: HTMLElement | null, off?: { x?: number; y?: number }) => {
+            if (!el || !stageRef.current) return { x: 120, y: 150 };
+            const s = stageRef.current.getBoundingClientRect();
+            const e = el.getBoundingClientRect();
             return {
-                x: Math.round(centerX - 3),
-                y: Math.round(centerY - 2),
+                x: Math.round(e.left - s.left + e.width / 2 + (off?.x ?? 0) - 3),
+                y: Math.round(e.top - s.top + e.height / 2 + (off?.y ?? 0) - 2),
             };
         },
         []
     );
 
-    // Helper: trigger clicking pulse with pure GSAP (zero React re-renders)
     const triggerClickPulse = useCallback(() => {
         if (cursorRef.current) {
             gsap.to(cursorRef.current, {
-                scale: 0.88,
-                duration: 0.08,
-                yoyo: true,
-                repeat: 1,
-                ease: "power2.inOut",
+                scale: 0.88, duration: 0.08, yoyo: true, repeat: 1, ease: "power2.inOut",
             });
         }
         if (clickPulseRef.current) {
-            gsap.fromTo(
-                clickPulseRef.current,
-                { scale: 0.3, opacity: 0.7, autoAlpha: 1 },
-                { scale: 2.2, opacity: 0, autoAlpha: 0, duration: 0.35, ease: "power2.out" }
+            gsap.fromTo(clickPulseRef.current,
+                { scale: 0.3, opacity: 0.7 },
+                { scale: 2.2, opacity: 0, duration: 0.35, ease: "power2.out" }
             );
         }
     }, []);
 
-    // Current question data
     const currentQ = DEMO_QUESTIONS[questionCycle % DEMO_QUESTIONS.length];
     const roleData = CAREER_ROLES_DATA[activeRole] || CAREER_ROLES_DATA["Software Engineer"];
 
-    // Main GSAP Master Timeline — Snappy, Instant Start
-    useGSAP(
-        () => {
-            const qScreen = questionScreenRef.current;
-            const aScreen = analyzingScreenRef.current;
-            const rScreen = resultScreenRef.current;
-            const cursor = cursorRef.current;
+    // ── GSAP Master Timeline ──────────────────────────────────────────
+    // Using plain useEffect + gsap.context instead of useGSAP to avoid
+    // React 19 Strict Mode context-revert race conditions.
+    useEffect(() => {
+        const qScreen = questionScreenRef.current;
+        const aScreen = analyzingScreenRef.current;
+        const rScreen = resultScreenRef.current;
+        const cursor = cursorRef.current;
 
-            if (!qScreen || !aScreen || !rScreen || !cursor) return;
+        if (!qScreen || !aScreen || !rScreen || !cursor) return;
 
-            // Handle prefers-reduced-motion: static final state
-            if (prefersReducedMotion) {
-                gsap.set(qScreen, { autoAlpha: 0, display: "none" });
-                gsap.set(aScreen, { autoAlpha: 0, display: "none" });
-                gsap.set(rScreen, { autoAlpha: 1, yPercent: 0, scale: 1, display: "flex" });
-                gsap.set(cursor, { autoAlpha: 0, display: "none" });
-                setCurrentScreen("result");
-                return;
-            }
+        // ── Reduced motion: static result view ──
+        if (prefersReducedMotion) {
+            gsap.set(qScreen, { opacity: 0, display: "none" });
+            gsap.set(aScreen, { opacity: 0, display: "none" });
+            gsap.set(rScreen, { opacity: 1, yPercent: 0, scale: 1, display: "flex" });
+            const items = rScreen.querySelectorAll<HTMLElement>(".result-stagger-item");
+            gsap.set(items, { opacity: 1, y: 0 });
+            gsap.set(cursor, { opacity: 0, display: "none" });
+            setCurrentScreen("result");
+            return () => {
+                gsap.set([qScreen, aScreen, rScreen, cursor], { clearProps: "all" });
+                gsap.set(items, { clearProps: "all" });
+            };
+        }
 
-            // Immediate initial setup via GSAP autoAlpha (visibility + opacity)
-            gsap.set(qScreen, { yPercent: 0, autoAlpha: 1, scale: 1, display: "flex" });
-            gsap.set(aScreen, { yPercent: 100, autoAlpha: 0, scale: 0.97, display: "flex" });
-            gsap.set(rScreen, { yPercent: 100, autoAlpha: 0, scale: 0.97, display: "flex" });
+        // ── Normal animation ──
+        const ctx = gsap.context(() => {
+            // Initial positions: Q visible, others hidden below
+            gsap.set(qScreen, { yPercent: 0, opacity: 1, scale: 1 });
+            gsap.set(aScreen, { yPercent: 100, opacity: 0, scale: 0.97 });
+            gsap.set(rScreen, { yPercent: 100, opacity: 0, scale: 0.97 });
 
-            // Start cursor slightly offset and immediately visible
-            const initialCoords = getCoords(optRef.current, { x: 35, y: 25 });
-            gsap.set(cursor, { autoAlpha: 1, scale: 1, x: initialCoords.x, y: initialCoords.y });
+            const c0 = getCoords(optRef.current, { x: 35, y: 25 });
+            gsap.set(cursor, { opacity: 1, scale: 1, x: c0.x, y: c0.y });
 
             const tl = gsap.timeline({ repeat: -1 });
             tlRef.current = tl;
 
-            // -------------------------------------------------------------
-            // PHASE 1: QUESTION STAGE (Starts IMMEDIATELY at 0.05s)
-            // -------------------------------------------------------------
+            // ── PHASE 1: QUESTION ──
             tl.call(() => {
                 setCurrentScreen("question");
                 setIsOptionSelected(false);
@@ -165,249 +143,172 @@ export default function AssessmentDemo() {
                 setActiveRole("Software Engineer");
             });
 
-            // 0.05s: Immediately glide cursor to Option A center (0.42s duration)
             tl.to(cursor, {
-                autoAlpha: 1,
-                duration: 0.42,
-                ease: "power2.out",
+                opacity: 1, duration: 0.42, ease: "power2.out",
                 x: () => getCoords(optRef.current).x,
                 y: () => getCoords(optRef.current).y,
             }, "+=0.05");
 
-            // 0.50s: Click Option A with organic ripple & select it
             tl.call(() => {
                 triggerClickPulse();
                 setIsOptionSelected(true);
             }, undefined, "+=0.08");
 
-            // 0.60s: Glide cursor straight down to "Lihat Hasil Asesmen" button
             tl.to(cursor, {
-                duration: 0.38,
-                ease: "power2.out",
+                duration: 0.38, ease: "power2.out",
                 x: () => getCoords(nextBtnRef.current).x,
                 y: () => getCoords(nextBtnRef.current).y,
             }, "+=0.1");
 
-            // 1.00s: Hover state on submit button
-            tl.call(() => {
-                setIsBtnHovered(true);
-            }, undefined, "+=0.05");
+            tl.call(() => setIsBtnHovered(true), undefined, "+=0.05");
 
-            // 1.15s: Click button with organic compression
             tl.call(() => {
                 setIsBtnPressed(true);
                 triggerClickPulse();
             }, undefined, "+=0.15");
 
-            // 1.25s: Release button press
             tl.call(() => {
                 setIsBtnPressed(false);
                 setIsBtnHovered(false);
             }, undefined, "+=0.1");
 
-            // 1.35s: Fade out cursor before stage transition
-            tl.to(cursor, {
-                autoAlpha: 0,
-                duration: 0.15,
-                ease: "power2.in",
-            }, "+=0.05");
+            tl.to(cursor, { opacity: 0, duration: 0.15, ease: "power2.in" }, "+=0.05");
 
-            // -------------------------------------------------------------
-            // TRANSITION 1: QUESTION -> ANALYZING (0.45s Snappy Slide)
-            // -------------------------------------------------------------
-            tl.call(() => {
-                setCurrentScreen("analyzing");
-            }, undefined, "+=0.05");
+            // ── TRANSITION 1: QUESTION → ANALYZING ──
+            tl.call(() => setCurrentScreen("analyzing"), undefined, "+=0.05");
 
             tl.to(qScreen, {
-                yPercent: -100,
-                autoAlpha: 0,
-                scale: 0.97,
-                duration: 0.45,
-                ease: "power2.inOut",
+                yPercent: -100, opacity: 0, scale: 0.97,
+                duration: 0.45, ease: "power2.inOut",
             });
+            tl.fromTo(aScreen,
+                { yPercent: 100, opacity: 0, scale: 0.97 },
+                { yPercent: 0, opacity: 1, scale: 1, duration: 0.45, ease: "power2.inOut" },
+                "<"
+            );
 
-            tl.fromTo(aScreen, {
-                yPercent: 100,
-                autoAlpha: 0,
-                scale: 0.97,
-            }, {
-                yPercent: 0,
-                autoAlpha: 1,
-                scale: 1,
-                duration: 0.45,
-                ease: "power2.inOut",
-            }, "<");
-
-            // Animate Archetype Bars filling up smoothly (0.9s)
             tl.call(() => {
                 const bars = aScreen.querySelectorAll<HTMLElement>(".demo-arch-bar");
                 const nums = aScreen.querySelectorAll<HTMLElement>(".demo-arch-num");
                 bars.forEach((bar) => {
                     gsap.set(bar, { width: "0%" });
-                    const target = bar.getAttribute("data-target") || "0%";
-                    gsap.to(bar, { width: target, duration: 0.9, ease: "power2.out" });
+                    gsap.to(bar, { width: bar.dataset.target || "0%", duration: 0.9, ease: "power2.out" });
                 });
                 nums.forEach((num) => {
-                    const targetVal = parseInt(num.getAttribute("data-target") || "0", 10);
-                    const obj = { val: 0 };
-                    gsap.to(obj, {
-                        val: targetVal,
-                        duration: 0.9,
-                        ease: "power2.out",
-                        onUpdate: () => {
-                            num.textContent = `${Math.round(obj.val)}%`;
-                        },
+                    const tgt = parseInt(num.dataset.target || "0", 10);
+                    const o = { v: 0 };
+                    gsap.to(o, {
+                        v: tgt, duration: 0.9, ease: "power2.out",
+                        onUpdate: () => { num.textContent = `${Math.round(o.v)}%`; },
                     });
                 });
             }, undefined, "+=0.05");
 
-            // Analyzing stage display time (~1.0s)
             tl.set({}, {}, "+=1.05");
 
-            // -------------------------------------------------------------
-            // TRANSITION 2: ANALYZING -> RESULT (0.45s Snappy Slide)
-            // -------------------------------------------------------------
+            // ── TRANSITION 2: ANALYZING → RESULT ──
             tl.call(() => setCurrentScreen("result"));
 
             tl.to(aScreen, {
-                yPercent: -100,
-                autoAlpha: 0,
-                scale: 0.97,
-                duration: 0.45,
-                ease: "power2.inOut",
+                yPercent: -100, opacity: 0, scale: 0.97,
+                duration: 0.45, ease: "power2.inOut",
             });
+            tl.fromTo(rScreen,
+                { yPercent: 100, opacity: 0, scale: 0.97 },
+                { yPercent: 0, opacity: 1, scale: 1, duration: 0.45, ease: "power2.inOut" },
+                "<"
+            );
 
-            tl.fromTo(rScreen, {
-                yPercent: 100,
-                autoAlpha: 0,
-                scale: 0.97,
-            }, {
-                yPercent: 0,
-                autoAlpha: 1,
-                scale: 1,
-                duration: 0.45,
-                ease: "power2.inOut",
-            }, "<");
-
-            // Stagger reveal of result items (0.3s total)
             tl.fromTo(
                 rScreen.querySelectorAll(".result-stagger-item"),
-                { autoAlpha: 0, y: 10 },
-                { autoAlpha: 1, y: 0, stagger: 0.08, duration: 0.3, ease: "power2.out" },
+                { opacity: 0, y: 10 },
+                { opacity: 1, y: 0, stagger: 0.08, duration: 0.3, ease: "power2.out" },
                 "-=0.1"
             );
 
-            // Reveal cursor on Result Screen
             tl.to(cursor, {
-                autoAlpha: 1,
-                duration: 0.2,
-                ease: "power2.out",
+                opacity: 1, duration: 0.2, ease: "power2.out",
                 onStart: () => {
-                    const coords = getCoords(chipDaRef.current, { y: 18 });
-                    gsap.set(cursor, { x: coords.x, y: coords.y });
+                    const c = getCoords(chipDaRef.current, { y: 18 });
+                    gsap.set(cursor, { x: c.x, y: c.y });
                 },
             }, "+=0.1");
 
-            // Glide cursor to "Data Analyst" chip
             tl.to(cursor, {
-                duration: 0.35,
-                ease: "power2.out",
+                duration: 0.35, ease: "power2.out",
                 x: () => getCoords(chipDaRef.current).x,
                 y: () => getCoords(chipDaRef.current).y,
             }, "+=0.05");
 
-            // Click "Data Analyst" chip -> Switch role instantly
             tl.call(() => {
                 triggerClickPulse();
                 setActiveRole("Data Analyst");
             }, undefined, "+=0.15");
 
-            // Glide cursor to "Software Engineer" chip
             tl.to(cursor, {
-                duration: 0.35,
-                ease: "power2.out",
+                duration: 0.35, ease: "power2.out",
                 x: () => getCoords(chipSeRef.current).x,
                 y: () => getCoords(chipSeRef.current).y,
             }, "+=0.35");
 
-            // Click "Software Engineer" chip -> Switch back
             tl.call(() => {
                 triggerClickPulse();
                 setActiveRole("Software Engineer");
             }, undefined, "+=0.15");
 
-            // Glide cursor down towards Roadmap card
             tl.to(cursor, {
-                duration: 0.4,
-                ease: "power2.out",
+                duration: 0.4, ease: "power2.out",
                 x: () => getCoords(roadmapCardRef.current).x,
                 y: () => getCoords(roadmapCardRef.current).y,
             }, "+=0.3");
 
-            // Pause slightly so user can view the result and roadmap card (~1.2s)
             tl.set({}, {}, "+=1.2");
 
-            // Fade out cursor before reset
-            tl.to(cursor, {
-                autoAlpha: 0,
-                duration: 0.2,
-                ease: "power2.in",
-            });
+            tl.to(cursor, { opacity: 0, duration: 0.2, ease: "power2.in" });
 
-            // -------------------------------------------------------------
-            // TRANSITION 3: RESULT -> NEXT QUESTION (0.45s Upward Slide)
-            // -------------------------------------------------------------
+            // ── TRANSITION 3: RESULT → NEXT QUESTION ──
             tl.call(() => {
-                setQuestionCycle((prev) => prev + 1);
+                setQuestionCycle((p) => p + 1);
                 setIsOptionSelected(false);
             }, undefined, "+=0.1");
 
             tl.to(rScreen, {
-                yPercent: -100,
-                autoAlpha: 0,
-                scale: 0.97,
-                duration: 0.45,
-                ease: "power2.inOut",
+                yPercent: -100, opacity: 0, scale: 0.97,
+                duration: 0.45, ease: "power2.inOut",
             });
+            tl.fromTo(qScreen,
+                { yPercent: 100, opacity: 0, scale: 0.97 },
+                { yPercent: 0, opacity: 1, scale: 1, duration: 0.45, ease: "power2.inOut" },
+                "<"
+            );
 
-            tl.fromTo(qScreen, {
-                yPercent: 100,
-                autoAlpha: 0,
-                scale: 0.97,
-            }, {
-                yPercent: 0,
-                autoAlpha: 1,
-                scale: 1,
-                duration: 0.45,
-                ease: "power2.inOut",
-            }, "<");
-
-            // Short pause before starting next loop
             tl.set({}, {}, "+=0.1");
-        },
-        { scope: stageRef, dependencies: [prefersReducedMotion, getCoords, triggerClickPulse] }
-    );
+        }, stageRef);
 
-    // Play / pause timeline based on tab visibility and viewport intersection
+        return () => {
+            ctx.revert();
+            tlRef.current = null;
+        };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [prefersReducedMotion]);
+
+    // Play / pause based on viewport & tab visibility
     useEffect(() => {
-        if (!tlRef.current) return;
-        if (!isInView || !isTabActive) {
-            tlRef.current.pause();
-        } else {
-            tlRef.current.resume();
-        }
+        const tl = tlRef.current;
+        if (!tl) return;
+        if (!isInView || !isTabActive) tl.pause();
+        else tl.resume();
     }, [isInView, isTabActive]);
 
+    // ── RENDER ────────────────────────────────────────────────────────
     return (
         <div
             className="w-full max-w-[440px] xl:max-w-[480px] min-h-[620px] sm:min-h-[630px] mx-auto rounded-[32px] bg-white border border-slate-200/90 shadow-[0_24px_50px_-12px_rgba(0,0,0,0.18),0_8px_24px_-4px_rgba(0,0,0,0.08)] p-5 sm:p-6 flex flex-col justify-between relative select-none [contain:layout] font-sans"
             aria-hidden="true"
         >
-            {/* Ambient Blue Glow */}
             <div className="absolute top-0 right-0 w-48 h-48 bg-brand-primary/5 blur-2xl rounded-full pointer-events-none" />
 
-            {/* Top Meta Header (Fixed - never moves) */}
+            {/* Top Meta Header */}
             <div className="flex items-center justify-between border-b border-blue-50 pb-3 relative z-10 shrink-0">
                 <div className="flex items-center gap-2">
                     <div className="w-8 h-8 rounded-xl bg-blue-50 flex items-center justify-center text-brand-primary border border-blue-100">
@@ -429,19 +330,16 @@ export default function AssessmentDemo() {
                 </span>
             </div>
 
-            {/* STAGE CONTAINER (Fixed Height, Overflow Hidden - Clips Screen Slides & Fake Cursor) */}
+            {/* Stage Container */}
             <div
                 ref={stageRef}
                 className="relative w-full h-[470px] sm:h-[480px] overflow-hidden my-auto"
             >
-                {/* ===================================================================
-                    SCREEN 1: QUESTION SCREEN (Visible immediately on initial render)
-                =================================================================== */}
+                {/* SCREEN 1: QUESTION — visible by default via z-order, no opacity class */}
                 <div
                     ref={questionScreenRef}
                     className="absolute inset-0 w-full h-full flex flex-col justify-center space-y-3.5 px-0.5 z-20"
                 >
-                    {/* Progress Bar */}
                     <div className="space-y-1.5">
                         <div className="flex justify-between text-[11px] font-semibold text-slate-400">
                             <span>Progres Evaluasi</span>
@@ -452,16 +350,11 @@ export default function AssessmentDemo() {
                         <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
                             <div
                                 className="h-full bg-brand-primary rounded-full transition-[width] duration-500 ease-out"
-                                style={{
-                                    width: !isOptionSelected
-                                        ? `${currentQ.progressPercent}%`
-                                        : `${currentQ.progressPercent + 7}%`,
-                                }}
+                                style={{ width: !isOptionSelected ? `${currentQ.progressPercent}%` : `${currentQ.progressPercent + 7}%` }}
                             />
                         </div>
                     </div>
 
-                    {/* Question Box */}
                     <div className="p-4 rounded-2xl bg-blue-50/40 border border-blue-100/80 space-y-3">
                         <div className="flex items-center justify-between">
                             <span className="text-[10px] font-bold uppercase tracking-widest text-brand-primary">
@@ -476,51 +369,42 @@ export default function AssessmentDemo() {
                             {currentQ.questionText}
                         </p>
 
-                        {/* Choices */}
                         <div className="space-y-2 pt-1">
                             {currentQ.choices.map((choice, idx) => {
-                                const isSelected = idx === 0 && isOptionSelected;
+                                const sel = idx === 0 && isOptionSelected;
                                 return (
                                     <button
                                         key={choice.id}
                                         ref={idx === 0 ? optRef : undefined}
                                         type="button"
                                         tabIndex={-1}
-                                        className={`w-full flex items-center gap-3 p-3 rounded-xl border text-left transition-all duration-200 ${isSelected
-                                                ? "bg-white border-2 border-brand-primary shadow-xs ring-2 ring-brand-primary/10"
-                                                : "bg-white border-slate-200/80 text-slate-700 hover:border-blue-200"
+                                        className={`w-full flex items-center gap-3 p-3 rounded-xl border text-left transition-all duration-200 ${sel
+                                            ? "bg-white border-2 border-brand-primary shadow-xs ring-2 ring-brand-primary/10"
+                                            : "bg-white border-slate-200/80 text-slate-700 hover:border-blue-200"
                                             }`}
                                     >
-                                        <div
-                                            className={`w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors duration-200 ${isSelected ? "border-brand-primary" : "border-slate-300"
-                                                }`}
-                                        >
-                                            {isSelected && (
-                                                <span className="w-2 h-2 rounded-full bg-brand-primary" />
-                                            )}
+                                        <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors duration-200 ${sel ? "border-brand-primary" : "border-slate-300"}`}>
+                                            {sel && <span className="w-2 h-2 rounded-full bg-brand-primary" />}
                                         </div>
-                                        <span className="text-xs font-medium leading-snug">
-                                            {choice.text}
-                                        </span>
+                                        <span className="text-xs font-medium leading-snug">{choice.text}</span>
                                     </button>
                                 );
                             })}
                         </div>
                     </div>
 
-                    {/* Action Button */}
                     <div className="pt-1">
                         <button
                             ref={nextBtnRef}
                             type="button"
                             tabIndex={-1}
                             className={`w-full h-11 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-2 transition-all duration-200 ${isOptionSelected
-                                    ? isBtnPressed
-                                        ? "bg-brand-primary/80 text-white scale-[0.98]"
-                                        : isBtnHovered
-                                            ? "bg-brand-primary text-white shadow-md shadow-brand-primary/25 scale-[1.01]"
-                                            : "bg-brand-primary text-white shadow-xs"
-                                    : "bg-slate-100 text-slate-400 cursor-not-allowed"
+                                ? isBtnPressed
+                                    ? "bg-brand-primary/80 text-white scale-[0.98]"
+                                    : isBtnHovered
+                                        ? "bg-brand-primary text-white shadow-md shadow-brand-primary/25 scale-[1.01]"
+                                        : "bg-brand-primary text-white shadow-xs"
+                                : "bg-slate-100 text-slate-400 cursor-not-allowed"
                                 }`}
                         >
                             <span>Lihat Hasil Asesmen</span>
@@ -529,12 +413,10 @@ export default function AssessmentDemo() {
                     </div>
                 </div>
 
-                {/* ===================================================================
-                    SCREEN 2: ANALYZING SCREEN (Invisible initially, handled by GSAP)
-                =================================================================== */}
+                {/* SCREEN 2: ANALYZING — hidden by opacity-0, shown by GSAP opacity:1 */}
                 <div
                     ref={analyzingScreenRef}
-                    className="absolute inset-0 w-full h-full flex flex-col justify-center items-center space-y-6 px-4 z-10 invisible"
+                    className="absolute inset-0 w-full h-full flex flex-col justify-center items-center space-y-6 px-4 z-10 opacity-0 pointer-events-none"
                 >
                     <div className="relative flex items-center justify-center">
                         <div className="w-16 h-16 rounded-full border-3 border-blue-100 border-t-brand-primary animate-spin" />
@@ -542,55 +424,37 @@ export default function AssessmentDemo() {
                     </div>
 
                     <div className="text-center space-y-1">
-                        <h4 className="text-sm font-bold text-slate-900">
-                            Menganalisis Pola Responsmu...
-                        </h4>
-                        <p className="text-xs text-slate-400">
-                            Memetakan orientasi psikometri RIASEC &amp; kompetensi industri.
-                        </p>
+                        <h4 className="text-sm font-bold text-slate-900">Menganalisis Pola Responsmu...</h4>
+                        <p className="text-xs text-slate-400">Memetakan orientasi psikometri RIASEC &amp; kompetensi industri.</p>
                     </div>
 
-                    {/* Archetype Bars Filling Up */}
                     <div className="w-full max-w-xs space-y-2.5 bg-blue-50/50 p-4 rounded-2xl border border-blue-100 shadow-xs">
                         {DEMO_ARCHETYPES.map((arch) => (
                             <div key={arch.label} className="space-y-1">
                                 <div className="flex justify-between text-[11px] font-semibold text-slate-600">
                                     <span>{arch.label}</span>
-                                    <span
-                                        className="demo-arch-num font-mono tabular-nums text-brand-primary font-bold"
-                                        data-target={arch.val}
-                                    >
-                                        0%
-                                    </span>
+                                    <span className="demo-arch-num font-mono tabular-nums text-brand-primary font-bold" data-target={arch.val}>0%</span>
                                 </div>
                                 <div className="h-1.5 w-full bg-blue-100/70 rounded-full overflow-hidden">
-                                    <div
-                                        className="demo-arch-bar h-full bg-brand-primary rounded-full w-0"
-                                        data-target={`${arch.val}%`}
-                                    />
+                                    <div className="demo-arch-bar h-full bg-brand-primary rounded-full w-0" data-target={`${arch.val}%`} />
                                 </div>
                             </div>
                         ))}
                     </div>
                 </div>
 
-                {/* ===================================================================
-                    SCREEN 3: RESULT SCREEN (Invisible initially, handled by GSAP)
-                =================================================================== */}
+                {/* SCREEN 3: RESULT — hidden by opacity-0, shown by GSAP opacity:1 */}
                 <div
                     ref={resultScreenRef}
-                    className="absolute inset-0 w-full h-full flex flex-col justify-between py-1 px-0.5 space-y-2 z-10 invisible"
+                    className="absolute inset-0 w-full h-full flex flex-col justify-between py-1 px-0.5 space-y-2 z-10 opacity-0 pointer-events-none"
                 >
-                    {/* ITEM 1: Profile Top Match & Role Switcher Chips (Stagger Step 1) */}
                     <div className="result-stagger-item space-y-2">
                         <div className="flex items-center justify-between">
                             <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-blue-50 text-brand-primary text-[10px] font-bold border border-blue-200">
                                 <Sparkles className="w-3 h-3 text-brand-primary" />
                                 Kecocokan Tertinggi (94%)
                             </span>
-                            <span className="text-[10px] font-bold text-slate-400">
-                                Profil Terverifikasi
-                            </span>
+                            <span className="text-[10px] font-bold text-slate-400">Profil Terverifikasi</span>
                         </div>
 
                         <div className="p-3 rounded-2xl bg-blue-50/50 border border-blue-100/90 space-y-2">
@@ -601,58 +465,25 @@ export default function AssessmentDemo() {
                                 Berbakat merancang arsitektur sistem logis, memecahkan problematis teknikal, dan eksekusi presisi.
                             </div>
 
-                            {/* Dynamic Career Role Chips */}
                             <div className="flex items-center gap-1.5 pt-1 overflow-x-auto no-scrollbar">
-                                <button
-                                    ref={chipSeRef}
-                                    type="button"
-                                    tabIndex={-1}
-                                    onClick={() => setActiveRole("Software Engineer")}
-                                    className={`px-2.5 py-1 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer ${activeRole === "Software Engineer"
-                                            ? "bg-brand-primary text-white shadow-xs scale-105"
-                                            : "bg-white border border-slate-200 text-slate-700 hover:border-brand-primary/50"
-                                        }`}
-                                >
+                                <button ref={chipSeRef} type="button" tabIndex={-1} onClick={() => setActiveRole("Software Engineer")}
+                                    className={`px-2.5 py-1 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer ${activeRole === "Software Engineer" ? "bg-brand-primary text-white shadow-xs scale-105" : "bg-white border border-slate-200 text-slate-700 hover:border-brand-primary/50"}`}>
                                     <span className="flex items-center gap-1">
-                                        {activeRole === "Software Engineer" && (
-                                            <CheckCircle2 className="w-3 h-3" />
-                                        )}
+                                        {activeRole === "Software Engineer" && <CheckCircle2 className="w-3 h-3" />}
                                         Software Engineer
                                     </span>
                                 </button>
-
-                                <button
-                                    ref={chipDaRef}
-                                    type="button"
-                                    tabIndex={-1}
-                                    onClick={() => setActiveRole("Data Analyst")}
-                                    className={`px-2.5 py-1 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer ${activeRole === "Data Analyst"
-                                            ? "bg-brand-primary text-white shadow-xs scale-105"
-                                            : "bg-white border border-slate-200 text-slate-700 hover:border-brand-primary/50"
-                                        }`}
-                                >
+                                <button ref={chipDaRef} type="button" tabIndex={-1} onClick={() => setActiveRole("Data Analyst")}
+                                    className={`px-2.5 py-1 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer ${activeRole === "Data Analyst" ? "bg-brand-primary text-white shadow-xs scale-105" : "bg-white border border-slate-200 text-slate-700 hover:border-brand-primary/50"}`}>
                                     <span className="flex items-center gap-1">
-                                        {activeRole === "Data Analyst" && (
-                                            <CheckCircle2 className="w-3 h-3" />
-                                        )}
+                                        {activeRole === "Data Analyst" && <CheckCircle2 className="w-3 h-3" />}
                                         Data Analyst
                                     </span>
                                 </button>
-
-                                <button
-                                    ref={chipUiRef}
-                                    type="button"
-                                    tabIndex={-1}
-                                    onClick={() => setActiveRole("UI/UX Designer")}
-                                    className={`px-2.5 py-1 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer ${activeRole === "UI/UX Designer"
-                                            ? "bg-brand-primary text-white shadow-xs scale-105"
-                                            : "bg-white border border-slate-200 text-slate-700 hover:border-brand-primary/50"
-                                        }`}
-                                >
+                                <button ref={chipUiRef} type="button" tabIndex={-1} onClick={() => setActiveRole("UI/UX Designer")}
+                                    className={`px-2.5 py-1 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer ${activeRole === "UI/UX Designer" ? "bg-brand-primary text-white shadow-xs scale-105" : "bg-white border border-slate-200 text-slate-700 hover:border-brand-primary/50"}`}>
                                     <span className="flex items-center gap-1">
-                                        {activeRole === "UI/UX Designer" && (
-                                            <CheckCircle2 className="w-3 h-3" />
-                                        )}
+                                        {activeRole === "UI/UX Designer" && <CheckCircle2 className="w-3 h-3" />}
                                         UI/UX Designer
                                     </span>
                                 </button>
@@ -660,19 +491,11 @@ export default function AssessmentDemo() {
                         </div>
                     </div>
 
-                    {/* ITEM 2: SKILL READINESS Component (Stagger Step 2) */}
                     <div className="result-stagger-item">
-                        <SkillReadiness
-                            data={roleData}
-                            isAnimated={!prefersReducedMotion}
-                            triggerAnimation={true}
-                        />
+                        <SkillReadiness data={roleData} isAnimated={!prefersReducedMotion} triggerAnimation={true} />
                     </div>
 
-                    {/* ITEM 3: Gap Terbesar Callout Row (Stagger Step 3) */}
-                    <div
-                        className="result-stagger-item p-2 sm:p-2.5 rounded-xl bg-blue-50/80 border border-blue-200/80 text-[11px] text-slate-700 flex items-center gap-2"
-                    >
+                    <div className="result-stagger-item p-2 sm:p-2.5 rounded-xl bg-blue-50/80 border border-blue-200/80 text-[11px] text-slate-700 flex items-center gap-2">
                         <AlertCircle className="w-3.5 h-3.5 text-brand-primary shrink-0" />
                         <span className="truncate">
                             <strong className="text-brand-primary font-bold">Gap terbesar:</strong>{" "}
@@ -680,80 +503,50 @@ export default function AssessmentDemo() {
                         </span>
                     </div>
 
-                    {/* ITEM 4: Roadmap Ready Notification Card (Stagger Step 4) */}
-                    <div
-                        ref={roadmapCardRef}
-                        className="result-stagger-item p-2.5 sm:p-3 rounded-2xl bg-white border border-blue-100 shadow-xs flex items-center gap-2.5"
-                    >
+                    <div ref={roadmapCardRef} className="result-stagger-item p-2.5 sm:p-3 rounded-2xl bg-white border border-blue-100 shadow-xs flex items-center gap-2.5">
                         <div className="w-7 h-7 rounded-lg bg-blue-50 text-brand-primary flex items-center justify-center shrink-0 border border-blue-100">
                             <Sparkles className="w-3.5 h-3.5 text-brand-primary" />
                         </div>
                         <div className="min-w-0 flex-1">
                             <div className="text-xs font-bold text-slate-900">Roadmap belajarmu siap!</div>
-                            <div className="text-[10px] text-slate-400">
-                                Kurikulum 4 fase terstruktur untuk mempercepat kesiapan kariermu.
-                            </div>
+                            <div className="text-[10px] text-slate-400">Kurikulum 4 fase terstruktur untuk mempercepat kesiapan kariermu.</div>
                         </div>
                     </div>
                 </div>
 
-                {/* Virtual Animated Cursor (Clipped inside stage container) */}
+                {/* Animated Cursor */}
                 <div
                     ref={cursorRef}
-                    className="absolute pointer-events-none z-50 top-0 left-0 invisible"
-                    style={{
-                        transformOrigin: "3px 2px",
-                        willChange: "transform, opacity",
-                    }}
+                    className="absolute pointer-events-none z-50 top-0 left-0 opacity-0"
+                    style={{ transformOrigin: "3px 2px", willChange: "transform, opacity" }}
                     aria-hidden="true"
                 >
                     <div className="relative">
-                        <svg
-                            width="28"
-                            height="34"
-                            viewBox="0 0 24 28"
-                            fill="none"
-                            className="drop-shadow-lg filter drop-shadow-[0_4px_12px_rgba(0,102,255,0.4)]"
-                        >
-                            <path
-                                d="M2.5 1.5L21.5 13.5L12 16L8 25.5L2.5 1.5Z"
-                                fill="#0066FF"
-                                stroke="white"
-                                strokeWidth="2.2"
-                                strokeLinejoin="round"
-                            />
+                        <svg width="28" height="34" viewBox="0 0 24 28" fill="none" className="drop-shadow-lg filter drop-shadow-[0_4px_12px_rgba(0,102,255,0.4)]">
+                            <path d="M2.5 1.5L21.5 13.5L12 16L8 25.5L2.5 1.5Z" fill="#0066FF" stroke="white" strokeWidth="2.2" strokeLinejoin="round" />
                         </svg>
                         <span
                             ref={clickPulseRef}
-                            className="absolute w-12 h-12 rounded-full bg-brand-primary/25 border-2 border-brand-primary pointer-events-none invisible"
-                            style={{
-                                left: "-19px",
-                                top: "-20px",
-                            }}
+                            className="absolute w-12 h-12 rounded-full bg-brand-primary/25 border-2 border-brand-primary pointer-events-none opacity-0"
+                            style={{ left: "-19px", top: "-20px" }}
                         />
                     </div>
                 </div>
             </div>
 
-            {/* Bottom Assistant Snapshot Preview (Fixed - never moves) */}
+            {/* Bottom Assistant Snapshot */}
             <div className="mt-auto pt-3 border-t border-blue-50 relative z-10 shrink-0">
                 <div className="flex items-center gap-3 p-2.5 rounded-2xl bg-blue-50/50 border border-blue-100/80">
                     <div className="w-7 h-7 rounded-lg bg-blue-100 text-brand-primary flex items-center justify-center shrink-0">
                         <Sparkles className="w-4 h-4 text-brand-primary" />
                     </div>
                     <div className="min-w-0 flex-1">
-                        <div className="text-[9px] font-bold tracking-wider text-brand-primary uppercase">
-                            AI Persona Compass
-                        </div>
+                        <div className="text-[9px] font-bold tracking-wider text-brand-primary uppercase">AI Persona Compass</div>
                         <div className="text-[11px] font-bold text-slate-800 truncate transition-colors duration-300">
-                            {currentScreen === "result"
-                                ? "Hasil siap dieksplorasi"
-                                : "Memetakan kepribadian ke karier nyata"}
+                            {currentScreen === "result" ? "Hasil siap dieksplorasi" : "Memetakan kepribadian ke karier nyata"}
                         </div>
                     </div>
-                    <span className="text-[10px] font-semibold text-slate-400 shrink-0">
-                        Ilustrasi &rarr;
-                    </span>
+                    <span className="text-[10px] font-semibold text-slate-400 shrink-0">Ilustrasi &rarr;</span>
                 </div>
             </div>
         </div>
