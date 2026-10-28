@@ -1,7 +1,6 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
 import {
   Brain,
   CheckCircle2,
@@ -249,72 +248,57 @@ export function SJTSoftSkillsCard({
         )}
 
         {/* ── EXPANDED VIEW 1: BASIC PROGRESS BARS (FREE & OVERVIEW) ── */}
-        <AnimatePresence>
-          {isExpanded && (!isPurchased || activeTab === 'overview') && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.25 }}
-              className="overflow-hidden"
-            >
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-1 mb-6">
-                {skillData.map((item) => (
-                  <div
-                    key={item.skill}
-                    className="p-4 rounded-2xl bg-slate-50/90 border border-slate-200/80 flex flex-col justify-between hover:bg-white transition-all shadow-2xs hover:shadow-xs"
-                  >
-                    <div>
-                      <div className="flex items-center justify-between gap-2 mb-2">
-                        <span className="text-2xl p-1.5 bg-white rounded-xl border border-slate-100 shadow-2xs">
-                          {item.icon}
-                        </span>
-                        <span
-                          className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${item.levelColor}`}
-                        >
-                          {item.level === 3 ? 'Unggul' : item.level === 2 ? 'Standar' : 'Perlu Asah'}
-                        </span>
-                      </div>
-
-                      <h4 className="text-xs sm:text-sm font-bold text-slate-900 mb-1 leading-snug">
-                        {item.shortLabel}
-                      </h4>
-                      <p className="text-[11px] text-slate-500 leading-relaxed mb-3 line-clamp-3">
-                        {item.description}
-                      </p>
+        <div className={`grid transition-[grid-template-rows,opacity] duration-300 ease-out ${isExpanded && (!isPurchased || activeTab === 'overview') ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0 pointer-events-none'}`}>
+          <div className="overflow-hidden">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-1 mb-6">
+              {skillData.map((item) => (
+                <div
+                  key={item.skill}
+                  className="p-4 rounded-2xl bg-slate-50/90 border border-slate-200/80 flex flex-col justify-between hover:bg-white transition-all shadow-2xs hover:shadow-xs"
+                >
+                  <div>
+                    <div className="flex items-center justify-between gap-2 mb-2">
+                      <span className="text-2xl p-1.5 bg-white rounded-xl border border-slate-100 shadow-2xs">
+                        {item.icon}
+                      </span>
+                      <span
+                        className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${item.levelColor}`}
+                      >
+                        {item.level === 3 ? 'Unggul' : item.level === 2 ? 'Standar' : 'Perlu Asah'}
+                      </span>
                     </div>
 
-                    <div>
-                      <div className="flex items-center justify-between text-[10px] text-slate-400 font-medium mb-1">
-                        <span>Pencapaian</span>
-                        <span className="font-mono font-bold text-slate-700">
-                          {item.level === 3 ? 'Tinggi (Lv 3)' : item.level === 2 ? 'Sedang (Lv 2)' : 'Dasar (Lv 1)'}
-                        </span>
-                      </div>
-                      <div className="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
-                        <div
-                          className={`h-full rounded-full transition-all duration-500 ${item.progressColor}`}
-                          style={{ width: item.barWidth }}
-                        />
-                      </div>
+                    <h4 className="text-xs sm:text-sm font-bold text-slate-900 mb-1 leading-snug">
+                      {item.shortLabel}
+                    </h4>
+                    <p className="text-[11px] text-slate-500 leading-relaxed mb-3 line-clamp-3">
+                      {item.description}
+                    </p>
+                  </div>
+
+                  <div>
+                    <div className="flex items-center justify-between text-[10px] text-slate-400 font-medium mb-1">
+                      <span>Pencapaian</span>
+                      <span className="font-mono font-bold text-slate-700">
+                        {item.level === 3 ? 'Tinggi (Lv 3)' : item.level === 2 ? 'Sedang (Lv 2)' : 'Dasar (Lv 1)'}
+                      </span>
+                    </div>
+                    <div className="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
+                      <div
+                        className={`h-full rounded-full transition-all duration-500 ${item.progressColor}`}
+                        style={{ width: item.barWidth }}
+                      />
                     </div>
                   </div>
-                ))}
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
 
         {/* ── EXPANDED VIEW 2: IN-DEPTH DETAIL FOR PAID USERS ── */}
-        <AnimatePresence>
-          {isExpanded && isPurchased && activeTab === 'in_depth' && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.25 }}
-              className="overflow-hidden"
-            >
+        <div className={`grid transition-[grid-template-rows,opacity] duration-300 ease-out ${isExpanded && isPurchased && activeTab === 'in_depth' ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0 pointer-events-none'}`}>
+          <div className="overflow-hidden">
               <div className="mb-4 p-4 rounded-2xl bg-indigo-50/70 border border-indigo-200/80 flex items-start gap-3">
                 <span className="p-2 bg-indigo-100 text-indigo-700 rounded-xl shrink-0 mt-0.5">
                   <Sparkles className="w-4 h-4" />
@@ -385,14 +369,9 @@ export function SJTSoftSkillsCard({
                         </div>
                       </button>
 
-                      <AnimatePresence>
-                        {isSelected && (
-                          <motion.div
-                            initial={{ opacity: 0, height: 0 }}
-                            animate={{ opacity: 1, height: 'auto' }}
-                            exit={{ opacity: 0, height: 0 }}
-                            className="p-5 pt-1 border-t border-slate-200/80 bg-white space-y-4"
-                          >
+                      <div className={`grid transition-[grid-template-rows,opacity] duration-300 ease-out ${isSelected ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0 pointer-events-none'}`}>
+                        <div className="overflow-hidden">
+                          <div className="p-5 pt-1 border-t border-slate-200/80 bg-white space-y-4">
                             {/* Respon Alami */}
                             <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 text-xs">
                               <span className="font-bold text-slate-900 block mb-1">
@@ -480,16 +459,15 @@ export function SJTSoftSkillsCard({
                                 </div>
                               </div>
                             </div>
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   );
                 })}
               </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+            </div>
+        </div>
 
         {/* ── CALLOUT KUNCI UNTUK FREE USERS ── */}
         {!isPurchased && (

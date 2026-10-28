@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { useState, useRef, useEffect } from 'react';
+import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
 import { 
   Building2, 
   Briefcase, 
@@ -45,6 +46,40 @@ export default function SimulationClient({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isCompleted, setIsCompleted] = useState(isInitiallyCompleted);
   const [showCelebrationModal, setShowCelebrationModal] = useState(false);
+  const [isCelebRendered, setIsCelebRendered] = useState(false);
+  const celebBackdropRef = useRef<HTMLDivElement>(null);
+  const celebModalRef = useRef<HTMLDivElement>(null);
+  const taskWorkspaceRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (showCelebrationModal) {
+      setIsCelebRendered(true);
+    } else if (isCelebRendered && celebBackdropRef.current && celebModalRef.current) {
+      gsap.killTweensOf([celebBackdropRef.current, celebModalRef.current]);
+      gsap.to(celebBackdropRef.current, { opacity: 0, duration: 0.2, ease: 'power2.in' });
+      gsap.to(celebModalRef.current, {
+        opacity: 0,
+        scale: 0.9,
+        duration: 0.2,
+        ease: 'power2.in',
+        onComplete: () => setIsCelebRendered(false),
+      });
+    }
+  }, [showCelebrationModal, isCelebRendered]);
+
+  useEffect(() => {
+    if (showCelebrationModal && isCelebRendered && celebBackdropRef.current && celebModalRef.current) {
+      gsap.killTweensOf([celebBackdropRef.current, celebModalRef.current]);
+      gsap.fromTo(celebBackdropRef.current, { opacity: 0 }, { opacity: 1, duration: 0.25, ease: 'power2.out' });
+      gsap.fromTo(celebModalRef.current, { opacity: 0, scale: 0.9 }, { opacity: 1, scale: 1, duration: 0.25, ease: 'power2.out' });
+    }
+  }, [showCelebrationModal, isCelebRendered]);
+
+  useGSAP(() => {
+    if (taskWorkspaceRef.current) {
+      gsap.fromTo(taskWorkspaceRef.current, { opacity: 0, y: 15 }, { opacity: 1, y: 0, duration: 0.25, ease: 'power2.out' });
+    }
+  }, [currentTaskIndex]);
 
   const currentTask = simulation.tasks[currentTaskIndex];
   const totalTasks = simulation.tasks.length;
@@ -193,10 +228,9 @@ export default function SimulationClient({
           <span className="text-blue-600">{progressPercent}% Selesai</span>
         </div>
         <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
-          <motion.div
-            initial={{ width: 0 }}
-            animate={{ width: `${progressPercent}%` }}
+          <div
             className="h-full bg-linear-to-r from-blue-600 to-indigo-600 rounded-full transition-all duration-300"
+            style={{ width: `${progressPercent}%` }}
           />
         </div>
 
@@ -234,10 +268,9 @@ export default function SimulationClient({
       </div>
 
       {/* Active Task Workspace */}
-      <motion.div
+      <div
+        ref={taskWorkspaceRef}
         key={currentTask.id}
-        initial={{ opacity: 0, y: 15 }}
-        animate={{ opacity: 1, y: 0 }}
         className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-6"
       >
         <div>
@@ -303,14 +336,10 @@ export default function SimulationClient({
                         </p>
 
                         {isSelected && (
-                          <motion.div
-                            initial={{ opacity: 0, height: 0 }}
-                            animate={{ opacity: 1, height: 'auto' }}
-                            className="mt-3 p-3 rounded-xl bg-white border border-blue-200 text-xs text-blue-900"
-                          >
+                          <div className="mt-3 p-3 rounded-xl bg-white border border-blue-200 text-xs text-blue-900 transition-all">
                             <span className="font-bold">Insight Mentor Industri: </span>
                             {opt.feedback}
-                          </motion.div>
+                          </div>
                         )}
                       </div>
                     </div>
@@ -381,59 +410,53 @@ export default function SimulationClient({
             </button>
           )}
         </div>
-      </motion.div>
+      </div>
 
       {/* CELEBRATION MODAL ON SUCCESS */}
-      <AnimatePresence>
-        {showCelebrationModal && (
-          <motion.div
-            className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-xs"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+      {isCelebRendered && (
+        <div
+          ref={celebBackdropRef}
+          className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-xs"
+        >
+          <div
+            ref={celebModalRef}
+            className="bg-white border border-slate-200 p-8 rounded-3xl max-w-md w-full shadow-2xl text-center relative overflow-hidden"
           >
-            <motion.div
-              className="bg-white border border-slate-200 p-8 rounded-3xl max-w-md w-full shadow-2xl text-center relative overflow-hidden"
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-            >
-              <div className="w-16 h-16 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto mb-4 border border-emerald-200 shadow-xs">
-                <Award className="w-8 h-8" />
-              </div>
+            <div className="w-16 h-16 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto mb-4 border border-emerald-200 shadow-xs">
+              <Award className="w-8 h-8" />
+            </div>
 
-              <span className="text-[11px] font-extrabold px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 uppercase tracking-wider mb-3 inline-block">
-                Simulasi Selesai 100%
-              </span>
+            <span className="text-[11px] font-extrabold px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 uppercase tracking-wider mb-3 inline-block">
+              Simulasi Selesai 100%
+            </span>
 
-              <h3 className="text-2xl font-black text-slate-900 mb-2">
-                Selamat, {userName}!
-              </h3>
+            <h3 className="text-2xl font-black text-slate-900 mb-2">
+              Selamat, {userName}!
+            </h3>
 
-              <p className="text-xs md:text-sm text-slate-600 mb-6 leading-relaxed">
-                Kamu telah menuntaskan seluruh tantangan studi kasus <strong>{simulation.companyName}</strong> untuk posisi <strong>{careerTitle}</strong>. Bukti kompetensimu siap diklaim dan diposting ke LinkedIn!
-              </p>
+            <p className="text-xs md:text-sm text-slate-600 mb-6 leading-relaxed">
+              Kamu telah menuntaskan seluruh tantangan studi kasus <strong>{simulation.companyName}</strong> untuk posisi <strong>{careerTitle}</strong>. Bukti kompetensimu siap diklaim dan diposting ke LinkedIn!
+            </p>
 
-              <div className="space-y-3">
-                <Link
-                  href={`/roadmap/${assessmentId}/sertifikat`}
-                  className="w-full flex items-center justify-center gap-2 py-3.5 bg-linear-to-r from-blue-600 via-indigo-600 to-sky-600 hover:opacity-95 text-white rounded-xl text-sm font-bold shadow-md hover:shadow-lg transition-all"
-                >
-                  <Award className="w-4 h-4" />
-                  <span>Buka & Klaim Sertifikat LinkedIn</span>
-                </Link>
+            <div className="space-y-3">
+              <Link
+                href={`/roadmap/${assessmentId}/sertifikat`}
+                className="w-full flex items-center justify-center gap-2 py-3.5 bg-linear-to-r from-blue-600 via-indigo-600 to-sky-600 hover:opacity-95 text-white rounded-xl text-sm font-bold shadow-md hover:shadow-lg transition-all"
+              >
+                <Award className="w-4 h-4" />
+                <span>Buka & Klaim Sertifikat LinkedIn</span>
+              </Link>
 
-                <button
-                  onClick={() => setShowCelebrationModal(false)}
-                  className="w-full py-2.5 text-slate-500 hover:text-slate-800 text-xs font-semibold transition-colors"
-                >
-                  Tutup
-                </button>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+              <button
+                onClick={() => setShowCelebrationModal(false)}
+                className="w-full py-2.5 text-slate-500 hover:text-slate-800 text-xs font-semibold transition-colors"
+              >
+                Tutup
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

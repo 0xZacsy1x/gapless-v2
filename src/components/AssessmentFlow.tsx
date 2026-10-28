@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { useState, useMemo, useEffect, useRef } from 'react';
+import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
 import { Brain, ChevronRight, ChevronLeft, BarChart3, Loader2, RotateCcw } from 'lucide-react';
 import { ASSESSMENT_QUESTIONS, type AssessmentOption } from '@/data/gaplessData';
 import { useGaplessContext } from '@/contexts/CareerContext';
@@ -32,6 +33,47 @@ export function AssessmentFlow() {
   const [currentIdx, setCurrentIdx] = useState(0);
   const [started, setStarted] = useState(false);
   const [showRetakeModal, setShowRetakeModal] = useState(false);
+  const [isRetakeRendered, setIsRetakeRendered] = useState(false);
+  const retakeBackdropRef = useRef<HTMLDivElement>(null);
+  const retakeModalRef = useRef<HTMLDivElement>(null);
+  const introRef = useRef<HTMLDivElement>(null);
+  const questionRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (showRetakeModal) {
+      setIsRetakeRendered(true);
+    } else if (isRetakeRendered && retakeBackdropRef.current && retakeModalRef.current) {
+      gsap.killTweensOf([retakeBackdropRef.current, retakeModalRef.current]);
+      gsap.to(retakeBackdropRef.current, { opacity: 0, duration: 0.2, ease: 'power2.in' });
+      gsap.to(retakeModalRef.current, {
+        opacity: 0,
+        scale: 0.95,
+        duration: 0.2,
+        ease: 'power2.in',
+        onComplete: () => setIsRetakeRendered(false),
+      });
+    }
+  }, [showRetakeModal, isRetakeRendered]);
+
+  useEffect(() => {
+    if (showRetakeModal && isRetakeRendered && retakeBackdropRef.current && retakeModalRef.current) {
+      gsap.killTweensOf([retakeBackdropRef.current, retakeModalRef.current]);
+      gsap.fromTo(retakeBackdropRef.current, { opacity: 0 }, { opacity: 1, duration: 0.25, ease: 'power2.out' });
+      gsap.fromTo(retakeModalRef.current, { opacity: 0, scale: 0.95 }, { opacity: 1, scale: 1, duration: 0.25, ease: 'power2.out' });
+    }
+  }, [showRetakeModal, isRetakeRendered]);
+
+  useGSAP(() => {
+    if (!started && introRef.current) {
+      gsap.fromTo(introRef.current, { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.7, ease: 'power2.out' });
+    }
+  }, [started]);
+
+  useGSAP(() => {
+    if (started && questionRef.current) {
+      gsap.fromTo(questionRef.current, { opacity: 0, x: 25 }, { opacity: 1, x: 0, duration: 0.3, ease: 'power2.out' });
+    }
+  }, [currentIdx, started]);
   const [isCheckingActive, setIsCheckingActive] = useState(false);
   const [isSyncing, setIsSyncing] = useState(false);
   const [syncError, setSyncError] = useState<string | null>(null);
@@ -154,29 +196,12 @@ export function AssessmentFlow() {
   if (!started) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-space px-6 relative overflow-hidden">
-        {/* Animated Navbar (Disappears upwards when assessment starts) */}
-        <AnimatePresence>
-          {!started && (
-            <motion.header
-              key="assessment-navbar"
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ 
-                opacity: 0, 
-                y: -80, 
-                transition: { duration: 0.45, ease: [0.4, 0, 0.2, 1] } 
-              }}
-              className="w-full absolute top-0 left-0 right-0 z-50"
-            >
-              <Navbar />
-            </motion.header>
-          )}
-        </AnimatePresence>
+        <header className="w-full absolute top-0 left-0 right-0 z-50">
+          <Navbar />
+        </header>
 
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, ease: 'easeOut' }}
+        <div
+          ref={introRef}
           className="text-center max-w-lg pt-16 sm:pt-0"
         >
           <div
@@ -221,49 +246,43 @@ export function AssessmentFlow() {
             <Brain size={18} />
             {isCheckingActive ? 'Memuat...' : 'Mulai Assesmen'}
           </button>
-        </motion.div>
+        </div>
 
         {/* Retake Modal */}
-        <AnimatePresence>
-          {showRetakeModal && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+        {isRetakeRendered && (
+          <div
+            ref={retakeBackdropRef}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+          >
+            <div
+              ref={retakeModalRef}
+              className="bg-card w-full max-w-md rounded-2xl border border-white/10 p-6 shadow-2xl relative overflow-hidden"
             >
-              <motion.div
-                initial={{ scale: 0.95 }}
-                animate={{ scale: 1 }}
-                exit={{ scale: 0.95 }}
-                className="bg-card w-full max-w-md rounded-2xl border border-white/10 p-6 shadow-2xl relative overflow-hidden"
-              >
-                <div className="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-blue-500 to-cyan-400" />
-                <h2 className="text-xl font-bold text-white mb-3">Konfirmasi Retake</h2>
-                <p className="text-gray-300 text-sm mb-6 leading-relaxed">
-                  Kamu akan mengambil tes ini lagi. Hasil analisis kamu akan diperbarui. Kalau rekomendasi kariernya beda dari sebelumnya, progress roadmap lama kamu tetap tersimpan tapi untuk sementara tidak ditampilkan. Lanjutkan?
-                </p>
-                <div className="flex gap-3 justify-end">
-                  <button
-                    onClick={() => setShowRetakeModal(false)}
-                    className="px-4 py-2 rounded-lg text-sm font-medium text-gray-300 hover:text-white hover:bg-white/5 transition-colors cursor-pointer"
-                  >
-                    Batal
-                  </button>
-                  <button
-                    onClick={() => {
-                      setShowRetakeModal(false);
-                      setStarted(true);
-                    }}
-                    className="px-4 py-2 rounded-lg text-sm font-medium bg-blue-500/20 text-blue-400 hover:bg-blue-500/30 transition-colors border border-blue-500/30 cursor-pointer"
-                  >
-                    Ya, Lanjutkan
-                  </button>
-                </div>
-              </motion.div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+              <div className="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-blue-500 to-cyan-400" />
+              <h2 className="text-xl font-bold text-white mb-3">Konfirmasi Retake</h2>
+              <p className="text-gray-300 text-sm mb-6 leading-relaxed">
+                Kamu akan mengambil tes ini lagi. Hasil analisis kamu akan diperbarui. Kalau rekomendasi kariernya beda dari sebelumnya, progress roadmap lama kamu tetap tersimpan tapi untuk sementara tidak ditampilkan. Lanjutkan?
+              </p>
+              <div className="flex gap-3 justify-end">
+                <button
+                  onClick={() => setShowRetakeModal(false)}
+                  className="px-4 py-2 rounded-lg text-sm font-medium text-gray-300 hover:text-white hover:bg-white/5 transition-colors cursor-pointer"
+                >
+                  Batal
+                </button>
+                <button
+                  onClick={() => {
+                    setShowRetakeModal(false);
+                    setStarted(true);
+                  }}
+                  className="px-4 py-2 rounded-lg text-sm font-medium bg-blue-500/20 text-blue-400 hover:bg-blue-500/30 transition-colors border border-blue-500/30 cursor-pointer"
+                >
+                  Ya, Lanjutkan
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     );
   }
@@ -321,62 +340,49 @@ export function AssessmentFlow() {
         </div>
 
         {/* Question */}
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={question.id}
-            initial={{ opacity: 0, x: 30 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -30 }}
-            transition={{ duration: 0.3 }}
-          >
-            <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mb-6 leading-relaxed">
-              {question.question}
-            </h2>
+        <div ref={questionRef}>
+          <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mb-6 leading-relaxed">
+            {question.question}
+          </h2>
 
-            {/* Options */}
-            <div className="space-y-3">
-              {currentShuffledOptions.map((item, displayIdx) => {
-                const isSelected = answers[question.id] === item.originalIndex;
-                return (
-                  <motion.button
-                    key={item.option.label + '-' + item.originalIndex}
-                    initial={{ opacity: 0, y: 15 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: displayIdx * 0.05 }}
-                    whileHover={{ scale: 1.01 }}
-                    whileTap={{ scale: 0.98 }}
-                    onClick={() => handleSelect(item.originalIndex)}
-                    className={`w-full text-left p-4 sm:p-5 rounded-2xl transition-all duration-200 flex items-start gap-4 ${
-                      isSelected
-                        ? 'option-card selected'
-                        : 'option-card'
-                    }`}
+          {/* Options */}
+          <div className="space-y-3">
+            {currentShuffledOptions.map((item, displayIdx) => {
+              const isSelected = answers[question.id] === item.originalIndex;
+              return (
+                <button
+                  key={item.option.label + '-' + item.originalIndex}
+                  onClick={() => handleSelect(item.originalIndex)}
+                  className={`w-full text-left p-4 sm:p-5 rounded-2xl transition-all duration-200 hover:scale-[1.01] active:scale-[0.98] cursor-pointer flex items-start gap-4 ${
+                    isSelected
+                      ? 'option-card selected'
+                      : 'option-card'
+                  }`}
+                >
+                  <span
+                    className="shrink-0 w-8 h-8 sm:w-9 sm:h-9 rounded-xl flex items-center justify-center text-sm font-bold"
+                    style={{
+                      background: isSelected
+                        ? 'rgba(37,99,235,0.12)'
+                        : '#f1f5f9',
+                      color: isSelected ? '#1d4ed8' : '#94a3b8',
+                    }}
                   >
-                    <span
-                      className="shrink-0 w-8 h-8 sm:w-9 sm:h-9 rounded-xl flex items-center justify-center text-sm font-bold"
-                      style={{
-                        background: isSelected
-                          ? 'rgba(37,99,235,0.12)'
-                          : '#f1f5f9',
-                        color: isSelected ? '#1d4ed8' : '#94a3b8',
-                      }}
-                    >
-                      {['A', 'B', 'C', 'D'][displayIdx]}
-                    </span>
-                    <span
-                      className="text-sm sm:text-base leading-relaxed pt-1"
-                      style={{
-                        color: isSelected ? '#1e293b' : '#64748b',
-                      }}
-                    >
-                      {item.option.text}
-                    </span>
-                  </motion.button>
-                );
-              })}
-            </div>
-          </motion.div>
-        </AnimatePresence>
+                    {['A', 'B', 'C', 'D'][displayIdx]}
+                  </span>
+                  <span
+                    className="text-sm sm:text-base leading-relaxed pt-1"
+                    style={{
+                      color: isSelected ? '#1e293b' : '#64748b',
+                    }}
+                  >
+                    {item.option.text}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
 
         {/* Error notification if submit fails */}
         {syncError && (

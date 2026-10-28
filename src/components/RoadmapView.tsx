@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { useState, useRef, useEffect } from 'react';
+import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
 import { CheckCircle2, ChevronDown, RotateCcw, Lock, Home, Sparkles } from 'lucide-react';
 import { useGaplessContext } from '@/contexts/CareerContext';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
@@ -35,7 +36,102 @@ export function RoadmapView({ overrideData, isPro: propIsPro }: RoadmapViewProps
   const router = useRouter();
   const [isResetting, setIsResetting] = useState(false);
   const [confirmAction, setConfirmAction] = useState<(() => void) | null>(null);
+  const [isConfirmRendered, setIsConfirmRendered] = useState(false);
   const [alertMessage, setAlertMessage] = useState<string | null>(null);
+  const [isAlertRendered, setIsAlertRendered] = useState(false);
+
+  const containerRef = useRef<HTMLDivElement>(null);
+  const confirmBackdropRef = useRef<HTMLDivElement>(null);
+  const confirmCardRef = useRef<HTMLDivElement>(null);
+  const alertBackdropRef = useRef<HTMLDivElement>(null);
+  const alertCardRef = useRef<HTMLDivElement>(null);
+
+  useGSAP(() => {
+    if (containerRef.current) {
+      gsap.fromTo(
+        containerRef.current.querySelector('.roadmap-header'),
+        { opacity: 0, y: -20 },
+        { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' }
+      );
+      gsap.fromTo(
+        containerRef.current.querySelectorAll('.phase-card'),
+        { opacity: 0, y: 30 },
+        { opacity: 1, y: 0, duration: 0.5, stagger: 0.15, ease: 'power2.out', delay: 0.2 }
+      );
+    }
+  }, { scope: containerRef });
+
+  useEffect(() => {
+    if (confirmAction) {
+      setIsConfirmRendered(true);
+    } else if (isConfirmRendered && confirmBackdropRef.current && confirmCardRef.current) {
+      gsap.killTweensOf([confirmBackdropRef.current, confirmCardRef.current]);
+      gsap.to(confirmBackdropRef.current, {
+        opacity: 0,
+        duration: 0.2,
+        ease: 'power2.in',
+      });
+      gsap.to(confirmCardRef.current, {
+        scale: 0.95,
+        opacity: 0,
+        duration: 0.2,
+        ease: 'power2.in',
+        onComplete: () => setIsConfirmRendered(false),
+      });
+    }
+  }, [confirmAction]);
+
+  useGSAP(() => {
+    if (isConfirmRendered && confirmAction && confirmBackdropRef.current && confirmCardRef.current) {
+      gsap.killTweensOf([confirmBackdropRef.current, confirmCardRef.current]);
+      gsap.fromTo(
+        confirmBackdropRef.current,
+        { opacity: 0 },
+        { opacity: 1, duration: 0.25, ease: 'power2.out' }
+      );
+      gsap.fromTo(
+        confirmCardRef.current,
+        { scale: 0.95, opacity: 0 },
+        { scale: 1, opacity: 1, duration: 0.25, ease: 'back.out(1.4)' }
+      );
+    }
+  }, [isConfirmRendered, confirmAction]);
+
+  useEffect(() => {
+    if (alertMessage) {
+      setIsAlertRendered(true);
+    } else if (isAlertRendered && alertBackdropRef.current && alertCardRef.current) {
+      gsap.killTweensOf([alertBackdropRef.current, alertCardRef.current]);
+      gsap.to(alertBackdropRef.current, {
+        opacity: 0,
+        duration: 0.2,
+        ease: 'power2.in',
+      });
+      gsap.to(alertCardRef.current, {
+        scale: 0.95,
+        opacity: 0,
+        duration: 0.2,
+        ease: 'power2.in',
+        onComplete: () => setIsAlertRendered(false),
+      });
+    }
+  }, [alertMessage]);
+
+  useGSAP(() => {
+    if (isAlertRendered && alertMessage && alertBackdropRef.current && alertCardRef.current) {
+      gsap.killTweensOf([alertBackdropRef.current, alertCardRef.current]);
+      gsap.fromTo(
+        alertBackdropRef.current,
+        { opacity: 0 },
+        { opacity: 1, duration: 0.25, ease: 'power2.out' }
+      );
+      gsap.fromTo(
+        alertCardRef.current,
+        { scale: 0.95, opacity: 0 },
+        { scale: 1, opacity: 1, duration: 0.25, ease: 'back.out(1.4)' }
+      );
+    }
+  }, [isAlertRendered, alertMessage]);
 
   const handleReset = async () => {
     setConfirmAction(() => async () => {
@@ -104,14 +200,12 @@ export function RoadmapView({ overrideData, isPro: propIsPro }: RoadmapViewProps
   );
 
   return (
-    <div className="min-h-screen bg-space">
+    <div ref={containerRef} className="min-h-screen bg-space">
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 pt-6 sm:pt-8 pb-12">
         {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-8"
+        <div
+          className="roadmap-header text-center mb-8"
         >
           <div className="inline-flex items-center px-5 py-2 rounded-full mb-4 bg-slate-100/80 border border-slate-200/50">
             <span className="text-sm font-semibold text-slate-700">
@@ -124,7 +218,7 @@ export function RoadmapView({ overrideData, isPro: propIsPro }: RoadmapViewProps
           <p className="text-slate-500 text-base md:text-lg max-w-2xl mx-auto">
             Jalur belajar personal 4 fase dengan metrik kesiapan kompetensi industri.
           </p>
-        </motion.div>
+        </div>
 
         {/* Timeline */}
         <div className="space-y-8">
@@ -139,13 +233,10 @@ export function RoadmapView({ overrideData, isPro: propIsPro }: RoadmapViewProps
             let isPreviousCompleted = !isPhaseLocked; // Hanya terbuka jika fase ini tidak terkunci
 
             return (
-              <motion.div
+              <div
                 key={phase.phase || phaseIdx}
                 id={`phase-card-${phaseIdx}`}
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 + phaseIdx * 0.15 }}
-                className="relative scroll-mt-24"
+                className="phase-card relative scroll-mt-24"
               >
                 {/* Phase Card */}
                 <div
@@ -252,11 +343,9 @@ export function RoadmapView({ overrideData, isPro: propIsPro }: RoadmapViewProps
 
                   {/* Phase Progress Bar */}
                   <div className="progress-track mb-6 h-2 bg-slate-100">
-                    <motion.div
-                      initial={{ width: 0 }}
-                      animate={{ width: `${phase.progress * 100}%` }}
-                      transition={{ duration: 0.8, delay: 0.5 + phaseIdx * 0.15 }}
-                      className="progress-fill h-full bg-blue-600"
+                    <div
+                      style={{ width: `${phase.progress * 100}%` }}
+                      className="progress-fill h-full bg-blue-600 transition-[width] duration-700 ease-out"
                     />
                   </div>
 
@@ -273,11 +362,7 @@ export function RoadmapView({ overrideData, isPro: propIsPro }: RoadmapViewProps
 
                       return (
                         <div key={mod}>
-                          <motion.div
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.6 + phaseIdx * 0.1 + modIdx * 0.04 }}
-                          >
+                          <div>
                             {(() => {
                               const slug = slugify(mod);
                               const assessmentId = overrideData?.id || context.currentAssessmentId;
@@ -358,7 +443,7 @@ export function RoadmapView({ overrideData, isPro: propIsPro }: RoadmapViewProps
                                 </div>
                               );
                             })()}
-                          </motion.div>
+                          </div>
                         </div>
                       );
                     })}
@@ -391,16 +476,13 @@ export function RoadmapView({ overrideData, isPro: propIsPro }: RoadmapViewProps
                     </div>
                   )}
                 </div>
-              </motion.div>
+              </div>
             );
           })}
         </div>
 
         {/* Navigation Footer */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1 }}
+        <div
           className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-12 pb-8"
         >
           <Link
@@ -417,7 +499,7 @@ export function RoadmapView({ overrideData, isPro: propIsPro }: RoadmapViewProps
           >
             <RotateCcw size={18} className={isResetting ? "animate-spin" : ""} /> {isResetting ? "Mereset..." : "Reset Progress"}
           </button>
-        </motion.div>
+        </div>
 
         {/* O*NET Attribution */}
         <div className="mt-12 text-center text-xs text-slate-400 max-w-3xl mx-auto border-t border-slate-200/50 pt-8 pb-4">
@@ -428,73 +510,61 @@ export function RoadmapView({ overrideData, isPro: propIsPro }: RoadmapViewProps
       </div>
 
       {/* MODAL RESET CONFIRMATION */}
-      <AnimatePresence>
-        {confirmAction && (
-          <motion.div
-            className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+      {isConfirmRendered && (
+        <div
+          ref={confirmBackdropRef}
+          className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm"
+        >
+          <div
+            ref={confirmCardRef}
+            className="bg-slate-900 border border-slate-700 p-6 rounded-2xl max-w-sm w-full shadow-2xl"
           >
-            <motion.div
-              className="bg-slate-900 border border-slate-700 p-6 rounded-2xl max-w-sm w-full shadow-2xl"
-              initial={{ scale: 0.95, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.95, opacity: 0 }}
-            >
-              <h3 className="text-xl font-bold text-white mb-2">Reset Progress?</h3>
-              <p className="text-gray-400 mb-6 text-sm">
-                Progress roadmap ini akan direset ke 0%. Hasil analisis dan riwayat tes kamu tidak akan terhapus. Lanjutkan?
-              </p>
-              <div className="flex gap-3 justify-end">
-                <button
-                  onClick={() => setConfirmAction(null)}
-                  className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-xl text-sm font-medium transition-colors"
-                >
-                  Batal
-                </button>
-                <button
-                  onClick={confirmAction}
-                  className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-xl text-sm font-medium transition-colors"
-                >
-                  Ya, Reset
-                </button>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            <h3 className="text-xl font-bold text-white mb-2">Reset Progress?</h3>
+            <p className="text-gray-400 mb-6 text-sm">
+              Progress roadmap ini akan direset ke 0%. Hasil analisis dan riwayat tes kamu tidak akan terhapus. Lanjutkan?
+            </p>
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={() => setConfirmAction(null)}
+                className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-xl text-sm font-medium transition-colors"
+              >
+                Batal
+              </button>
+              <button
+                onClick={() => confirmAction && confirmAction()}
+                className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-xl text-sm font-medium transition-colors"
+              >
+                Ya, Reset
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ALERT MODAL */}
-      <AnimatePresence>
-        {alertMessage && (
-          <motion.div
-            className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+      {isAlertRendered && (
+        <div
+          ref={alertBackdropRef}
+          className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm"
+        >
+          <div
+            ref={alertCardRef}
+            className="bg-slate-900 border border-slate-700 p-6 rounded-2xl max-w-sm w-full shadow-2xl text-center"
           >
-            <motion.div
-              className="bg-slate-900 border border-slate-700 p-6 rounded-2xl max-w-sm w-full shadow-2xl text-center"
-              initial={{ scale: 0.95, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.95, opacity: 0 }}
+            <div className="w-12 h-12 bg-red-500/10 text-red-500 flex items-center justify-center rounded-full mx-auto mb-4">
+              <CheckCircle2 size={24} />
+            </div>
+            <h3 className="text-xl font-bold text-white mb-2">Pemberitahuan</h3>
+            <p className="text-gray-400 mb-6 text-sm">{alertMessage}</p>
+            <button
+              onClick={() => setAlertMessage(null)}
+              className="w-full py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-sm font-medium transition-colors"
             >
-              <div className="w-12 h-12 bg-red-500/10 text-red-500 flex items-center justify-center rounded-full mx-auto mb-4">
-                <CheckCircle2 size={24} />
-              </div>
-              <h3 className="text-xl font-bold text-white mb-2">Pemberitahuan</h3>
-              <p className="text-gray-400 mb-6 text-sm">{alertMessage}</p>
-              <button
-                onClick={() => setAlertMessage(null)}
-                className="w-full py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-sm font-medium transition-colors"
-              >
-                Tutup
-              </button>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+              Tutup
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
