@@ -1,8 +1,9 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
+import gsap from "gsap";
+import { useGSAP } from "@gsap/react";
 import { Brain, CheckCircle2, Sparkles, ChevronRight, AlertCircle } from "lucide-react";
-import FakeCursor from "./FakeCursor";
 import SkillReadiness from "./SkillReadiness";
 import {
     DEMO_QUESTIONS,
@@ -10,10 +11,13 @@ import {
     CAREER_ROLES_DATA,
 } from "@/constants/assessmentDemoData";
 
-type ScreenPosition = "enter" | "active" | "exit" | "hidden";
-
 export default function AssessmentDemo() {
     const stageRef = useRef<HTMLDivElement>(null);
+    const questionScreenRef = useRef<HTMLDivElement>(null);
+    const analyzingScreenRef = useRef<HTMLDivElement>(null);
+    const resultScreenRef = useRef<HTMLDivElement>(null);
+    const cursorRef = useRef<HTMLDivElement>(null);
+    const tlRef = useRef<gsap.core.Timeline | null>(null);
 
     // Targets for fake cursor calculation
     const optRef = useRef<HTMLButtonElement>(null);
@@ -23,11 +27,8 @@ export default function AssessmentDemo() {
     const chipUiRef = useRef<HTMLButtonElement>(null);
     const roadmapCardRef = useRef<HTMLDivElement>(null);
 
-    // Screen Positions for Silky Upward Sliding Transitions
-    const [questionPos, setQuestionPos] = useState<ScreenPosition>("active");
-    const [analyzingPos, setAnalyzingPos] = useState<ScreenPosition>("hidden");
-    const [resultPos, setResultPos] = useState<ScreenPosition>("hidden");
-    const [isTransitioning, setIsTransitioning] = useState<boolean>(false);
+    // Active screen tracking for meta label
+    const [currentScreen, setCurrentScreen] = useState<"question" | "analyzing" | "result">("question");
 
     // Question & Role State
     const [questionCycle, setQuestionCycle] = useState<number>(0);
@@ -35,19 +36,7 @@ export default function AssessmentDemo() {
     const [isBtnHovered, setIsBtnHovered] = useState<boolean>(false);
     const [isBtnPressed, setIsBtnPressed] = useState<boolean>(false);
     const [activeRole, setActiveRole] = useState<string>("Software Engineer");
-
-    // Analyzing Stage Progress
-    const [analyzingProgress, setAnalyzingProgress] = useState<number>(0);
-    const [analyzingBarsActive, setAnalyzingBarsActive] = useState<boolean>(false);
-
-    // Result Stage Staggered Entrance (1: Profile, 2: SkillReadiness, 3: Gap row, 4: Roadmap)
-    const [renderResult, setRenderResult] = useState<boolean>(false);
-    const [resultStaggerStep, setResultStaggerStep] = useState<number>(0);
-
-    // Fake Cursor State
-    const [cursorPos, setCursorPos] = useState<{ x: number; y: number }>({ x: 90, y: 90 });
     const [isClicking, setIsClicking] = useState<boolean>(false);
-    const [cursorVisible, setCursorVisible] = useState<boolean>(false);
 
     // Observers & Accessibility
     const [isInView, setIsInView] = useState<boolean>(true);
@@ -93,8 +82,8 @@ export default function AssessmentDemo() {
         };
     }, []);
 
-    // Calculate coordinates relative to stage container
-    const getCoordinates = useCallback(
+    // Helper: calculate coordinates relative to stage container
+    const getCoords = useCallback(
         (element: HTMLElement | null, offset?: { x?: number; y?: number }) => {
             if (!element || !stageRef.current) return { x: 90, y: 90 };
             const sRect = stageRef.current.getBoundingClientRect();
@@ -109,283 +98,291 @@ export default function AssessmentDemo() {
         []
     );
 
+    // Helper: trigger clicking pulse
+    const triggerClickPulse = useCallback(() => {
+        setIsClicking(true);
+        setTimeout(() => setIsClicking(false), 350);
+        if (cursorRef.current) {
+            gsap.to(cursorRef.current, {
+                scale: 0.88,
+                duration: 0.1,
+                yoyo: true,
+                repeat: 1,
+                ease: "power2.inOut",
+            });
+        }
+    }, []);
+
     // Current question data
     const currentQ = DEMO_QUESTIONS[questionCycle % DEMO_QUESTIONS.length];
     const roleData = CAREER_ROLES_DATA[activeRole] || CAREER_ROLES_DATA["Software Engineer"];
 
-    // Helper for Screen Styles with Velvety Deceleration and Depth Scaling
-    const getScreenStyle = (pos: ScreenPosition) => {
-        let transform = "translate3d(0, 0, 0) scale(1)";
-        let opacity = 1;
-        let visibility: "visible" | "hidden" = "visible";
-        let pointerEvents: "auto" | "none" = "auto";
+    // Main GSAP Master Timeline
+    useGSAP(
+        () => {
+            if (prefersReducedMotion) return;
 
-        if (pos === "enter") {
-            transform = "translate3d(0, 100%, 0) scale(0.97)";
-            opacity = 0;
-            visibility = "visible";
-            pointerEvents = "none";
-        } else if (pos === "exit") {
-            transform = "translate3d(0, -100%, 0) scale(0.97)";
-            opacity = 0;
-            visibility = "visible";
-            pointerEvents = "none";
-        } else if (pos === "hidden") {
-            transform = "translate3d(0, 100%, 0) scale(0.97)";
-            opacity = 0;
-            visibility = "hidden";
-            pointerEvents = "none";
-        }
+            const qScreen = questionScreenRef.current;
+            const aScreen = analyzingScreenRef.current;
+            const rScreen = resultScreenRef.current;
+            const cursor = cursorRef.current;
 
-        return {
-            transform,
-            opacity,
-            visibility,
-            pointerEvents,
-            transition: isTransitioning
-                ? "transform 750ms cubic-bezier(0.16, 1, 0.3, 1), opacity 750ms cubic-bezier(0.16, 1, 0.3, 1)"
-                : "none",
-            willChange: isTransitioning ? "transform, opacity" : "auto",
-        };
-    };
+            if (!qScreen || !aScreen || !rScreen || !cursor) return;
 
-    // Helper for staggered items in Result Screen (gentle 12px float-up + soft fade)
-    const getResultStaggerStyle = (stepNumber: number) => {
-        const isRevealed = prefersReducedMotion || resultStaggerStep >= stepNumber;
-        return {
-            transform: isRevealed ? "translate3d(0, 0, 0)" : "translate3d(0, 12px, 0)",
-            opacity: isRevealed ? 1 : 0,
-            transition: "transform 480ms cubic-bezier(0.16, 1, 0.3, 1), opacity 480ms ease-out",
-            pointerEvents: isRevealed ? ("auto" as const) : ("none" as const),
-        };
-    };
+            // Initial screen setups
+            gsap.set(qScreen, { yPercent: 0, opacity: 1, scale: 1, pointerEvents: "auto", display: "flex" });
+            gsap.set(aScreen, { yPercent: 100, opacity: 0, scale: 0.97, pointerEvents: "none", display: "flex" });
+            gsap.set(rScreen, { yPercent: 100, opacity: 0, scale: 0.97, pointerEvents: "none", display: "flex" });
+            gsap.set(cursor, { opacity: 0, scale: 1, x: 90, y: 90 });
 
-    // Main Animation State Machine Loop with Natural Human Pacing
-    useEffect(() => {
-        if (prefersReducedMotion || !isInView || !isTabActive) return;
+            const tl = gsap.timeline({ repeat: -1 });
+            tlRef.current = tl;
 
-        let active = true;
-        const timerIds: NodeJS.Timeout[] = [];
-        let animFrameId: number;
-
-        const schedule = (fn: () => void, delayMs: number) => {
-            const id = setTimeout(() => {
-                if (active) fn();
-            }, delayMs);
-            timerIds.push(id);
-        };
-
-        const triggerClick = () => {
-            setIsClicking(true);
-            setTimeout(() => {
-                if (active) setIsClicking(false);
-            }, 350);
-        };
-
-        const runTimeline = () => {
             // -------------------------------------------------------------
             // PHASE 1: QUESTION STAGE
             // -------------------------------------------------------------
-            setIsOptionSelected(false);
-            setIsBtnPressed(false);
-            setIsBtnHovered(false);
-            setActiveRole("Software Engineer");
-            setAnalyzingProgress(0);
-            setAnalyzingBarsActive(false);
-            setRenderResult(false);
-            setResultStaggerStep(0);
-
-            // 500ms: Reveal fake cursor smoothly
-            schedule(() => {
-                if (optRef.current) {
-                    setCursorPos(getCoordinates(optRef.current, { y: 22 }));
-                }
-                setCursorVisible(true);
-            }, 500);
-
-            // 900ms: Silky glide cursor to Option A
-            schedule(() => {
-                if (optRef.current) {
-                    setCursorPos(getCoordinates(optRef.current));
-                }
-            }, 900);
-
-            // 1800ms: Click Option A with organic ripple
-            schedule(() => {
-                triggerClick();
-                setIsOptionSelected(true);
-            }, 1800);
-
-            // 2500ms: Glide cursor to "Lihat Hasil Asesmen" button
-            schedule(() => {
-                if (nextBtnRef.current) {
-                    setCursorPos(getCoordinates(nextBtnRef.current, { y: -2 }));
-                }
-            }, 2500);
-
-            // 3300ms: Hover on button with soft glow
-            schedule(() => {
-                setIsBtnHovered(true);
-            }, 3300);
-
-            // 3800ms: Click button with tactile spring press
-            schedule(() => {
-                triggerClick();
-                setIsBtnPressed(true);
-            }, 3800);
-
-            // 4150ms: Softly fade out cursor before slide starts
-            schedule(() => {
-                setIsBtnPressed(false);
+            tl.call(() => {
+                setCurrentScreen("question");
+                setIsOptionSelected(false);
                 setIsBtnHovered(false);
-                setCursorVisible(false);
-            }, 4150);
+                setIsBtnPressed(false);
+                setActiveRole("Software Engineer");
+            });
+
+            // 0.5s: Reveal cursor near Option A
+            tl.to(cursor, {
+                opacity: 1,
+                duration: 0.35,
+                ease: "power2.out",
+                onStart: () => {
+                    const coords = getCoords(optRef.current, { y: 22 });
+                    gsap.set(cursor, { x: coords.x, y: coords.y });
+                },
+            }, "+=0.5");
+
+            // 0.9s: Silky glide cursor to Option A center
+            tl.to(cursor, {
+                duration: 0.8,
+                ease: "power2.out",
+                x: () => getCoords(optRef.current).x,
+                y: () => getCoords(optRef.current).y,
+            }, "+=0.05");
+
+            // 1.8s: Click Option A
+            tl.call(() => {
+                triggerClickPulse();
+                setIsOptionSelected(true);
+            }, undefined, "+=0.4");
+
+            // 2.5s: Glide cursor to "Lihat Hasil Asesmen" button
+            tl.to(cursor, {
+                duration: 0.8,
+                ease: "power2.out",
+                x: () => getCoords(nextBtnRef.current, { y: -2 }).x,
+                y: () => getCoords(nextBtnRef.current, { y: -2 }).y,
+            }, "+=0.3");
+
+            // 3.3s: Hover on button
+            tl.call(() => setIsBtnHovered(true), undefined, "+=0.1");
+
+            // 3.8s: Click button
+            tl.call(() => {
+                triggerClickPulse();
+                setIsBtnPressed(true);
+            }, undefined, "+=0.5");
+
+            // 4.15s: Fade out cursor
+            tl.to(cursor, {
+                opacity: 0,
+                duration: 0.25,
+                ease: "power2.in",
+                onComplete: () => {
+                    setIsBtnPressed(false);
+                    setIsBtnHovered(false);
+                },
+            }, "+=0.25");
 
             // -------------------------------------------------------------
             // TRANSITION 1: QUESTION -> ANALYZING (750ms Silky Upward Slide)
             // -------------------------------------------------------------
-            schedule(() => {
-                setAnalyzingPos("enter");
-            }, 4250);
+            tl.call(() => setCurrentScreen("analyzing"), undefined, "+=0.1");
 
-            schedule(() => {
-                setIsTransitioning(true);
-                setQuestionPos("exit");
-                setAnalyzingPos("active");
-            }, 4300);
+            tl.to(qScreen, {
+                yPercent: -100,
+                opacity: 0,
+                scale: 0.97,
+                duration: 0.75,
+                ease: "power2.inOut",
+            });
 
-            // 5050ms: Transition 1 completes. Question hidden and reset.
-            schedule(() => {
-                setIsTransitioning(false);
-                setQuestionPos("hidden");
-                setAnalyzingBarsActive(true);
+            tl.fromTo(aScreen, {
+                yPercent: 100,
+                opacity: 0,
+                scale: 0.97,
+            }, {
+                yPercent: 0,
+                opacity: 1,
+                scale: 1,
+                duration: 0.75,
+                ease: "power2.inOut",
+            }, "<");
 
-                // Start Analyzing Archetype Bars Animation with cubic deceleration (~1.8s)
-                const startTime = performance.now();
-                const duration = 1800;
-                const animateBars = (currentTime: number) => {
-                    if (!active) return;
-                    const elapsed = currentTime - startTime;
-                    const progress = Math.min(elapsed / duration, 1);
-                    // easeOutCubic
-                    const easeProgress = 1 - Math.pow(1 - progress, 3);
-                    setAnalyzingProgress(easeProgress);
-                    if (progress < 1) {
-                        animFrameId = requestAnimationFrame(animateBars);
-                    }
-                };
-                animFrameId = requestAnimationFrame(animateBars);
-            }, 5050);
+            // Reset Archetype Bars & animate them filling up (1.8s)
+            tl.call(() => {
+                const bars = aScreen.querySelectorAll<HTMLElement>(".demo-arch-bar");
+                const nums = aScreen.querySelectorAll<HTMLElement>(".demo-arch-num");
+                bars.forEach((bar) => {
+                    gsap.set(bar, { width: "0%" });
+                    const target = bar.getAttribute("data-target") || "0%";
+                    gsap.to(bar, { width: target, duration: 1.8, ease: "power2.out" });
+                });
+                nums.forEach((num) => {
+                    const targetVal = parseInt(num.getAttribute("data-target") || "0", 10);
+                    const obj = { val: 0 };
+                    gsap.to(obj, {
+                        val: targetVal,
+                        duration: 1.8,
+                        ease: "power2.out",
+                        onUpdate: () => {
+                            num.textContent = `${Math.round(obj.val)}%`;
+                        },
+                    });
+                });
+            }, undefined, "+=0.1");
+
+            // Wait during analyzing animation (~2.1s)
+            tl.set({}, {}, "+=2.2");
 
             // -------------------------------------------------------------
             // TRANSITION 2: ANALYZING -> RESULT (750ms Silky Upward Slide)
             // -------------------------------------------------------------
-            schedule(() => {
-                setRenderResult(true);
-                setResultPos("enter");
-            }, 7350);
+            tl.call(() => setCurrentScreen("result"));
 
-            schedule(() => {
-                setIsTransitioning(true);
-                setAnalyzingPos("exit");
-                setResultPos("active");
-            }, 7400);
+            tl.to(aScreen, {
+                yPercent: -100,
+                opacity: 0,
+                scale: 0.97,
+                duration: 0.75,
+                ease: "power2.inOut",
+            });
 
-            // 8150ms: Transition 2 completes. Analyzing hidden.
-            schedule(() => {
-                setIsTransitioning(false);
-                setAnalyzingPos("hidden");
-                setAnalyzingBarsActive(false);
-                setAnalyzingProgress(0);
-            }, 8150);
+            tl.fromTo(rScreen, {
+                yPercent: 100,
+                opacity: 0,
+                scale: 0.97,
+            }, {
+                yPercent: 0,
+                opacity: 1,
+                scale: 1,
+                duration: 0.75,
+                ease: "power2.inOut",
+            }, "<");
 
-            // -------------------------------------------------------------
-            // PHASE 3: RESULT STAGE (Gentle Staggered Entrance)
-            // -------------------------------------------------------------
-            schedule(() => setResultStaggerStep(1), 8300);
-            schedule(() => setResultStaggerStep(2), 8550);
-            schedule(() => setResultStaggerStep(3), 8800);
-            schedule(() => setResultStaggerStep(4), 9050);
+            // Stagger reveal of result items
+            tl.fromTo(
+                rScreen.querySelectorAll(".result-stagger-item"),
+                { opacity: 0, y: 14 },
+                { opacity: 1, y: 0, stagger: 0.18, duration: 0.45, ease: "power2.out" },
+                "-=0.2"
+            );
 
-            // 9600ms: Reveal fake cursor on Result Screen
-            schedule(() => {
-                if (chipDaRef.current) {
-                    setCursorPos(getCoordinates(chipDaRef.current, { y: 25 }));
-                }
-                setCursorVisible(true);
-            }, 9600);
+            // Reveal cursor on Result Screen
+            tl.to(cursor, {
+                opacity: 1,
+                duration: 0.35,
+                ease: "power2.out",
+                onStart: () => {
+                    const coords = getCoords(chipDaRef.current, { y: 25 });
+                    gsap.set(cursor, { x: coords.x, y: coords.y });
+                },
+            }, "+=0.3");
 
-            // 10100ms: Silky glide cursor to "Data Analyst" chip
-            schedule(() => {
-                if (chipDaRef.current) {
-                    setCursorPos(getCoordinates(chipDaRef.current));
-                }
-            }, 10100);
+            // Glide cursor to "Data Analyst" chip
+            tl.to(cursor, {
+                duration: 0.75,
+                ease: "power2.out",
+                x: () => getCoords(chipDaRef.current).x,
+                y: () => getCoords(chipDaRef.current).y,
+            }, "+=0.1");
 
-            // 10900ms: Click "Data Analyst" chip -> Smooth in-place transition to 54%
-            schedule(() => {
-                triggerClick();
+            // Click "Data Analyst" chip
+            tl.call(() => {
+                triggerClickPulse();
                 setActiveRole("Data Analyst");
-            }, 10900);
+            }, undefined, "+=0.35");
 
-            // 11800ms: Glide cursor back to "Software Engineer" chip
-            schedule(() => {
-                if (chipSeRef.current) {
-                    setCursorPos(getCoordinates(chipSeRef.current));
-                }
-            }, 11800);
+            // Glide cursor to "Software Engineer" chip
+            tl.to(cursor, {
+                duration: 0.75,
+                ease: "power2.out",
+                x: () => getCoords(chipSeRef.current).x,
+                y: () => getCoords(chipSeRef.current).y,
+            }, "+=0.6");
 
-            // 12650ms: Click "Software Engineer" chip -> Smooth in-place transition to 68%
-            schedule(() => {
-                triggerClick();
+            // Click "Software Engineer" chip
+            tl.call(() => {
+                triggerClickPulse();
                 setActiveRole("Software Engineer");
-            }, 12650);
+            }, undefined, "+=0.35");
 
-            // 13550ms: Glide cursor down towards Roadmap card
-            schedule(() => {
-                if (roadmapCardRef.current) {
-                    setCursorPos(getCoordinates(roadmapCardRef.current));
-                }
-            }, 13550);
+            // Glide cursor down towards Roadmap card
+            tl.to(cursor, {
+                duration: 0.8,
+                ease: "power2.out",
+                x: () => getCoords(roadmapCardRef.current).x,
+                y: () => getCoords(roadmapCardRef.current).y,
+            }, "+=0.5");
 
-            // 14450ms: Fade out cursor softly before reset transition
-            schedule(() => {
-                setCursorVisible(false);
-            }, 14450);
+            // Fade out cursor before reset
+            tl.to(cursor, {
+                opacity: 0,
+                duration: 0.3,
+                ease: "power2.in",
+            }, "+=0.6");
 
             // -------------------------------------------------------------
             // TRANSITION 3: RESULT -> NEXT QUESTION (750ms Upward Slide)
             // -------------------------------------------------------------
-            schedule(() => {
+            tl.call(() => {
                 setQuestionCycle((prev) => prev + 1);
                 setIsOptionSelected(false);
-                setQuestionPos("enter");
-            }, 14700);
+            }, undefined, "+=0.2");
 
-            schedule(() => {
-                setIsTransitioning(true);
-                setResultPos("exit");
-                setQuestionPos("active");
-            }, 14750);
+            tl.to(rScreen, {
+                yPercent: -100,
+                opacity: 0,
+                scale: 0.97,
+                duration: 0.75,
+                ease: "power2.inOut",
+            });
 
-            // 15500ms: Transition 3 completes. Result hidden and loop restarts!
-            schedule(() => {
-                setIsTransitioning(false);
-                setResultPos("hidden");
-                setRenderResult(false);
-                setResultStaggerStep(0);
-                runTimeline();
-            }, 15500);
-        };
+            tl.fromTo(qScreen, {
+                yPercent: 100,
+                opacity: 0,
+                scale: 0.97,
+            }, {
+                yPercent: 0,
+                opacity: 1,
+                scale: 1,
+                duration: 0.75,
+                ease: "power2.inOut",
+            }, "<");
 
-        runTimeline();
+            // Small settle pause before starting next loop
+            tl.set({}, {}, "+=0.3");
+        },
+        { scope: stageRef, dependencies: [prefersReducedMotion, getCoords, triggerClickPulse] }
+    );
 
-        return () => {
-            active = false;
-            timerIds.forEach(clearTimeout);
-            if (animFrameId) cancelAnimationFrame(animFrameId);
-        };
-    }, [isInView, isTabActive, prefersReducedMotion, getCoordinates]);
+    // Play / pause timeline based on tab visibility and viewport intersection
+    useEffect(() => {
+        if (!tlRef.current) return;
+        if (!isInView || !isTabActive) {
+            tlRef.current.pause();
+        } else {
+            tlRef.current.resume();
+        }
+    }, [isInView, isTabActive]);
 
     return (
         <div
@@ -404,9 +401,9 @@ export default function AssessmentDemo() {
                     <div>
                         <div className="text-xs font-bold text-slate-900 font-sans">Simulasi Asesmen Minat</div>
                         <div className="text-[10px] text-slate-400 font-medium transition-colors duration-300">
-                            {analyzingPos === "active"
+                            {currentScreen === "analyzing"
                                 ? "Menganalisis matriks psikometri..."
-                                : resultPos === "active" || prefersReducedMotion
+                                : currentScreen === "result" || prefersReducedMotion
                                     ? "Hasil Terverifikasi"
                                     : currentQ.stepLabel}
                         </div>
@@ -426,7 +423,8 @@ export default function AssessmentDemo() {
                     SCREEN 1: QUESTION SCREEN
                 =================================================================== */}
                 <div
-                    style={prefersReducedMotion ? { display: "none" } : getScreenStyle(questionPos)}
+                    ref={questionScreenRef}
+                    style={prefersReducedMotion ? { display: "none" } : undefined}
                     className="absolute inset-0 w-full h-full flex flex-col justify-center space-y-3.5 px-0.5"
                 >
                     {/* Progress Bar */}
@@ -439,7 +437,7 @@ export default function AssessmentDemo() {
                         </div>
                         <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
                             <div
-                                className="h-full bg-brand-primary rounded-full transition-all duration-700 ease-out"
+                                className="h-full bg-brand-primary rounded-full transition-[width] duration-700 ease-out"
                                 style={{
                                     width: !isOptionSelected
                                         ? `${currentQ.progressPercent}%`
@@ -478,9 +476,6 @@ export default function AssessmentDemo() {
                                                 ? "bg-white border-2 border-brand-primary shadow-xs ring-2 ring-brand-primary/10"
                                                 : "bg-white border-slate-200/80 text-slate-700 hover:border-blue-200"
                                             }`}
-                                        style={{
-                                            transition: "all 300ms cubic-bezier(0.16, 1, 0.3, 1)",
-                                        }}
                                     >
                                         <div
                                             className={`w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors duration-300 ${isSelected ? "border-brand-primary" : "border-slate-300"
@@ -513,9 +508,6 @@ export default function AssessmentDemo() {
                                             : "bg-brand-primary text-white shadow-xs"
                                     : "bg-slate-100 text-slate-400 cursor-not-allowed"
                                 }`}
-                            style={{
-                                transition: "all 200ms cubic-bezier(0.16, 1, 0.3, 1)",
-                            }}
                         >
                             <span>Lihat Hasil Asesmen</span>
                             <ChevronRight className="w-4 h-4" />
@@ -527,7 +519,8 @@ export default function AssessmentDemo() {
                     SCREEN 2: ANALYZING SCREEN
                 =================================================================== */}
                 <div
-                    style={getScreenStyle(analyzingPos)}
+                    ref={analyzingScreenRef}
+                    style={prefersReducedMotion ? { display: "none" } : undefined}
                     className="absolute inset-0 w-full h-full flex flex-col justify-center items-center space-y-6 px-4"
                 >
                     <div className="relative flex items-center justify-center">
@@ -546,176 +539,192 @@ export default function AssessmentDemo() {
 
                     {/* Archetype Bars Filling Up */}
                     <div className="w-full max-w-xs space-y-2.5 bg-blue-50/50 p-4 rounded-2xl border border-blue-100 shadow-xs">
-                        {DEMO_ARCHETYPES.map((arch, idx) => {
-                            const currentVal = Math.round(arch.val * analyzingProgress);
-                            return (
-                                <div key={arch.label} className="space-y-1">
-                                    <div className="flex justify-between text-[11px] font-semibold text-slate-600">
-                                        <span>{arch.label}</span>
-                                        <span className="font-mono tabular-nums text-brand-primary font-bold">{currentVal}%</span>
-                                    </div>
-                                    <div className="h-1.5 w-full bg-blue-100/70 rounded-full overflow-hidden">
-                                        <div
-                                            className="h-full bg-brand-primary rounded-full"
-                                            style={{
-                                                width: analyzingBarsActive ? `${arch.val}%` : "0%",
-                                                transition: analyzingBarsActive
-                                                    ? `width 1800ms cubic-bezier(0.16, 1, 0.3, 1) ${idx * 40}ms`
-                                                    : "none",
-                                                willChange: "width",
-                                            }}
-                                        />
-                                    </div>
+                        {DEMO_ARCHETYPES.map((arch) => (
+                            <div key={arch.label} className="space-y-1">
+                                <div className="flex justify-between text-[11px] font-semibold text-slate-600">
+                                    <span>{arch.label}</span>
+                                    <span
+                                        className="demo-arch-num font-mono tabular-nums text-brand-primary font-bold"
+                                        data-target={arch.val}
+                                    >
+                                        0%
+                                    </span>
                                 </div>
-                            );
-                        })}
+                                <div className="h-1.5 w-full bg-blue-100/70 rounded-full overflow-hidden">
+                                    <div
+                                        className="demo-arch-bar h-full bg-brand-primary rounded-full w-0"
+                                        data-target={`${arch.val}%`}
+                                    />
+                                </div>
+                            </div>
+                        ))}
                     </div>
                 </div>
 
                 {/* ===================================================================
                     SCREEN 3: RESULT SCREEN (Staggered Entrance)
                 =================================================================== */}
-                {(renderResult || prefersReducedMotion) && (
-                    <div
-                        style={getScreenStyle(resultPos)}
-                        className="absolute inset-0 w-full h-full flex flex-col justify-between py-1 px-0.5 space-y-2"
-                    >
-                        {/* ITEM 1: Profile Top Match & Role Switcher Chips (Stagger Step 1) */}
-                        <div style={getResultStaggerStyle(1)} className="space-y-2">
-                            <div className="flex items-center justify-between">
-                                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-blue-50 text-brand-primary text-[10px] font-bold border border-blue-200">
-                                    <Sparkles className="w-3 h-3 text-brand-primary" />
-                                    Kecocokan Tertinggi (94%)
-                                </span>
-                                <span className="text-[10px] font-bold text-slate-400">
-                                    Profil Terverifikasi
-                                </span>
-                            </div>
-
-                            <div className="p-3 rounded-2xl bg-blue-50/50 border border-blue-100/90 space-y-2">
-                                <div className="text-xs font-bold text-slate-800">
-                                    Kamu adalah <span className="text-brand-primary">The Builder</span>
-                                </div>
-                                <div className="text-[11px] text-slate-500 leading-snug">
-                                    Berbakat merancang arsitektur sistem logis, memecahkan problematis teknikal, dan eksekusi presisi.
-                                </div>
-
-                                {/* Dynamic Career Role Chips */}
-                                <div className="flex items-center gap-1.5 pt-1 overflow-x-auto no-scrollbar">
-                                    <button
-                                        ref={chipSeRef}
-                                        type="button"
-                                        tabIndex={-1}
-                                        onClick={() => setActiveRole("Software Engineer")}
-                                        className={`px-2.5 py-1 rounded-xl text-xs font-bold transition-all duration-300 cursor-pointer ${activeRole === "Software Engineer"
-                                                ? "bg-brand-primary text-white shadow-xs scale-105"
-                                                : "bg-white border border-slate-200 text-slate-700 hover:border-brand-primary/50"
-                                            }`}
-                                        style={{
-                                            transition: "all 250ms cubic-bezier(0.16, 1, 0.3, 1)",
-                                        }}
-                                    >
-                                        <span className="flex items-center gap-1">
-                                            {activeRole === "Software Engineer" && (
-                                                <CheckCircle2 className="w-3 h-3" />
-                                            )}
-                                            Software Engineer
-                                        </span>
-                                    </button>
-
-                                    <button
-                                        ref={chipDaRef}
-                                        type="button"
-                                        tabIndex={-1}
-                                        onClick={() => setActiveRole("Data Analyst")}
-                                        className={`px-2.5 py-1 rounded-xl text-xs font-bold transition-all duration-300 cursor-pointer ${activeRole === "Data Analyst"
-                                                ? "bg-brand-primary text-white shadow-xs scale-105"
-                                                : "bg-white border border-slate-200 text-slate-700 hover:border-brand-primary/50"
-                                            }`}
-                                        style={{
-                                            transition: "all 250ms cubic-bezier(0.16, 1, 0.3, 1)",
-                                        }}
-                                    >
-                                        <span className="flex items-center gap-1">
-                                            {activeRole === "Data Analyst" && (
-                                                <CheckCircle2 className="w-3 h-3" />
-                                            )}
-                                            Data Analyst
-                                        </span>
-                                    </button>
-
-                                    <button
-                                        ref={chipUiRef}
-                                        type="button"
-                                        tabIndex={-1}
-                                        onClick={() => setActiveRole("UI/UX Designer")}
-                                        className={`px-2.5 py-1 rounded-xl text-xs font-bold transition-all duration-300 cursor-pointer ${activeRole === "UI/UX Designer"
-                                                ? "bg-brand-primary text-white shadow-xs scale-105"
-                                                : "bg-white border border-slate-200 text-slate-700 hover:border-brand-primary/50"
-                                            }`}
-                                        style={{
-                                            transition: "all 250ms cubic-bezier(0.16, 1, 0.3, 1)",
-                                        }}
-                                    >
-                                        <span className="flex items-center gap-1">
-                                            {activeRole === "UI/UX Designer" && (
-                                                <CheckCircle2 className="w-3 h-3" />
-                                            )}
-                                            UI/UX Designer
-                                        </span>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* ITEM 2: SKILL READINESS Component (Stagger Step 2) */}
-                        <div style={getResultStaggerStyle(2)}>
-                            <SkillReadiness
-                                data={roleData}
-                                isAnimated={!prefersReducedMotion}
-                                triggerAnimation={prefersReducedMotion || resultStaggerStep >= 2}
-                            />
-                        </div>
-
-                        {/* ITEM 3: Gap Terbesar Callout Row (Stagger Step 3) */}
-                        <div
-                            style={getResultStaggerStyle(3)}
-                            className="p-2 sm:p-2.5 rounded-xl bg-blue-50/80 border border-blue-200/80 text-[11px] text-slate-700 flex items-center gap-2"
-                        >
-                            <AlertCircle className="w-3.5 h-3.5 text-brand-primary shrink-0" />
-                            <span className="truncate">
-                                <strong className="text-brand-primary font-bold">Gap terbesar:</strong>{" "}
-                                {roleData.biggestGap}. Roadmap belajarmu mulai dari sini.
+                <div
+                    ref={resultScreenRef}
+                    style={prefersReducedMotion ? { display: "flex", position: "relative" } : undefined}
+                    className="absolute inset-0 w-full h-full flex flex-col justify-between py-1 px-0.5 space-y-2"
+                >
+                    {/* ITEM 1: Profile Top Match & Role Switcher Chips (Stagger Step 1) */}
+                    <div className="result-stagger-item space-y-2">
+                        <div className="flex items-center justify-between">
+                            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-blue-50 text-brand-primary text-[10px] font-bold border border-blue-200">
+                                <Sparkles className="w-3 h-3 text-brand-primary" />
+                                Kecocokan Tertinggi (94%)
+                            </span>
+                            <span className="text-[10px] font-bold text-slate-400">
+                                Profil Terverifikasi
                             </span>
                         </div>
 
-                        {/* ITEM 4: Roadmap Ready Notification Card (Stagger Step 4) */}
-                        <div
-                            ref={roadmapCardRef}
-                            style={getResultStaggerStyle(4)}
-                            className="p-2.5 sm:p-3 rounded-2xl bg-white border border-blue-100 shadow-xs flex items-center gap-2.5"
-                        >
-                            <div className="w-7 h-7 rounded-lg bg-blue-50 text-brand-primary flex items-center justify-center shrink-0 border border-blue-100">
-                                <Sparkles className="w-3.5 h-3.5 text-brand-primary" />
+                        <div className="p-3 rounded-2xl bg-blue-50/50 border border-blue-100/90 space-y-2">
+                            <div className="text-xs font-bold text-slate-800">
+                                Kamu adalah <span className="text-brand-primary">The Builder</span>
                             </div>
-                            <div className="min-w-0 flex-1">
-                                <div className="text-xs font-bold text-slate-900">Roadmap belajarmu siap!</div>
-                                <div className="text-[10px] text-slate-400">
-                                    Kurikulum 4 fase terstruktur untuk mempercepat kesiapan kariermu.
-                                </div>
+                            <div className="text-[11px] text-slate-500 leading-snug">
+                                Berbakat merancang arsitektur sistem logis, memecahkan problematis teknikal, dan eksekusi presisi.
+                            </div>
+
+                            {/* Dynamic Career Role Chips */}
+                            <div className="flex items-center gap-1.5 pt-1 overflow-x-auto no-scrollbar">
+                                <button
+                                    ref={chipSeRef}
+                                    type="button"
+                                    tabIndex={-1}
+                                    onClick={() => setActiveRole("Software Engineer")}
+                                    className={`px-2.5 py-1 rounded-xl text-xs font-bold transition-all duration-300 cursor-pointer ${activeRole === "Software Engineer"
+                                            ? "bg-brand-primary text-white shadow-xs scale-105"
+                                            : "bg-white border border-slate-200 text-slate-700 hover:border-brand-primary/50"
+                                        }`}
+                                >
+                                    <span className="flex items-center gap-1">
+                                        {activeRole === "Software Engineer" && (
+                                            <CheckCircle2 className="w-3 h-3" />
+                                        )}
+                                        Software Engineer
+                                    </span>
+                                </button>
+
+                                <button
+                                    ref={chipDaRef}
+                                    type="button"
+                                    tabIndex={-1}
+                                    onClick={() => setActiveRole("Data Analyst")}
+                                    className={`px-2.5 py-1 rounded-xl text-xs font-bold transition-all duration-300 cursor-pointer ${activeRole === "Data Analyst"
+                                            ? "bg-brand-primary text-white shadow-xs scale-105"
+                                            : "bg-white border border-slate-200 text-slate-700 hover:border-brand-primary/50"
+                                        }`}
+                                >
+                                    <span className="flex items-center gap-1">
+                                        {activeRole === "Data Analyst" && (
+                                            <CheckCircle2 className="w-3 h-3" />
+                                        )}
+                                        Data Analyst
+                                    </span>
+                                </button>
+
+                                <button
+                                    ref={chipUiRef}
+                                    type="button"
+                                    tabIndex={-1}
+                                    onClick={() => setActiveRole("UI/UX Designer")}
+                                    className={`px-2.5 py-1 rounded-xl text-xs font-bold transition-all duration-300 cursor-pointer ${activeRole === "UI/UX Designer"
+                                            ? "bg-brand-primary text-white shadow-xs scale-105"
+                                            : "bg-white border border-slate-200 text-slate-700 hover:border-brand-primary/50"
+                                        }`}
+                                >
+                                    <span className="flex items-center gap-1">
+                                        {activeRole === "UI/UX Designer" && (
+                                            <CheckCircle2 className="w-3 h-3" />
+                                        )}
+                                        UI/UX Designer
+                                    </span>
+                                </button>
                             </div>
                         </div>
                     </div>
-                )}
+
+                    {/* ITEM 2: SKILL READINESS Component (Stagger Step 2) */}
+                    <div className="result-stagger-item">
+                        <SkillReadiness
+                            data={roleData}
+                            isAnimated={!prefersReducedMotion}
+                            triggerAnimation={true}
+                        />
+                    </div>
+
+                    {/* ITEM 3: Gap Terbesar Callout Row (Stagger Step 3) */}
+                    <div
+                        className="result-stagger-item p-2 sm:p-2.5 rounded-xl bg-blue-50/80 border border-blue-200/80 text-[11px] text-slate-700 flex items-center gap-2"
+                    >
+                        <AlertCircle className="w-3.5 h-3.5 text-brand-primary shrink-0" />
+                        <span className="truncate">
+                            <strong className="text-brand-primary font-bold">Gap terbesar:</strong>{" "}
+                            {roleData.biggestGap}. Roadmap belajarmu mulai dari sini.
+                        </span>
+                    </div>
+
+                    {/* ITEM 4: Roadmap Ready Notification Card (Stagger Step 4) */}
+                    <div
+                        ref={roadmapCardRef}
+                        className="result-stagger-item p-2.5 sm:p-3 rounded-2xl bg-white border border-blue-100 shadow-xs flex items-center gap-2.5"
+                    >
+                        <div className="w-7 h-7 rounded-lg bg-blue-50 text-brand-primary flex items-center justify-center shrink-0 border border-blue-100">
+                            <Sparkles className="w-3.5 h-3.5 text-brand-primary" />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                            <div className="text-xs font-bold text-slate-900">Roadmap belajarmu siap!</div>
+                            <div className="text-[10px] text-slate-400">
+                                Kurikulum 4 fase terstruktur untuk mempercepat kesiapan kariermu.
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
                 {/* Virtual Animated Cursor (Clipped inside stage container) */}
                 {!prefersReducedMotion && (
-                    <FakeCursor
-                        x={cursorPos.x}
-                        y={cursorPos.y}
-                        isClicking={isClicking}
-                        visible={cursorVisible}
-                    />
+                    <div
+                        ref={cursorRef}
+                        className="absolute pointer-events-none z-50 top-0 left-0"
+                        style={{
+                            opacity: 0,
+                            transformOrigin: "3px 2px",
+                            willChange: "transform, opacity",
+                        }}
+                        aria-hidden="true"
+                    >
+                        <div className="relative">
+                            <svg
+                                width="28"
+                                height="34"
+                                viewBox="0 0 24 28"
+                                fill="none"
+                                className="drop-shadow-lg filter drop-shadow-[0_4px_12px_rgba(0,102,255,0.4)]"
+                            >
+                                <path
+                                    d="M2.5 1.5L21.5 13.5L12 16L8 25.5L2.5 1.5Z"
+                                    fill="#0066FF"
+                                    stroke="white"
+                                    strokeWidth="2.2"
+                                    strokeLinejoin="round"
+                                />
+                            </svg>
+                            {isClicking && (
+                                <span
+                                    className="absolute w-12 h-12 rounded-full bg-brand-primary/25 border-2 border-brand-primary animate-ping pointer-events-none"
+                                    style={{
+                                        left: "-19px",
+                                        top: "-20px",
+                                        animationDuration: "450ms",
+                                    }}
+                                />
+                            )}
+                        </div>
+                    </div>
                 )}
             </div>
 
@@ -730,7 +739,7 @@ export default function AssessmentDemo() {
                             AI Persona Compass
                         </div>
                         <div className="text-[11px] font-bold text-slate-800 truncate transition-colors duration-300">
-                            {resultPos === "active" || prefersReducedMotion
+                            {currentScreen === "result" || prefersReducedMotion
                                 ? "Hasil siap dieksplorasi"
                                 : "Memetakan kepribadian ke karier nyata"}
                         </div>

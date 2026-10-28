@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
+import gsap from "gsap";
+import { useGSAP } from "@gsap/react";
 import Link from "next/link";
 import {
   GraduationCap,
@@ -194,6 +196,8 @@ const KEGIATAN_PRESETS = [
 
 export default function BentoEcosystemTour() {
   const containerRef = useRef<HTMLDivElement>(null);
+  const roadmapBodyRef = useRef<HTMLDivElement>(null);
+  const kegiatanBodyRef = useRef<HTMLDivElement>(null);
 
   // States for Left Card & Bottom Card
   const [activeCareerIdx, setActiveCareerIdx] = useState<number>(0);
@@ -202,6 +206,28 @@ export default function BentoEcosystemTour() {
   const [isInView, setIsInView] = useState<boolean>(true);
   const [isTabActive, setIsTabActive] = useState<boolean>(true);
   const [isUserInteracting, setIsUserInteracting] = useState<boolean>(false);
+
+  // Smooth crossfade on career change
+  useGSAP(() => {
+    if (roadmapBodyRef.current && !prefersReducedMotion) {
+      gsap.fromTo(
+        roadmapBodyRef.current,
+        { opacity: 0.5, y: 3 },
+        { opacity: 1, y: 0, duration: 0.35, ease: "power2.out" }
+      );
+    }
+  }, [activeCareerIdx]);
+
+  // Smooth crossfade on kegiatan change
+  useGSAP(() => {
+    if (kegiatanBodyRef.current && !prefersReducedMotion) {
+      gsap.fromTo(
+        kegiatanBodyRef.current,
+        { opacity: 0.5, y: 3 },
+        { opacity: 1, y: 0, duration: 0.35, ease: "power2.out" }
+      );
+    }
+  }, [activeKegiatanIdx]);
 
   const [prefersReducedMotion, setPrefersReducedMotion] = useState<boolean>(() => {
     if (typeof window !== "undefined") {
@@ -285,6 +311,8 @@ export default function BentoEcosystemTour() {
   return (
     <div
       ref={containerRef}
+      onMouseEnter={() => setIsUserInteracting(true)}
+      onMouseLeave={() => setIsUserInteracting(false)}
       className="grid grid-cols-1 lg:grid-cols-12 gap-3.5 sm:gap-4 select-none w-full items-stretch font-sans"
     >
       {/* =========================================================================
@@ -368,7 +396,7 @@ export default function BentoEcosystemTour() {
         </div>
 
         {/* Module Progression: Fase 01 (Selesai) + Fase 02 (Modul Aktif) */}
-        <div className="space-y-2 flex-1 flex flex-col justify-center py-0.5">
+        <div ref={roadmapBodyRef} className="space-y-2 flex-1 flex flex-col justify-center py-0.5">
           {/* FASE 01: MODUL SELESAI */}
           <div className="bg-emerald-50/25 border border-emerald-200/90 rounded-xl p-2.5 shadow-3xs space-y-1.5 transition-all">
             <div className="flex items-center justify-between gap-2">
@@ -672,7 +700,7 @@ export default function BentoEcosystemTour() {
             </div>
 
             {/* Inner Curated / Case Study Card */}
-            <div className="p-2.5 sm:p-3 rounded-xl bg-white/10 backdrop-blur-xs border border-white/20 flex flex-col justify-between space-y-1.5">
+            <div ref={kegiatanBodyRef} className="p-2.5 sm:p-3 rounded-xl bg-white/10 backdrop-blur-xs border border-white/20 flex flex-col justify-between space-y-1.5">
               <div>
                 <div className="flex items-center justify-between text-[8px] sm:text-[8.5px] font-mono text-blue-100 mb-0.5">
                   <span>KEGIATAN &amp; STUDI KASUS</span>
