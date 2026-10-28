@@ -69,7 +69,7 @@ export default function AssessmentDemo() {
             ([entry]) => {
                 setIsInView(entry.isIntersecting);
             },
-            { threshold: 0.15 }
+            { threshold: 0.1 }
         );
 
         if (stageRef.current) {
@@ -85,7 +85,7 @@ export default function AssessmentDemo() {
     // Helper: calculate coordinates relative to stage container
     const getCoords = useCallback(
         (element: HTMLElement | null, offset?: { x?: number; y?: number }) => {
-            if (!element || !stageRef.current) return { x: 90, y: 90 };
+            if (!element || !stageRef.current) return { x: 120, y: 150 };
             const sRect = stageRef.current.getBoundingClientRect();
             const eRect = element.getBoundingClientRect();
             const centerX = eRect.left - sRect.left + eRect.width / 2 + (offset?.x ?? 0);
@@ -101,11 +101,11 @@ export default function AssessmentDemo() {
     // Helper: trigger clicking pulse
     const triggerClickPulse = useCallback(() => {
         setIsClicking(true);
-        setTimeout(() => setIsClicking(false), 350);
+        setTimeout(() => setIsClicking(false), 280);
         if (cursorRef.current) {
             gsap.to(cursorRef.current, {
                 scale: 0.88,
-                duration: 0.1,
+                duration: 0.08,
                 yoyo: true,
                 repeat: 1,
                 ease: "power2.inOut",
@@ -117,10 +117,26 @@ export default function AssessmentDemo() {
     const currentQ = DEMO_QUESTIONS[questionCycle % DEMO_QUESTIONS.length];
     const roleData = CAREER_ROLES_DATA[activeRole] || CAREER_ROLES_DATA["Software Engineer"];
 
-    // Main GSAP Master Timeline
+    // Main GSAP Master Timeline — Snappy, Instant Start
     useGSAP(
         () => {
-            if (prefersReducedMotion) return;
+            if (prefersReducedMotion) {
+                const qScreen = questionScreenRef.current;
+                const aScreen = analyzingScreenRef.current;
+                const rScreen = resultScreenRef.current;
+                const cursor = cursorRef.current;
+
+                if (qScreen) gsap.set(qScreen, { yPercent: -100, opacity: 0, pointerEvents: "none", display: "none" });
+                if (aScreen) gsap.set(aScreen, { yPercent: -100, opacity: 0, pointerEvents: "none", display: "none" });
+                if (rScreen) {
+                    gsap.set(rScreen, { yPercent: 0, opacity: 1, scale: 1, pointerEvents: "auto", display: "flex" });
+                    const items = rScreen.querySelectorAll(".result-stagger-item");
+                    if (items.length) gsap.set(items, { opacity: 1, y: 0, scale: 1 });
+                }
+                if (cursor) gsap.set(cursor, { opacity: 0, display: "none" });
+                setCurrentScreen("result");
+                return;
+            }
 
             const qScreen = questionScreenRef.current;
             const aScreen = analyzingScreenRef.current;
@@ -129,17 +145,20 @@ export default function AssessmentDemo() {
 
             if (!qScreen || !aScreen || !rScreen || !cursor) return;
 
-            // Initial screen setups
+            // Immediate initial setup — Question visible at 0s, others hidden below
             gsap.set(qScreen, { yPercent: 0, opacity: 1, scale: 1, pointerEvents: "auto", display: "flex" });
             gsap.set(aScreen, { yPercent: 100, opacity: 0, scale: 0.97, pointerEvents: "none", display: "flex" });
             gsap.set(rScreen, { yPercent: 100, opacity: 0, scale: 0.97, pointerEvents: "none", display: "flex" });
-            gsap.set(cursor, { opacity: 0, scale: 1, x: 90, y: 90 });
+
+            // Start cursor slightly offset and immediately visible
+            const initialCoords = getCoords(optRef.current, { x: 40, y: 35 });
+            gsap.set(cursor, { opacity: 1, scale: 1, x: initialCoords.x, y: initialCoords.y });
 
             const tl = gsap.timeline({ repeat: -1 });
             tlRef.current = tl;
 
             // -------------------------------------------------------------
-            // PHASE 1: QUESTION STAGE
+            // PHASE 1: QUESTION STAGE (Starts IMMEDIATELY at 0.05s)
             // -------------------------------------------------------------
             tl.call(() => {
                 setCurrentScreen("question");
@@ -149,69 +168,59 @@ export default function AssessmentDemo() {
                 setActiveRole("Software Engineer");
             });
 
-            // 0.5s: Reveal cursor near Option A
+            // 0.05s: Immediately glide cursor to Option A center (0.45s duration)
             tl.to(cursor, {
                 opacity: 1,
-                duration: 0.35,
-                ease: "power2.out",
-                onStart: () => {
-                    const coords = getCoords(optRef.current, { y: 22 });
-                    gsap.set(cursor, { x: coords.x, y: coords.y });
-                },
-            }, "+=0.5");
-
-            // 0.9s: Silky glide cursor to Option A center
-            tl.to(cursor, {
-                duration: 0.8,
+                duration: 0.45,
                 ease: "power2.out",
                 x: () => getCoords(optRef.current).x,
                 y: () => getCoords(optRef.current).y,
             }, "+=0.05");
 
-            // 1.8s: Click Option A
+            // 0.52s: Click Option A with organic ripple & select it!
             tl.call(() => {
                 triggerClickPulse();
                 setIsOptionSelected(true);
-            }, undefined, "+=0.4");
+            }, undefined, "+=0.08");
 
-            // 2.5s: Glide cursor to "Lihat Hasil Asesmen" button
+            // 0.75s: Glide cursor straight to "Lihat Hasil Asesmen" button (0.45s duration)
             tl.to(cursor, {
-                duration: 0.8,
+                duration: 0.45,
                 ease: "power2.out",
                 x: () => getCoords(nextBtnRef.current, { y: -2 }).x,
                 y: () => getCoords(nextBtnRef.current, { y: -2 }).y,
-            }, "+=0.3");
+            }, "+=0.18");
 
-            // 3.3s: Hover on button
-            tl.call(() => setIsBtnHovered(true), undefined, "+=0.1");
+            // 1.25s: Hover on button
+            tl.call(() => setIsBtnHovered(true), undefined, "+=0.05");
 
-            // 3.8s: Click button
+            // 1.42s: Click button
             tl.call(() => {
                 triggerClickPulse();
                 setIsBtnPressed(true);
-            }, undefined, "+=0.5");
+            }, undefined, "+=0.15");
 
-            // 4.15s: Fade out cursor
+            // 1.62s: Fade out cursor
             tl.to(cursor, {
                 opacity: 0,
-                duration: 0.25,
+                duration: 0.18,
                 ease: "power2.in",
                 onComplete: () => {
                     setIsBtnPressed(false);
                     setIsBtnHovered(false);
                 },
-            }, "+=0.25");
+            }, "+=0.08");
 
             // -------------------------------------------------------------
-            // TRANSITION 1: QUESTION -> ANALYZING (750ms Silky Upward Slide)
+            // TRANSITION 1: QUESTION -> ANALYZING (0.55s Snappy Slide)
             // -------------------------------------------------------------
-            tl.call(() => setCurrentScreen("analyzing"), undefined, "+=0.1");
+            tl.call(() => setCurrentScreen("analyzing"), undefined, "+=0.05");
 
             tl.to(qScreen, {
                 yPercent: -100,
                 opacity: 0,
                 scale: 0.97,
-                duration: 0.75,
+                duration: 0.55,
                 ease: "power2.inOut",
             });
 
@@ -223,38 +232,38 @@ export default function AssessmentDemo() {
                 yPercent: 0,
                 opacity: 1,
                 scale: 1,
-                duration: 0.75,
+                duration: 0.55,
                 ease: "power2.inOut",
             }, "<");
 
-            // Reset Archetype Bars & animate them filling up (1.8s)
+            // Animate Archetype Bars filling up smoothly (1.1s)
             tl.call(() => {
                 const bars = aScreen.querySelectorAll<HTMLElement>(".demo-arch-bar");
                 const nums = aScreen.querySelectorAll<HTMLElement>(".demo-arch-num");
                 bars.forEach((bar) => {
                     gsap.set(bar, { width: "0%" });
                     const target = bar.getAttribute("data-target") || "0%";
-                    gsap.to(bar, { width: target, duration: 1.8, ease: "power2.out" });
+                    gsap.to(bar, { width: target, duration: 1.1, ease: "power2.out" });
                 });
                 nums.forEach((num) => {
                     const targetVal = parseInt(num.getAttribute("data-target") || "0", 10);
                     const obj = { val: 0 };
                     gsap.to(obj, {
                         val: targetVal,
-                        duration: 1.8,
+                        duration: 1.1,
                         ease: "power2.out",
                         onUpdate: () => {
                             num.textContent = `${Math.round(obj.val)}%`;
                         },
                     });
                 });
-            }, undefined, "+=0.1");
+            }, undefined, "+=0.05");
 
-            // Wait during analyzing animation (~2.1s)
-            tl.set({}, {}, "+=2.2");
+            // Analyzing stage display time (~1.3s)
+            tl.set({}, {}, "+=1.35");
 
             // -------------------------------------------------------------
-            // TRANSITION 2: ANALYZING -> RESULT (750ms Silky Upward Slide)
+            // TRANSITION 2: ANALYZING -> RESULT (0.55s Snappy Slide)
             // -------------------------------------------------------------
             tl.call(() => setCurrentScreen("result"));
 
@@ -262,7 +271,7 @@ export default function AssessmentDemo() {
                 yPercent: -100,
                 opacity: 0,
                 scale: 0.97,
-                duration: 0.75,
+                duration: 0.55,
                 ease: "power2.inOut",
             });
 
@@ -274,85 +283,88 @@ export default function AssessmentDemo() {
                 yPercent: 0,
                 opacity: 1,
                 scale: 1,
-                duration: 0.75,
+                duration: 0.55,
                 ease: "power2.inOut",
             }, "<");
 
-            // Stagger reveal of result items
+            // Stagger reveal of result items (0.35s total)
             tl.fromTo(
                 rScreen.querySelectorAll(".result-stagger-item"),
-                { opacity: 0, y: 14 },
-                { opacity: 1, y: 0, stagger: 0.18, duration: 0.45, ease: "power2.out" },
-                "-=0.2"
+                { opacity: 0, y: 12 },
+                { opacity: 1, y: 0, stagger: 0.1, duration: 0.35, ease: "power2.out" },
+                "-=0.15"
             );
 
             // Reveal cursor on Result Screen
             tl.to(cursor, {
                 opacity: 1,
-                duration: 0.35,
+                duration: 0.25,
                 ease: "power2.out",
                 onStart: () => {
-                    const coords = getCoords(chipDaRef.current, { y: 25 });
+                    const coords = getCoords(chipDaRef.current, { y: 20 });
                     gsap.set(cursor, { x: coords.x, y: coords.y });
                 },
-            }, "+=0.3");
+            }, "+=0.15");
 
             // Glide cursor to "Data Analyst" chip
             tl.to(cursor, {
-                duration: 0.75,
+                duration: 0.45,
                 ease: "power2.out",
                 x: () => getCoords(chipDaRef.current).x,
                 y: () => getCoords(chipDaRef.current).y,
-            }, "+=0.1");
+            }, "+=0.05");
 
-            // Click "Data Analyst" chip
+            // Click "Data Analyst" chip -> Switch role instantly
             tl.call(() => {
                 triggerClickPulse();
                 setActiveRole("Data Analyst");
-            }, undefined, "+=0.35");
+            }, undefined, "+=0.18");
 
             // Glide cursor to "Software Engineer" chip
             tl.to(cursor, {
-                duration: 0.75,
+                duration: 0.45,
                 ease: "power2.out",
                 x: () => getCoords(chipSeRef.current).x,
                 y: () => getCoords(chipSeRef.current).y,
-            }, "+=0.6");
+            }, "+=0.45");
 
-            // Click "Software Engineer" chip
+            // Click "Software Engineer" chip -> Switch back
             tl.call(() => {
                 triggerClickPulse();
                 setActiveRole("Software Engineer");
-            }, undefined, "+=0.35");
+            }, undefined, "+=0.18");
 
             // Glide cursor down towards Roadmap card
             tl.to(cursor, {
-                duration: 0.8,
+                duration: 0.5,
                 ease: "power2.out",
                 x: () => getCoords(roadmapCardRef.current).x,
                 y: () => getCoords(roadmapCardRef.current).y,
-            }, "+=0.5");
+            }, "+=0.35");
+
+            // Pause slightly so user can view the result and roadmap card (~1.2s)
+            tl.set({}, {}, "+=1.2");
 
             // Fade out cursor before reset
             tl.to(cursor, {
                 opacity: 0,
-                duration: 0.3,
+                duration: 0.2,
                 ease: "power2.in",
-            }, "+=0.6");
+            });
 
             // -------------------------------------------------------------
-            // TRANSITION 3: RESULT -> NEXT QUESTION (750ms Upward Slide)
+            // TRANSITION 3: RESULT -> NEXT QUESTION (0.55s Upward Slide)
             // -------------------------------------------------------------
             tl.call(() => {
                 setQuestionCycle((prev) => prev + 1);
                 setIsOptionSelected(false);
-            }, undefined, "+=0.2");
+            }, undefined, "+=0.1");
 
             tl.to(rScreen, {
                 yPercent: -100,
                 opacity: 0,
                 scale: 0.97,
-                duration: 0.75,
+                duration: 0.55,
                 ease: "power2.inOut",
             });
 
@@ -364,12 +376,12 @@ export default function AssessmentDemo() {
                 yPercent: 0,
                 opacity: 1,
                 scale: 1,
-                duration: 0.75,
+                duration: 0.55,
                 ease: "power2.inOut",
             }, "<");
 
-            // Small settle pause before starting next loop
-            tl.set({}, {}, "+=0.3");
+            // Short pause before starting next loop
+            tl.set({}, {}, "+=0.15");
         },
         { scope: stageRef, dependencies: [prefersReducedMotion, getCoords, triggerClickPulse] }
     );
@@ -403,7 +415,7 @@ export default function AssessmentDemo() {
                         <div className="text-[10px] text-slate-400 font-medium transition-colors duration-300">
                             {currentScreen === "analyzing"
                                 ? "Menganalisis matriks psikometri..."
-                                : currentScreen === "result" || prefersReducedMotion
+                                : currentScreen === "result"
                                     ? "Hasil Terverifikasi"
                                     : currentQ.stepLabel}
                         </div>
@@ -420,12 +432,11 @@ export default function AssessmentDemo() {
                 className="relative w-full h-[470px] sm:h-[480px] overflow-hidden my-auto"
             >
                 {/* ===================================================================
-                    SCREEN 1: QUESTION SCREEN
+                    SCREEN 1: QUESTION SCREEN (Visible immediately on initial render)
                 =================================================================== */}
                 <div
                     ref={questionScreenRef}
-                    style={prefersReducedMotion ? { display: "none" } : undefined}
-                    className="absolute inset-0 w-full h-full flex flex-col justify-center space-y-3.5 px-0.5"
+                    className="absolute inset-0 w-full h-full flex flex-col justify-center space-y-3.5 px-0.5 z-10"
                 >
                     {/* Progress Bar */}
                     <div className="space-y-1.5">
@@ -437,7 +448,7 @@ export default function AssessmentDemo() {
                         </div>
                         <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
                             <div
-                                className="h-full bg-brand-primary rounded-full transition-[width] duration-700 ease-out"
+                                className="h-full bg-brand-primary rounded-full transition-[width] duration-500 ease-out"
                                 style={{
                                     width: !isOptionSelected
                                         ? `${currentQ.progressPercent}%`
@@ -472,13 +483,13 @@ export default function AssessmentDemo() {
                                         ref={idx === 0 ? optRef : undefined}
                                         type="button"
                                         tabIndex={-1}
-                                        className={`w-full flex items-center gap-3 p-3 rounded-xl border text-left transition-all duration-300 ${isSelected
+                                        className={`w-full flex items-center gap-3 p-3 rounded-xl border text-left transition-all duration-200 ${isSelected
                                                 ? "bg-white border-2 border-brand-primary shadow-xs ring-2 ring-brand-primary/10"
                                                 : "bg-white border-slate-200/80 text-slate-700 hover:border-blue-200"
                                             }`}
                                     >
                                         <div
-                                            className={`w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors duration-300 ${isSelected ? "border-brand-primary" : "border-slate-300"
+                                            className={`w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors duration-200 ${isSelected ? "border-brand-primary" : "border-slate-300"
                                                 }`}
                                         >
                                             {isSelected && (
@@ -500,7 +511,7 @@ export default function AssessmentDemo() {
                             ref={nextBtnRef}
                             type="button"
                             tabIndex={-1}
-                            className={`w-full h-11 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-2 transition-all duration-300 ${isOptionSelected
+                            className={`w-full h-11 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-2 transition-all duration-200 ${isOptionSelected
                                     ? isBtnPressed
                                         ? "bg-brand-primary/80 text-white scale-[0.98]"
                                         : isBtnHovered
@@ -516,12 +527,12 @@ export default function AssessmentDemo() {
                 </div>
 
                 {/* ===================================================================
-                    SCREEN 2: ANALYZING SCREEN
+                    SCREEN 2: ANALYZING SCREEN (Hidden below initial viewport)
                 =================================================================== */}
                 <div
                     ref={analyzingScreenRef}
-                    style={prefersReducedMotion ? { display: "none" } : undefined}
-                    className="absolute inset-0 w-full h-full flex flex-col justify-center items-center space-y-6 px-4"
+                    style={{ transform: "translateY(100%)", opacity: 0, pointerEvents: "none" }}
+                    className="absolute inset-0 w-full h-full flex flex-col justify-center items-center space-y-6 px-4 z-10"
                 >
                     <div className="relative flex items-center justify-center">
                         <div className="w-16 h-16 rounded-full border-3 border-blue-100 border-t-brand-primary animate-spin" />
@@ -562,12 +573,12 @@ export default function AssessmentDemo() {
                 </div>
 
                 {/* ===================================================================
-                    SCREEN 3: RESULT SCREEN (Staggered Entrance)
+                    SCREEN 3: RESULT SCREEN (Hidden below initial viewport)
                 =================================================================== */}
                 <div
                     ref={resultScreenRef}
-                    style={prefersReducedMotion ? { display: "flex", position: "relative" } : undefined}
-                    className="absolute inset-0 w-full h-full flex flex-col justify-between py-1 px-0.5 space-y-2"
+                    style={{ transform: "translateY(100%)", opacity: 0, pointerEvents: "none" }}
+                    className="absolute inset-0 w-full h-full flex flex-col justify-between py-1 px-0.5 space-y-2 z-10"
                 >
                     {/* ITEM 1: Profile Top Match & Role Switcher Chips (Stagger Step 1) */}
                     <div className="result-stagger-item space-y-2">
@@ -596,7 +607,7 @@ export default function AssessmentDemo() {
                                     type="button"
                                     tabIndex={-1}
                                     onClick={() => setActiveRole("Software Engineer")}
-                                    className={`px-2.5 py-1 rounded-xl text-xs font-bold transition-all duration-300 cursor-pointer ${activeRole === "Software Engineer"
+                                    className={`px-2.5 py-1 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer ${activeRole === "Software Engineer"
                                             ? "bg-brand-primary text-white shadow-xs scale-105"
                                             : "bg-white border border-slate-200 text-slate-700 hover:border-brand-primary/50"
                                         }`}
@@ -614,7 +625,7 @@ export default function AssessmentDemo() {
                                     type="button"
                                     tabIndex={-1}
                                     onClick={() => setActiveRole("Data Analyst")}
-                                    className={`px-2.5 py-1 rounded-xl text-xs font-bold transition-all duration-300 cursor-pointer ${activeRole === "Data Analyst"
+                                    className={`px-2.5 py-1 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer ${activeRole === "Data Analyst"
                                             ? "bg-brand-primary text-white shadow-xs scale-105"
                                             : "bg-white border border-slate-200 text-slate-700 hover:border-brand-primary/50"
                                         }`}
@@ -632,7 +643,7 @@ export default function AssessmentDemo() {
                                     type="button"
                                     tabIndex={-1}
                                     onClick={() => setActiveRole("UI/UX Designer")}
-                                    className={`px-2.5 py-1 rounded-xl text-xs font-bold transition-all duration-300 cursor-pointer ${activeRole === "UI/UX Designer"
+                                    className={`px-2.5 py-1 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer ${activeRole === "UI/UX Designer"
                                             ? "bg-brand-primary text-white shadow-xs scale-105"
                                             : "bg-white border border-slate-200 text-slate-700 hover:border-brand-primary/50"
                                         }`}
@@ -686,46 +697,44 @@ export default function AssessmentDemo() {
                 </div>
 
                 {/* Virtual Animated Cursor (Clipped inside stage container) */}
-                {!prefersReducedMotion && (
-                    <div
-                        ref={cursorRef}
-                        className="absolute pointer-events-none z-50 top-0 left-0"
-                        style={{
-                            opacity: 0,
-                            transformOrigin: "3px 2px",
-                            willChange: "transform, opacity",
-                        }}
-                        aria-hidden="true"
-                    >
-                        <div className="relative">
-                            <svg
-                                width="28"
-                                height="34"
-                                viewBox="0 0 24 28"
-                                fill="none"
-                                className="drop-shadow-lg filter drop-shadow-[0_4px_12px_rgba(0,102,255,0.4)]"
-                            >
-                                <path
-                                    d="M2.5 1.5L21.5 13.5L12 16L8 25.5L2.5 1.5Z"
-                                    fill="#0066FF"
-                                    stroke="white"
-                                    strokeWidth="2.2"
-                                    strokeLinejoin="round"
-                                />
-                            </svg>
-                            {isClicking && (
-                                <span
-                                    className="absolute w-12 h-12 rounded-full bg-brand-primary/25 border-2 border-brand-primary animate-ping pointer-events-none"
-                                    style={{
-                                        left: "-19px",
-                                        top: "-20px",
-                                        animationDuration: "450ms",
-                                    }}
-                                />
-                            )}
-                        </div>
+                <div
+                    ref={cursorRef}
+                    className="absolute pointer-events-none z-50 top-0 left-0"
+                    style={{
+                        opacity: 0,
+                        transformOrigin: "3px 2px",
+                        willChange: "transform, opacity",
+                    }}
+                    aria-hidden="true"
+                >
+                    <div className="relative">
+                        <svg
+                            width="28"
+                            height="34"
+                            viewBox="0 0 24 28"
+                            fill="none"
+                            className="drop-shadow-lg filter drop-shadow-[0_4px_12px_rgba(0,102,255,0.4)]"
+                        >
+                            <path
+                                d="M2.5 1.5L21.5 13.5L12 16L8 25.5L2.5 1.5Z"
+                                fill="#0066FF"
+                                stroke="white"
+                                strokeWidth="2.2"
+                                strokeLinejoin="round"
+                            />
+                        </svg>
+                        {isClicking && (
+                            <span
+                                className="absolute w-12 h-12 rounded-full bg-brand-primary/25 border-2 border-brand-primary animate-ping pointer-events-none"
+                                style={{
+                                    left: "-19px",
+                                    top: "-20px",
+                                    animationDuration: "350ms",
+                                }}
+                            />
+                        )}
                     </div>
-                )}
+                </div>
             </div>
 
             {/* Bottom Assistant Snapshot Preview (Fixed - never moves) */}
@@ -739,7 +748,7 @@ export default function AssessmentDemo() {
                             AI Persona Compass
                         </div>
                         <div className="text-[11px] font-bold text-slate-800 truncate transition-colors duration-300">
-                            {currentScreen === "result" || prefersReducedMotion
+                            {currentScreen === "result"
                                 ? "Hasil siap dieksplorasi"
                                 : "Memetakan kepribadian ke karier nyata"}
                         </div>
