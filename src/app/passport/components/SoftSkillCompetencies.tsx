@@ -11,6 +11,7 @@ import {
   Sparkles,
   Info,
 } from 'lucide-react';
+import { SkillIcon } from '@/components/ui/AppIcons';
 import { COMPETENCIES, CompetencyItem } from '../types';
 
 interface SoftSkillCompetenciesProps {
@@ -94,8 +95,8 @@ export function SoftSkillCompetencies({
         {/* Top: Icon + Name + Badge + Score */}
         <div className="flex items-start justify-between gap-2 mb-2">
           <div className="flex items-center gap-2.5 min-w-0">
-            <div className="w-8 h-8 rounded-xl bg-white border border-slate-200/80 flex items-center justify-center text-base shrink-0 shadow-2xs">
-              {comp.icon || '🎯'}
+            <div className="w-8 h-8 rounded-xl bg-white border border-slate-200/80 flex items-center justify-center text-slate-700 shrink-0 shadow-2xs">
+              <SkillIcon skillId={comp.id} name={comp.icon} className="w-4 h-4 text-slate-700" strokeWidth={1.75} />
             </div>
             <div className="min-w-0">
               <h3 className="font-bold text-slate-900 text-xs sm:text-sm truncate">

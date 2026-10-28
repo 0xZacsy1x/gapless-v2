@@ -9,6 +9,7 @@ import { TRAIT_META } from '@/data/gaplessData';
 import { useGaplessContext } from '@/contexts/CareerContext';
 import { Navbar } from '@/components/Navbar';
 import dynamic from 'next/dynamic';
+import { CareerIcon } from '@/components/ui/AppIcons';
 
 const ArchetypeReasoningBlock = dynamic(
   () => import('./ArchetypeReasoningBlock').then((mod) => mod.ArchetypeReasoningBlock),
@@ -254,7 +255,9 @@ export function ResultsView() {
                         Pilihan Terbaik
                       </span>
                     )}
-                    <div className="text-2xl mb-2">{career.icon}</div>
+                    <div className="w-10 h-10 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-800 mb-2">
+                      <CareerIcon careerId={career.id} name={career.icon} className="w-5 h-5 text-slate-800" strokeWidth={1.75} />
+                    </div>
                     <h3 className="text-slate-900 font-bold mb-1">{career.title}</h3>
                     <p className="text-gray-500 text-sm leading-relaxed mb-3">
                       {career.description}

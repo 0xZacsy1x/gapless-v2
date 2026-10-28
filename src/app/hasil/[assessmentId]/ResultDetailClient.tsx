@@ -16,6 +16,7 @@ import { useGaplessContext } from "@/contexts/CareerContext";
 import dynamic from "next/dynamic";
 import { GapInsight } from "@/contexts/CareerContext";
 import { SJTSoftSkillsCard } from "@/components/SJTSoftSkillsCard";
+import { CareerIcon, TraitIcon } from "@/components/ui/AppIcons";
 
 const ArchetypeReasoningBlock = dynamic(
   () => import("@/components/ArchetypeReasoningBlock").then((mod) => mod.ArchetypeReasoningBlock),
@@ -287,8 +288,8 @@ export function ResultDetailClient({
 
                     {/* Baris Icon + Judul Karier & Gaji */}
                     <div className="flex items-start sm:items-center gap-3.5 mb-3.5">
-                      <span className="text-3xl p-2.5 bg-slate-50 rounded-2xl border border-slate-100 shadow-xs shrink-0">
-                        {career.icon}
+                      <span className="p-2.5 bg-slate-50 rounded-2xl border border-slate-100 shadow-xs shrink-0 flex items-center justify-center text-slate-800">
+                        <CareerIcon careerId={career.id} name={career.icon} className="w-7 h-7 text-slate-800" strokeWidth={1.75} />
                       </span>
                       <div className="min-w-0 flex-1">
                         <h3 className="text-base sm:text-lg font-bold text-slate-900 leading-snug break-words">
@@ -407,12 +408,12 @@ export function ResultDetailClient({
                       border: `1px solid ${traitMetaColor}30`,
                     }}
                   >
-                    <span>{TRAIT_META[careerProfile.trait as Trait]?.emoji || "🎯"}</span>
+                    <TraitIcon trait={careerProfile.trait} className="w-3.5 h-3.5" strokeWidth={1.75} />
                     <span>Archetype: {careerProfile.trait}</span>
                   </span>
                 </div>
                 <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
-                  {careerProfile.icon && <span className="text-2xl">{careerProfile.icon}</span>}
+                  <CareerIcon careerId={careerProfile.id} name={careerProfile.icon} className="w-7 h-7 text-slate-900 shrink-0" strokeWidth={1.75} />
                   <span>{careerProfile.title}</span>
                 </h1>
                 <p className="text-slate-500 text-xs sm:text-sm mt-1 max-w-2xl leading-relaxed">

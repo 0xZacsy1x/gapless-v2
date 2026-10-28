@@ -222,8 +222,9 @@ export function PricingClient({ isLoggedIn, isPro: initialIsPro, periodEnd: init
                 <ArrowRight className="w-3.5 h-3.5" />
               </button>
             ) : !isPro ? (
-              <div className="w-full py-3 px-4 rounded-xl bg-slate-50 border border-slate-200 text-slate-600 text-xs font-semibold text-center">
-                ✓ Paket Aktif Kamu Saat Ini
+              <div className="w-full py-3 px-4 rounded-xl bg-slate-50 border border-slate-200 text-slate-600 text-xs font-semibold flex items-center justify-center gap-1.5">
+                <Check className="w-3.5 h-3.5 text-emerald-600" strokeWidth={2} />
+                <span>Paket Aktif Kamu Saat Ini</span>
               </div>
             ) : (
               <Link

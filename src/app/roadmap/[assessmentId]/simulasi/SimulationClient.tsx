@@ -16,7 +16,10 @@ import {
   FileText, 
   ArrowLeft,
   Share2,
-  Lock
+  Lock,
+  Pin,
+  Check,
+  Lightbulb,
 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -213,9 +216,10 @@ export default function SimulationClient({
           {simulation.skillsValidated.map((skill) => (
             <span
               key={skill}
-              className="text-xs font-semibold px-3 py-1 rounded-lg bg-blue-50 text-blue-700 border border-blue-100"
+              className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1 rounded-lg bg-blue-50 text-blue-700 border border-blue-100"
             >
-              ✓ {skill}
+              <Check className="w-3 h-3 text-blue-600" strokeWidth={2} />
+              <span>{skill}</span>
             </span>
           ))}
         </div>
@@ -286,7 +290,8 @@ export default function SimulationClient({
         {/* Skenario Kasus */}
         <div className="bg-slate-50 p-5 rounded-2xl border border-slate-200/80 text-xs md:text-sm text-slate-700 leading-relaxed space-y-2">
           <p className="font-bold text-slate-900 flex items-center gap-1.5">
-            <span>📌 Skenario Kasus Industri:</span>
+            <Pin className="w-3.5 h-3.5 text-slate-700" strokeWidth={1.75} />
+            <span>Skenario Kasus Industri:</span>
           </p>
           <p>{currentTask.scenario}</p>
         </div>
@@ -362,8 +367,9 @@ export default function SimulationClient({
                 className="w-full p-4 rounded-2xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 text-xs md:text-sm text-slate-800 outline-none transition-all font-mono"
               />
               {currentTask.hint && (
-                <p className="text-[11px] text-slate-400 italic">
-                  💡 Tips: {currentTask.hint}
+                <p className="text-[11px] text-slate-500 italic flex items-center gap-1.5">
+                  <Lightbulb className="w-3.5 h-3.5 text-amber-500 shrink-0" strokeWidth={1.75} />
+                  <span>Tips: {currentTask.hint}</span>
                 </p>
               )}
             </div>

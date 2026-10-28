@@ -14,6 +14,7 @@ import {
   Target,
   Zap,
 } from 'lucide-react';
+import { SkillIcon } from '@/components/ui/AppIcons';
 import { SJT_SKILLS, SJT_SKILL_META, SJTSkill } from '@/data/sjtBank';
 import { getDetailedSoftSkillAnalysis, SoftSkillDetailReport } from '@/data/sjtAnalysisData';
 
@@ -179,7 +180,7 @@ export function SJTSoftSkillsCard({
                     key={s.skill}
                     className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1 rounded-xl bg-white text-emerald-900 border border-emerald-200 shadow-2xs"
                   >
-                    <span>{s.icon}</span>
+                    <SkillIcon skill={s.skill} className="w-3.5 h-3.5 text-emerald-700" strokeWidth={1.75} />
                     <span>{s.shortLabel}</span>
                   </span>
                 ))}
@@ -207,7 +208,7 @@ export function SJTSoftSkillsCard({
                     key={s.skill}
                     className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1 rounded-xl bg-white text-amber-900 border border-amber-200 shadow-2xs"
                   >
-                    <span>{s.icon}</span>
+                    <SkillIcon skill={s.skill} className="w-3.5 h-3.5 text-amber-700" strokeWidth={1.75} />
                     <span>{s.shortLabel}</span>
                   </span>
                 ))}
@@ -258,8 +259,8 @@ export function SJTSoftSkillsCard({
                 >
                   <div>
                     <div className="flex items-center justify-between gap-2 mb-2">
-                      <span className="text-2xl p-1.5 bg-white rounded-xl border border-slate-100 shadow-2xs">
-                        {item.icon}
+                      <span className="p-2 bg-white rounded-xl border border-slate-100 shadow-2xs text-slate-700 flex items-center justify-center">
+                        <SkillIcon skill={item.skill} className="w-5 h-5 text-slate-700" strokeWidth={1.75} />
                       </span>
                       <span
                         className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${item.levelColor}`}
@@ -308,8 +309,9 @@ export function SJTSoftSkillsCard({
                     <h4 className="text-xs font-bold text-indigo-950">
                       Evaluasi Kematangan Perilaku Kerja &amp; Panduan Wawancara ({careerTitle})
                     </h4>
-                    <span className="text-[10px] font-semibold text-emerald-800 bg-emerald-100 border border-emerald-200 px-2 py-0.5 rounded-md">
-                      ✓ Tergabung di Laporan Lengkap (Hal 4 &amp; 5)
+                    <span className="text-[10px] font-semibold text-emerald-800 bg-emerald-100 border border-emerald-200 px-2 py-0.5 rounded-md inline-flex items-center gap-1">
+                      <CheckCircle2 className="w-3 h-3 text-emerald-700" strokeWidth={2} />
+                      <span>Tergabung di Laporan Lengkap (Hal 4 &amp; 5)</span>
                     </span>
                   </div>
                   <p className="text-[11px] text-indigo-800 leading-relaxed">
@@ -333,8 +335,8 @@ export function SJTSoftSkillsCard({
                         className="w-full p-4.5 sm:p-5 flex items-center justify-between text-left hover:bg-slate-100/80 transition cursor-pointer"
                       >
                         <div className="flex items-center gap-3.5">
-                          <span className="text-2xl p-2 bg-white rounded-xl border border-slate-200/80 shadow-2xs">
-                            {item.icon}
+                          <span className="p-2 bg-white rounded-xl border border-slate-200/80 shadow-2xs text-slate-700 flex items-center justify-center shrink-0">
+                            <SkillIcon skill={item.skill} className="w-5 h-5 text-slate-700" strokeWidth={1.75} />
                           </span>
                           <div>
                             <div className="flex items-center gap-2">
@@ -374,8 +376,9 @@ export function SJTSoftSkillsCard({
                           <div className="p-5 pt-1 border-t border-slate-200/80 bg-white space-y-4">
                             {/* Respon Alami */}
                             <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 text-xs">
-                              <span className="font-bold text-slate-900 block mb-1">
-                                🧠 Respon Alami di Tempat Kerja:
+                              <span className="font-bold text-slate-900 flex items-center gap-1.5 mb-1">
+                                <Brain className="w-3.5 h-3.5 text-slate-700" strokeWidth={1.75} />
+                                <span>Respon Alami di Tempat Kerja:</span>
                               </span>
                               <p className="text-slate-600 leading-relaxed">
                                 {item.behavioralTendency}

@@ -9,6 +9,7 @@ import { useAuthGuard } from '@/hooks/useAuthGuard';
 import { Navbar } from '@/components/Navbar';
 import { LearningTabsNav } from '@/components/LearningTabsNav';
 import Link from 'next/link';
+import { Compass, Target } from 'lucide-react';
 
 type AssessmentResult = {
   id: string;
@@ -229,7 +230,11 @@ export default function RoadmapClient({ history, initialAssessmentId, serverUser
                       }`}
                       title={careerTitle}
                     >
-                      <span className="shrink-0">{isExploration ? '🧭' : '🎯'}</span>
+                      {isExploration ? (
+                        <Compass className="w-3.5 h-3.5 shrink-0" strokeWidth={1.75} />
+                      ) : (
+                        <Target className="w-3.5 h-3.5 shrink-0" strokeWidth={1.75} />
+                      )}
                       <span className="truncate max-w-[200px] sm:max-w-[320px]">
                         {isExploration ? 'Eksplorasi' : 'Terarah'} • {shortCareer}
                       </span>

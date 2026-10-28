@@ -11,6 +11,7 @@ import { useGaplessContext } from '@/contexts/CareerContext';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 import { Navbar } from '@/components/Navbar';
 import { quizBank } from '@/data/quizBank';
+import { CareerIcon } from '@/components/ui/AppIcons';
 import {
   saveAssessmentDraft,
   loadAssessmentDraft,
@@ -251,8 +252,9 @@ export function SkillGapView() {
                 Analisis Kesenjangan Skill
               </span>
             </div>
-            <h1 className="text-3xl md:text-4xl font-bold text-slate-900 mb-2">
-              {selectedCareer.icon} {selectedCareer.title}
+            <h1 className="text-3xl md:text-4xl font-bold text-slate-900 mb-2 flex items-center justify-center gap-3">
+              <CareerIcon careerId={selectedCareer.id} name={selectedCareer.icon} className="w-8 h-8 text-slate-900" strokeWidth={1.75} />
+              <span>{selectedCareer.title}</span>
             </h1>
             <p className="text-gray-500 text-sm sm:text-base max-w-lg mx-auto">
               Jawab 10 pertanyaan studi kasus industri untuk mengukur kesiapan skill aktualmu.

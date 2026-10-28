@@ -4,7 +4,7 @@ import { useState } from 'react';
 import {
   Calendar, Award, Bookmark, ExternalLink, Filter,
   CheckCircle2, Clock, Sparkles, Lock, ArrowUpRight,
-  Search, Users, Trophy, HeartHandshake, Building2, MapPin, Tag, GraduationCap
+  Search, Users, Trophy, HeartHandshake, Building2, MapPin, Tag, GraduationCap, Star
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -206,7 +206,7 @@ export function KegiatanClient({
           {[
             { id: 'all', label: 'Semua' },
             ...(userCareerTitle && roleMatchCount > 0
-              ? [{ id: 'role_match', label: `⭐ Sesuai Karier (${roleMatchCount})` }]
+              ? [{ id: 'role_match', label: `Sesuai Karier (${roleMatchCount})`, isHighlight: true }]
               : []),
             { id: 'development_program', label: 'Development Program' },
             { id: 'lomba', label: 'Lomba / Kompetisi' },
@@ -217,13 +217,14 @@ export function KegiatanClient({
             <button
               key={tab.id}
               onClick={() => setSelectedType(tab.id)}
-              className={`px-3.5 py-2 rounded-xl font-medium whitespace-nowrap transition-all ${
+              className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl font-medium whitespace-nowrap transition-all cursor-pointer ${
                 selectedType === tab.id
                   ? 'bg-slate-900 text-white shadow-sm'
                   : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
               }`}
             >
-              {tab.label}
+              {tab.isHighlight && <Star className="w-3.5 h-3.5 text-amber-400 fill-amber-400 shrink-0" />}
+              <span>{tab.label}</span>
             </button>
           ))}
         </div>

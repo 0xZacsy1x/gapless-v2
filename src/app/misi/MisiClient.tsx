@@ -355,7 +355,10 @@ export function MisiClient({
                             }`}>
                               {mission.title}
                               {!isLocked && isCompleted && (
-                                <span className="ml-2 text-xs font-normal text-emerald-600">✓ Selesai (Diisi sendiri)</span>
+                                <span className="ml-2 inline-flex items-center gap-1 text-xs font-normal text-emerald-600">
+                                  <CheckCircle2 className="w-3.5 h-3.5" strokeWidth={1.75} />
+                                  <span>Selesai (Diisi sendiri)</span>
+                                </span>
                               )}
                             </p>
                             {isLocked && (

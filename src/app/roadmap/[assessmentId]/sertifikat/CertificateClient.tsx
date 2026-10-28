@@ -257,9 +257,10 @@ Big thanks to Gapless and ${companyName} for providing this immersive learning e
                 {skillsValidated.map((skill) => (
                   <span
                     key={skill}
-                    className="text-xs font-semibold px-3 py-1 rounded-lg bg-slate-100 text-slate-700 border border-slate-200"
+                    className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1 rounded-lg bg-slate-100 text-slate-700 border border-slate-200"
                   >
-                    ✓ {skill}
+                    <Check className="w-3.5 h-3.5 text-emerald-600" strokeWidth={2} />
+                    <span>{skill}</span>
                   </span>
                 ))}
               </div>

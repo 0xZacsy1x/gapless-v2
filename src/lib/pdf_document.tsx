@@ -525,14 +525,14 @@ export function PdfDocument({ report }: PdfDocumentProps) {
               </View>
 
               <Text style={{ fontSize: 7.5, fontFamily: 'Helvetica-Bold', color: '#15803d', marginTop: 2 }}>
-                ✓ Di Level {item.currentLevel} Sudah Mampu:
+                Di Level {item.currentLevel} Sudah Mampu:
               </Text>
               {item.canDo.map((c, i) => (
                 <Text key={i} style={{ fontSize: 7.5, color: colors.textDark, marginLeft: 6 }}>• {c}</Text>
               ))}
 
               <Text style={{ fontSize: 7.5, fontFamily: 'Helvetica-Bold', color: '#b91c1c', marginTop: 4 }}>
-                ✗ Yang Belum Dikuasai (Kebutuhan Level {item.targetLevel}):
+                Kebutuhan Level {item.targetLevel} (Belum Dikuasai):
               </Text>
               {item.cannotDo.map((c, i) => (
                 <Text key={i} style={{ fontSize: 7.5, color: colors.textDark, marginLeft: 6 }}>• {c}</Text>

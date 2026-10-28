@@ -16,6 +16,7 @@ import { CAREER_PROFILES, TRAIT_META, Trait } from '@/data/gaplessData';
 import { hasActivePro } from '@/lib/payment_service';
 import { computeSJTScores, SJT_SKILLS, SJT_SKILL_META } from '@/data/sjtBank';
 import { COMPETENCIES, CompetencyItem } from '@/app/passport/types';
+import { SkillIcon } from '@/components/ui/AppIcons';
 
 import type { Metadata } from 'next';
 
@@ -304,7 +305,9 @@ export default async function PublicPassportPage({
                 >
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex items-center gap-2 min-w-0">
-                      <span className="text-base">{comp.icon || '🎯'}</span>
+                      <span className="w-6 h-6 rounded-lg bg-slate-700/60 border border-slate-600/60 flex items-center justify-center shrink-0">
+                        <SkillIcon skillId={comp.id} name={comp.icon} className="w-3.5 h-3.5 text-slate-300" strokeWidth={1.75} />
+                      </span>
                       <div className="min-w-0">
                         <h4 className="text-xs font-semibold text-white truncate">{comp.name}</h4>
                         <span className={`text-[10px] px-1.5 py-0.2 rounded border font-medium ${badgeColor}`}>

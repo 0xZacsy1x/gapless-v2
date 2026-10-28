@@ -389,7 +389,7 @@ export function SkillReadinessCard({
               </div>
               <div>
                 <h4 className="font-bold text-sm md:text-base mb-1 text-emerald-950">
-                  🎉 Kesiapan Sempurna! Kamu Sudah Memenuhi Standar Industri
+                  Kesiapan Sempurna! Kamu Sudah Memenuhi Standar Industri
                 </h4>
                 <p className="text-xs md:text-sm text-emerald-900/90 leading-relaxed">
                   Kamu telah menyelesaikan seluruh materi belajar dan memiliki tingkat kesiapan skill 100% untuk berkarier sebagai <strong>{career.title}</strong>. Terus asah portofoliomu dan mulai lamar pekerjaan impian!
