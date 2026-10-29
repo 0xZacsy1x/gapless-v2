@@ -220,6 +220,7 @@ export default function BentoEcosystemTour() {
   const cursorRef = useRef<HTMLDivElement>(null);
   const clickPulseRef = useRef<HTMLSpanElement>(null);
   const tlRef = useRef<gsap.core.Timeline | null>(null);
+  const userTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   // Button refs for cursor automated gliding
   const tabRoadmapRef = useRef<HTMLButtonElement>(null);
@@ -233,16 +234,10 @@ export default function BentoEcosystemTour() {
   const [activeCareerIdx, setActiveCareerIdx] = useState<number>(0);
   const [activeKegiatanIdx, setActiveKegiatanIdx] = useState<number>(0);
   const [bookmarkedId, setBookmarkedId] = useState<string>("k1");
-  const [isInView, setIsInView] = useState<boolean>(true);
   const [isTabActive, setIsTabActive] = useState<boolean>(true);
   const [isUserInteracting, setIsUserInteracting] = useState<boolean>(false);
 
-  const [prefersReducedMotion, setPrefersReducedMotion] = useState<boolean>(() => {
-    if (typeof window !== "undefined") {
-      return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    }
-    return false;
-  });
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState<boolean>(false);
 
   // Check prefers-reduced-motion
   useEffect(() => {
@@ -256,33 +251,29 @@ export default function BentoEcosystemTour() {
   // Coordinate helper relative to window container
   const getCoords = useCallback(
     (el: HTMLElement | null, off?: { x?: number; y?: number }) => {
-      if (!el || !windowContainerRef.current) return { x: 120, y: 150 };
+      if (!el || !windowContainerRef.current) return { x: 140, y: 55 };
       const parentRect = windowContainerRef.current.getBoundingClientRect();
       const elRect = el.getBoundingClientRect();
       return {
-        x: Math.round(elRect.left - parentRect.left + elRect.width / 2 + (off?.x ?? 0)),
-        y: Math.round(elRect.top - parentRect.top + elRect.height / 2 + (off?.y ?? 0)),
+        x: Math.round(elRect.left - parentRect.left + elRect.width * 0.4 + (off?.x ?? 0)),
+        y: Math.round(elRect.top - parentRect.top + elRect.height * 0.5 + (off?.y ?? 0)),
       };
     },
     []
   );
 
-  // Ripple click pulse on cursor
+  // Ripple click pulse on cursor with visible tactile feedback
   const triggerClickPulse = useCallback(() => {
     if (cursorRef.current) {
-      gsap.to(cursorRef.current, {
-        scale: 0.88,
-        duration: 0.08,
-        yoyo: true,
-        repeat: 1,
-        ease: "power2.inOut",
-      });
+      gsap.timeline()
+        .to(cursorRef.current, { scale: 0.74, duration: 0.08, ease: "power2.in" })
+        .to(cursorRef.current, { scale: 1, duration: 0.16, ease: "back.out(2)" });
     }
     if (clickPulseRef.current) {
       gsap.fromTo(
         clickPulseRef.current,
-        { scale: 0.3, opacity: 0.8 },
-        { scale: 2.2, opacity: 0, duration: 0.35, ease: "power2.out", immediateRender: false }
+        { scale: 0.2, opacity: 1 },
+        { scale: 1.8, opacity: 0, duration: 0.35, ease: "power2.out", immediateRender: false }
       );
     }
   }, []);
@@ -298,41 +289,30 @@ export default function BentoEcosystemTour() {
     }
   }, [activeTab, prefersReducedMotion]);
 
-  // IntersectionObserver & Visibility handling
+  // Visibility handling (pause only when browser tab is inactive)
   useEffect(() => {
     const handleVisibility = () => {
       setIsTabActive(!document.hidden);
     };
     document.addEventListener("visibilitychange", handleVisibility);
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        setIsInView(entry.isIntersecting);
-      },
-      { threshold: 0.15, rootMargin: "100px 0px 100px 0px" }
-    );
-
-    if (windowContainerRef.current) {
-      observer.observe(windowContainerRef.current);
-    }
-
     return () => {
       document.removeEventListener("visibilitychange", handleVisibility);
-      observer.disconnect();
     };
   }, []);
 
   // Automated Virtual Cursor Tour Orchestration
   useEffect(() => {
-    if (prefersReducedMotion) return;
-
     const cursor = cursorRef.current;
     if (!cursor) return;
+
+    // Immediately place cursor at Tab 1 on mount
+    const initPos = getCoords(tabRoadmapRef.current, { x: 0, y: 0 });
+    gsap.set(cursor, { x: initPos.x, y: initPos.y, opacity: 1, scale: 1 });
 
     // Create the master looping cursor timeline
     const tl = gsap.timeline({
       repeat: -1,
-      repeatDelay: 0.5,
+      repeatDelay: 0.4,
       defaults: { ease: "power2.out" },
     });
     tlRef.current = tl;
@@ -343,15 +323,8 @@ export default function BentoEcosystemTour() {
       setActiveCareerIdx(0);
     });
 
-    // Reveal cursor at Tab 1
-    tl.to(cursor, {
-      opacity: 1,
-      duration: 0.4,
-      onStart: () => {
-        const c = getCoords(tabRoadmapRef.current, { x: 0, y: 0 });
-        gsap.set(cursor, { x: c.x, y: c.y });
-      },
-    }, "+=0.3");
+    // Pause briefly at Tab 1
+    tl.to({}, { duration: 0.4 });
 
     // Click Tab 1
     tl.call(() => {
@@ -363,24 +336,24 @@ export default function BentoEcosystemTour() {
     tl.to(cursor, {
       x: () => getCoords(careerDaRef.current, { x: 0, y: 0 }).x,
       y: () => getCoords(careerDaRef.current, { x: 0, y: 0 }).y,
-      duration: 0.8,
+      duration: 0.75,
       ease: "power2.inOut",
-    }, "+=0.8");
+    }, "+=0.6");
 
     // Click "Data Analyst" button
     tl.call(() => {
       triggerClickPulse();
       setActiveCareerIdx(1);
-    }, undefined, "+=0.15");
+    }, undefined, "+=0.12");
 
     // Pause to inspect Data Analyst roadmap modules
-    tl.to({}, { duration: 3.5 });
+    tl.to({}, { duration: 3.2 });
 
     // ── PHASE 2: Glide to Tab 2 (Misi Soft Skill) ──
     tl.to(cursor, {
       x: () => getCoords(tabMisiRef.current, { x: 0, y: 0 }).x,
       y: () => getCoords(tabMisiRef.current, { x: 0, y: 0 }).y,
-      duration: 0.85,
+      duration: 0.8,
       ease: "power2.inOut",
     });
 
@@ -391,13 +364,13 @@ export default function BentoEcosystemTour() {
     }, undefined, "+=0.1");
 
     // Pause to inspect Misi Soft Skill items & XP
-    tl.to({}, { duration: 4.0 });
+    tl.to({}, { duration: 3.5 });
 
     // ── PHASE 3: Glide to Tab 3 (Portofolio) ──
     tl.to(cursor, {
       x: () => getCoords(tabPortoRef.current, { x: 0, y: 0 }).x,
       y: () => getCoords(tabPortoRef.current, { x: 0, y: 0 }).y,
-      duration: 0.85,
+      duration: 0.8,
       ease: "power2.inOut",
     });
 
@@ -413,22 +386,22 @@ export default function BentoEcosystemTour() {
       y: () => getCoords(kegiatan2Ref.current, { x: 0, y: 0 }).y,
       duration: 0.75,
       ease: "power2.inOut",
-    }, "+=1.2");
+    }, "+=1.0");
 
     // Click "Kasus 2"
     tl.call(() => {
       triggerClickPulse();
       setActiveKegiatanIdx(1);
-    }, undefined, "+=0.15");
+    }, undefined, "+=0.12");
 
     // Pause to inspect Case 2 (Hackathon)
-    tl.to({}, { duration: 3.2 });
+    tl.to({}, { duration: 3.0 });
 
     // ── PHASE 4: Glide back to Tab 1 (Roadmap) ──
     tl.to(cursor, {
       x: () => getCoords(tabRoadmapRef.current, { x: 0, y: 0 }).x,
       y: () => getCoords(tabRoadmapRef.current, { x: 0, y: 0 }).y,
-      duration: 0.85,
+      duration: 0.8,
       ease: "power2.inOut",
     });
 
@@ -443,37 +416,40 @@ export default function BentoEcosystemTour() {
     return () => {
       tl.kill();
     };
-  }, [getCoords, triggerClickPulse, prefersReducedMotion]);
+  }, [getCoords, triggerClickPulse]);
 
-  // Pause cursor tour when user interacts or window is out of view
+  // Pause cursor tour when user interacts or browser tab is hidden
   useEffect(() => {
     if (!tlRef.current) return;
-    if (isUserInteracting || !isInView || !isTabActive) {
+    if (isUserInteracting || !isTabActive) {
       tlRef.current.pause();
       if (cursorRef.current) {
-        gsap.to(cursorRef.current, { opacity: 0, duration: 0.25 });
+        gsap.to(cursorRef.current, { opacity: 0, duration: 0.2 });
       }
     } else {
       tlRef.current.resume();
+      if (cursorRef.current) {
+        gsap.to(cursorRef.current, { opacity: 1, duration: 0.25 });
+      }
     }
-  }, [isUserInteracting, isInView, isTabActive]);
+  }, [isUserInteracting, isTabActive]);
 
   const handleTabClick = (tabId: FeatureTab) => {
     setActiveTab(tabId);
     setIsUserInteracting(true);
-    const timeout = setTimeout(() => {
+    if (userTimerRef.current) clearTimeout(userTimerRef.current);
+    userTimerRef.current = setTimeout(() => {
       setIsUserInteracting(false);
-    }, 6000);
-    return () => clearTimeout(timeout);
+    }, 4500);
   };
 
   const handleSelectCareer = (idx: number) => {
     setActiveCareerIdx(idx);
     setIsUserInteracting(true);
-    const timeout = setTimeout(() => {
+    if (userTimerRef.current) clearTimeout(userTimerRef.current);
+    userTimerRef.current = setTimeout(() => {
       setIsUserInteracting(false);
-    }, 6000);
-    return () => clearTimeout(timeout);
+    }, 4500);
   };
 
   const toggleBookmark = (id: string, e: React.MouseEvent) => {
@@ -1063,29 +1039,33 @@ export default function BentoEcosystemTour() {
       ========================================================================= */}
       <div
         ref={cursorRef}
-        className="absolute pointer-events-none z-50 top-0 left-0 opacity-0 will-change-transform"
+        className="absolute pointer-events-none z-50 top-0 left-0 will-change-transform"
+        style={{ opacity: 1 }}
         aria-hidden="true"
       >
         <div className="relative">
+          {/* Click Pulse Ripple (Origin centered directly on pointer tip at x=2, y=2) */}
+          <span
+            ref={clickPulseRef}
+            className="absolute -top-3.5 -left-3.5 w-8 h-8 rounded-full bg-[#0066FF]/40 border-2 border-[#0066FF] pointer-events-none opacity-0 will-change-transform"
+          />
+
           <svg
-            width="28"
-            height="34"
-            viewBox="0 0 24 28"
+            width="20"
+            height="24"
+            viewBox="0 0 20 24"
             fill="none"
-            className="drop-shadow-lg filter drop-shadow-[0_4px_16px_rgba(0,102,255,0.7)]"
+            className="filter drop-shadow-[0_2px_8px_rgba(0,0,0,0.55)]"
           >
             <path
-              d="M2.5 1.5L21.5 13.5L12 16L8 25.5L2.5 1.5Z"
+              d="M2 2L18 12.5L10 14.5L6.5 22L2 2Z"
               fill="#0066FF"
-              stroke="white"
-              strokeWidth="2.2"
+              stroke="#FFFFFF"
+              strokeWidth="1.75"
+              strokeLinecap="round"
               strokeLinejoin="round"
             />
           </svg>
-          <span
-            ref={clickPulseRef}
-            className="absolute w-12 h-12 rounded-full bg-[#0066FF]/30 border-2 border-[#0066FF] pointer-events-none opacity-0 -left-[19px] -top-[20px]"
-          />
         </div>
       </div>
     </div>
