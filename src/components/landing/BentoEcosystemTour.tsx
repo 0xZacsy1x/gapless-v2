@@ -421,11 +421,14 @@ export default function BentoEcosystemTour() {
   // Pause cursor tour when user interacts or browser tab is hidden
   useEffect(() => {
     if (!tlRef.current) return;
-    if (isUserInteracting || !isTabActive) {
+    if (!isTabActive) {
       tlRef.current.pause();
       if (cursorRef.current) {
         gsap.to(cursorRef.current, { opacity: 0, duration: 0.2 });
       }
+    } else if (isUserInteracting) {
+      tlRef.current.pause();
+      // Keep cursor gently visible at current position without vanishing abruptly
     } else {
       tlRef.current.resume();
       if (cursorRef.current) {
@@ -463,29 +466,24 @@ export default function BentoEcosystemTour() {
   return (
     <div
       ref={windowContainerRef}
-      onMouseEnter={() => setIsUserInteracting(true)}
-      onMouseLeave={() => {
-        // Resume tour after short delay when user moves mouse away
-        setTimeout(() => setIsUserInteracting(false), 2000);
-      }}
-      className="relative w-full bg-[#1c1c1e] border border-white/[0.12] rounded-2xl sm:rounded-3xl shadow-[0_28px_70px_-15px_rgba(0,0,0,0.6),inset_0_1px_0_0_rgba(255,255,255,0.12)] overflow-hidden flex flex-col min-h-[530px] text-[#f5f5f7] select-none font-sans"
+      className="relative w-full bg-[#1c1c1e] border border-white/[0.12] rounded-2xl sm:rounded-3xl shadow-[0_28px_70px_-15px_rgba(0,0,0,0.6),inset_0_1px_0_0_rgba(255,255,255,0.12)] overflow-hidden flex flex-col min-h-[480px] sm:min-h-[530px] text-[#f5f5f7] select-none font-sans"
     >
       {/* =========================================================================
           MACOS TOP WINDOW CHROME (MacBook Titlebar)
       ========================================================================= */}
-      <div className="bg-[#252528] border-b border-white/[0.08] px-4 sm:px-6 py-3 flex items-center justify-between gap-3 relative z-20 shrink-0">
+      <div className="bg-[#252528] border-b border-white/[0.08] px-3.5 sm:px-6 py-2.5 sm:py-3 flex items-center justify-between gap-2.5 sm:gap-3 relative z-20 shrink-0">
         {/* macOS 3 Window Controls */}
-        <div className="flex items-center gap-2 shrink-0">
+        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
           <span
-            className="w-3 h-3 rounded-full bg-[#FF5F57] border border-[#e0443e] shadow-[inset_0_1px_1px_rgba(255,255,255,0.4)] inline-block"
+            className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-[#FF5F57] border border-[#e0443e] shadow-[inset_0_1px_1px_rgba(255,255,255,0.4)] inline-block"
             title="Close"
           />
           <span
-            className="w-3 h-3 rounded-full bg-[#FFBD2E] border border-[#dea123] shadow-[inset_0_1px_1px_rgba(255,255,255,0.4)] inline-block"
+            className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-[#FFBD2E] border border-[#dea123] shadow-[inset_0_1px_1px_rgba(255,255,255,0.4)] inline-block"
             title="Minimize"
           />
           <span
-            className="w-3 h-3 rounded-full bg-[#28C840] border border-[#1aab29] shadow-[inset_0_1px_1px_rgba(255,255,255,0.4)] inline-block"
+            className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-[#28C840] border border-[#1aab29] shadow-[inset_0_1px_1px_rgba(255,255,255,0.4)] inline-block"
             title="Fullscreen"
           />
         </div>
@@ -504,18 +502,18 @@ export default function BentoEcosystemTour() {
         </div>
 
         {/* Status Badge */}
-        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#2c2c2e] border border-white/10 text-xs font-semibold text-[#f5f5f7] shadow-3xs shrink-0">
+        <div className="flex items-center gap-1.5 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-lg bg-[#2c2c2e] border border-white/10 text-xs font-semibold text-[#f5f5f7] shadow-3xs shrink-0">
           <span className="w-1.5 h-1.5 rounded-full bg-[#30d158]" />
-          <span className="font-mono text-[11px] text-[#e5e5e7]">Sistem Terkalibrasi</span>
+          <span className="font-mono text-[10px] sm:text-[11px] text-[#e5e5e7]">Sistem Terkalibrasi</span>
         </div>
       </div>
 
       {/* =========================================================================
           IN-WINDOW TAB NAVIGATION BAR (Tabs Inside MacBook Window)
       ========================================================================= */}
-      <div className="bg-[#18181b] border-b border-white/[0.08] px-4 sm:px-6 py-2.5 flex flex-wrap items-center justify-between gap-3 relative z-20 shrink-0">
+      <div className="bg-[#18181b] border-b border-white/[0.08] px-3.5 sm:px-6 py-2 sm:py-2.5 flex flex-wrap sm:flex-nowrap items-center justify-between gap-2 sm:gap-3 relative z-20 shrink-0">
         {/* Segmented Control Tabs */}
-        <div className="flex items-center gap-1.5 p-1 rounded-xl bg-[#242426] border border-white/[0.08] overflow-x-auto no-scrollbar">
+        <div className="flex items-center gap-1 sm:gap-1.5 p-1 rounded-xl bg-[#242426] border border-white/[0.08] overflow-x-auto no-scrollbar touch-pan-x max-w-full">
           {FEATURE_TABS.map((tab) => {
             const isActive = activeTab === tab.id;
             const Icon = tab.icon;
@@ -532,7 +530,7 @@ export default function BentoEcosystemTour() {
                 ref={ref}
                 type="button"
                 onClick={() => handleTabClick(tab.id)}
-                className={`px-3 sm:px-4 py-1.5 rounded-lg text-xs font-bold transition-all duration-200 cursor-pointer flex items-center gap-2 shrink-0 ${
+                className={`px-3 sm:px-4 py-2 sm:py-1.5 rounded-lg text-xs font-bold transition-all duration-200 cursor-pointer min-h-[38px] sm:min-h-[40px] flex items-center gap-1.5 sm:gap-2 shrink-0 active:scale-[0.97] ${
                   isActive
                     ? "bg-[#0066FF] text-white shadow-xs"
                     : "text-[#98989d] hover:text-[#f5f5f7] hover:bg-white/[0.04]"
@@ -553,9 +551,9 @@ export default function BentoEcosystemTour() {
         </div>
 
         {/* Live Auto-Tour Status Indicator */}
-        <div className="flex items-center gap-2 text-[11px] font-mono text-[#98989d]">
+        <div className="flex items-center gap-1.5 text-[10.5px] sm:text-[11px] font-mono text-[#98989d] shrink-0">
           <span className="w-1.5 h-1.5 rounded-full bg-[#0066FF] animate-pulse" />
-          <span className="hidden sm:inline">Kursor Tur Otomatis</span>
+          <span>Tur Otomatis</span>
           <span className="text-[#71717a] hidden md:inline">· Klik bebas kapan saja</span>
         </div>
       </div>
@@ -565,7 +563,7 @@ export default function BentoEcosystemTour() {
       ========================================================================= */}
       <div
         ref={windowContentRef}
-        className="p-4 sm:p-6 lg:p-7 flex-1 flex flex-col justify-between space-y-5 relative z-10"
+        className="p-3.5 sm:p-6 lg:p-7 flex-1 flex flex-col justify-between space-y-4 sm:space-y-5 relative z-10"
       >
         {/* ===================================================================
             TAB 1: ROADMAP BELAJAR TERSTRUKTUR
@@ -722,13 +720,13 @@ export default function BentoEcosystemTour() {
             </div>
 
             {/* 4 Phases Stepper Timeline (Spanning Full Width) */}
-            <div className="bg-[#242426] border border-white/[0.08] rounded-2xl p-4 sm:p-5">
-              <div className="relative flex items-start justify-between px-3 sm:px-8">
+            <div className="bg-[#242426] border border-white/[0.08] rounded-xl sm:rounded-2xl p-3 sm:p-5">
+              <div className="relative flex items-start justify-between px-1 sm:px-8">
                 {/* Background connecting rail */}
-                <div className="absolute left-10 right-10 top-3.5 h-0.5 bg-[#3a3a3c]" aria-hidden="true" />
+                <div className="absolute left-6 right-6 sm:left-10 sm:right-10 top-3.5 h-0.5 bg-[#3a3a3c]" aria-hidden="true" />
                 {/* Completed rail */}
                 <div
-                  className="absolute left-10 top-3.5 h-0.5 bg-[#30d158] transition-all duration-500"
+                  className="absolute left-6 sm:left-10 top-3.5 h-0.5 bg-[#30d158] transition-all duration-500"
                   style={{ width: "33%" }}
                   aria-hidden="true"
                 />
@@ -741,7 +739,7 @@ export default function BentoEcosystemTour() {
                   return (
                     <div key={phase.phase} className="relative z-10 flex flex-col items-center text-center">
                       <div
-                        className={`w-7 h-7 rounded-full flex items-center justify-center transition-all duration-300 ${
+                        className={`w-6 h-6 sm:w-7 sm:h-7 rounded-full flex items-center justify-center transition-all duration-300 ${
                           isCompleted
                             ? "bg-[#30d158] text-black shadow-2xs"
                             : isInProgress
@@ -752,19 +750,19 @@ export default function BentoEcosystemTour() {
                         }`}
                       >
                         {isCompleted ? (
-                          <Check className="w-3.5 h-3.5 text-black stroke-[3]" />
+                          <Check className="w-3 sm:w-3.5 h-3 sm:h-3.5 text-black stroke-[3]" />
                         ) : isInProgress ? (
-                          <span className="w-2 h-2 rounded-full bg-white" />
+                          <span className="w-1.5 sm:w-2 h-1.5 sm:h-2 rounded-full bg-white" />
                         ) : isReady ? (
                           <span className="w-1.5 h-1.5 rounded-full bg-white/40" />
                         ) : (
-                          <Lock className="w-3 h-3 text-white/30" />
+                          <Lock className="w-2.5 sm:w-3 h-2.5 sm:h-3 text-white/30" />
                         )}
                       </div>
 
-                      <div className="mt-2 space-y-0.5">
+                      <div className="mt-1.5 sm:mt-2 space-y-0.5">
                         <span
-                          className={`text-[10.5px] font-mono font-bold uppercase tracking-wider block ${
+                          className={`text-[9.5px] sm:text-[10.5px] font-mono font-bold uppercase tracking-wider block ${
                             isInProgress
                               ? "text-[#0066FF]"
                               : isCompleted
@@ -774,11 +772,11 @@ export default function BentoEcosystemTour() {
                         >
                           Fase 0{phase.phase}
                         </span>
-                        <h4 className="text-xs font-bold text-[#f5f5f7] block truncate max-w-[80px] sm:max-w-[120px] leading-tight">
+                        <h4 className="text-[10.5px] sm:text-xs font-bold text-[#f5f5f7] block truncate max-w-[65px] sm:max-w-[120px] leading-tight">
                           {phase.title}
                         </h4>
                         <span
-                          className={`inline-block text-[10.5px] font-semibold px-2 py-0.5 rounded-md ${
+                          className={`inline-block text-[9.5px] sm:text-[10.5px] font-semibold px-1.5 sm:px-2 py-0.5 rounded-md ${
                             isCompleted
                               ? "text-[#30d158] bg-[#30d158]/15 border border-[#30d158]/30"
                               : isInProgress
@@ -912,7 +910,7 @@ export default function BentoEcosystemTour() {
 
               <Link
                 href="/assessment"
-                className="btn-press inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-[#0066FF] hover:bg-[#0052cc] text-white text-xs font-semibold shadow-xs transition-colors cursor-pointer group shrink-0"
+                className="btn-press inline-flex items-center justify-center gap-1.5 w-full sm:w-auto px-4 py-2.5 sm:py-2 rounded-xl bg-[#0066FF] hover:bg-[#0052cc] text-white text-xs sm:text-sm font-semibold shadow-xs transition-colors cursor-pointer group shrink-0 min-h-[44px] active:scale-[0.97]"
               >
                 <span>Mulai Latihan Situasional</span>
                 <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" />
@@ -1011,7 +1009,7 @@ export default function BentoEcosystemTour() {
                     ref={i === 1 ? kegiatan2Ref : undefined}
                     type="button"
                     onClick={() => setActiveKegiatanIdx(i)}
-                    className={`px-3 py-1.5 rounded-lg cursor-pointer transition-colors ${
+                    className={`px-3.5 py-2 sm:py-1.5 min-h-[38px] rounded-lg cursor-pointer transition-colors active:scale-[0.97] ${
                       i === activeKegiatanIdx
                         ? "bg-[#0066FF] text-white font-bold shadow-xs"
                         : "bg-[#2c2c2e] hover:bg-[#3a3a3c] text-[#98989d]"
@@ -1024,7 +1022,7 @@ export default function BentoEcosystemTour() {
 
               <Link
                 href="/assessment"
-                className="btn-press inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-[#0066FF] hover:bg-[#0052cc] text-white text-xs sm:text-sm font-semibold shadow-xs transition-colors cursor-pointer group shrink-0"
+                className="btn-press inline-flex items-center justify-center gap-1.5 w-full sm:w-auto px-4 py-2.5 sm:py-2 rounded-xl bg-[#0066FF] hover:bg-[#0052cc] text-white text-xs sm:text-sm font-semibold shadow-xs transition-colors cursor-pointer group shrink-0 min-h-[44px] active:scale-[0.97]"
               >
                 <span>Mulai Simulasi</span>
                 <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" />

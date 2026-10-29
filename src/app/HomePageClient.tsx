@@ -16,7 +16,7 @@ export function HomePageClient() {
       <HeroSection />
 
       {/* Bento Grid Features — "Ekosistem Karir Terpadu" (Generous Bottom Spacing) */}
-      <section className="w-full max-w-7xl mx-auto px-6 md:px-12 pt-8 pb-16 md:pt-10 md:pb-24 lg:pt-12 lg:pb-28 space-y-5 md:space-y-6 border-t border-blue-50/70">
+      <section className="w-full max-w-7xl mx-auto px-4 sm:px-6 md:px-12 pt-8 pb-14 md:pt-10 md:pb-24 lg:pt-12 lg:pb-28 space-y-5 md:space-y-6 border-t border-blue-50/70">
         <div className="space-y-1.5 max-w-2xl">
           <div className="text-[10.5px] font-mono font-bold text-brand-primary tracking-widest uppercase">
             FITUR UTAMA · ARSITEKTUR EKOSISTEM
