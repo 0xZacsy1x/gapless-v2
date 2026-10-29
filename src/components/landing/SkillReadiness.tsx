@@ -67,41 +67,41 @@ export default function SkillReadiness({
   const circumference = 2 * Math.PI * radius;
   const strokeDashoffset = circumference - (circumference * displayScore) / 100;
 
-  // Unified Status Badge System for real evaluation status (Apple HIG Dark Palette)
+  // Unified Status Badge System for real evaluation status (Light Theme)
   const getStatusBadge = (score: number) => {
     if (score >= 70) {
       return {
         text: "Siap",
-        className: "bg-[#30d158]/15 text-[#30d158] border-[#30d158]/30",
-        icon: <Check className="w-2.5 h-2.5 text-[#30d158] stroke-[2.5]" />,
+        className: "bg-emerald-50 text-emerald-700 border-emerald-200",
+        icon: <Check className="w-2.5 h-2.5 text-emerald-600 stroke-[2.5]" />,
       };
     }
     if (score >= 40) {
       return {
         text: "Cukup siap",
-        className: "bg-[#0a84ff]/15 text-[#0a84ff] border-[#0a84ff]/30",
-        icon: <span className="w-1.5 h-1.5 rounded-full bg-[#0a84ff] shrink-0" />,
+        className: "bg-blue-50 text-[#0066FF] border-blue-200",
+        icon: <span className="w-1.5 h-1.5 rounded-full bg-[#0066FF] shrink-0" />,
       };
     }
     return {
       text: "Perlu ditingkatkan",
-      className: "bg-[#ff9f0a]/15 text-[#ff9f0a] border-[#ff9f0a]/30",
-      icon: <span className="w-1.5 h-1.5 rounded-full bg-[#ff9f0a] shrink-0" />,
+      className: "bg-amber-50 text-amber-700 border-amber-200",
+      icon: <span className="w-1.5 h-1.5 rounded-full bg-amber-600 shrink-0" />,
     };
   };
 
   const status = getStatusBadge(displayScore > 0 ? displayScore : data.readinessScore);
 
   return (
-    <div className="p-3 sm:p-3.5 rounded-2xl bg-[#28282a] border border-white/[0.08] shadow-xs space-y-2.5 transition-all duration-300">
-      <div className="flex items-center justify-between border-b border-white/[0.08] pb-2">
+    <div className="p-3 sm:p-3.5 rounded-2xl bg-slate-50/90 border border-slate-200/90 shadow-3xs space-y-2.5 transition-all duration-300">
+      <div className="flex items-center justify-between border-b border-slate-200/80 pb-2">
         <div className="flex items-center gap-1.5">
-          <TrendingUp className="w-3.5 h-3.5 text-[#0a84ff]" />
-          <span className="text-[11px] font-semibold uppercase tracking-wider text-[#f5f5f7]">
+          <TrendingUp className="w-3.5 h-3.5 text-[#0066FF]" />
+          <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-900">
             Analisis Kesiapan Skill
           </span>
         </div>
-        <span className="text-[10px] font-mono text-[#98989d] font-medium">
+        <span className="text-[10px] font-mono text-slate-500 font-medium">
           Target: {data.role}
         </span>
       </div>
@@ -117,7 +117,7 @@ export default function SkillReadiness({
                 cx="40"
                 cy="40"
                 r={radius}
-                className="text-[#3a3a3c]"
+                className="text-slate-200"
                 strokeWidth="7"
                 stroke="currentColor"
                 fill="transparent"
@@ -127,7 +127,7 @@ export default function SkillReadiness({
                 cx="40"
                 cy="40"
                 r={radius}
-                className="text-[#0a84ff]"
+                className="text-[#0066FF]"
                 style={{
                   transition: "stroke-dashoffset 900ms cubic-bezier(0.16, 1, 0.3, 1)",
                 }}
@@ -140,15 +140,15 @@ export default function SkillReadiness({
               />
             </svg>
             <div className="absolute flex flex-col items-center justify-center text-center">
-              <span className="text-base sm:text-lg font-bold text-[#f5f5f7] leading-none tabular-nums font-mono">
+              <span className="text-base sm:text-lg font-bold text-slate-900 leading-none tabular-nums font-mono">
                 {displayScore}%
               </span>
-              <span className="text-[8px] sm:text-[9px] font-semibold text-[#86868b] mt-0.5">
+              <span className="text-[8px] sm:text-[9px] font-semibold text-slate-500 mt-0.5">
                 Readiness
               </span>
             </div>
           </div>
-          {/* Status Badge using unified 4px system */}
+          {/* Status Badge */}
           <span
             className={`mt-1.5 px-2 py-0.5 rounded-md text-[9.5px] font-semibold border inline-flex items-center gap-1 transition-all duration-300 ${status.className}`}
           >
@@ -162,32 +162,32 @@ export default function SkillReadiness({
           {data.skills.map((skill) => (
             <div key={skill.name} className="space-y-0.5">
               <div className="flex items-center justify-between text-[10px]">
-                <span className="font-semibold text-[#e5e5e7] truncate max-w-[115px]">
+                <span className="font-semibold text-slate-800 truncate max-w-[115px]">
                   {skill.name}
                 </span>
                 <div className="flex items-center gap-1.5 shrink-0">
                   {skill.isPriority && (
-                    <span className="px-1.5 py-0.2 rounded-md text-[8.5px] font-mono font-bold uppercase tracking-wider bg-[#ff453a]/20 text-[#ff453a] border border-[#ff453a]/30">
+                    <span className="px-1.5 py-0.2 rounded-md text-[8.5px] font-mono font-bold uppercase tracking-wider bg-rose-50 text-rose-600 border border-rose-200">
                       Prioritas
                     </span>
                   )}
                   <span className="font-semibold tabular-nums font-mono text-[10px]">
-                    <span className="text-[#0a84ff] font-bold">{skill.userLevel}</span>
-                    <span className="text-[#86868b]">/{skill.requiredLevel}</span>
+                    <span className="text-[#0066FF] font-bold">{skill.userLevel}</span>
+                    <span className="text-slate-400">/{skill.requiredLevel}</span>
                   </span>
                 </div>
               </div>
-              {/* Dual-Level Bar with smooth transition */}
-              <div className="h-1.5 w-full bg-[#3a3a3c] rounded-full overflow-hidden relative">
+              {/* Dual-Level Bar */}
+              <div className="h-1.5 w-full bg-slate-200 rounded-full overflow-hidden relative">
                 {/* Required Level Mark */}
                 <div
-                  className="absolute top-0 bottom-0 bg-[#48484a] rounded-full"
+                  className="absolute top-0 bottom-0 bg-slate-300 rounded-full"
                   style={{ width: `${skill.requiredLevel}%` }}
                 />
                 {/* User Current Level */}
                 <div
                   className={`relative h-full rounded-full ${
-                    skill.isPriority ? "bg-[#0a84ff] shadow-sm shadow-[#0a84ff]/50" : "bg-[#0a84ff]/90"
+                    skill.isPriority ? "bg-[#0066FF]" : "bg-[#0066FF]/90"
                   }`}
                   style={{
                     width: triggerAnimation ? `${skill.userLevel}%` : "0%",

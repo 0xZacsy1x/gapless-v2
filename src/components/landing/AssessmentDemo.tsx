@@ -103,10 +103,7 @@ export default function AssessmentDemo() {
         };
     }, []);
 
-    const currentQ = DEMO_QUESTIONS[questionCycle % DEMO_QUESTIONS.length];
-    const roleData = CAREER_ROLES_DATA[activeRole] || CAREER_ROLES_DATA["Software Engineer"];
-
-    // ── Main GSAP Animation Cycle ─────────────────────────────────────
+    // Master GSAP Timeline Orchestration
     useEffect(() => {
         const qScreen = questionScreenRef.current;
         const aScreen = analyzingScreenRef.current;
@@ -115,88 +112,85 @@ export default function AssessmentDemo() {
 
         if (!qScreen || !aScreen || !rScreen || !cursor) return;
 
-        let isCancelled = false;
+        // Reset positions
+        gsap.set(qScreen, { yPercent: 0, opacity: 1, scale: 1 });
+        gsap.set(aScreen, { yPercent: 100, opacity: 0, scale: 0.97 });
+        gsap.set(rScreen, { yPercent: 100, opacity: 0, scale: 0.97 });
+        gsap.set(cursor, { opacity: 0, scale: 1 });
 
-        // Reset elements for this cycle using GSAP exclusively (no React inline style fighting)
-        gsap.set(qScreen, { yPercent: 0, opacity: 1, scale: 1, pointerEvents: "auto" });
-        gsap.set(aScreen, { yPercent: 100, opacity: 0, scale: 0.97, pointerEvents: "none" });
-        gsap.set(rScreen, { yPercent: 100, opacity: 0, scale: 0.97, pointerEvents: "none" });
-
-        // Position cursor slightly offset from Option A
-        const startCoords = getCoords(optRef.current, { x: 30, y: 22 });
-        gsap.set(cursor, { opacity: 0, scale: 1, x: startCoords.x, y: startCoords.y, transformOrigin: "3px 2px" });
-
-        // Build cycle timeline with natural pacing
         const tl = gsap.timeline({
-            onComplete: () => {
-                if (!isCancelled) {
-                    setQuestionCycle((prev) => prev + 1);
-                }
-            },
+            repeat: -1,
+            repeatDelay: 0.8,
+            defaults: { ease: "power2.out" },
         });
         tlRef.current = tl;
 
-        // ── PHASE 1: QUESTION STAGE (Visible ~3.3s) ──
+        // ── PHASE 1: QUESTION STAGE (Visible ~3.5s) ──
         tl.call(() => {
             setCurrentScreen("question");
             setIsOptionSelected(false);
             setIsBtnHovered(false);
             setIsBtnPressed(false);
             setActiveRole("Software Engineer");
+            gsap.set(qScreen, { pointerEvents: "auto" });
+            gsap.set(aScreen, { pointerEvents: "none" });
+            gsap.set(rScreen, { pointerEvents: "none" });
         });
 
-        // 0.2s: Fade in cursor smoothly
+        // Initialize cursor position near the first choice
         tl.to(cursor, {
             opacity: 1,
-            duration: 0.3,
+            duration: 0.35,
             ease: "power2.out",
-        }, "+=0.2");
+            onStart: () => {
+                const c = getCoords(optRef.current, { x: -60, y: 35 });
+                gsap.set(cursor, { x: c.x, y: c.y });
+            },
+        }, "+=0.3");
 
-        // 0.5s: Silky glide cursor to Option A center
+        // Cursor glides towards the first option
         tl.to(cursor, {
-            duration: 0.55,
-            ease: "power2.out",
-            x: () => getCoords(optRef.current).x,
-            y: () => getCoords(optRef.current).y,
-        }, "+=0.05");
+            x: () => getCoords(optRef.current, { x: 20, y: 0 }).x,
+            y: () => getCoords(optRef.current, { x: 20, y: 0 }).y,
+            duration: 0.85,
+            ease: "power2.inOut",
+        });
 
-        // 1.1s: Click Option A with organic ripple & select it
+        // Click on Option A
         tl.call(() => {
             triggerClickPulse();
             setIsOptionSelected(true);
-        }, undefined, "+=0.15");
-
-        // 1.7s: Glide cursor down to "Lihat Hasil Asesmen" button
-        tl.to(cursor, {
-            duration: 0.55,
-            ease: "power2.out",
-            x: () => getCoords(nextBtnRef.current).x,
-            y: () => getCoords(nextBtnRef.current).y,
-        }, "+=0.45");
-
-        // 2.35s: Hover on submit button
-        tl.call(() => {
-            setIsBtnHovered(true);
         }, undefined, "+=0.1");
 
-        // 2.6s: Click button with spring compression
+        // Short pause after selection
+        tl.to({}, { duration: 0.4 });
+
+        // Cursor moves to "Lihat Hasil Asesmen" button
+        tl.to(cursor, {
+            x: () => getCoords(nextBtnRef.current, { x: 0, y: 0 }).x,
+            y: () => getCoords(nextBtnRef.current, { x: 0, y: 0 }).y,
+            duration: 0.75,
+            ease: "power2.inOut",
+            onStart: () => setIsBtnHovered(true),
+        });
+
+        // Press CTA button
         tl.call(() => {
             setIsBtnPressed(true);
             triggerClickPulse();
-        }, undefined, "+=0.15");
+        }, undefined, "+=0.1");
 
-        // 2.85s: Release button press
+        // Release CTA button & hide cursor during transition
         tl.call(() => {
             setIsBtnPressed(false);
             setIsBtnHovered(false);
-        }, undefined, "+=0.1");
+        }, undefined, "+=0.12");
 
-        // 3.0s: Fade out cursor before stage transition
         tl.to(cursor, {
             opacity: 0,
             duration: 0.2,
             ease: "power2.in",
-        }, "+=0.05");
+        }, "<");
 
         // ── TRANSITION 1: QUESTION -> ANALYZING (0.6s Silky Slide) ──
         tl.call(() => {
@@ -299,59 +293,49 @@ export default function AssessmentDemo() {
 
         // Glide cursor to "Data Analyst" chip
         tl.to(cursor, {
-            duration: 0.45,
-            ease: "power2.out",
-            x: () => getCoords(chipDaRef.current).x,
-            y: () => getCoords(chipDaRef.current).y,
-        }, "+=0.05");
+            x: () => getCoords(chipDaRef.current, { x: 0, y: 0 }).x,
+            y: () => getCoords(chipDaRef.current, { x: 0, y: 0 }).y,
+            duration: 0.7,
+            ease: "power2.inOut",
+        });
 
-        // Click "Data Analyst" -> switch role & trigger ripple
+        // Click Data Analyst chip
         tl.call(() => {
             triggerClickPulse();
             setActiveRole("Data Analyst");
-        }, undefined, "+=0.15");
+        }, undefined, "+=0.1");
 
-        // Glide cursor to "Software Engineer" chip
+        // Pause to inspect Data Analyst metrics
+        tl.to({}, { duration: 1.3 });
+
+        // Glide cursor to "UI/UX Designer" chip
         tl.to(cursor, {
-            duration: 0.45,
-            ease: "power2.out",
-            x: () => getCoords(chipSeRef.current).x,
-            y: () => getCoords(chipSeRef.current).y,
-        }, "+=0.7");
+            x: () => getCoords(chipUiRef.current, { x: 0, y: 0 }).x,
+            y: () => getCoords(chipUiRef.current, { x: 0, y: 0 }).y,
+            duration: 0.65,
+            ease: "power2.inOut",
+        });
 
-        // Click "Software Engineer" -> switch back
+        // Click UI/UX Designer chip
         tl.call(() => {
             triggerClickPulse();
-            setActiveRole("Software Engineer");
-        }, undefined, "+=0.15");
+            setActiveRole("UI/UX Designer");
+        }, undefined, "+=0.1");
 
-        // Glide cursor down towards Roadmap card
-        tl.to(cursor, {
-            duration: 0.45,
-            ease: "power2.out",
-            x: () => getCoords(roadmapCardRef.current).x,
-            y: () => getCoords(roadmapCardRef.current).y,
-        }, "+=0.35");
+        // Pause to inspect UI/UX Designer metrics
+        tl.to({}, { duration: 1.3 });
 
-        // Fade out cursor before hold
+        // Fade out cursor before looping back to Question
         tl.to(cursor, {
             opacity: 0,
-            duration: 0.25,
+            duration: 0.3,
             ease: "power2.in",
         }, "+=0.4");
 
-        // Hold on result screen so user can clearly read roadmap and gap details (~2.2s)
-        tl.to({}, { duration: 2.2 });
-
-        // ── TRANSITION 3: RESULT -> NEXT QUESTION (0.6s Upward Slide) ──
+        // ── TRANSITION 3: RESULT -> NEXT QUESTION (0.6s Silky Slide) ──
         tl.call(() => {
-            setCurrentScreen("question");
-            setIsOptionSelected(false);
-            setIsBtnHovered(false);
-            setIsBtnPressed(false);
-            setActiveRole("Software Engineer");
-            gsap.set(rScreen, { pointerEvents: "none" });
-            gsap.set(qScreen, { pointerEvents: "auto" });
+            // Cycle question for varied experience on next loop
+            setQuestionCycle((prev) => (prev + 1) % DEMO_QUESTIONS.length);
         });
 
         tl.set(qScreen, { yPercent: 100, opacity: 0, scale: 0.97 });
@@ -372,41 +356,33 @@ export default function AssessmentDemo() {
             ease: "power2.inOut",
         }, "<");
 
-        tl.to({}, { duration: 0.2 });
-
         return () => {
-            isCancelled = true;
-            if (tlRef.current) {
-                tlRef.current.kill();
-                tlRef.current = null;
-            }
-            gsap.killTweensOf([qScreen, aScreen, rScreen, cursor]);
+            tl.kill();
         };
-    // Re-run cycle whenever questionCycle updates
-    }, [questionCycle, getCoords, triggerClickPulse]);
+    }, [getCoords, triggerClickPulse]);
+
+    const currentQ = DEMO_QUESTIONS[questionCycle];
+    const roleData = CAREER_ROLES_DATA[activeRole] || CAREER_ROLES_DATA["Software Engineer"];
 
     return (
-        <div
-            className="w-full max-w-[440px] xl:max-w-[480px] min-h-[620px] sm:min-h-[630px] mx-auto rounded-[32px] bg-[#1c1c1e] border border-white/[0.12] shadow-[0_24px_60px_-12px_rgba(0,0,0,0.7),inset_0_1px_0_0_rgba(255,255,255,0.12)] p-5 sm:p-6 flex flex-col justify-between relative select-none [contain:layout] font-sans text-[#f5f5f7] overflow-hidden"
-            aria-hidden="true"
-        >
-            {/* Top Window Bar (macOS Pro Template Header - Fixed) */}
-            <div className="flex items-center justify-between border-b border-white/[0.08] pb-3 relative z-10 shrink-0">
+        <div className="relative w-full max-w-md mx-auto p-4 sm:p-5 rounded-3xl bg-white border border-slate-200/90 shadow-[0_24px_50px_-12px_rgba(0,0,0,0.08),0_4px_16px_rgba(0,0,0,0.03)] space-y-3 sm:space-y-4 font-sans select-none overflow-hidden text-slate-900">
+            {/* macOS Window Controls + Simulated Test Header (Light Mode) */}
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100 relative z-10 shrink-0">
                 <div className="flex items-center gap-2.5">
-                    {/* macOS Window Controls (Traffic Lights) */}
+                    {/* macOS 3 Window Controls */}
                     <div className="flex items-center gap-1.5 shrink-0 pr-1">
                         <span className="w-3 h-3 rounded-full bg-[#ff5f57] border border-[#e0443e] shadow-[inset_0_1px_1px_rgba(255,255,255,0.4)] inline-block" />
                         <span className="w-3 h-3 rounded-full bg-[#febc2e] border border-[#dea123] shadow-[inset_0_1px_1px_rgba(255,255,255,0.4)] inline-block" />
                         <span className="w-3 h-3 rounded-full bg-[#28c840] border border-[#1aab29] shadow-[inset_0_1px_1px_rgba(255,255,255,0.4)] inline-block" />
                     </div>
-                    <div className="h-3.5 w-px bg-white/[0.1] shrink-0" />
+                    <div className="h-3.5 w-px bg-slate-200 shrink-0" />
                     <div className="flex items-center gap-2">
-                        <div className="w-6 h-6 rounded-lg bg-white/[0.08] flex items-center justify-center text-[#f5f5f7] border border-white/10">
-                            <Brain className="w-3.5 h-3.5 text-[#0a84ff]" />
+                        <div className="w-6 h-6 rounded-lg bg-blue-50 flex items-center justify-center text-[#0066FF] border border-blue-100 shadow-3xs">
+                            <Brain className="w-3.5 h-3.5 text-[#0066FF]" />
                         </div>
                         <div>
-                            <div className="text-xs font-semibold text-[#f5f5f7] font-sans leading-none tracking-tight">Simulasi Asesmen Minat</div>
-                            <div className="text-[11px] text-[#98989d] font-medium transition-colors duration-300 mt-0.5">
+                            <div className="text-xs font-semibold text-slate-900 font-sans leading-none tracking-tight">Simulasi Asesmen Minat</div>
+                            <div className="text-[11px] text-slate-500 font-medium transition-colors duration-300 mt-0.5">
                                 {currentScreen === "analyzing"
                                     ? "Menganalisis matriks psikometri..."
                                     : currentScreen === "result"
@@ -416,8 +392,8 @@ export default function AssessmentDemo() {
                         </div>
                     </div>
                 </div>
-                <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-[#2c2c2e] border border-white/10 text-xs font-semibold text-[#f5f5f7] shadow-xs">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#30d158] " />
+                <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-100 border border-slate-200 text-xs font-semibold text-slate-700 shadow-3xs">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
                     <span>Demo Interaktif</span>
                 </div>
             </div>
@@ -428,23 +404,23 @@ export default function AssessmentDemo() {
                 className="relative w-full h-[470px] sm:h-[480px] overflow-hidden my-auto"
             >
                 {/* ===================================================================
-                    SCREEN 1: QUESTION SCREEN (Visible immediately on initial render)
+                    SCREEN 1: QUESTION SCREEN (Light Mode)
                 =================================================================== */}
                 <div
                     ref={questionScreenRef}
-                    className="absolute inset-0 w-full h-full flex flex-col justify-center space-y-3.5 px-0.5 z-20 pointer-events-auto bg-[#1c1c1e]"
+                    className="absolute inset-0 w-full h-full flex flex-col justify-center space-y-3.5 px-0.5 z-20 pointer-events-auto bg-white"
                 >
                     {/* Progress Bar */}
                     <div className="space-y-1.5">
-                        <div className="flex justify-between text-[11px] font-medium text-[#98989d]">
+                        <div className="flex justify-between text-[11px] font-medium text-slate-500">
                             <span>Progres Evaluasi</span>
-                            <span className="text-[#0a84ff] font-bold tabular-nums">
+                            <span className="text-[#0066FF] font-bold tabular-nums">
                                 {!isOptionSelected ? currentQ.progressLabel : `${currentQ.progressPercent + 7}% Selesai`}
                             </span>
                         </div>
-                        <div className="h-1.5 w-full bg-[#2c2c2e] rounded-full overflow-hidden border border-white/[0.04]">
+                        <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden border border-slate-200/60">
                             <div
-                                className="h-full bg-blue-600 rounded-full transition-[width] duration-500 ease-out"
+                                className="h-full bg-[#0066FF] rounded-full transition-[width] duration-500 ease-out"
                                 style={{
                                     width: !isOptionSelected
                                         ? `${currentQ.progressPercent}%`
@@ -454,18 +430,18 @@ export default function AssessmentDemo() {
                         </div>
                     </div>
 
-                    {/* Question Box (macOS Secondary Surface) */}
-                    <div className="p-4 rounded-2xl bg-[#28282a] border border-white/[0.08] space-y-3 shadow-xs">
+                    {/* Question Box */}
+                    <div className="p-4 rounded-2xl bg-slate-50/90 border border-slate-200/90 space-y-3 shadow-3xs">
                         <div className="flex items-center justify-between">
-                            <span className="text-[11px] font-semibold uppercase tracking-wider text-[#0a84ff]">
+                            <span className="text-[11px] font-semibold uppercase tracking-wider text-[#0066FF]">
                                 {currentQ.scenarioTitle}
                             </span>
-                            <span className="text-[11px] text-[#a1a1a6] font-medium font-mono">
+                            <span className="text-[11px] text-slate-400 font-medium font-mono">
                                 {currentQ.questionNumber}
                             </span>
                         </div>
 
-                        <p className="text-xs sm:text-sm font-semibold text-[#f5f5f7] leading-relaxed min-h-[38px]">
+                        <p className="text-xs sm:text-sm font-semibold text-slate-900 leading-relaxed min-h-[38px]">
                             {currentQ.questionText}
                         </p>
 
@@ -480,19 +456,19 @@ export default function AssessmentDemo() {
                                         type="button"
                                         tabIndex={-1}
                                         className={`w-full flex items-center gap-3 p-3 rounded-xl border text-left transition-all duration-200 ${isSelected
-                                                ? "bg-[#0a84ff]/15 border-2 border-[#0a84ff] text-white shadow-sm ring-2 ring-[#0a84ff]/20"
-                                                : "bg-[#323236] border-white/[0.06] text-[#e5e5e7] hover:border-white/15 hover:bg-[#3a3a3e]"
+                                                ? "bg-blue-50/80 border-2 border-[#0066FF] text-[#0066FF] shadow-xs ring-2 ring-[#0066FF]/15"
+                                                : "bg-white border-slate-200/80 text-slate-700 hover:border-slate-300 hover:bg-slate-50"
                                             }`}
                                     >
                                         <div
-                                            className={`w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors duration-200 ${isSelected ? "border-[#0a84ff] bg-[#0a84ff]" : "border-[#636366]"
+                                            className={`w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors duration-200 ${isSelected ? "border-[#0066FF] bg-[#0066FF]" : "border-slate-300 bg-white"
                                                 }`}
                                         >
                                             {isSelected && (
                                                 <span className="w-1.5 h-1.5 rounded-full bg-white" />
                                             )}
                                         </div>
-                                        <span className="text-xs font-medium leading-snug">
+                                        <span className={`text-xs font-medium leading-snug ${isSelected ? "text-slate-900 font-semibold" : "text-slate-700"}`}>
                                             {choice.text}
                                         </span>
                                     </button>
@@ -509,11 +485,11 @@ export default function AssessmentDemo() {
                             tabIndex={-1}
                             className={`w-full h-11 rounded-xl text-xs sm:text-sm font-semibold flex items-center justify-center gap-2 transition-all duration-200 ${isOptionSelected
                                     ? isBtnPressed
-                                        ? "bg-[#0071e3]/80 text-white scale-[0.98]"
+                                        ? "bg-[#0052cc] text-white scale-[0.98]"
                                         : isBtnHovered
-                                            ? "bg-[#0077ed] text-white shadow-lg shadow-[#0071e3]/40 scale-[1.01]"
-                                            : "bg-[#0071e3] text-white shadow-md shadow-[#0071e3]/30"
-                                    : "bg-[#2c2c2e] border border-white/[0.06] text-[#636366] cursor-not-allowed"
+                                            ? "bg-[#005cd9] text-white shadow-md shadow-[#0066FF]/30 scale-[1.01]"
+                                            : "bg-[#0066FF] text-white shadow-sm shadow-[#0066FF]/25"
+                                    : "bg-slate-100 border border-slate-200 text-slate-400 cursor-not-allowed"
                                 }`}
                         >
                             <span>Lihat Hasil Asesmen</span>
@@ -523,42 +499,42 @@ export default function AssessmentDemo() {
                 </div>
 
                 {/* ===================================================================
-                    SCREEN 2: ANALYZING SCREEN (Handled by GSAP)
+                    SCREEN 2: ANALYZING SCREEN (Light Mode)
                 =================================================================== */}
                 <div
                     ref={analyzingScreenRef}
-                    className="absolute inset-0 w-full h-full flex flex-col justify-center items-center space-y-6 px-4 z-10 pointer-events-none bg-[#1c1c1e]"
+                    className="absolute inset-0 w-full h-full flex flex-col justify-center items-center space-y-6 px-4 z-10 pointer-events-none bg-white"
                 >
                     <div className="relative flex items-center justify-center">
-                        <div className="w-16 h-16 rounded-full border-3 border-[#3a3a3c] border-t-[#0a84ff] animate-spin" />
-                        <Brain className="w-7 h-7 text-[#0a84ff] absolute" />
+                        <div className="w-16 h-16 rounded-full border-3 border-slate-200 border-t-[#0066FF] animate-spin" />
+                        <Brain className="w-7 h-7 text-[#0066FF] absolute" />
                     </div>
 
                     <div className="text-center space-y-1">
-                        <h4 className="text-sm font-semibold text-[#f5f5f7]">
+                        <h4 className="text-sm font-semibold text-slate-900">
                             Menganalisis Pola Responsmu...
                         </h4>
-                        <p className="text-xs text-[#98989d]">
+                        <p className="text-xs text-slate-500">
                             Memetakan orientasi psikometri RIASEC &amp; kompetensi industri.
                         </p>
                     </div>
 
                     {/* Archetype Bars Filling Up */}
-                    <div className="w-full max-w-xs space-y-2.5 bg-[#28282a] p-4 rounded-2xl border border-white/[0.08] shadow-xs">
+                    <div className="w-full max-w-xs space-y-2.5 bg-slate-50/90 p-4 rounded-2xl border border-slate-200/90 shadow-3xs">
                         {DEMO_ARCHETYPES.map((arch) => (
                             <div key={arch.label} className="space-y-1">
-                                <div className="flex justify-between text-[11px] font-medium text-[#e5e5e7]">
+                                <div className="flex justify-between text-[11px] font-medium text-slate-700">
                                     <span>{arch.label}</span>
                                     <span
-                                        className="demo-arch-num font-mono tabular-nums text-[#0a84ff] font-bold"
+                                        className="demo-arch-num font-mono tabular-nums text-[#0066FF] font-bold"
                                         data-target={arch.val}
                                     >
                                         0%
                                     </span>
                                 </div>
-                                <div className="h-1.5 w-full bg-[#3a3a3c] rounded-full overflow-hidden">
+                                <div className="h-1.5 w-full bg-slate-200 rounded-full overflow-hidden">
                                     <div
-                                        className="demo-arch-bar h-full bg-[#0a84ff] shadow-xs shadow-[#0a84ff]/40 rounded-full w-0"
+                                        className="demo-arch-bar h-full bg-[#0066FF] rounded-full w-0"
                                         data-target={`${arch.val}%`}
                                     />
                                 </div>
@@ -568,29 +544,29 @@ export default function AssessmentDemo() {
                 </div>
 
                 {/* ===================================================================
-                    SCREEN 3: RESULT SCREEN (Handled by GSAP)
+                    SCREEN 3: RESULT SCREEN (Light Mode)
                 =================================================================== */}
                 <div
                     ref={resultScreenRef}
-                    className="absolute inset-0 w-full h-full flex flex-col justify-between py-1 px-0.5 space-y-2 z-10 pointer-events-none bg-[#1c1c1e]"
+                    className="absolute inset-0 w-full h-full flex flex-col justify-between py-1 px-0.5 space-y-2 z-10 pointer-events-none bg-white"
                 >
-                    {/* ITEM 1: Profile Top Match & Role Switcher Chips (Stagger Step 1) */}
+                    {/* ITEM 1: Profile Top Match & Role Switcher Chips */}
                     <div className="result-stagger-item space-y-2">
                         <div className="flex items-center justify-between pb-0.5">
                             <div className="flex items-baseline gap-1.5">
-                                <span className="text-[11px] font-semibold text-[#f5f5f7]">Kecocokan Tertinggi</span>
-                                <span className="font-mono text-xs font-bold text-[#0a84ff] tabular-nums">94%</span>
+                                <span className="text-[11px] font-semibold text-slate-900">Kecocokan Tertinggi</span>
+                                <span className="font-mono text-xs font-bold text-[#0066FF] tabular-nums">94%</span>
                             </div>
-                            <span className="text-[11px] font-mono text-[#98989d] font-medium">
+                            <span className="text-[11px] font-mono text-slate-400 font-medium">
                                 Profil Terverifikasi
                             </span>
                         </div>
 
-                        <div className="p-3 rounded-2xl bg-[#28282a] border border-white/[0.08] space-y-2">
-                            <div className="text-xs font-bold text-[#f5f5f7]">
-                                Kamu adalah <span className="text-[#0a84ff]">The Builder</span>
+                        <div className="p-3 rounded-2xl bg-slate-50/90 border border-slate-200/90 space-y-2">
+                            <div className="text-xs font-bold text-slate-900">
+                                Kamu adalah <span className="text-[#0066FF]">The Builder</span>
                             </div>
-                            <div className="text-[11px] text-[#98989d] leading-snug">
+                            <div className="text-[11px] text-slate-600 leading-snug">
                                 Berbakat merancang arsitektur sistem logis, memecahkan problematis teknikal, dan eksekusi presisi.
                             </div>
 
@@ -602,8 +578,8 @@ export default function AssessmentDemo() {
                                     tabIndex={-1}
                                     onClick={() => setActiveRole("Software Engineer")}
                                     className={`px-2.5 py-1 rounded-xl text-xs font-semibold transition-all duration-200 cursor-pointer ${activeRole === "Software Engineer"
-                                            ? "bg-[#0071e3] text-white shadow-sm scale-105 border border-[#0a84ff]"
-                                            : "bg-[#323236] border border-white/[0.08] text-[#e5e5e7] hover:border-white/15 hover:bg-[#3a3a3e]"
+                                            ? "bg-[#0066FF] text-white shadow-xs scale-105 border border-[#0066FF]"
+                                            : "bg-white border border-slate-200 text-slate-700 hover:bg-slate-100"
                                         }`}
                                 >
                                     <span className="flex items-center gap-1">
@@ -620,8 +596,8 @@ export default function AssessmentDemo() {
                                     tabIndex={-1}
                                     onClick={() => setActiveRole("Data Analyst")}
                                     className={`px-2.5 py-1 rounded-xl text-xs font-semibold transition-all duration-200 cursor-pointer ${activeRole === "Data Analyst"
-                                            ? "bg-[#0071e3] text-white shadow-sm scale-105 border border-[#0a84ff]"
-                                            : "bg-[#323236] border border-white/[0.08] text-[#e5e5e7] hover:border-white/15 hover:bg-[#3a3a3e]"
+                                            ? "bg-[#0066FF] text-white shadow-xs scale-105 border border-[#0066FF]"
+                                            : "bg-white border border-slate-200 text-slate-700 hover:bg-slate-100"
                                         }`}
                                 >
                                     <span className="flex items-center gap-1">
@@ -638,8 +614,8 @@ export default function AssessmentDemo() {
                                     tabIndex={-1}
                                     onClick={() => setActiveRole("UI/UX Designer")}
                                     className={`px-2.5 py-1 rounded-xl text-xs font-semibold transition-all duration-200 cursor-pointer ${activeRole === "UI/UX Designer"
-                                            ? "bg-[#0071e3] text-white shadow-sm scale-105 border border-[#0a84ff]"
-                                            : "bg-[#323236] border border-white/[0.08] text-[#e5e5e7] hover:border-white/15 hover:bg-[#3a3a3e]"
+                                            ? "bg-[#0066FF] text-white shadow-xs scale-105 border border-[#0066FF]"
+                                            : "bg-white border border-slate-200 text-slate-700 hover:bg-slate-100"
                                         }`}
                                 >
                                     <span className="flex items-center gap-1">
@@ -653,7 +629,7 @@ export default function AssessmentDemo() {
                         </div>
                     </div>
 
-                    {/* ITEM 2: SKILL READINESS Component (Stagger Step 2) */}
+                    {/* ITEM 2: SKILL READINESS Component */}
                     <div className="result-stagger-item">
                         <SkillReadiness
                             data={roleData}
@@ -662,28 +638,28 @@ export default function AssessmentDemo() {
                         />
                     </div>
 
-                    {/* ITEM 3: Gap Terbesar Callout Row (Stagger Step 3) */}
+                    {/* ITEM 3: Gap Terbesar Callout Row */}
                     <div
-                        className="result-stagger-item p-2 sm:p-2.5 rounded-xl bg-[#0a84ff]/10 border border-[#0a84ff]/25 text-[11px] text-[#f5f5f7] flex items-center gap-2"
+                        className="result-stagger-item p-2 sm:p-2.5 rounded-xl bg-blue-50/70 border border-blue-200/80 text-[11px] text-slate-800 flex items-center gap-2"
                     >
-                        <AlertCircle className="w-3.5 h-3.5 text-[#0a84ff] shrink-0" />
+                        <AlertCircle className="w-3.5 h-3.5 text-[#0066FF] shrink-0" />
                         <span className="truncate">
-                            <strong className="text-[#0a84ff] font-semibold">Gap terbesar:</strong>{" "}
+                            <strong className="text-[#0066FF] font-semibold">Gap terbesar:</strong>{" "}
                             {roleData.biggestGap}. Roadmap belajarmu mulai dari sini.
                         </span>
                     </div>
 
-                    {/* ITEM 4: Roadmap Ready Notification Card (Stagger Step 4) */}
+                    {/* ITEM 4: Roadmap Ready Notification Card */}
                     <div
                         ref={roadmapCardRef}
-                        className="result-stagger-item p-2.5 sm:p-3 rounded-2xl bg-[#28282a] border border-white/[0.08] shadow-xs flex items-center gap-2.5"
+                        className="result-stagger-item p-2.5 sm:p-3 rounded-2xl bg-slate-50/90 border border-slate-200/90 shadow-3xs flex items-center gap-2.5"
                     >
-                        <div className="w-7 h-7 rounded-lg bg-[#0a84ff]/15 text-[#0a84ff] flex items-center justify-center shrink-0 border border-[#0a84ff]/25">
-                            <Compass className="w-3.5 h-3.5 text-[#0a84ff]" />
+                        <div className="w-7 h-7 rounded-lg bg-blue-50 text-[#0066FF] flex items-center justify-center shrink-0 border border-blue-200">
+                            <Compass className="w-3.5 h-3.5 text-[#0066FF]" />
                         </div>
                         <div className="min-w-0 flex-1">
-                            <div className="text-xs font-semibold text-[#f5f5f7]">Roadmap belajarmu siap!</div>
-                            <div className="text-[11px] text-[#98989d]">
+                            <div className="text-xs font-semibold text-slate-900">Roadmap belajarmu siap!</div>
+                            <div className="text-[11px] text-slate-500">
                                 Kurikulum 4 fase terstruktur untuk mempercepat kesiapan kariermu.
                             </div>
                         </div>
@@ -702,11 +678,11 @@ export default function AssessmentDemo() {
                             height="34"
                             viewBox="0 0 24 28"
                             fill="none"
-                            className="drop-shadow-lg filter drop-shadow-[0_4px_16px_rgba(10,132,255,0.6)]"
+                            className="drop-shadow-md"
                         >
                             <path
                                 d="M2.5 1.5L21.5 13.5L12 16L8 25.5L2.5 1.5Z"
-                                fill="#0a84ff"
+                                fill="#0066FF"
                                 stroke="white"
                                 strokeWidth="2.2"
                                 strokeLinejoin="round"
@@ -714,29 +690,29 @@ export default function AssessmentDemo() {
                         </svg>
                         <span
                             ref={clickPulseRef}
-                            className="absolute w-12 h-12 rounded-full bg-[#0a84ff]/30 border-2 border-[#0a84ff] pointer-events-none opacity-0 -left-[19px] -top-[20px]"
+                            className="absolute w-12 h-12 rounded-full bg-[#0066FF]/20 border-2 border-[#0066FF] pointer-events-none opacity-0 -left-[19px] -top-[20px]"
                         />
                     </div>
                 </div>
             </div>
 
             {/* Bottom Assistant Snapshot Preview (Fixed - never moves) */}
-            <div className="mt-auto pt-3 border-t border-white/[0.08] relative z-10 shrink-0">
-                <div className="flex items-center gap-3 p-2.5 rounded-2xl bg-[#28282a] border border-white/[0.08]">
-                    <div className="w-7 h-7 rounded-lg bg-[#0a84ff]/15 text-[#0a84ff] flex items-center justify-center shrink-0 border border-[#0a84ff]/25">
-                        <Compass className="w-4 h-4 text-[#0a84ff]" />
+            <div className="mt-auto pt-3 border-t border-slate-100 relative z-10 shrink-0">
+                <div className="flex items-center gap-3 p-2.5 rounded-2xl bg-slate-50/90 border border-slate-200/90">
+                    <div className="w-7 h-7 rounded-lg bg-blue-50 text-[#0066FF] flex items-center justify-center shrink-0 border border-blue-200">
+                        <Compass className="w-4 h-4 text-[#0066FF]" />
                     </div>
                     <div className="min-w-0 flex-1">
-                        <div className="text-[11px] font-semibold tracking-wider text-[#0a84ff] uppercase">
+                        <div className="text-[11px] font-semibold tracking-wider text-[#0066FF] uppercase">
                             AI Persona Compass
                         </div>
-                        <div className="text-[11px] font-semibold text-[#f5f5f7] truncate transition-colors duration-300">
+                        <div className="text-[11px] font-semibold text-slate-900 truncate transition-colors duration-300">
                             {currentScreen === "result"
                                 ? "Hasil siap dieksplorasi"
                                 : "Memetakan kepribadian ke karier nyata"}
                         </div>
                     </div>
-                    <span className="text-[11px] font-medium text-[#a1a1a6] shrink-0">
+                    <span className="text-[11px] font-medium text-slate-500 shrink-0">
                         Ilustrasi &rarr;
                     </span>
                 </div>

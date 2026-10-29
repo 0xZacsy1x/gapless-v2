@@ -1,22 +1,21 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import Link from "next/link";
 import {
   GraduationCap,
   Target,
-  CheckCircle2,
+  Briefcase,
   Lock,
   Bookmark,
   Clock,
-  Award,
   ArrowRight,
   Check,
 } from "lucide-react";
 
-// Career Roadmaps Data (Streamlined & Clean)
+// Career Roadmaps Data
 const ROADMAP_PRESETS = [
   {
     id: "swe",
@@ -161,7 +160,7 @@ const ROADMAP_PRESETS = [
   },
 ];
 
-// Rekomendasi Kegiatan Data
+// Rekomendasi Kegiatan & Portofolio Data
 const KEGIATAN_PRESETS = [
   {
     id: "k1",
@@ -192,12 +191,45 @@ const KEGIATAN_PRESETS = [
   },
 ];
 
-export default function BentoEcosystemTour() {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const roadmapBodyRef = useRef<HTMLDivElement>(null);
-  const kegiatanBodyRef = useRef<HTMLDivElement>(null);
+type FeatureTab = "roadmap" | "misi" | "portofolio";
 
-  // States for Left Card & Bottom Card
+const FEATURE_TABS = [
+  {
+    id: "roadmap" as FeatureTab,
+    label: "Roadmap Belajar",
+    badge: "4 Fase",
+    icon: GraduationCap,
+  },
+  {
+    id: "misi" as FeatureTab,
+    label: "Misi Soft Skill",
+    badge: "Latihan Harian",
+    icon: Target,
+  },
+  {
+    id: "portofolio" as FeatureTab,
+    label: "Portofolio",
+    badge: "Kasus Riil",
+    icon: Briefcase,
+  },
+];
+
+export default function BentoEcosystemTour() {
+  const windowContainerRef = useRef<HTMLDivElement>(null);
+  const windowContentRef = useRef<HTMLDivElement>(null);
+  const cursorRef = useRef<HTMLDivElement>(null);
+  const clickPulseRef = useRef<HTMLSpanElement>(null);
+  const tlRef = useRef<gsap.core.Timeline | null>(null);
+
+  // Button refs for cursor automated gliding
+  const tabRoadmapRef = useRef<HTMLButtonElement>(null);
+  const tabMisiRef = useRef<HTMLButtonElement>(null);
+  const tabPortoRef = useRef<HTMLButtonElement>(null);
+  const careerDaRef = useRef<HTMLButtonElement>(null);
+  const kegiatan2Ref = useRef<HTMLButtonElement>(null);
+
+  // States
+  const [activeTab, setActiveTab] = useState<FeatureTab>("roadmap");
   const [activeCareerIdx, setActiveCareerIdx] = useState<number>(0);
   const [activeKegiatanIdx, setActiveKegiatanIdx] = useState<number>(0);
   const [bookmarkedId, setBookmarkedId] = useState<string>("k1");
@@ -221,27 +253,50 @@ export default function BentoEcosystemTour() {
     return () => mediaQuery.removeEventListener("change", handleChange);
   }, []);
 
-  // Smooth crossfade on career change
-  useGSAP(() => {
-    if (roadmapBodyRef.current && !prefersReducedMotion) {
-      gsap.fromTo(
-        roadmapBodyRef.current,
-        { opacity: 0.5, y: 3 },
-        { opacity: 1, y: 0, duration: 0.35, ease: "power2.out" }
-      );
-    }
-  }, [activeCareerIdx, prefersReducedMotion]);
+  // Coordinate helper relative to window container
+  const getCoords = useCallback(
+    (el: HTMLElement | null, off?: { x?: number; y?: number }) => {
+      if (!el || !windowContainerRef.current) return { x: 120, y: 150 };
+      const parentRect = windowContainerRef.current.getBoundingClientRect();
+      const elRect = el.getBoundingClientRect();
+      return {
+        x: Math.round(elRect.left - parentRect.left + elRect.width / 2 + (off?.x ?? 0)),
+        y: Math.round(elRect.top - parentRect.top + elRect.height / 2 + (off?.y ?? 0)),
+      };
+    },
+    []
+  );
 
-  // Smooth crossfade on kegiatan change
-  useGSAP(() => {
-    if (kegiatanBodyRef.current && !prefersReducedMotion) {
+  // Ripple click pulse on cursor
+  const triggerClickPulse = useCallback(() => {
+    if (cursorRef.current) {
+      gsap.to(cursorRef.current, {
+        scale: 0.88,
+        duration: 0.08,
+        yoyo: true,
+        repeat: 1,
+        ease: "power2.inOut",
+      });
+    }
+    if (clickPulseRef.current) {
       gsap.fromTo(
-        kegiatanBodyRef.current,
-        { opacity: 0.5, y: 3 },
-        { opacity: 1, y: 0, duration: 0.35, ease: "power2.out" }
+        clickPulseRef.current,
+        { scale: 0.3, opacity: 0.8 },
+        { scale: 2.2, opacity: 0, duration: 0.35, ease: "power2.out", immediateRender: false }
       );
     }
-  }, [activeKegiatanIdx, prefersReducedMotion]);
+  }, []);
+
+  // GSAP Smooth fade/slide when switching tabs
+  useGSAP(() => {
+    if (windowContentRef.current && !prefersReducedMotion) {
+      gsap.fromTo(
+        windowContentRef.current,
+        { opacity: 0.45, y: 8 },
+        { opacity: 1, y: 0, duration: 0.28, ease: "power2.out" }
+      );
+    }
+  }, [activeTab, prefersReducedMotion]);
 
   // IntersectionObserver & Visibility handling
   useEffect(() => {
@@ -254,11 +309,11 @@ export default function BentoEcosystemTour() {
       ([entry]) => {
         setIsInView(entry.isIntersecting);
       },
-      { threshold: 0, rootMargin: "250px 0px 250px 0px" }
+      { threshold: 0.15, rootMargin: "100px 0px 100px 0px" }
     );
 
-    if (containerRef.current) {
-      observer.observe(containerRef.current);
+    if (windowContainerRef.current) {
+      observer.observe(windowContainerRef.current);
     }
 
     return () => {
@@ -267,27 +322,150 @@ export default function BentoEcosystemTour() {
     };
   }, []);
 
-  // Auto-cycle Left Card Career Roadmap every 5.0 seconds
+  // Automated Virtual Cursor Tour Orchestration
   useEffect(() => {
-    if (prefersReducedMotion || !isInView || !isTabActive || isUserInteracting) return;
+    if (prefersReducedMotion) return;
 
-    const timer = setInterval(() => {
-      setActiveCareerIdx((prev) => (prev + 1) % ROADMAP_PRESETS.length);
-    }, 5000);
+    const cursor = cursorRef.current;
+    if (!cursor) return;
 
-    return () => clearInterval(timer);
-  }, [isInView, isTabActive, isUserInteracting, prefersReducedMotion]);
+    // Create the master looping cursor timeline
+    const tl = gsap.timeline({
+      repeat: -1,
+      repeatDelay: 0.5,
+      defaults: { ease: "power2.out" },
+    });
+    tlRef.current = tl;
 
-  // Auto-cycle Kegiatan in Bottom Card every 4.0 seconds
+    // ── PHASE 1: Start at Roadmap Belajar ──
+    tl.call(() => {
+      setActiveTab("roadmap");
+      setActiveCareerIdx(0);
+    });
+
+    // Reveal cursor at Tab 1
+    tl.to(cursor, {
+      opacity: 1,
+      duration: 0.4,
+      onStart: () => {
+        const c = getCoords(tabRoadmapRef.current, { x: 0, y: 0 });
+        gsap.set(cursor, { x: c.x, y: c.y });
+      },
+    }, "+=0.3");
+
+    // Click Tab 1
+    tl.call(() => {
+      triggerClickPulse();
+      setActiveTab("roadmap");
+    }, undefined, "+=0.1");
+
+    // Glide cursor to "Data Analyst" career switcher button
+    tl.to(cursor, {
+      x: () => getCoords(careerDaRef.current, { x: 0, y: 0 }).x,
+      y: () => getCoords(careerDaRef.current, { x: 0, y: 0 }).y,
+      duration: 0.8,
+      ease: "power2.inOut",
+    }, "+=0.8");
+
+    // Click "Data Analyst" button
+    tl.call(() => {
+      triggerClickPulse();
+      setActiveCareerIdx(1);
+    }, undefined, "+=0.15");
+
+    // Pause to inspect Data Analyst roadmap modules
+    tl.to({}, { duration: 3.5 });
+
+    // ── PHASE 2: Glide to Tab 2 (Misi Soft Skill) ──
+    tl.to(cursor, {
+      x: () => getCoords(tabMisiRef.current, { x: 0, y: 0 }).x,
+      y: () => getCoords(tabMisiRef.current, { x: 0, y: 0 }).y,
+      duration: 0.85,
+      ease: "power2.inOut",
+    });
+
+    // Click Tab 2
+    tl.call(() => {
+      triggerClickPulse();
+      setActiveTab("misi");
+    }, undefined, "+=0.1");
+
+    // Pause to inspect Misi Soft Skill items & XP
+    tl.to({}, { duration: 4.0 });
+
+    // ── PHASE 3: Glide to Tab 3 (Portofolio) ──
+    tl.to(cursor, {
+      x: () => getCoords(tabPortoRef.current, { x: 0, y: 0 }).x,
+      y: () => getCoords(tabPortoRef.current, { x: 0, y: 0 }).y,
+      duration: 0.85,
+      ease: "power2.inOut",
+    });
+
+    // Click Tab 3
+    tl.call(() => {
+      triggerClickPulse();
+      setActiveTab("portofolio");
+    }, undefined, "+=0.1");
+
+    // Pause briefly, then glide cursor to "Kasus 2" button
+    tl.to(cursor, {
+      x: () => getCoords(kegiatan2Ref.current, { x: 0, y: 0 }).x,
+      y: () => getCoords(kegiatan2Ref.current, { x: 0, y: 0 }).y,
+      duration: 0.75,
+      ease: "power2.inOut",
+    }, "+=1.2");
+
+    // Click "Kasus 2"
+    tl.call(() => {
+      triggerClickPulse();
+      setActiveKegiatanIdx(1);
+    }, undefined, "+=0.15");
+
+    // Pause to inspect Case 2 (Hackathon)
+    tl.to({}, { duration: 3.2 });
+
+    // ── PHASE 4: Glide back to Tab 1 (Roadmap) ──
+    tl.to(cursor, {
+      x: () => getCoords(tabRoadmapRef.current, { x: 0, y: 0 }).x,
+      y: () => getCoords(tabRoadmapRef.current, { x: 0, y: 0 }).y,
+      duration: 0.85,
+      ease: "power2.inOut",
+    });
+
+    // Click Tab 1 to complete the loop
+    tl.call(() => {
+      triggerClickPulse();
+      setActiveTab("roadmap");
+      setActiveCareerIdx(0);
+      setActiveKegiatanIdx(0);
+    }, undefined, "+=0.1");
+
+    return () => {
+      tl.kill();
+    };
+  }, [getCoords, triggerClickPulse, prefersReducedMotion]);
+
+  // Pause cursor tour when user interacts or window is out of view
   useEffect(() => {
-    if (prefersReducedMotion || !isInView || !isTabActive) return;
+    if (!tlRef.current) return;
+    if (isUserInteracting || !isInView || !isTabActive) {
+      tlRef.current.pause();
+      if (cursorRef.current) {
+        gsap.to(cursorRef.current, { opacity: 0, duration: 0.25 });
+      }
+    } else {
+      tlRef.current.resume();
+    }
+  }, [isUserInteracting, isInView, isTabActive]);
 
-    const timer = setInterval(() => {
-      setActiveKegiatanIdx((prev) => (prev + 1) % KEGIATAN_PRESETS.length);
-    }, 4000);
-
-    return () => clearInterval(timer);
-  }, [isInView, isTabActive, prefersReducedMotion]);
+  const handleTabClick = (tabId: FeatureTab) => {
+    setActiveTab(tabId);
+    setIsUserInteracting(true);
+    const timeout = setTimeout(() => {
+      setIsUserInteracting(false);
+    }, 6000);
+    return () => clearTimeout(timeout);
+  };
 
   const handleSelectCareer = (idx: number) => {
     setActiveCareerIdx(idx);
@@ -308,414 +486,518 @@ export default function BentoEcosystemTour() {
 
   return (
     <div
-      ref={containerRef}
+      ref={windowContainerRef}
       onMouseEnter={() => setIsUserInteracting(true)}
-      onMouseLeave={() => setIsUserInteracting(false)}
-      className="grid grid-cols-1 lg:grid-cols-12 gap-3.5 sm:gap-4 select-none w-full items-stretch font-sans"
+      onMouseLeave={() => {
+        // Resume tour after short delay when user moves mouse away
+        setTimeout(() => setIsUserInteracting(false), 2000);
+      }}
+      className="relative w-full bg-[#1c1c1e] border border-white/[0.12] rounded-2xl sm:rounded-3xl shadow-[0_28px_70px_-15px_rgba(0,0,0,0.6),inset_0_1px_0_0_rgba(255,255,255,0.12)] overflow-hidden flex flex-col min-h-[530px] text-[#f5f5f7] select-none font-sans"
     >
       {/* =========================================================================
-          ROW 1, CARD 1: ROADMAP BELAJAR TERSTRUKTUR (lg:col-span-7)
+          MACOS TOP WINDOW CHROME (MacBook Titlebar)
       ========================================================================= */}
-      <div className="relative overflow-hidden lg:col-span-7 p-4 sm:p-5 bg-[#1c1c1e] border border-white/[0.12] rounded-2xl flex flex-col justify-between shadow-[0_24px_60px_-12px_rgba(0,0,0,0.6),inset_0_1px_0_0_rgba(255,255,255,0.12)] space-y-3 min-h-[465px] h-full text-[#f5f5f7]">
-        {/* Top Header */}
-        <div className="space-y-2.5 relative z-10 shrink-0">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/[0.08] pb-2.5">
-            <div className="flex items-center gap-2.5">
-              {/* macOS Window Controls */}
-              <div className="flex items-center gap-1.5 shrink-0 pr-1">
-                <span className="w-2.5 h-2.5 rounded-full bg-[#ff5f57] border border-[#e0443e] shadow-[inset_0_1px_1px_rgba(255,255,255,0.4)] inline-block" />
-                <span className="w-2.5 h-2.5 rounded-full bg-[#febc2e] border border-[#dea123] shadow-[inset_0_1px_1px_rgba(255,255,255,0.4)] inline-block" />
-                <span className="w-2.5 h-2.5 rounded-full bg-[#28c840] border border-[#1aab29] shadow-[inset_0_1px_1px_rgba(255,255,255,0.4)] inline-block" />
-              </div>
-              <div className="h-3.5 w-px bg-white/[0.1] shrink-0" />
-              <div className="w-7 h-7 rounded-lg bg-white/[0.08] flex items-center justify-center text-[#0a84ff] border border-white/10 shadow-3xs">
-                <GraduationCap className="w-4 h-4 text-[#0a84ff]" />
-              </div>
-              <div>
-                <h3 className="text-xs sm:text-sm font-bold tracking-tight text-[#f5f5f7] leading-tight">
-                  Roadmap Belajar Terstruktur
-                </h3>
-                <p className="text-[11px] text-[#98989d]">
-                  Kurikulum 4 fase progresif terkalibrasi dengan standar industri nyata.
-                </p>
-              </div>
-            </div>
-
-            {/* Subtle Live Tour Indicator */}
-            <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-[#2c2c2e] border border-white/10 text-xs font-semibold text-[#f5f5f7] shadow-xs self-start sm:self-auto">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#30d158] " />
-              <span className="font-mono text-[11px]">Tur Otomatis</span>
-            </div>
-          </div>
-
-          {/* Interactive Career Selector Tabs */}
-          <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pt-0.5">
-            {ROADMAP_PRESETS.map((preset, idx) => {
-              const isSelected = idx === activeCareerIdx;
-              return (
-                <button
-                  key={preset.id}
-                  onClick={() => handleSelectCareer(idx)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all duration-200 cursor-pointer btn-press flex items-center gap-2 shrink-0 ${
-                    isSelected
-                      ? "bg-[#0071e3] text-white border border-[#0a84ff] shadow-sm ring-2 ring-[#0a84ff]/20"
-                      : "bg-[#2c2c2e] hover:bg-[#3a3a3c] border border-white/[0.08] text-[#e5e5e7]"
-                  }`}
-                >
-                  <span>{preset.career}</span>
-                  <span
-                    className={`text-[11px] font-mono tabular-nums font-bold ${
-                      isSelected ? "text-white/80" : "text-[#a1a1a6]"
-                    }`}
-                  >
-                    {preset.overallProgress}%
-                  </span>
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Active Career Track Banner */}
-          <div className="bg-[#242426] border border-white/[0.08] rounded-xl px-3 py-2 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-            <div className="flex items-baseline gap-2 min-w-0">
-              <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-[#a1a1a6] shrink-0">
-                Jalur Fokus:
-              </span>
-              <span className="text-xs font-bold text-[#f5f5f7] truncate">
-                {currentRoadmap.track}
-              </span>
-            </div>
-            <div className="flex items-center gap-2.5 shrink-0">
-              <div className="w-20 sm:w-24 h-1.5 bg-[#3a3a3c] rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-[#0a84ff] rounded-full transition-all duration-700 ease-out"
-                  style={{ width: `${currentRoadmap.overallProgress}%` }}
-                />
-              </div>
-              <span className="text-xs font-mono font-bold text-[#f5f5f7] tabular-nums">
-                {currentRoadmap.overallProgress}% Kesiapan
-              </span>
-            </div>
-          </div>
+      <div className="bg-[#252528] border-b border-white/[0.08] px-4 sm:px-6 py-3 flex items-center justify-between gap-3 relative z-20 shrink-0">
+        {/* macOS 3 Window Controls */}
+        <div className="flex items-center gap-2 shrink-0">
+          <span
+            className="w-3 h-3 rounded-full bg-[#FF5F57] border border-[#e0443e] shadow-[inset_0_1px_1px_rgba(255,255,255,0.4)] inline-block"
+            title="Close"
+          />
+          <span
+            className="w-3 h-3 rounded-full bg-[#FFBD2E] border border-[#dea123] shadow-[inset_0_1px_1px_rgba(255,255,255,0.4)] inline-block"
+            title="Minimize"
+          />
+          <span
+            className="w-3 h-3 rounded-full bg-[#28C840] border border-[#1aab29] shadow-[inset_0_1px_1px_rgba(255,255,255,0.4)] inline-block"
+            title="Fullscreen"
+          />
         </div>
 
-        {/* Module Progression: Fase 01 (Selesai) + Fase 02 (Modul Aktif) */}
-        <div ref={roadmapBodyRef} className="space-y-2 flex-1 flex flex-col justify-center py-0.5 relative z-10">
-          {/* FASE 01: MODUL SELESAI */}
-          <div className="bg-[#242426] border border-[#30d158]/30 rounded-xl p-3 shadow-3xs space-y-2 transition-all">
-            <div className="flex items-center justify-between gap-2">
-              <div className="flex items-center gap-2 min-w-0">
-                <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[11px] font-semibold bg-[#30d158]/15 text-[#30d158] border border-[#30d158]/30 shrink-0">
-                  <Check className="w-2.5 h-2.5 text-[#30d158] stroke-[2.5]" />
-                  Selesai
-                </span>
-                <span className="text-xs font-bold text-[#e5e5e7] truncate">
-                  {currentRoadmap.completedModule.phase}
-                </span>
-              </div>
-              <div className="flex items-baseline gap-1 shrink-0 font-mono">
-                <span className="text-xs font-bold text-[#30d158]">Skor {currentRoadmap.completedModule.score}</span>
-              </div>
-            </div>
-
-            <h4 className="text-xs font-bold text-[#f5f5f7] leading-snug">
-              {currentRoadmap.completedModule.name}
-            </h4>
-
-            {/* Skill Keys & Project Capstone */}
-            <div className="flex flex-wrap items-center justify-between gap-1.5 pt-1.5 border-t border-white/[0.08] text-[11px]">
-              <div className="flex items-center gap-1.5 text-[#98989d] font-medium">
-                <span className="text-[#a1a1a6] font-mono text-[11px] uppercase">Skill:</span>
-                <span>{currentRoadmap.completedModule.skills.join(" · ")}</span>
-              </div>
-              <span className="text-[#a1a1a6] font-mono text-[11px] flex items-center gap-1">
-                <Clock className="w-2.5 h-2.5 text-[#a1a1a6]" />
-                {currentRoadmap.completedModule.pace}
-              </span>
-            </div>
-          </div>
-
-          {/* FASE 02: MODUL AKTIF */}
-          <div className="bg-[#242426] border-2 border-[#0a84ff] rounded-xl p-3 shadow-xs space-y-2 transition-all ring-2 ring-[#0a84ff]/20">
-            <div className="flex items-center justify-between gap-2">
-              <div className="flex items-center gap-2 min-w-0">
-                <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[11px] font-semibold bg-[#0a84ff]/20 text-[#0a84ff] border border-[#0a84ff]/40 shrink-0">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#0a84ff] " />
-                  Modul Aktif
-                </span>
-                <span className="text-xs font-bold text-[#f5f5f7] truncate">
-                  {currentRoadmap.activeModule.phase}
-                </span>
-              </div>
-              <span className="text-[11px] font-mono text-[#0a84ff] font-bold">
-                Target Minggu Ini
-              </span>
-            </div>
-
-            <h4 className="text-xs font-bold text-[#f5f5f7] leading-snug">
-              {currentRoadmap.activeModule.name}
-            </h4>
-
-            {/* Skill Keys & Project Capstone */}
-            <div className="flex flex-wrap items-center justify-between gap-1.5 pt-1.5 border-t border-white/[0.08] text-[11px]">
-              <div className="flex items-center gap-1.5 text-[#98989d] font-medium">
-                <span className="text-[#a1a1a6] font-mono text-[11px] uppercase">Skill:</span>
-                <span>{currentRoadmap.activeModule.skills.join(" · ")}</span>
-              </div>
-              <span className="text-[#98989d] font-mono text-[11px] flex items-center gap-1">
-                <Clock className="w-2.5 h-2.5 text-[#0a84ff]" />
-                {currentRoadmap.activeModule.pace}
-              </span>
-            </div>
-          </div>
+        {/* Window Subtitle / URL Address Pill */}
+        <div className="hidden sm:flex items-center gap-2 px-3 py-1 bg-[#1c1c1e] border border-white/[0.08] rounded-lg text-[11px] font-mono text-[#98989d] shadow-3xs max-w-sm w-full justify-center">
+          <Lock className="w-3 h-3 text-[#98989d] shrink-0" />
+          <span className="truncate">
+            gapless.id/app/
+            {activeTab === "roadmap"
+              ? "roadmap-kurikulum"
+              : activeTab === "misi"
+              ? "misi-situasional"
+              : "portofolio-industri"}
+          </span>
         </div>
 
-        {/* 4 Phases Horizontal Stepper Timeline (Progress Motif) */}
-        <div className="bg-[#242426] border border-white/[0.08] rounded-xl p-3 sm:p-3.5 relative z-10">
-          <div className="relative flex items-start justify-between px-2 sm:px-6">
-            {/* Background connecting rail */}
-            <div className="absolute left-8 right-8 top-3 h-0.5 bg-[#3a3a3c]" aria-hidden="true" />
-            {/* Active completed segment rail */}
-            <div
-              className="absolute left-8 top-3 h-0.5 bg-[#30d158] transition-all duration-500"
-              style={{ width: "33%" }}
-              aria-hidden="true"
-            />
-
-            {currentRoadmap.phases.map((phase) => {
-              const isCompleted = phase.status === "completed";
-              const isInProgress = phase.status === "in_progress";
-              const isReady = phase.status === "ready";
-
-              return (
-                <div key={phase.phase} className="relative z-10 flex flex-col items-center text-center group">
-                  {/* Stepper Node Dot */}
-                  <div
-                    className={`w-6 h-6 rounded-full flex items-center justify-center transition-all duration-300 ${
-                      isCompleted
-                        ? "bg-[#30d158] text-black shadow-2xs"
-                        : isInProgress
-                        ? "bg-[#0a84ff] text-white ring-4 ring-[#0a84ff]/25 shadow-xs"
-                        : isReady
-                        ? "bg-[#2c2c2e] border-2 border-white/20 text-[#98989d]"
-                        : "bg-[#202022] border-2 border-white/10 text-white/30"
-                    }`}
-                  >
-                    {isCompleted ? (
-                      <Check className="w-3 h-3 text-black stroke-[3]" />
-                    ) : isInProgress ? (
-                      <span className="w-1.5 h-1.5 rounded-full bg-white " />
-                    ) : isReady ? (
-                      <span className="w-1.5 h-1.5 rounded-full bg-white/40" />
-                    ) : (
-                      <Lock className="w-2.5 h-2.5 text-white/30" />
-                    )}
-                  </div>
-
-                  {/* Phase Label & Status under Node */}
-                  <div className="mt-1.5 space-y-0.5">
-                    <span
-                      className={`text-[11px] font-mono font-bold uppercase tracking-wider block ${
-                        isInProgress
-                          ? "text-[#0a84ff]"
-                          : isCompleted
-                          ? "text-[#30d158]"
-                          : "text-[#a1a1a6]"
-                      }`}
-                    >
-                      Fase 0{phase.phase}
-                    </span>
-                    <h4 className="text-xs font-bold text-[#f5f5f7] block truncate max-w-[65px] sm:max-w-[85px] leading-tight">
-                      {phase.title}
-                    </h4>
-                    <span
-                      className={`inline-block text-[11px] font-semibold px-1.5 py-0.2 rounded-md ${
-                        isCompleted
-                          ? "text-[#30d158] bg-[#30d158]/15 border border-[#30d158]/30"
-                          : isInProgress
-                          ? "text-[#0a84ff] bg-[#0a84ff]/15 border border-[#0a84ff]/30"
-                          : isReady
-                          ? "text-[#98989d] bg-[#2c2c2e] border border-white/10"
-                          : "text-[#a1a1a6] bg-transparent"
-                      }`}
-                    >
-                      {isCompleted ? "Selesai" : isInProgress ? "Aktif" : isReady ? "Tersedia" : "Terkunci"}
-                    </span>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+        {/* Status Badge */}
+        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#2c2c2e] border border-white/10 text-xs font-semibold text-[#f5f5f7] shadow-3xs shrink-0">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#30d158]" />
+          <span className="font-mono text-[11px] text-[#e5e5e7]">Sistem Terkalibrasi</span>
         </div>
       </div>
 
       {/* =========================================================================
-          RIGHT COLUMN (lg:col-span-5): MISI SOFT SKILL (TOP) + PORTOFOLIO (BOTTOM)
+          IN-WINDOW TAB NAVIGATION BAR (Tabs Inside MacBook Window)
       ========================================================================= */}
-      <div className="lg:col-span-5 flex flex-col gap-3.5 sm:gap-4 h-full">
-        {/* CARD 2: MISI SOFT SKILL */}
-        <div className="relative overflow-hidden p-4 sm:p-5 bg-[#1c1c1e] border border-white/[0.12] rounded-2xl flex flex-col justify-between shadow-[0_24px_60px_-12px_rgba(0,0,0,0.6),inset_0_1px_0_0_rgba(255,255,255,0.12)] space-y-3 flex-1 text-[#f5f5f7]">
-          {/* Top Header */}
-          <div className="flex items-center justify-between relative z-10 shrink-0">
-            <div className="flex items-center gap-2.5">
-              {/* macOS Window Controls */}
-              <div className="flex items-center gap-1.5 shrink-0 pr-1">
-                <span className="w-2.5 h-2.5 rounded-full bg-[#ff5f57] border border-[#e0443e] shadow-[inset_0_1px_1px_rgba(255,255,255,0.4)] inline-block" />
-                <span className="w-2.5 h-2.5 rounded-full bg-[#febc2e] border border-[#dea123] shadow-[inset_0_1px_1px_rgba(255,255,255,0.4)] inline-block" />
-                <span className="w-2.5 h-2.5 rounded-full bg-[#28c840] border border-[#1aab29] shadow-[inset_0_1px_1px_rgba(255,255,255,0.4)] inline-block" />
-              </div>
-              <div className="h-3.5 w-px bg-white/[0.1] shrink-0" />
-              <div className="w-7 h-7 rounded-lg bg-white/[0.08] border border-white/10 flex items-center justify-center text-[#30d158] shadow-2xs">
-                <Target className="w-4 h-4 text-[#30d158]" />
-              </div>
-              <div>
-                <h3 className="text-xs sm:text-sm font-bold text-[#f5f5f7] leading-tight">
-                  Misi Soft Skill
-                </h3>
-                <p className="text-[11px] text-[#98989d] leading-tight mt-0.5">
-                  Latihan situasional harian berhadiah XP.
-                </p>
-              </div>
-            </div>
+      <div className="bg-[#18181b] border-b border-white/[0.08] px-4 sm:px-6 py-2.5 flex flex-wrap items-center justify-between gap-3 relative z-20 shrink-0">
+        {/* Segmented Control Tabs */}
+        <div className="flex items-center gap-1.5 p-1 rounded-xl bg-[#242426] border border-white/[0.08] overflow-x-auto no-scrollbar">
+          {FEATURE_TABS.map((tab) => {
+            const isActive = activeTab === tab.id;
+            const Icon = tab.icon;
+            const ref =
+              tab.id === "roadmap"
+                ? tabRoadmapRef
+                : tab.id === "misi"
+                ? tabMisiRef
+                : tabPortoRef;
 
-            {/* Level & XP: Game-like thin progress bar + bold typography */}
-            <div className="text-right flex items-center gap-3">
-              <div className="flex flex-col items-end">
-                <div className="font-mono text-sm sm:text-base font-extrabold text-[#f5f5f7] tabular-nums">
-                  450 <span className="text-xs font-bold text-[#30d158]">XP</span>
-                </div>
-                <div className="flex items-center gap-1.5 mt-0.5">
-                  <div className="w-14 sm:w-16 h-1.5 bg-[#3a3a3c] rounded-full overflow-hidden">
-                    <div className="h-full bg-[#30d158] rounded-full w-[75%]" />
-                  </div>
-                  <span className="text-[11px] font-mono text-[#a1a1a6] font-bold">Lv. 3</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* 3 Misi List */}
-          <div className="space-y-1.5 flex-1 flex flex-col justify-between py-0.5 relative z-10">
-            {/* Item 1: Sampaikan Ide Tim Cross-Functional (Completed) */}
-            <div className="flex items-center justify-between px-3 py-2 rounded-xl border border-[#30d158]/30 bg-[#242426] shadow-3xs transition-all">
-              <div className="flex items-center gap-2.5 min-w-0">
-                <div className="w-5.5 h-5.5 rounded-full bg-[#30d158]/20 flex items-center justify-center text-[#30d158] shrink-0">
-                  <Check className="w-3.5 h-3.5 text-[#30d158] stroke-[2.5]" />
-                </div>
-                <div className="min-w-0">
-                  <div className="font-bold text-[#f5f5f7] text-xs truncate">
-                    Sampaikan Ide Tim Cross-Functional
-                  </div>
-                  <div className="text-[11px] text-[#a1a1a6] font-medium mt-0.5">
-                    Komunikasi · 15 Mnt
-                  </div>
-                </div>
-              </div>
-              <div className="font-mono text-xs font-bold text-[#30d158] shrink-0 tabular-nums">
-                +150 XP
-              </div>
-            </div>
-
-            {/* Item 2: Negosiasi Prioritas Sprint Tim (Active / In Progress) */}
-            <div className="flex items-center justify-between px-3 py-2 rounded-xl border-2 border-[#0a84ff] bg-[#242426] shadow-xs transition-all ring-2 ring-[#0a84ff]/20">
-              <div className="flex items-center gap-2.5 min-w-0">
-                <div className="w-5.5 h-5.5 rounded-full bg-[#0a84ff]/20 flex items-center justify-center shrink-0">
-                  <span className="w-2.5 h-2.5 rounded-full bg-[#0a84ff] " />
-                </div>
-                <div className="min-w-0">
-                  <div className="font-bold text-[#f5f5f7] text-xs truncate">
-                    Negosiasi Prioritas Sprint Tim
-                  </div>
-                  <div className="text-[11px] text-[#0a84ff] font-medium mt-0.5">
-                    Kolaborasi · 20 Mnt
-                  </div>
-                </div>
-              </div>
-              <div className="font-mono text-xs font-bold text-[#0a84ff] shrink-0 tabular-nums">
-                +200 XP
-              </div>
-            </div>
-
-            {/* Item 3: Evaluasi Risiko Rilis Aplikasi (Locked) */}
-            <div className="flex items-center justify-between px-3 py-2 rounded-xl border border-white/[0.06] bg-[#202022] transition-all ">
-              <div className="flex items-center gap-2.5 min-w-0">
-                <div className="w-5.5 h-5.5 rounded-full bg-white/[0.06] flex items-center justify-center text-[#a1a1a6] shrink-0">
-                  <Lock className="w-3 h-3 text-[#a1a1a6]" />
-                </div>
-                <div className="min-w-0">
-                  <div className="font-bold text-[#a1a1a6] text-xs truncate">
-                    Evaluasi Risiko Rilis Aplikasi
-                  </div>
-                  <div className="text-[11px] text-[#a1a1a6]/80 font-medium mt-0.5">
-                    Tanggung Jawab · 30 Mnt
-                  </div>
-                </div>
-              </div>
-              <div className="font-mono text-xs font-bold text-[#a1a1a6] shrink-0 tabular-nums">
-                +250 XP
-              </div>
-            </div>
-          </div>
-
-          {/* Daily Progress Meter */}
-          <div className="pt-2 border-t border-white/[0.08] space-y-1.5 relative z-10">
-            <div className="flex items-center justify-between text-[11px]">
-              <span className="text-[#98989d] font-medium">Progres Misi Harian</span>
-              <span className="text-[#30d158] font-mono font-bold tabular-nums">2 / 3 Selesai (67%)</span>
-            </div>
-            <div className="w-full h-1.5 bg-[#3a3a3c] rounded-full overflow-hidden">
-              <div className="h-full bg-[#30d158] rounded-full w-[67%]" />
-            </div>
-          </div>
+            return (
+              <button
+                key={tab.id}
+                ref={ref}
+                type="button"
+                onClick={() => handleTabClick(tab.id)}
+                className={`px-3 sm:px-4 py-1.5 rounded-lg text-xs font-bold transition-all duration-200 cursor-pointer flex items-center gap-2 shrink-0 ${
+                  isActive
+                    ? "bg-[#0066FF] text-white shadow-xs"
+                    : "text-[#98989d] hover:text-[#f5f5f7] hover:bg-white/[0.04]"
+                }`}
+              >
+                <Icon className="w-3.5 h-3.5" />
+                <span>{tab.label}</span>
+                <span
+                  className={`hidden sm:inline-block text-[10px] font-mono font-medium px-1.5 py-0.2 rounded ${
+                    isActive ? "bg-white/20 text-white" : "text-[#71717a]"
+                  }`}
+                >
+                  {tab.badge}
+                </span>
+              </button>
+            );
+          })}
         </div>
 
-        {/* CARD 3: PORTOFOLIO TERVERIFIKASI & SIMULASI KERJA */}
-        <div className="relative overflow-hidden p-4 sm:p-5 bg-[#1c1c1e] border border-white/[0.12] rounded-2xl flex flex-col justify-between shadow-[0_24px_60px_-12px_rgba(0,0,0,0.6),inset_0_1px_0_0_rgba(255,255,255,0.12)] space-y-3 flex-1 text-[#f5f5f7]">
-          <div className="relative z-10 space-y-2.5">
-            {/* Top Header with macOS Window Controls */}
-            <div className="flex items-center justify-between border-b border-white/[0.08] pb-2.5">
-              <div className="flex items-center gap-2.5">
-                <div className="flex items-center gap-1.5 shrink-0 pr-1">
-                  <span className="w-2.5 h-2.5 rounded-full bg-[#ff5f57] border border-[#e0443e] shadow-[inset_0_1px_1px_rgba(255,255,255,0.4)] inline-block" />
-                  <span className="w-2.5 h-2.5 rounded-full bg-[#febc2e] border border-[#dea123] shadow-[inset_0_1px_1px_rgba(255,255,255,0.4)] inline-block" />
-                  <span className="w-2.5 h-2.5 rounded-full bg-[#28c840] border border-[#1aab29] shadow-[inset_0_1px_1px_rgba(255,255,255,0.4)] inline-block" />
+        {/* Live Auto-Tour Status Indicator */}
+        <div className="flex items-center gap-2 text-[11px] font-mono text-[#98989d]">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#0066FF] animate-pulse" />
+          <span className="hidden sm:inline">Kursor Tur Otomatis</span>
+          <span className="text-[#71717a] hidden md:inline">· Klik bebas kapan saja</span>
+        </div>
+      </div>
+
+      {/* =========================================================================
+          DYNAMIC WINDOW CONTENT CANVAS
+      ========================================================================= */}
+      <div
+        ref={windowContentRef}
+        className="p-4 sm:p-6 lg:p-7 flex-1 flex flex-col justify-between space-y-5 relative z-10"
+      >
+        {/* ===================================================================
+            TAB 1: ROADMAP BELAJAR TERSTRUKTUR
+        =================================================================== */}
+        {activeTab === "roadmap" && (
+          <div className="space-y-4 sm:space-y-5 flex-1 flex flex-col justify-between">
+            {/* Header & Career Selector Bar */}
+            <div className="space-y-3">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-xl bg-white/[0.08] border border-white/10 flex items-center justify-center text-[#0066FF] shadow-3xs shrink-0">
+                    <GraduationCap className="w-5 h-5 text-[#0066FF]" />
+                  </div>
+                  <div>
+                    <h3 className="text-sm sm:text-base font-bold text-[#f5f5f7] tracking-tight leading-tight">
+                      Roadmap Belajar Terstruktur
+                    </h3>
+                    <p className="text-xs text-[#98989d] leading-tight mt-0.5">
+                      Kurikulum 4 fase progresif terkalibrasi dengan standar industri nyata.
+                    </p>
+                  </div>
                 </div>
-                <div className="h-3.5 w-px bg-white/[0.1] shrink-0" />
+
+                <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#2c2c2e] border border-white/10 text-[#f5f5f7] text-[11px] font-mono font-medium self-start sm:self-auto">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#0066FF]" />
+                  <span>Jalur Terbuka</span>
+                </div>
+              </div>
+
+              {/* Career Selector Tabs (Brand Blue Highlight) */}
+              <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pt-1">
+                {ROADMAP_PRESETS.map((preset, idx) => {
+                  const isSelected = idx === activeCareerIdx;
+                  return (
+                    <button
+                      key={preset.id}
+                      ref={idx === 1 ? careerDaRef : undefined}
+                      type="button"
+                      onClick={() => handleSelectCareer(idx)}
+                      className={`px-3 sm:px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer btn-press flex items-center gap-2 shrink-0 ${
+                        isSelected
+                          ? "bg-[#0066FF] text-white border border-[#0066FF] shadow-xs"
+                          : "bg-[#2c2c2e] hover:bg-[#3a3a3c] border border-white/[0.08] text-[#e5e5e7]"
+                      }`}
+                    >
+                      <span>{preset.career}</span>
+                      <span
+                        className={`text-[11px] font-mono tabular-nums font-bold ${
+                          isSelected ? "text-white/80" : "text-[#a1a1a6]"
+                        }`}
+                      >
+                        {preset.overallProgress}%
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Active Career Track Banner */}
+              <div className="bg-[#242426] border border-white/[0.08] rounded-xl px-4 py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+                <div className="flex items-baseline gap-2 min-w-0">
+                  <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-[#a1a1a6] shrink-0">
+                    Jalur Fokus:
+                  </span>
+                  <span className="text-xs sm:text-sm font-bold text-[#f5f5f7] truncate">
+                    {currentRoadmap.track}
+                  </span>
+                </div>
+                <div className="flex items-center gap-3 shrink-0">
+                  <div className="w-24 sm:w-32 h-2 bg-[#3a3a3c] rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-[#0066FF] rounded-full transition-all duration-700 ease-out"
+                      style={{ width: `${currentRoadmap.overallProgress}%` }}
+                    />
+                  </div>
+                  <span className="text-xs font-mono font-bold text-[#f5f5f7] tabular-nums">
+                    {currentRoadmap.overallProgress}% Kesiapan
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Module Cards: 2 Columns Side-by-Side on Desktop */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+              {/* FASE 01: MODUL SELESAI */}
+              <div className="bg-[#242426] border border-[#30d158]/30 rounded-2xl p-4 shadow-3xs space-y-2.5 flex flex-col justify-between">
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-semibold bg-[#30d158]/15 text-[#30d158] border border-[#30d158]/30 shrink-0">
+                        <Check className="w-3 h-3 text-[#30d158] stroke-[2.5]" />
+                        Selesai
+                      </span>
+                      <span className="text-xs font-bold text-[#e5e5e7] truncate">
+                        {currentRoadmap.completedModule.phase}
+                      </span>
+                    </div>
+                    <div className="shrink-0 font-mono text-xs font-bold text-[#30d158]">
+                      Skor {currentRoadmap.completedModule.score}
+                    </div>
+                  </div>
+
+                  <h4 className="text-xs sm:text-sm font-bold text-[#f5f5f7] leading-snug">
+                    {currentRoadmap.completedModule.name}
+                  </h4>
+                </div>
+
+                <div className="pt-2.5 border-t border-white/[0.08] flex flex-wrap items-center justify-between gap-2 text-[11px]">
+                  <div className="flex items-center gap-1.5 text-[#98989d] font-medium">
+                    <span className="text-[#a1a1a6] font-mono text-[11px] uppercase">Skill:</span>
+                    <span className="truncate">{currentRoadmap.completedModule.skills.join(" · ")}</span>
+                  </div>
+                  <span className="text-[#a1a1a6] font-mono text-[11px] flex items-center gap-1 shrink-0">
+                    <Clock className="w-3 h-3 text-[#a1a1a6]" />
+                    {currentRoadmap.completedModule.pace}
+                  </span>
+                </div>
+              </div>
+
+              {/* FASE 02: MODUL AKTIF (Brand Blue Highlight) */}
+              <div className="bg-[#242426] border-2 border-[#0066FF] rounded-2xl p-4 shadow-xs space-y-2.5 flex flex-col justify-between ring-2 ring-[#0066FF]/20">
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-semibold bg-[#0066FF] text-white shrink-0">
+                        <span className="w-1.5 h-1.5 rounded-full bg-white" />
+                        Modul Aktif
+                      </span>
+                      <span className="text-xs font-bold text-[#f5f5f7] truncate">
+                        {currentRoadmap.activeModule.phase}
+                      </span>
+                    </div>
+                    <span className="text-[11px] font-mono text-[#0066FF] font-bold shrink-0">
+                      Target Minggu Ini
+                    </span>
+                  </div>
+
+                  <h4 className="text-xs sm:text-sm font-bold text-[#f5f5f7] leading-snug">
+                    {currentRoadmap.activeModule.name}
+                  </h4>
+                </div>
+
+                <div className="pt-2.5 border-t border-white/[0.08] flex flex-wrap items-center justify-between gap-2 text-[11px]">
+                  <div className="flex items-center gap-1.5 text-[#e5e5e7] font-medium">
+                    <span className="text-[#0066FF] font-mono text-[11px] uppercase font-bold">Skill:</span>
+                    <span className="truncate">{currentRoadmap.activeModule.skills.join(" · ")}</span>
+                  </div>
+                  <span className="text-[#0066FF] font-mono text-[11px] flex items-center gap-1 shrink-0">
+                    <Clock className="w-3 h-3 text-[#0066FF]" />
+                    {currentRoadmap.activeModule.pace}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* 4 Phases Stepper Timeline (Spanning Full Width) */}
+            <div className="bg-[#242426] border border-white/[0.08] rounded-2xl p-4 sm:p-5">
+              <div className="relative flex items-start justify-between px-3 sm:px-8">
+                {/* Background connecting rail */}
+                <div className="absolute left-10 right-10 top-3.5 h-0.5 bg-[#3a3a3c]" aria-hidden="true" />
+                {/* Completed rail */}
+                <div
+                  className="absolute left-10 top-3.5 h-0.5 bg-[#30d158] transition-all duration-500"
+                  style={{ width: "33%" }}
+                  aria-hidden="true"
+                />
+
+                {currentRoadmap.phases.map((phase) => {
+                  const isCompleted = phase.status === "completed";
+                  const isInProgress = phase.status === "in_progress";
+                  const isReady = phase.status === "ready";
+
+                  return (
+                    <div key={phase.phase} className="relative z-10 flex flex-col items-center text-center">
+                      <div
+                        className={`w-7 h-7 rounded-full flex items-center justify-center transition-all duration-300 ${
+                          isCompleted
+                            ? "bg-[#30d158] text-black shadow-2xs"
+                            : isInProgress
+                            ? "bg-[#0066FF] text-white ring-4 ring-[#0066FF]/25 shadow-xs"
+                            : isReady
+                            ? "bg-[#2c2c2e] border-2 border-white/20 text-[#98989d]"
+                            : "bg-[#202022] border-2 border-white/10 text-white/30"
+                        }`}
+                      >
+                        {isCompleted ? (
+                          <Check className="w-3.5 h-3.5 text-black stroke-[3]" />
+                        ) : isInProgress ? (
+                          <span className="w-2 h-2 rounded-full bg-white" />
+                        ) : isReady ? (
+                          <span className="w-1.5 h-1.5 rounded-full bg-white/40" />
+                        ) : (
+                          <Lock className="w-3 h-3 text-white/30" />
+                        )}
+                      </div>
+
+                      <div className="mt-2 space-y-0.5">
+                        <span
+                          className={`text-[10.5px] font-mono font-bold uppercase tracking-wider block ${
+                            isInProgress
+                              ? "text-[#0066FF]"
+                              : isCompleted
+                              ? "text-[#30d158]"
+                              : "text-[#a1a1a6]"
+                          }`}
+                        >
+                          Fase 0{phase.phase}
+                        </span>
+                        <h4 className="text-xs font-bold text-[#f5f5f7] block truncate max-w-[80px] sm:max-w-[120px] leading-tight">
+                          {phase.title}
+                        </h4>
+                        <span
+                          className={`inline-block text-[10.5px] font-semibold px-2 py-0.5 rounded-md ${
+                            isCompleted
+                              ? "text-[#30d158] bg-[#30d158]/15 border border-[#30d158]/30"
+                              : isInProgress
+                              ? "text-[#0066FF] bg-[#0066FF]/15 border border-[#0066FF]/30"
+                              : isReady
+                              ? "text-[#98989d] bg-[#2c2c2e] border border-white/10"
+                              : "text-[#a1a1a6] bg-transparent"
+                          }`}
+                        >
+                          {isCompleted ? "Selesai" : isInProgress ? "Aktif" : isReady ? "Tersedia" : "Terkunci"}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ===================================================================
+            TAB 2: MISI SOFT SKILL
+        =================================================================== */}
+        {activeTab === "misi" && (
+          <div className="space-y-4 sm:space-y-5 flex-1 flex flex-col justify-between">
+            {/* Header with Level & XP Counter */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/[0.08] pb-3">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-white/[0.08] border border-white/10 flex items-center justify-center text-[#30d158] shadow-3xs shrink-0">
+                  <Target className="w-5 h-5 text-[#30d158]" />
+                </div>
                 <div>
-                  <h3 className="text-xs sm:text-sm font-bold tracking-tight text-[#f5f5f7] leading-tight">
-                    Bangun Portofolio Teruji
+                  <h3 className="text-sm sm:text-base font-bold text-[#f5f5f7] tracking-tight leading-tight">
+                    Misi Soft Skill
                   </h3>
-                  <p className="text-[11px] text-[#98989d] leading-tight mt-0.5">
-                    Studi kasus riil dievaluasi standar industri.
+                  <p className="text-xs text-[#98989d] leading-tight mt-0.5">
+                    Latihan situasional harian berhadiah XP untuk mengasah keahlian kerja nyata.
                   </p>
                 </div>
               </div>
 
-              <div className="text-[11px] font-mono font-bold tracking-wider text-[#0a84ff] uppercase shrink-0">
-                Simulasi Riil
+              <div className="flex items-center gap-3 self-start sm:self-auto bg-[#242426] border border-white/[0.08] px-3 py-1.5 rounded-xl">
+                <div className="text-right">
+                  <div className="font-mono text-sm sm:text-base font-extrabold text-[#f5f5f7] tabular-nums leading-none">
+                    450 <span className="text-xs font-bold text-[#30d158]">XP</span>
+                  </div>
+                  <div className="flex items-center gap-1.5 mt-1">
+                    <div className="w-16 h-1.5 bg-[#3a3a3c] rounded-full overflow-hidden">
+                      <div className="h-full bg-[#30d158] rounded-full w-[75%]" />
+                    </div>
+                    <span className="text-[10.5px] font-mono text-[#a1a1a6] font-bold">Lv. 3</span>
+                  </div>
+                </div>
               </div>
             </div>
 
-            {/* Inner Curated / Case Study Card */}
-            <div ref={kegiatanBodyRef} className="p-3 rounded-xl bg-[#242426] border border-white/[0.08] flex flex-col justify-between space-y-2">
-              <div>
-                <div className="flex items-center justify-between text-[11px] font-mono text-[#a1a1a6] mb-1">
-                  <span>STUDI KASUS REKOMENDASI</span>
-                  <span className="text-[#30d158] font-bold tabular-nums text-xs font-mono">{currentKegiatan.match}% Cocok</span>
+            {/* 3 Situational Missions (Dark High Contrast Surface) */}
+            <div className="space-y-2.5">
+              {/* Mission 1 (Completed) */}
+              <div className="flex items-center justify-between px-4 py-3 rounded-xl border border-[#30d158]/30 bg-[#242426] shadow-3xs transition-all">
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="w-7 h-7 rounded-full bg-[#30d158]/20 flex items-center justify-center text-[#30d158] shrink-0">
+                    <Check className="w-4 h-4 stroke-[2.5]" />
+                  </div>
+                  <div className="min-w-0">
+                    <div className="font-bold text-[#f5f5f7] text-xs sm:text-sm truncate">
+                      Sampaikan Ide Tim Cross-Functional
+                    </div>
+                    <div className="text-[11px] text-[#a1a1a6] font-medium mt-0.5">
+                      Komunikasi · 15 Mnt
+                    </div>
+                  </div>
                 </div>
-                <h4 className="text-xs sm:text-sm font-bold text-[#f5f5f7] truncate">
-                  {currentKegiatan.title}
-                </h4>
-                <div className="text-xs text-[#98989d] mt-0.5 truncate">
-                  {currentKegiatan.organizer}
+                <div className="font-mono text-xs sm:text-sm font-bold text-[#30d158] shrink-0 tabular-nums">
+                  +150 XP
+                </div>
+              </div>
+
+              {/* Mission 2 (Active / In Progress with Brand Blue) */}
+              <div className="flex items-center justify-between px-4 py-3 rounded-xl border-2 border-[#0066FF] bg-[#242426] shadow-xs ring-2 ring-[#0066FF]/20 transition-all">
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="w-7 h-7 rounded-full bg-[#0066FF]/20 flex items-center justify-center text-[#0066FF] shrink-0">
+                    <span className="w-2.5 h-2.5 rounded-full bg-[#0066FF]" />
+                  </div>
+                  <div className="min-w-0">
+                    <div className="font-bold text-[#f5f5f7] text-xs sm:text-sm truncate">
+                      Negosiasi Prioritas Sprint Tim
+                    </div>
+                    <div className="text-[11px] text-[#0066FF] font-medium mt-0.5">
+                      Kolaborasi · 20 Mnt
+                    </div>
+                  </div>
+                </div>
+                <div className="font-mono text-xs sm:text-sm font-bold text-[#0066FF] shrink-0 tabular-nums">
+                  +200 XP
+                </div>
+              </div>
+
+              {/* Mission 3 (Locked) */}
+              <div className="flex items-center justify-between px-4 py-3 rounded-xl border border-white/[0.06] bg-[#202022] transition-all opacity-75">
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="w-7 h-7 rounded-full bg-white/[0.06] flex items-center justify-center text-[#a1a1a6] shrink-0">
+                    <Lock className="w-3.5 h-3.5 text-[#a1a1a6]" />
+                  </div>
+                  <div className="min-w-0">
+                    <div className="font-bold text-[#a1a1a6] text-xs sm:text-sm truncate">
+                      Evaluasi Risiko Rilis Aplikasi
+                    </div>
+                    <div className="text-[11px] text-[#a1a1a6]/80 font-medium mt-0.5">
+                      Tanggung Jawab · 30 Mnt
+                    </div>
+                  </div>
+                </div>
+                <div className="font-mono text-xs sm:text-sm font-bold text-[#a1a1a6] shrink-0 tabular-nums">
+                  +250 XP
+                </div>
+              </div>
+            </div>
+
+            {/* Daily Progress Meter & Action */}
+            <div className="pt-3 border-t border-white/[0.08] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="space-y-1.5 flex-1 max-w-md">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-[#98989d] font-medium">Progres Misi Harian</span>
+                  <span className="text-[#30d158] font-mono font-bold tabular-nums">2 / 3 Selesai (67%)</span>
+                </div>
+                <div className="w-full h-2 bg-[#3a3a3c] rounded-full overflow-hidden">
+                  <div className="h-full bg-[#30d158] rounded-full w-[67%]" />
+                </div>
+              </div>
+
+              <Link
+                href="/assessment"
+                className="btn-press inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-[#0066FF] hover:bg-[#0052cc] text-white text-xs font-semibold shadow-xs transition-colors cursor-pointer group shrink-0"
+              >
+                <span>Mulai Latihan Situasional</span>
+                <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" />
+              </Link>
+            </div>
+          </div>
+        )}
+
+        {/* ===================================================================
+            TAB 3: PORTOFOLIO (BANGUN PORTOFOLIO TERUJI)
+        =================================================================== */}
+        {activeTab === "portofolio" && (
+          <div className="space-y-4 sm:space-y-5 flex-1 flex flex-col justify-between">
+            {/* Header */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/[0.08] pb-3">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-white/[0.08] border border-white/10 flex items-center justify-center text-[#0066FF] shadow-3xs shrink-0">
+                  <Briefcase className="w-5 h-5 text-[#0066FF]" />
+                </div>
+                <div>
+                  <h3 className="text-sm sm:text-base font-bold text-[#f5f5f7] tracking-tight leading-tight">
+                    Bangun Portofolio Teruji
+                  </h3>
+                  <p className="text-xs text-[#98989d] leading-tight mt-0.5">
+                    Studi kasus riil yang dievaluasi standar industri & lowongan terkurasi.
+                  </p>
+                </div>
+              </div>
+
+              <div className="text-[11px] font-mono font-bold tracking-wider text-[#0066FF] uppercase self-start sm:self-auto bg-[#0066FF]/15 px-2.5 py-1 rounded-lg border border-[#0066FF]/30">
+                Simulasi Kasus Riil
+              </div>
+            </div>
+
+            {/* Curated Case Study Card (Dark Surface, Crisp Details) */}
+            <div className="p-4 sm:p-5 rounded-2xl bg-[#242426] border border-white/[0.08] flex flex-col justify-between space-y-4 shadow-3xs">
+              <div className="space-y-2.5">
+                <div className="flex items-center justify-between text-xs font-mono">
+                  <span className="text-[#a1a1a6] font-bold uppercase tracking-wider text-[11px]">
+                    Studi Kasus Rekomendasi
+                  </span>
+                  <span className="text-[#30d158] font-bold tabular-nums text-xs sm:text-sm font-mono">
+                    {currentKegiatan.match}% Cocok
+                  </span>
                 </div>
 
-                {/* Tags in single row */}
-                <div className="flex items-center gap-1.5 mt-2 overflow-hidden h-[22px]">
+                <div>
+                  <h4 className="text-sm sm:text-base font-bold text-[#f5f5f7]">
+                    {currentKegiatan.title}
+                  </h4>
+                  <div className="text-xs text-[#98989d] mt-0.5">
+                    {currentKegiatan.organizer}
+                  </div>
+                </div>
+
+                {/* Tags */}
+                <div className="flex flex-wrap items-center gap-2 pt-1">
                   {currentKegiatan.tags.map((tag) => (
                     <span
                       key={tag}
-                      className="text-[11px] px-2 py-0.5 bg-white/[0.06] border border-white/10 rounded-md text-[#e5e5e7] shrink-0 truncate max-w-[130px] font-medium"
+                      className="text-xs px-2.5 py-1 bg-white/[0.06] border border-white/10 rounded-lg text-[#e5e5e7] font-medium shadow-3xs"
                     >
                       {tag}
                     </span>
@@ -723,54 +1005,87 @@ export default function BentoEcosystemTour() {
                 </div>
               </div>
 
-              <div className="flex items-center justify-between pt-2 border-t border-white/[0.08] text-[11px]">
-                <span className="text-[#ffd60a] font-mono font-semibold flex items-center gap-1">
-                  <Clock className="w-2.5 h-2.5 text-[#ffd60a]" />
+              {/* Deadline & Bookmark Row */}
+              <div className="flex items-center justify-between pt-3 border-t border-white/[0.08] text-xs">
+                <span className="text-[#ffd60a] font-mono font-semibold flex items-center gap-1.5">
+                  <Clock className="w-3.5 h-3.5 text-[#ffd60a]" />
                   {currentKegiatan.deadline}
                 </span>
                 <button
                   type="button"
                   onClick={(e) => toggleBookmark(currentKegiatan.id, e)}
-                  className="text-[#98989d] hover:text-[#f5f5f7] transition-colors cursor-pointer flex items-center gap-1 font-mono text-[11px]"
+                  className="text-[#98989d] hover:text-[#f5f5f7] transition-colors cursor-pointer flex items-center gap-1.5 font-mono text-xs"
                 >
                   <Bookmark
-                    className={`w-3 h-3 ${
-                      bookmarkedId === currentKegiatan.id ? "fill-[#0a84ff] text-[#0a84ff]" : ""
+                    className={`w-3.5 h-3.5 ${
+                      bookmarkedId === currentKegiatan.id ? "fill-[#0066FF] text-[#0066FF]" : ""
                     }`}
                   />
-                  <span>Simpan</span>
+                  <span>{bookmarkedId === currentKegiatan.id ? "Tersimpan" : "Simpan"}</span>
                 </button>
               </div>
             </div>
-          </div>
 
-          {/* Footer Bar */}
-          <div className="pt-2 border-t border-white/[0.08] flex items-center justify-between gap-2 text-[11px] relative z-10">
-            <div className="flex items-center gap-1 font-mono text-[11px] sm:text-[11px]">
-              {KEGIATAN_PRESETS.map((k, i) => (
-                <button
-                  key={k.id}
-                  type="button"
-                  onClick={() => setActiveKegiatanIdx(i)}
-                  className={`px-2 py-0.5 rounded-md cursor-pointer transition-colors ${
-                    i === activeKegiatanIdx
-                      ? "bg-[#0071e3] text-white font-bold shadow-xs"
-                      : "text-[#98989d] hover:text-white"
-                  }`}
-                >
-                  Kasus {i + 1}
-                </button>
-              ))}
+            {/* Case Switcher & CTA Button (Brand Blue: #0066FF) */}
+            <div className="pt-3 border-t border-white/[0.08] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="flex items-center gap-1.5 font-mono text-xs">
+                {KEGIATAN_PRESETS.map((k, i) => (
+                  <button
+                    key={k.id}
+                    ref={i === 1 ? kegiatan2Ref : undefined}
+                    type="button"
+                    onClick={() => setActiveKegiatanIdx(i)}
+                    className={`px-3 py-1.5 rounded-lg cursor-pointer transition-colors ${
+                      i === activeKegiatanIdx
+                        ? "bg-[#0066FF] text-white font-bold shadow-xs"
+                        : "bg-[#2c2c2e] hover:bg-[#3a3a3c] text-[#98989d]"
+                    }`}
+                  >
+                    Kasus {i + 1}
+                  </button>
+                ))}
+              </div>
+
+              <Link
+                href="/assessment"
+                className="btn-press inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-[#0066FF] hover:bg-[#0052cc] text-white text-xs sm:text-sm font-semibold shadow-xs transition-colors cursor-pointer group shrink-0"
+              >
+                <span>Mulai Simulasi</span>
+                <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" />
+              </Link>
             </div>
-
-            <Link
-              href="/assessment"
-              className="btn-press inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold shadow-xs transition-colors cursor-pointer group shrink-0"
-            >
-              <span>Mulai Simulasi</span>
-              <ArrowRight className="w-3 h-3 transition-transform group-hover:translate-x-0.5" />
-            </Link>
           </div>
+        )}
+      </div>
+
+      {/* =========================================================================
+          VIRTUAL ANIMATED CURSOR (Glides & Clicks Inside MacBook Window)
+      ========================================================================= */}
+      <div
+        ref={cursorRef}
+        className="absolute pointer-events-none z-50 top-0 left-0 opacity-0 will-change-transform"
+        aria-hidden="true"
+      >
+        <div className="relative">
+          <svg
+            width="28"
+            height="34"
+            viewBox="0 0 24 28"
+            fill="none"
+            className="drop-shadow-lg filter drop-shadow-[0_4px_16px_rgba(0,102,255,0.7)]"
+          >
+            <path
+              d="M2.5 1.5L21.5 13.5L12 16L8 25.5L2.5 1.5Z"
+              fill="#0066FF"
+              stroke="white"
+              strokeWidth="2.2"
+              strokeLinejoin="round"
+            />
+          </svg>
+          <span
+            ref={clickPulseRef}
+            className="absolute w-12 h-12 rounded-full bg-[#0066FF]/30 border-2 border-[#0066FF] pointer-events-none opacity-0 -left-[19px] -top-[20px]"
+          />
         </div>
       </div>
     </div>
