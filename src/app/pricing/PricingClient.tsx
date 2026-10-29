@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from 'react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import {
-  Check, Sparkles, Lock, ArrowRight, Crown, Shield, FileText,
+  Check, Lock, ArrowRight, Crown, Shield, FileText,
   HelpCircle, Calendar, Zap, CheckCircle2, Clock, X, AlertCircle
 } from 'lucide-react';
 import { PLAN_CONFIG, PRODUCTS } from '@/config/plan';
@@ -384,7 +384,7 @@ export function PricingClient({ isLoggedIn, isPro: initialIsPro, periodEnd: init
             </button>
 
             <div className="text-center mb-6">
-              <div className="w-14 h-14 rounded-2xl bg-linear-to-tr from-blue-600 via-indigo-600 to-sky-500 text-white flex items-center justify-center mx-auto mb-3 shadow-md">
+              <div className="w-14 h-14 rounded-2xl bg-[#0066FF] text-white flex items-center justify-center mx-auto mb-3 shadow-xs">
                 <Crown className="w-7 h-7" />
               </div>
               <h3 className="text-xl font-bold text-slate-900">
@@ -406,7 +406,7 @@ export function PricingClient({ isLoggedIn, isPro: initialIsPro, periodEnd: init
               </div>
               <div className="flex justify-between text-slate-900 font-bold pt-2 border-t border-slate-200 text-sm">
                 <span>Total Tagihan:</span>
-                <span className="text-blue-600">Rp 29.000</span>
+                <span className="text-[#0066FF] font-mono tabular-nums">Rp 29.000</span>
               </div>
             </div>
 
@@ -426,7 +426,7 @@ export function PricingClient({ isLoggedIn, isPro: initialIsPro, periodEnd: init
                 <button
                   onClick={handleSubscribePro}
                   disabled={isSubscribing}
-                  className="flex-1 py-2.5 rounded-xl bg-linear-to-r from-blue-600 via-indigo-600 to-sky-500 hover:opacity-95 text-white text-xs font-semibold shadow-md transition disabled:opacity-50 cursor-pointer"
+                  className="flex-1 py-2.5 rounded-xl bg-[#0066FF] hover:bg-blue-700 text-white text-xs font-semibold shadow-xs transition-colors disabled:opacity-50 cursor-pointer"
                 >
                   {isSubscribing ? 'Memproses...' : 'Konfirmasi Bayar'}
                 </button>

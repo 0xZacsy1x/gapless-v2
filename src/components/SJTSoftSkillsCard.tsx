@@ -5,7 +5,7 @@ import {
   Brain,
   CheckCircle2,
   ChevronDown,
-  Sparkles,
+  FileText,
   TrendingUp,
   AlertCircle,
   Lock,
@@ -166,10 +166,10 @@ export function SJTSoftSkillsCard({
           <div className="p-4 rounded-2xl bg-emerald-50/70 border border-emerald-200/80">
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-900">
-                <Sparkles className="w-4 h-4 text-emerald-600" />
+                <CheckCircle2 className="w-4 h-4 text-emerald-600" />
                 <span>Soft Skill Paling Menonjol (Kekuatan Utama)</span>
               </div>
-              <span className="text-[10px] font-semibold text-emerald-700 bg-emerald-100/70 px-2 py-0.5 rounded-full">
+              <span className="text-[10px] font-semibold text-emerald-700 bg-emerald-100/70 px-2 py-0.5 rounded-md">
                 Terverifikasi
               </span>
             </div>
@@ -242,7 +242,7 @@ export function SJTSoftSkillsCard({
                   : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
               }`}
             >
-              <Sparkles className="w-3.5 h-3.5 text-white" />
+              <FileText className="w-3.5 h-3.5 text-white" />
               <span>Detail Analisis Mendalam (Paid Exclusive)</span>
             </button>
           </div>
@@ -300,13 +300,13 @@ export function SJTSoftSkillsCard({
         {/* ── EXPANDED VIEW 2: IN-DEPTH DETAIL FOR PAID USERS ── */}
         <div className={`grid transition-[grid-template-rows,opacity] duration-300 ease-out ${isExpanded && isPurchased && activeTab === 'in_depth' ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0 pointer-events-none'}`}>
           <div className="overflow-hidden">
-              <div className="mb-4 p-4 rounded-2xl bg-indigo-50/70 border border-indigo-200/80 flex items-start gap-3">
-                <span className="p-2 bg-indigo-100 text-indigo-700 rounded-xl shrink-0 mt-0.5">
-                  <Sparkles className="w-4 h-4" />
+              <div className="mb-4 p-4 rounded-2xl bg-blue-50/70 border border-blue-200/80 flex items-start gap-3">
+                <span className="p-2 bg-blue-100 text-[#0066FF] rounded-xl shrink-0 mt-0.5">
+                  <Target className="w-4 h-4" />
                 </span>
                 <div>
                   <div className="flex flex-wrap items-center gap-2 mb-1">
-                    <h4 className="text-xs font-bold text-indigo-950">
+                    <h4 className="text-xs font-bold text-blue-950">
                       Evaluasi Kematangan Perilaku Kerja &amp; Panduan Wawancara ({careerTitle})
                     </h4>
                     <span className="text-[10px] font-semibold text-emerald-800 bg-emerald-100 border border-emerald-200 px-2 py-0.5 rounded-md inline-flex items-center gap-1">
@@ -314,7 +314,7 @@ export function SJTSoftSkillsCard({
                       <span>Tergabung di Laporan Lengkap (Hal 4 &amp; 5)</span>
                     </span>
                   </div>
-                  <p className="text-[11px] text-indigo-800 leading-relaxed">
+                  <p className="text-[11px] text-slate-700 leading-relaxed">
                     Data di bawah menganalisis respon alami di tempat kerja, deteksi blind spots, aksi perbaikan mingguan, dan simulasi jawaban interview (STAR Method). Analisis ini otomatis terintegrasi utuh di dalam Dokumen Laporan Eksekutif 11 Halaman di bawah.
                   </p>
                 </div>
@@ -444,20 +444,20 @@ export function SJTSoftSkillsCard({
                                 &ldquo;{item.interviewTalkingPoint.promptQuestion}&rdquo;
                               </p>
                               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px] pt-1">
-                                <div className="p-2 bg-white rounded-lg border border-violet-100">
-                                  <strong className="text-violet-900 block">S - Situation:</strong>
+                                <div className="p-2 bg-slate-50 rounded-lg border border-slate-200">
+                                  <strong className="text-slate-900 block font-mono text-[10.5px]">S - SITUATION:</strong>
                                   <span className="text-slate-600">{item.interviewTalkingPoint.starStory.situation}</span>
                                 </div>
-                                <div className="p-2 bg-white rounded-lg border border-violet-100">
-                                  <strong className="text-violet-900 block">T - Task:</strong>
+                                <div className="p-2 bg-slate-50 rounded-lg border border-slate-200">
+                                  <strong className="text-slate-900 block font-mono text-[10.5px]">T - TASK:</strong>
                                   <span className="text-slate-600">{item.interviewTalkingPoint.starStory.task}</span>
                                 </div>
-                                <div className="p-2 bg-white rounded-lg border border-violet-100">
-                                  <strong className="text-violet-900 block">A - Action:</strong>
+                                <div className="p-2 bg-slate-50 rounded-lg border border-slate-200">
+                                  <strong className="text-slate-900 block font-mono text-[10.5px]">A - ACTION:</strong>
                                   <span className="text-slate-600">{item.interviewTalkingPoint.starStory.action}</span>
                                 </div>
-                                <div className="p-2 bg-white rounded-lg border border-violet-100">
-                                  <strong className="text-violet-900 block">R - Result:</strong>
+                                <div className="p-2 bg-slate-50 rounded-lg border border-slate-200">
+                                  <strong className="text-slate-900 block font-mono text-[10.5px]">R - RESULT:</strong>
                                   <span className="text-slate-600">{item.interviewTalkingPoint.starStory.result}</span>
                                 </div>
                               </div>
@@ -474,11 +474,10 @@ export function SJTSoftSkillsCard({
 
         {/* ── CALLOUT KUNCI UNTUK FREE USERS ── */}
         {!isPurchased && (
-          <div className="p-5 sm:p-6 rounded-2xl bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 text-white relative overflow-hidden shadow-md">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/10 rounded-full blur-2xl pointer-events-none" />
+          <div className="p-5 sm:p-6 rounded-2xl bg-slate-900 border border-slate-800 text-white relative overflow-hidden shadow-md">
             <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-5">
               <div className="space-y-1.5 max-w-xl">
-                <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white/10 text-amber-300 border border-white/15 text-[11px] font-bold">
+                <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white/10 text-amber-300 border border-white/15 text-[11px] font-mono font-bold">
                   <Lock className="w-3 h-3 text-amber-400" />
                   <span>Manfaat Eksklusif Laporan Berbayar (Rp9.900)</span>
                 </div>
@@ -495,18 +494,18 @@ export function SJTSoftSkillsCard({
                   <button
                     type="button"
                     onClick={onUnlockClick}
-                    className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white font-bold text-xs shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer hover:scale-105"
+                    className="btn-press w-full sm:w-auto px-5 py-2.5 rounded-xl bg-[#0066FF] hover:bg-[#0052cc] text-white font-bold text-xs shadow-xs transition-colors flex items-center justify-center gap-2 cursor-pointer"
                   >
-                    <Sparkles className="w-4 h-4 text-amber-300" />
+                    <FileText className="w-4 h-4 text-white" />
                     <span>Buka di Laporan Resmi (Rp9.900)</span>
                     <ArrowRight className="w-3.5 h-3.5" />
                   </button>
                 ) : (
                   <a
                     href="#laporan-eksekutif-section"
-                    className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white font-bold text-xs shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer hover:scale-105"
+                    className="btn-press w-full sm:w-auto px-5 py-2.5 rounded-xl bg-[#0066FF] hover:bg-[#0052cc] text-white font-bold text-xs shadow-xs transition-colors flex items-center justify-center gap-2 cursor-pointer"
                   >
-                    <Sparkles className="w-4 h-4 text-amber-300" />
+                    <FileText className="w-4 h-4 text-white" />
                     <span>Buka di Laporan Resmi (Rp9.900)</span>
                     <ArrowRight className="w-3.5 h-3.5" />
                   </a>

@@ -9,10 +9,11 @@ export const TRAITS: Trait[] = [
 
 export const TRAIT_META: Record<
   Trait,
-  { emoji: string; color: string; label: string; description: string }
+  { emoji: string; color: string; label: string; description: string; image: string }
 > = {
   'The Thinker': {
     emoji: 'LineChart',
+    image: '/The Thinker.png',
     color: '#10b981',
     label: 'The Thinker',
     description:
@@ -20,6 +21,7 @@ export const TRAIT_META: Record<
   },
   'The Creator': {
     emoji: 'Palette',
+    image: '/The Creator.png',
     color: '#a855f7',
     label: 'The Creator',
     description:
@@ -27,6 +29,7 @@ export const TRAIT_META: Record<
   },
   'The Connector': {
     emoji: 'Network',
+    image: '/The Connector.png',
     color: '#3b82f6',
     label: 'The Connector',
     description:
@@ -34,6 +37,7 @@ export const TRAIT_META: Record<
   },
   'The Builder': {
     emoji: 'Cpu',
+    image: '/The Builder.png',
     color: '#f59e0b',
     label: 'The Builder',
     description:

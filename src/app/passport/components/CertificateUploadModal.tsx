@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import gsap from 'gsap';
-import { Award, Sparkles, AlertCircle, UploadCloud, FileCheck, X } from 'lucide-react';
+import { Award, Brain, AlertCircle, UploadCloud, FileCheck, X } from 'lucide-react';
 import { CertificateData } from '../types';
 
 interface CertificateUploadModalProps {
@@ -152,14 +152,14 @@ export function CertificateUploadModal({
             </div>
 
             {/* Panduan Validasi AI Instan & Akumulasi Skor */}
-            <div className="p-3.5 rounded-xl bg-gradient-to-r from-blue-50/90 via-indigo-50/80 to-purple-50/70 border border-blue-200/80 text-slate-800 space-y-1.5">
+            <div className="p-3.5 rounded-xl bg-blue-50/70 border border-blue-200/80 text-slate-800 space-y-1.5">
               <div className="flex items-center gap-1.5 font-bold text-xs text-blue-950">
-                <Sparkles className="w-4 h-4 text-blue-600 shrink-0" />
+                <Brain className="w-4 h-4 text-[#0066FF] shrink-0" />
                 <span>Verifikasi Instan via AI:</span>
               </div>
               <div className="text-[11px] leading-relaxed text-slate-600 space-y-1">
                 <div className="flex items-start gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-blue-500 shrink-0 mt-1.5" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#0066FF] shrink-0 mt-1.5" />
                   <span><strong>100% Otomatis:</strong> Dokumen langsung diverifikasi secara otonom oleh AI dalam hitungan detik tanpa perlu antrean review!</span>
                 </div>
                 <div className="flex items-start gap-1.5">
@@ -167,7 +167,7 @@ export function CertificateUploadModal({
                   <span><strong>Penilaian Bobot Dinamis:</strong> Prestasi juara lomba mendapat boost hingga +5%, volunteer +3%, dan kursus +2%.</span>
                 </div>
                 <div className="flex items-start gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 shrink-0 mt-1.5" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#0066FF] shrink-0 mt-1.5" />
                   <span><strong>Khusus Gapless Pro:</strong> Analisis mendalam AI dan detail dampak skill per dokumen dapat diakses akun Pro.</span>
                 </div>
               </div>

@@ -1,9 +1,10 @@
 'use client';
 
 import { useEffect, useState, useMemo, useRef } from 'react';
+import Image from 'next/image';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
-import { Star, Sparkles } from 'lucide-react';
+import { Star, Lightbulb } from 'lucide-react';
 import {
   RadarChart,
   PolarGrid,
@@ -14,6 +15,7 @@ import {
   Tooltip,
 } from 'recharts';
 import { getArchetypeReasoning, TRAITS, TRAIT_META, ASSESSMENT_QUESTIONS, Trait } from '@/data/gaplessData';
+import { TraitIcon } from '@/components/ui/AppIcons';
 
 interface Props {
   dominantTrait: string;
@@ -76,11 +78,14 @@ export function ArchetypeReasoningBlock({ dominantTrait, traitScores, keyTraits,
     });
 
     // Key traits
-    gsap.fromTo(
-      '.key-traits-container',
-      { opacity: 0, y: 10 },
-      { opacity: 1, y: 0, duration: 0.5, delay: 1, ease: 'power2.out' }
-    );
+    const keyTraitsEl = containerRef.current.querySelector('.key-traits-container');
+    if (keyTraitsEl) {
+      gsap.fromTo(
+        keyTraitsEl,
+        { opacity: 0, y: 10 },
+        { opacity: 1, y: 0, duration: 0.5, delay: 1, ease: 'power2.out' }
+      );
+    }
   }, { scope: containerRef });
 
   useGSAP(() => {
@@ -102,7 +107,29 @@ export function ArchetypeReasoningBlock({ dominantTrait, traitScores, keyTraits,
       <div className="archetype-header text-center mb-12">
         {!hideTitle && (
           <>
-            <div className="text-5xl mb-4">{meta.emoji}</div>
+            {meta.image ? (
+              <div className="w-28 h-28 mx-auto mb-3 relative flex items-center justify-center">
+                <Image
+                  src={meta.image}
+                  alt={dominantTrait}
+                  width={112}
+                  height={112}
+                  className="w-full h-full object-contain drop-shadow-md"
+                  priority
+                />
+              </div>
+            ) : (
+              <div
+                className="w-16 h-16 rounded-2xl mx-auto mb-4 flex items-center justify-center shadow-xs"
+                style={{
+                  backgroundColor: `${meta.color}15`,
+                  color: meta.color,
+                  border: `1px solid ${meta.color}30`,
+                }}
+              >
+                <TraitIcon trait={dominantTrait} className="w-8 h-8" strokeWidth={2} />
+              </div>
+            )}
             <div
               className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-4"
               style={{
@@ -127,7 +154,7 @@ export function ArchetypeReasoningBlock({ dominantTrait, traitScores, keyTraits,
         
         <div className="max-w-2xl mx-auto bg-white/60 p-6 rounded-2xl border border-white/50 text-left shadow-sm">
           <div className="flex items-start gap-3">
-            <Sparkles className="w-5 h-5 mt-1 shrink-0" style={{ color: meta.color }} />
+            <Lightbulb className="w-5 h-5 mt-1 shrink-0" style={{ color: meta.color }} />
             <p className="text-sm md:text-base text-gray-700 leading-relaxed font-medium">
               <span className="font-bold text-slate-900 block mb-1">Mengapa kamu mendapat hasil ini?</span>
               {archetypeReasoning}
@@ -150,8 +177,24 @@ export function ArchetypeReasoningBlock({ dominantTrait, traitScores, keyTraits,
               return (
                 <div key={trait}>
                   <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center gap-2">
-                      <span className="text-lg">{tMeta.emoji}</span>
+                    <div className="flex items-center gap-2.5">
+                      {tMeta.image ? (
+                        <div className="w-6 h-6 rounded-md overflow-hidden bg-slate-100 shrink-0 border border-slate-200/80 flex items-center justify-center">
+                          <Image
+                            src={tMeta.image}
+                            alt={trait}
+                            width={24}
+                            height={24}
+                            className="w-full h-full object-contain"
+                          />
+                        </div>
+                      ) : (
+                        <TraitIcon
+                          trait={trait}
+                          className="w-4 h-4 shrink-0"
+                          style={{ color: isDominant ? tMeta.color : '#64748b' }}
+                        />
+                      )}
                       <span
                         className="text-sm font-semibold"
                         style={{ color: isDominant ? tMeta.color : '#64748b' }}

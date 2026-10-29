@@ -12,7 +12,6 @@ import {
   ArrowLeft, 
   ShieldCheck, 
   ExternalLink,
-  Sparkles,
   Building2
 } from 'lucide-react';
 import Link from 'next/link';
@@ -201,7 +200,7 @@ Big thanks to Gapless and ${companyName} for providing this immersive learning e
           {/* Header Logos */}
           <div className="flex items-center justify-between border-b border-[#D4AF37]/30 pb-6 mb-8 relative z-10">
             <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center text-white font-black text-lg shadow-sm">
+              <div className="w-9 h-9 rounded-xl bg-[#0066FF] flex items-center justify-center text-white font-black text-lg shadow-xs">
                 G
               </div>
               <div>
@@ -211,8 +210,8 @@ Big thanks to Gapless and ${companyName} for providing this immersive learning e
             </div>
 
             <div className="text-right">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-50 border border-amber-300 text-amber-900 text-xs font-bold">
-                <Building2 className="w-3.5 h-3.5 text-amber-600" />
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-amber-50/80 border border-amber-300/80 text-amber-950 text-xs font-semibold">
+                <Building2 className="w-3.5 h-3.5 text-amber-700" />
                 <span>In Collaboration with {companyName}</span>
               </div>
             </div>

@@ -12,7 +12,6 @@ import {
   Lock,
   Unlock,
   CheckCircle2,
-  Sparkles,
   Loader2,
   ExternalLink,
   Clock,
@@ -291,8 +290,8 @@ export default function ModuleDetailClient({
     <div className="flex flex-col gap-8 pb-20">
       {/* Toast Notification — Auto dismiss dalam 4 detik, posisi di bawah navbar agar tidak menutupi akun */}
       {toastMessage && (
-        <div className="fixed top-20 right-4 sm:top-24 sm:right-8 z-50 bg-emerald-600 text-white px-4 py-3 rounded-2xl shadow-2xl border border-emerald-500/40 flex items-center gap-3 text-sm font-semibold animate-in fade-in slide-in-from-top-3 duration-300">
-          <Sparkles className="w-4 h-4 text-amber-300 shrink-0" />
+        <div className="fixed top-20 right-4 sm:top-24 sm:right-8 z-50 bg-emerald-600 text-white px-4 py-3 rounded-2xl shadow-xl border border-emerald-500/40 flex items-center gap-3 text-sm font-semibold animate-in fade-in slide-in-from-top-3 duration-300">
+          <CheckCircle2 className="w-4 h-4 text-emerald-200 shrink-0" />
           <span>{toastMessage}</span>
           <button
             onClick={() => setToastMessage(null)}
@@ -353,7 +352,7 @@ export default function ModuleDetailClient({
 
       {/* Target Modul */}
       <div className="bg-white border border-blue-100 rounded-2xl p-5 shadow-xs flex items-start gap-4">
-        <div className="bg-gradient-to-br from-blue-600 to-indigo-600 text-white p-2.5 rounded-xl shrink-0 shadow-xs">
+        <div className="bg-[#0066FF] text-white p-2.5 rounded-xl shrink-0 shadow-xs">
           <Target size={22} />
         </div>
         <div className="flex flex-col">
@@ -368,8 +367,7 @@ export default function ModuleDetailClient({
       <div className="bg-white border border-slate-200 rounded-3xl overflow-hidden shadow-xs">
         {/* Header Card Fase */}
         <div className="p-6 sm:p-8 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center gap-6">
-          <div className="flex flex-col items-center justify-center bg-gradient-to-br from-blue-600 to-indigo-700 text-white rounded-2xl w-28 h-24 shrink-0 shadow-md relative overflow-hidden px-2">
-            <div className="absolute top-0 right-0 w-16 h-16 bg-white/10 rounded-bl-full blur-md"></div>
+          <div className="flex flex-col items-center justify-center bg-[#0066FF] text-white rounded-2xl w-28 h-24 shrink-0 shadow-xs relative overflow-hidden px-2">
             <span className="text-xs font-semibold opacity-90">Fase {phaseIndex + 1}</span>
             <span className="text-base sm:text-lg font-black text-center truncate w-full">
               {['Dasar', 'Menengah', 'Lanjutan', 'Ekspert'][phaseIndex] || 'Ekspert'}
@@ -549,7 +547,7 @@ export default function ModuleDetailClient({
 
             {/* Live Indicator Sesi Belajar Latar Belakang */}
             {isStudying && !isAllResourcesDone && (
-              <div className="bg-gradient-to-r from-blue-50/90 via-indigo-50/60 to-blue-50/90 border border-blue-200 rounded-2xl p-4 text-xs text-blue-900 flex items-center gap-3.5 shadow-xs animate-in fade-in duration-300 mt-4">
+              <div className="bg-blue-50/80 border border-blue-200 rounded-2xl p-4 text-xs text-blue-900 flex items-center gap-3.5 shadow-xs animate-in fade-in duration-300 mt-4">
                 <div className="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center shrink-0 shadow-xs">
                   <Loader2 className="w-5 h-5 animate-spin" />
                 </div>

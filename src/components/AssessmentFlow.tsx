@@ -204,17 +204,11 @@ export function AssessmentFlow() {
           ref={introRef}
           className="text-center max-w-lg pt-16 sm:pt-0"
         >
-          <div
-            className="flex items-center justify-center w-20 h-20 rounded-2xl mx-auto mb-6"
-            style={{
-              background: 'linear-gradient(135deg, #1d4ed8, #3b82f6, #22d3ee)',
-              boxShadow: '0 0 40px rgba(37,99,235,0.3)',
-            }}
-          >
-            <Brain size={36} className="text-white" />
+          <div className="flex items-center justify-center w-20 h-20 rounded-2xl mx-auto mb-6 bg-brand-primary text-white shadow-sm">
+            <Brain size={36} />
           </div>
           <h1 className="text-4xl font-bold text-slate-900 mb-3">
-            <span className="gradient-text">Assesmen</span> Karir
+            <span className="text-brand-primary">Asesmen</span> Karier
           </h1>
           <p className="text-gray-500 text-lg mb-4 leading-relaxed">
             Jawab 15 pertanyaan untuk menemukan trait karir dominanmu dan temukan
@@ -258,7 +252,7 @@ export function AssessmentFlow() {
               ref={retakeModalRef}
               className="bg-card w-full max-w-md rounded-2xl border border-white/10 p-6 shadow-2xl relative overflow-hidden"
             >
-              <div className="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-blue-500 to-cyan-400" />
+              <div className="absolute top-0 left-0 w-full h-1 bg-[#0066FF]" />
               <h2 className="text-xl font-bold text-white mb-3">Konfirmasi Retake</h2>
               <p className="text-gray-300 text-sm mb-6 leading-relaxed">
                 Kamu akan mengambil tes ini lagi. Hasil analisis kamu akan diperbarui. Kalau rekomendasi kariernya beda dari sebelumnya, progress roadmap lama kamu tetap tersimpan tapi untuk sementara tidak ditampilkan. Lanjutkan?
@@ -326,16 +320,10 @@ export function AssessmentFlow() {
           </div>
         )}
 
-        {/* Dimension Badge */}
+        {/* Dimension Eyebrow */}
         <div className="mb-4">
-          <span
-            className="text-[11px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider"
-            style={{
-              background: 'rgba(37,99,235,0.08)',
-              color: '#3b82f6',
-            }}
-          >
-            {question.dimension}
+          <span className="text-[11px] font-mono font-bold tracking-wider uppercase text-brand-primary pl-2 border-l-2 border-brand-primary">
+            Dimensi: {question.dimension}
           </span>
         </div>
 

@@ -100,38 +100,38 @@ Berikan hasil analisis sepenuhnya menggunakan Bahasa Indonesia yang profesional,
 
     // 3. Eksekusi AI dengan Multi-Tier Fallback
     let object;
-    let engineUsed = 'gemini-3.6-flash';
+    let engineUsed = 'gemini-3.8-flash';
 
     try {
       if (process.env.GEMINI_API_KEY) {
         const result = await generateObject({
-          model: google('gemini-3.6-flash'),
+          model: google('gemini-3.8-flash'),
           schema: AIInsightSchema,
           system: systemPrompt,
           prompt: userPrompt,
           temperature: 0.7,
           maxRetries: 0,
-          abortSignal: AbortSignal.timeout(8000),
+          abortSignal: AbortSignal.timeout(15000),
         });
         object = result.object;
       } else {
         throw new Error('GEMINI_API_KEY missing');
       }
     } catch (primaryErr: any) {
-      console.warn('⚠️ Gemini 3.6 Flash terkendala, mencoba fallback ke Gemini 3.1 Flash Lite...', primaryErr?.message);
+      console.warn('⚠️ Gemini 3.8 Flash terkendala, mencoba fallback ke Gemini 3.5 Flash Lite...', primaryErr?.message);
       try {
         if (process.env.GEMINI_API_KEY) {
           const liteResult = await generateObject({
-            model: google('gemini-3.1-flash-lite'),
+            model: google('gemini-3.5-flash-lite'),
             schema: AIInsightSchema,
             system: systemPrompt,
             prompt: userPrompt,
             temperature: 0.7,
             maxRetries: 0,
-            abortSignal: AbortSignal.timeout(8000),
+            abortSignal: AbortSignal.timeout(15000),
           });
           object = liteResult.object;
-          engineUsed = 'gemini-3.1-flash-lite';
+          engineUsed = 'gemini-3.5-flash-lite';
         } else {
           throw new Error('GEMINI_API_KEY missing');
         }

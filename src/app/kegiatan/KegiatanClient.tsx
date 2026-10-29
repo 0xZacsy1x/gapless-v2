@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import {
   Calendar, Award, Bookmark, ExternalLink, Filter,
-  CheckCircle2, Clock, Sparkles, Lock, ArrowUpRight,
+  CheckCircle2, Clock, Target, Lock, ArrowUpRight,
   Search, Users, Trophy, HeartHandshake, Building2, MapPin, Tag, GraduationCap, Star
 } from 'lucide-react';
 import Link from 'next/link';
@@ -116,7 +116,7 @@ export function KegiatanClient({
     switch (type) {
       case 'development_program':
       case 'program':
-        return <Sparkles className="w-4 h-4 text-slate-700" />;
+        return <GraduationCap className="w-4 h-4 text-slate-700" />;
       case 'organisasi':
         return <Users className="w-4 h-4 text-slate-700" />;
       case 'lomba':
@@ -179,7 +179,7 @@ export function KegiatanClient({
       <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <span className="p-1.5 rounded-lg bg-indigo-50 text-indigo-600">
+            <span className="p-1.5 rounded-lg bg-blue-50 text-[#0066FF]">
               <Calendar className="w-5 h-5" />
             </span>
             <h1 className="text-xl font-bold text-slate-900">Rekomendasi Kegiatan</h1>
@@ -191,7 +191,7 @@ export function KegiatanClient({
 
         {isPro && userCareerTitle ? (
           <div className="px-3.5 py-2 rounded-xl bg-amber-50/70 border border-amber-200 text-xs text-amber-900 flex items-center gap-2">
-            <Sparkles className="w-4 h-4 text-amber-700 shrink-0" />
+            <Target className="w-4 h-4 text-amber-700 shrink-0" />
             <div>
               <span className="font-bold text-slate-900">Pro Rekomendasi Aktif:</span> Dikalibrasi untuk{' '}
               <span className="font-semibold text-blue-700">{userCareerTitle.split(' / ')[0]}</span>
@@ -252,7 +252,7 @@ export function KegiatanClient({
               key={act.id}
               className={`bg-white rounded-2xl p-5 border shadow-sm flex flex-col justify-between transition-all group ${
                 act.isRoleMatch
-                  ? 'border-indigo-200 hover:border-indigo-300 ring-1 ring-indigo-100'
+                  ? 'border-blue-200 hover:border-blue-300 ring-1 ring-blue-100'
                   : 'border-slate-200 hover:border-slate-300'
               }`}
             >
@@ -270,13 +270,13 @@ export function KegiatanClient({
 
                     {act.isRoleMatch ? (
                       <span className="text-[11px] font-semibold px-2 py-0.5 rounded-md bg-amber-50 text-amber-700 border border-amber-200 flex items-center gap-1">
-                        <Sparkles className="w-3 h-3 text-amber-600" />
+                        <Target className="w-3 h-3 text-amber-600" />
                         Rekomendasi Role
                       </span>
                     ) : null}
 
                     {act.matchPercent && act.matchPercent > 0 ? (
-                      <span className="text-[11px] font-medium px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-700 border border-indigo-100 flex items-center gap-1">
+                      <span className="text-[11px] font-medium px-2 py-0.5 rounded-md bg-blue-50 text-[#0066FF] border border-blue-200/60 font-mono tabular-nums flex items-center gap-1">
                         {act.matchPercent}% Cocok
                       </span>
                     ) : null}
@@ -360,7 +360,7 @@ export function KegiatanClient({
                   {act.competencyTags?.map((tag) => (
                     <span
                       key={tag}
-                      className="text-[10px] font-medium px-2 py-0.5 rounded-md bg-purple-50 text-purple-700 border border-purple-100/60"
+                      className="text-[10px] font-medium px-2 py-0.5 rounded-md bg-slate-50 text-slate-700 border border-slate-200"
                     >
                       {tag}
                     </span>
@@ -378,7 +378,7 @@ export function KegiatanClient({
                 {/* Panduan Unggah Sertifikat untuk Kegiatan yang Disimpan */}
                 {isSaved && (
                   <div className="mb-3.5 p-3 rounded-xl bg-blue-50/70 border border-blue-200/80 flex items-start gap-2.5 text-xs text-blue-900">
-                    <Sparkles className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
+                    <Award className="w-4 h-4 text-[#0066FF] shrink-0 mt-0.5" />
                     <div className="leading-relaxed">
                       Sudah ikut kegiatan ini? Unggah sertifikat di{' '}
                       <Link

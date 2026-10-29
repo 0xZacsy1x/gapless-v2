@@ -10,7 +10,7 @@ import {
   assessmentResults,
 } from '@/db/schema';
 import { eq, desc } from 'drizzle-orm';
-import { Shield, CheckCircle2, Award, Briefcase, ExternalLink, Sparkles, Crown, Compass, Target } from 'lucide-react';
+import { Shield, CheckCircle2, Award, Briefcase, ExternalLink, Crown, Compass, Target } from 'lucide-react';
 import Link from 'next/link';
 import { CAREER_PROFILES, TRAIT_META, Trait } from '@/data/gaplessData';
 import { hasActivePro } from '@/lib/payment_service';
@@ -211,7 +211,7 @@ export default async function PublicPassportPage({
                   </span>
                   {dominantTrait && (
                     <span className="text-slate-300 text-xs">
-                      Arketipe: <strong className="text-white font-semibold">{dominantTrait} {traitMeta?.emoji || ''}</strong>
+                      Arketipe: <strong className="text-white font-semibold">{dominantTrait}</strong>
                     </span>
                   )}
                 </div>
@@ -265,12 +265,12 @@ export default async function PublicPassportPage({
               8 Dimensi Soft Skill Kesiapan Karir
             </h3>
             {hasVerifiedSjt ? (
-              <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-400 bg-emerald-500/10 px-2.5 py-0.5 rounded-full border border-emerald-500/20">
+              <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-400 bg-emerald-500/10 px-2.5 py-0.5 rounded-md border border-emerald-500/20">
                 <CheckCircle2 className="w-3 h-3" /> Terverifikasi SJT
               </span>
             ) : (
-              <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-amber-400 bg-amber-500/10 px-2.5 py-0.5 rounded-full border border-amber-500/20">
-                <Sparkles className="w-3 h-3" /> Estimasi Standar
+              <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-amber-400 bg-amber-500/10 px-2.5 py-0.5 rounded-md border border-amber-500/20">
+                <Target className="w-3 h-3" /> Estimasi Standar
               </span>
             )}
           </div>

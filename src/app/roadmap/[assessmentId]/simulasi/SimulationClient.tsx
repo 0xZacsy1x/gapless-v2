@@ -12,7 +12,7 @@ import {
   ChevronRight, 
   ChevronLeft, 
   Send, 
-  Sparkles, 
+  Loader2, 
   FileText, 
   ArrowLeft,
   Share2,
@@ -159,7 +159,7 @@ export default function SimulationClient({
         {isCompleted && (
           <Link
             href={`/roadmap/${assessmentId}/sertifikat`}
-            className="inline-flex items-center gap-2 text-sm font-bold bg-linear-to-r from-blue-600 to-indigo-600 text-white px-5 py-2 rounded-xl shadow-md hover:shadow-lg transition-all"
+            className="inline-flex items-center gap-2 text-sm font-bold bg-[#0066FF] hover:bg-blue-700 text-white px-5 py-2 rounded-xl shadow-xs transition-colors"
           >
             <Award className="w-4 h-4" />
             <span>Lihat Sertifikat LinkedIn</span>
@@ -169,7 +169,6 @@ export default function SimulationClient({
 
       {/* Hero Header Partner Card */}
       <div className="bg-white/95 backdrop-blur-md rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-linear-to-bl from-blue-100/50 to-transparent rounded-full blur-2xl pointer-events-none" />
 
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-6">
           <div className="flex items-center gap-3">
@@ -233,7 +232,7 @@ export default function SimulationClient({
         </div>
         <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
           <div
-            className="h-full bg-linear-to-r from-blue-600 to-indigo-600 rounded-full transition-all duration-300"
+            className="h-full bg-[#0066FF] rounded-full transition-all duration-300"
             style={{ width: `${progressPercent}%` }}
           />
         </div>
@@ -400,11 +399,11 @@ export default function SimulationClient({
             <button
               onClick={handleSubmitAll}
               disabled={!isCurrentTaskFilled() || isSubmitting}
-              className="flex items-center gap-2 text-xs md:text-sm font-bold px-6 py-3 rounded-xl bg-linear-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-md"
+              className="flex items-center gap-2 text-xs md:text-sm font-bold px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white disabled:opacity-40 disabled:cursor-not-allowed transition-colors shadow-xs"
             >
               {isSubmitting ? (
                 <>
-                  <Sparkles className="w-4 h-4 animate-spin" />
+                  <Loader2 className="w-4 h-4 animate-spin" />
                   <span>Memverifikasi Solusi...</span>
                 </>
               ) : (
@@ -448,7 +447,7 @@ export default function SimulationClient({
             <div className="space-y-3">
               <Link
                 href={`/roadmap/${assessmentId}/sertifikat`}
-                className="w-full flex items-center justify-center gap-2 py-3.5 bg-linear-to-r from-blue-600 via-indigo-600 to-sky-600 hover:opacity-95 text-white rounded-xl text-sm font-bold shadow-md hover:shadow-lg transition-all"
+                className="w-full flex items-center justify-center gap-2 py-3.5 bg-[#0066FF] hover:bg-blue-700 text-white rounded-xl text-sm font-bold shadow-xs transition-colors"
               >
                 <Award className="w-4 h-4" />
                 <span>Buka & Klaim Sertifikat LinkedIn</span>

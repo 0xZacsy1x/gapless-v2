@@ -1,6 +1,6 @@
 'use client';
 
-import { Award, Sparkles, Plus, UploadCloud, CheckCircle2, XCircle, Clock, Lock, ExternalLink } from 'lucide-react';
+import { Award, Brain, TrendingUp, Plus, UploadCloud, CheckCircle2, XCircle, Clock, Lock, ExternalLink } from 'lucide-react';
 import { CertificateData } from '../types';
 
 interface CertificatesSectionProps {
@@ -25,12 +25,12 @@ export function CertificatesSection({
               <Award className="w-5 h-5" />
             </span>
             <h2 className="text-base font-bold text-slate-900">Sertifikat & Portofolio</h2>
-            <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200 flex items-center gap-1">
-              <Sparkles className="w-3 h-3 text-blue-600" />
+            <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-md bg-blue-50 text-blue-700 border border-blue-200 flex items-center gap-1">
+              <Brain className="w-3 h-3 text-[#0066FF]" />
               Verifikasi AI Instan
             </span>
             {verifiedCount > 0 && (
-              <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+              <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200">
                 {verifiedCount} Dokumen Tervalidasi
               </span>
             )}
@@ -101,8 +101,8 @@ export function CertificatesSection({
 
                     {isApproved && (
                       isPro ? (
-                        <span className="text-[11px] font-bold text-emerald-700 bg-emerald-100/60 px-2 py-0.5 rounded-md flex items-center gap-1">
-                          <Sparkles className="w-3 h-3 text-emerald-600" />
+                        <span className="text-[11px] font-bold text-emerald-700 bg-emerald-100/60 px-2 py-0.5 rounded-md flex items-center gap-1 font-mono tabular-nums">
+                          <TrendingUp className="w-3 h-3 text-emerald-600" />
                           +{cert.readinessBoostApplied || 3}% Skill Readiness
                         </span>
                       ) : (
@@ -124,7 +124,7 @@ export function CertificatesSection({
                   {isPro && cert.aiAnalysis && (
                     <div className="text-[11px] text-blue-900 bg-blue-50/70 p-2.5 rounded-xl border border-blue-100 mt-2 space-y-1">
                       <div className="flex items-center gap-1 font-semibold text-blue-950">
-                        <Sparkles className="w-3 h-3 text-blue-600" />
+                        <Brain className="w-3 h-3 text-[#0066FF]" />
                         <span>Analisis AI ({cert.aiAnalysis.achievementLevel}):</span>
                       </div>
                       <p className="text-[11px] text-slate-600 leading-relaxed">

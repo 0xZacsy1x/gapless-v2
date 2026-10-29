@@ -116,11 +116,9 @@ export function PassportClient({
     <div className="space-y-6">
       {/* Header Profile Passport */}
       <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm relative overflow-hidden">
-        <div className="absolute -right-12 -top-12 w-48 h-48 bg-linear-to-br from-blue-100/50 to-indigo-100/30 rounded-full blur-2xl pointer-events-none" />
-
         <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 relative z-10">
           <div className="flex items-start sm:items-center gap-4 sm:gap-5">
-            <div className="w-18 h-18 sm:w-20 sm:h-20 rounded-2xl bg-linear-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center font-bold text-2xl sm:text-3xl shadow-md border-2 border-white ring-1 ring-slate-200/80 shrink-0 overflow-hidden">
+            <div className="w-18 h-18 sm:w-20 sm:h-20 rounded-2xl bg-[#0066FF] text-white flex items-center justify-center font-bold text-2xl sm:text-3xl shadow-xs border-2 border-white ring-1 ring-slate-200/80 shrink-0 overflow-hidden">
               {user.image ? (
                 <img
                   src={user.image}
@@ -139,12 +137,12 @@ export function PassportClient({
                   <Shield className="w-4 h-4" />
                 </span>
                 {isPro ? (
-                  <span className="text-[11px] font-extrabold px-2.5 py-0.5 rounded-full bg-linear-to-r from-blue-600 via-indigo-600 to-sky-500 text-white shadow-xs flex items-center gap-1">
+                  <span className="text-[11px] font-extrabold px-2 py-0.5 rounded-md bg-[#0066FF] text-white shadow-xs flex items-center gap-1">
                     <Crown className="w-3 h-3" />
                     PRO
                   </span>
                 ) : (
-                  <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-slate-200">
+                  <span className="text-[11px] font-semibold px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 border border-slate-200">
                     FREE
                   </span>
                 )}
@@ -155,19 +153,19 @@ export function PassportClient({
                 <div className="flex items-center gap-2 flex-wrap text-xs">
                   {currentAssessment.quizType === 'belum_tahu_minat' ? (
                     <>
-                      <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200">
-                        <Compass className="w-3 h-3 text-indigo-600" />
+                      <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[11px] font-semibold bg-blue-50 text-blue-700 border border-blue-200">
+                        <Compass className="w-3 h-3 text-[#0066FF]" />
                         Jalur Eksplorasi Minat
                       </span>
                       {currentAssessment.dominantTrait && (
-                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-slate-50 text-slate-700 border border-slate-200">
-                          Arketipe: <strong className="font-semibold text-slate-900">{currentAssessment.dominantTrait} {traitMeta?.emoji || ''}</strong>
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-medium bg-slate-50 text-slate-700 border border-slate-200">
+                          Arketipe: <strong className="font-semibold text-slate-900">{currentAssessment.dominantTrait}</strong>
                         </span>
                       )}
                     </>
                   ) : (
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-blue-50 text-blue-700 border border-blue-200">
-                      <Target className="w-3 h-3 text-blue-600" />
+                    <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[11px] font-semibold bg-blue-50 text-blue-700 border border-blue-200">
+                      <Target className="w-3 h-3 text-[#0066FF]" />
                       Jalur Terarah
                     </span>
                   )}
@@ -302,7 +300,7 @@ export function PassportClient({
               Berdasarkan penyelesaian modul terkurasi & kurikulum standar industri.
             </p>
           </div>
-          <div className="w-16 h-16 rounded-full border-4 border-blue-500 flex items-center justify-center font-bold text-blue-600 bg-blue-50 text-sm">
+          <div className="w-16 h-16 rounded-full border-4 border-blue-500 flex items-center justify-center font-bold text-[#0066FF] bg-blue-50 text-sm font-mono tabular-nums">
             {currentHardScore}%
           </div>
         </div>
@@ -314,8 +312,8 @@ export function PassportClient({
               Soft Skill Readiness
             </span>
             <div className="flex items-baseline gap-2 mt-1">
-              <span className="text-3xl font-extrabold text-slate-900">{currentSoftScore}%</span>
-              <span className="text-xs font-medium text-indigo-600 flex items-center">
+              <span className="text-3xl font-extrabold text-slate-900 font-mono tabular-nums">{currentSoftScore}%</span>
+              <span className="text-xs font-medium text-blue-700 flex items-center">
                 <UserCheck className="w-3 h-3 mr-0.5" /> {activeHasVerifiedSjt ? '8 Dimensi Terverifikasi' : '8 Dimensi Soft Skill'}
               </span>
             </div>
@@ -325,7 +323,7 @@ export function PassportClient({
                 : 'Berdasarkan misi terselesaikan & bukti kegiatan terkonfirmasi.'}
             </p>
           </div>
-          <div className="w-16 h-16 rounded-full border-4 border-indigo-500 flex items-center justify-center font-bold text-indigo-600 bg-indigo-50 text-sm">
+          <div className="w-16 h-16 rounded-full border-4 border-blue-500 flex items-center justify-center font-bold text-[#0066FF] bg-blue-50 text-sm font-mono tabular-nums">
             {currentSoftScore}%
           </div>
         </div>

@@ -8,7 +8,7 @@ import {
   ArrowRight,
   Zap,
   ChevronDown,
-  Sparkles,
+  Target,
   Info,
 } from 'lucide-react';
 import { SkillIcon } from '@/components/ui/AppIcons';
@@ -65,19 +65,19 @@ export function SoftSkillCompetencies({
     // Style per level
     let badgeText = 'Perlu Asah';
     let badgeClass = 'bg-amber-50 text-amber-700 border-amber-200';
-    let barGradient = 'from-amber-400 to-amber-500';
-    let scoreColor = 'text-amber-600';
+    let barColor = 'bg-amber-500';
+    let scoreColor = 'text-amber-700 font-mono tabular-nums';
 
     if (isLevel3) {
       badgeText = 'Unggul';
       badgeClass = 'bg-emerald-50 text-emerald-700 border-emerald-200';
-      barGradient = 'from-emerald-500 via-teal-500 to-cyan-500';
-      scoreColor = 'text-emerald-700';
+      barColor = 'bg-emerald-600';
+      scoreColor = 'text-emerald-700 font-mono tabular-nums';
     } else if (isLevel2) {
       badgeText = 'Standar Industri';
       badgeClass = 'bg-blue-50 text-blue-700 border-blue-200';
-      barGradient = 'from-blue-500 to-indigo-600';
-      scoreColor = 'text-blue-700';
+      barColor = 'bg-[#0066FF]';
+      scoreColor = 'text-[#0066FF] font-mono tabular-nums';
     }
 
     const hasFeedback = comp.feedbackList && comp.feedbackList.length > 0;
@@ -130,7 +130,7 @@ export function SoftSkillCompetencies({
         {/* Progress Bar yang menyatu langsung di bawah deskripsi */}
         <div className="w-full h-2 bg-slate-200/70 rounded-full overflow-hidden">
           <div
-            className={`h-full bg-linear-to-r ${barGradient} rounded-full transition-all duration-700`}
+            className={`h-full ${barColor} rounded-full transition-all duration-700`}
             style={{ width: `${Math.min(100, Math.max(5, score))}%` }}
           />
         </div>
@@ -196,13 +196,13 @@ export function SoftSkillCompetencies({
 
         <div className="flex items-center gap-2 shrink-0">
           {hasVerifiedSjt ? (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-2xs">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-2xs">
               <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
               <span>Terverifikasi Asesmen SJT</span>
             </span>
           ) : (
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-medium bg-amber-50 text-amber-700 border border-amber-200">
-              <Sparkles className="w-3 h-3 text-amber-600" />
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-medium bg-amber-50 text-amber-800 border border-amber-200">
+              <Target className="w-3 h-3 text-amber-700" />
               <span>Estimasi Standar</span>
             </span>
           )}
@@ -211,9 +211,9 @@ export function SoftSkillCompetencies({
 
       {/* Banner Ajakan Asesmen jika belum verifikasi SJT */}
       {!hasVerifiedSjt && (
-        <div className="mb-6 p-4 rounded-2xl bg-linear-to-r from-blue-50/90 via-indigo-50/60 to-slate-50 border border-blue-200/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-2xs relative z-10">
+        <div className="mb-6 p-4 rounded-2xl bg-blue-50/70 border border-blue-200/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-2xs relative z-10">
           <div className="flex items-start gap-3">
-            <div className="w-8 h-8 rounded-xl bg-blue-600 text-white flex items-center justify-center shrink-0 mt-0.5 shadow-xs">
+            <div className="w-8 h-8 rounded-xl bg-[#0066FF] text-white flex items-center justify-center shrink-0 mt-0.5 shadow-xs">
               <Zap className="w-4 h-4" />
             </div>
             <div>
@@ -227,7 +227,7 @@ export function SoftSkillCompetencies({
           </div>
           <Link
             href="/assessment"
-            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold shrink-0 shadow-xs transition-colors cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#0066FF] hover:bg-blue-700 text-white text-xs font-semibold shrink-0 shadow-xs transition-colors cursor-pointer"
           >
             <span>Mulai Asesmen SJT</span>
             <ArrowRight className="w-3.5 h-3.5" />

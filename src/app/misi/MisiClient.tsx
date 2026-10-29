@@ -6,7 +6,7 @@ import { useGSAP } from '@gsap/react';
 import {
   Target, CheckCircle2, Clock, Lock, ChevronRight,
   Zap, Users, Shield, Handshake, RefreshCw, MessageSquare,
-  TrendingUp, Star, AlertCircle, Sparkles
+  TrendingUp, Star, AlertCircle, Brain
 } from 'lucide-react';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
@@ -14,7 +14,7 @@ import dynamic from 'next/dynamic';
 const FeedbackMarkdown = dynamic(
   () => import('./FeedbackMarkdown').then((m) => m.FeedbackMarkdown),
   {
-    loading: () => <div className="h-16 animate-pulse bg-indigo-100/50 rounded-xl" />,
+    loading: () => <div className="h-16 animate-pulse bg-slate-100 rounded-xl" />,
     ssr: false,
   }
 );
@@ -43,9 +43,9 @@ const COMPETENCY_CONFIG: Record<string, {
   Integrity: {
     label: 'Integritas',
     icon: Shield,
-    color: 'text-violet-700',
-    bg: 'bg-violet-50',
-    border: 'border-violet-200',
+    color: 'text-slate-800',
+    bg: 'bg-slate-100',
+    border: 'border-slate-300',
   },
   Dependability: {
     label: 'Tanggung Jawab',
@@ -234,7 +234,7 @@ export function MisiClient({
             <span className="font-bold text-slate-900">{completedCount}/{missions.length}</span>
           </div>
           {showSampleLabel && (
-            <span className="text-xs bg-amber-50 border border-amber-200 text-amber-700 px-3 py-1.5 rounded-full font-medium">
+            <span className="text-xs bg-amber-50 border border-amber-200 text-amber-800 px-2.5 py-1 rounded-md font-medium">
               Data Contoh
             </span>
           )}
@@ -271,7 +271,7 @@ export function MisiClient({
                     </div>
                     <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
                       <div
-                        className="h-full bg-blue-600 rounded-full transition-[width] duration-500 ease-out"
+                        className="h-full bg-[#0066FF] rounded-full transition-[width] duration-500 ease-out"
                         style={{ width: `${pct}%` }}
                       />
                     </div>
@@ -362,14 +362,14 @@ export function MisiClient({
                               )}
                             </p>
                             {isLocked && (
-                              <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-indigo-600 bg-indigo-50 border border-indigo-200/60 px-2 py-0.5 rounded-md mt-1">
+                              <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-blue-700 bg-blue-50 border border-blue-200/80 px-2 py-0.5 rounded-md mt-1">
                                 <Lock className="w-2.5 h-2.5" />
                                 Tersedia di Gapless Pro
                               </span>
                             )}
                           </div>
                           <div className="flex items-center gap-2 flex-shrink-0">
-                            <span className={`text-[11px] font-medium px-2 py-0.5 rounded-full border ${diffCfg.color}`}>
+                            <span className={`text-[11px] font-medium px-2 py-0.5 rounded-md border ${diffCfg.color}`}>
                               {diffCfg.label}
                             </span>
                             <span className="flex items-center gap-1 text-xs text-slate-400">
@@ -419,7 +419,7 @@ export function MisiClient({
                               {feedbacks[mission.id] ? (
                                 <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-2">
                                   <div className="flex items-center gap-1.5 text-xs font-bold text-slate-900">
-                                    <Sparkles className="w-4 h-4 text-slate-700" />
+                                    <Brain className="w-4 h-4 text-slate-700" />
                                     <span>Evaluasi & Feedback Career Coach AI</span>
                                   </div>
                                   <div className="text-xs text-slate-700 leading-relaxed">
@@ -434,7 +434,7 @@ export function MisiClient({
                                 <div className="bg-slate-900 text-white rounded-xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border border-slate-800">
                                   <div>
                                     <div className="flex items-center gap-1.5 text-xs font-bold text-white mb-1">
-                                      <Sparkles className="w-3.5 h-3.5 text-slate-300" />
+                                      <Brain className="w-3.5 h-3.5 text-slate-300" />
                                       Dapatkan Evaluasi Refleksi dari AI
                                     </div>
                                     <p className="text-xs text-slate-300 leading-relaxed">

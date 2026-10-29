@@ -3,7 +3,7 @@
 import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
-import { TrendingUp, ArrowRight, ArrowLeft, Sparkles, AlertCircle, Zap } from 'lucide-react';
+import { TrendingUp, ArrowRight, ArrowLeft, Brain, AlertCircle, Zap } from 'lucide-react';
 import Link from 'next/link';
 import { TRAIT_META } from '@/data/gaplessData';
 import { useGaplessContext } from '@/contexts/CareerContext';
@@ -111,14 +111,8 @@ export function ResultsView() {
         {/* ── AI Personality Narrative ── */}
         <div className="results-ai-card glass-card p-8 mb-10" style={{ opacity: 0 }}>
           <div className="flex items-center gap-3 mb-6">
-            <div
-              className="w-10 h-10 rounded-xl flex items-center justify-center"
-              style={{
-                background: 'linear-gradient(135deg, #1d4ed8, #3b82f6, #22d3ee)',
-                boxShadow: '0 0 20px rgba(37,99,235,0.2)',
-              }}
-            >
-              <Sparkles size={18} className="text-white" />
+            <div className="w-10 h-10 rounded-xl bg-[#0066FF] flex items-center justify-center text-white shadow-xs">
+              <Brain size={18} />
             </div>
             <div>
               <h2 className="text-xl font-bold text-slate-900">Analisis Kepribadian AI</h2>
@@ -168,7 +162,7 @@ export function ResultsView() {
                   <details className="group [&_summary::-webkit-details-marker]:hidden bg-blue-50/50 rounded-xl border border-blue-100/50">
                     <summary className="flex items-center justify-between cursor-pointer p-4 text-sm font-semibold text-blue-900">
                       <div className="flex items-center gap-2">
-                        <Sparkles size={16} className="text-blue-500" />
+                        <Brain size={16} className="text-[#0066FF]" />
                         Bagaimana AI menyimpulkan ini?
                       </div>
                       <span className="transition duration-300 group-open:-rotate-180 text-blue-500">

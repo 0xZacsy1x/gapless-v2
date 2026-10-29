@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { Brain, Sparkles, ChevronRight, CheckCircle2 } from "lucide-react";
+import { Brain, Compass, ChevronRight, CheckCircle2 } from "lucide-react";
 
 export default function HeroDemoAnimation() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -487,7 +487,7 @@ export default function HeroDemoAnimation() {
           {/* Assistant Bubble Notification */}
           <div className="p-3 rounded-2xl bg-white border border-gray-200/80 shadow-xs flex items-center gap-3">
             <div className="w-8 h-8 rounded-xl bg-brand-primary/10 text-brand-primary flex items-center justify-center shrink-0">
-              <Sparkles className="w-4 h-4" />
+              <Brain className="w-4 h-4" />
             </div>
             <div className="min-w-0 flex-1">
               <div className="text-xs font-bold text-gray-900">Roadmap belajarmu siap!</div>
@@ -503,7 +503,7 @@ export default function HeroDemoAnimation() {
       <div className="mt-6 p-3.5 rounded-2xl bg-gray-50 border border-gray-100 flex items-center justify-between gap-4 relative z-10 shrink-0">
         <div className="flex items-center gap-2.5 min-w-0">
           <div className="w-7 h-7 rounded-lg bg-brand-primary/10 text-brand-primary flex items-center justify-center shrink-0">
-            <Sparkles className="w-3.5 h-3.5" />
+            <Compass className="w-3.5 h-3.5" />
           </div>
           <div className="min-w-0">
             <div className="text-[10px] font-bold uppercase tracking-wider text-brand-primary">

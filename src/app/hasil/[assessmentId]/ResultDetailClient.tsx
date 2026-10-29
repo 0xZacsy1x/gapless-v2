@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo, useCallback } from "react";
 import Image from "next/image";
-import { Target, Sparkles, ArrowRight, Lock, Loader2 } from "lucide-react";
+import { Target, ArrowRight, Lock, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import {
   CAREER_PROFILES,
@@ -222,8 +222,8 @@ export function ResultDetailClient({
         {/* CTA Banner: Pilih Karier untuk Lanjut */}
         <div className="mb-8 bg-slate-900 rounded-2xl p-6 sm:p-8 text-white border border-slate-800 relative overflow-hidden">
           <div className="relative z-10 max-w-3xl">
-            <div className="flex items-center gap-2 text-xs font-semibold text-slate-300 mb-3 pl-2.5 border-l-2 border-blue-500">
-              <Sparkles className="w-3.5 h-3.5 text-blue-400" />
+            <div className="flex items-center gap-2 text-xs font-semibold text-slate-300 mb-3 pl-2.5 border-l-2 border-[#0066FF]">
+              <Target className="w-3.5 h-3.5 text-[#0066FF]" />
               <span>Langkah Selanjutnya: Validasi Karier</span>
             </div>
             <h2 className="text-2xl sm:text-3xl font-extrabold mb-2 tracking-tight">
@@ -234,7 +234,7 @@ export function ResultDetailClient({
             </p>
             <a
               href="#rekomendasi-karier"
-              className="inline-flex items-center gap-2 bg-blue-700 hover:bg-blue-800 text-white px-5 py-2.5 rounded-xl font-semibold text-xs sm:text-sm transition-colors"
+              className="inline-flex items-center gap-2 bg-[#0066FF] hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl font-semibold text-xs sm:text-sm transition-colors"
             >
               <span>Pilih Karier untuk Lanjut</span>
               <ArrowRight className="w-4 h-4" />
