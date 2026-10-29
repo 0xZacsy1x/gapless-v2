@@ -451,32 +451,24 @@ export function CaseStudyQuizView() {
         number: 1,
         title: 'Kolaborasi Tim & Komunikasi',
         icon: Users2,
-        color: 'from-blue-600 to-indigo-600',
-        badgeBg: 'bg-blue-50 text-blue-700 border-blue-200',
       };
     } else if (sjtIndex < 20) {
       return {
         number: 2,
         title: 'Analisis & Pemecahan Masalah',
         icon: SearchCheck,
-        color: 'from-emerald-600 to-teal-600',
-        badgeBg: 'bg-emerald-50 text-emerald-700 border-emerald-200',
       };
     } else if (sjtIndex < 30) {
       return {
         number: 3,
         title: 'Ketelitian & Rasa Ingin Tahu',
         icon: Crosshair,
-        color: 'from-violet-600 to-purple-600',
-        badgeBg: 'bg-violet-50 text-violet-700 border-violet-200',
       };
     } else {
       return {
         number: 4,
         title: 'Inisiatif & Adaptabilitas Kerja',
         icon: Flame,
-        color: 'from-amber-600 to-orange-600',
-        badgeBg: 'bg-amber-50 text-amber-700 border-amber-200',
       };
     }
   }, [sjtIndex]);

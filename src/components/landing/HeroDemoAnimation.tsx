@@ -221,9 +221,6 @@ export default function HeroDemoAnimation() {
       }`}
       aria-hidden="true"
     >
-      {/* Decorative Brand Gradient Accent */}
-      <div className="absolute top-0 right-0 w-44 h-44 bg-brand-primary/5 blur-2xl rounded-full pointer-events-none" />
-
       {/* Top Meta Bar */}
       <div className="flex items-center justify-between border-b border-gray-100 pb-3 relative z-10 shrink-0">
         <div className="flex items-center gap-2">
@@ -401,7 +398,7 @@ export default function HeroDemoAnimation() {
           <div className="relative w-14 h-14 mx-auto">
             <div className="absolute inset-0 rounded-2xl bg-brand-primary/20 animate-ping opacity-50" />
             <div className="relative w-14 h-14 rounded-2xl bg-brand-primary text-white flex items-center justify-center shadow-lg">
-              <Brain className="w-7 h-7 animate-pulse" />
+              <Brain className="w-7 h-7 " />
             </div>
           </div>
 

@@ -29,13 +29,13 @@ export function LearningTabsNav() {
                 href={tab.href}
                 prefetch={true}
                 id={tab.id}
-                className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 -mb-px transition-all duration-200 whitespace-nowrap rounded-t-xl ${
+                className={`flex items-center gap-2 px-4 py-3 text-sm border-b-2 -mb-px transition-all duration-200 whitespace-nowrap ${
                   isActive
-                    ? 'border-blue-600 text-blue-700 bg-blue-50/60 font-semibold'
-                    : 'border-transparent text-slate-500 hover:text-slate-800 hover:border-slate-300 hover:bg-slate-50/80'
+                    ? 'border-blue-700 text-blue-700 font-semibold bg-blue-50/40'
+                    : 'border-transparent text-slate-500 hover:text-slate-800 hover:border-slate-300'
                 }`}
               >
-                <Icon className={`w-4 h-4 ${isActive ? 'text-blue-600' : 'text-slate-400'}`} />
+                <Icon className="w-4 h-4 text-current" />
                 {tab.label}
               </Link>
             );

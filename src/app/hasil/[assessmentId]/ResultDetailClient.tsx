@@ -220,22 +220,21 @@ export function ResultDetailClient({
         </div>
 
         {/* CTA Banner: Pilih Karier untuk Lanjut */}
-        <div className="mb-8 bg-linear-to-r from-blue-600 via-indigo-600 to-cyan-500 rounded-3xl p-6 sm:p-8 text-white shadow-lg relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-80 h-80 bg-white/10 rounded-full blur-2xl pointer-events-none transform translate-x-20 -translate-y-20" />
+        <div className="mb-8 bg-slate-900 rounded-2xl p-6 sm:p-8 text-white border border-slate-800 relative overflow-hidden">
           <div className="relative z-10 max-w-3xl">
-            <div className="flex items-center gap-2 text-xs font-semibold text-blue-100 mb-3 pl-2.5 border-l-2 border-white/60">
-              <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+            <div className="flex items-center gap-2 text-xs font-semibold text-slate-300 mb-3 pl-2.5 border-l-2 border-blue-500">
+              <Sparkles className="w-3.5 h-3.5 text-blue-400" />
               <span>Langkah Selanjutnya: Validasi Karier</span>
             </div>
             <h2 className="text-2xl sm:text-3xl font-extrabold mb-2 tracking-tight">
               Pilih Fokus Kariermu &amp; Lanjutkan Studi Kasus
             </h2>
-            <p className="text-white/90 text-sm sm:text-base leading-relaxed mb-5">
-              Berdasarkan kepribadian <strong className="text-white underline decoration-amber-300 font-bold">{dominantTrait}</strong>, kami telah menyaring rekomendasi karier paling ideal untuk potensimu. Pilih salah satu karier di bawah untuk menyelesaikan tes studi kasus (10 soal) dan membuka analisis kesiapan skill serta roadmap belajar personalmu.
+            <p className="text-slate-300 text-sm sm:text-base leading-relaxed mb-5">
+              Berdasarkan kepribadian <strong className="text-white font-bold">{dominantTrait}</strong>, kami telah menyaring rekomendasi karier paling ideal untuk potensimu. Pilih salah satu karier di bawah untuk menyelesaikan tes studi kasus (10 soal) dan membuka analisis kesiapan skill serta roadmap belajar personalmu.
             </p>
             <a
               href="#rekomendasi-karier"
-              className="inline-flex items-center gap-2 bg-white text-blue-700 hover:bg-slate-100 px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm shadow-md transition-transform hover:scale-105"
+              className="inline-flex items-center gap-2 bg-blue-700 hover:bg-blue-800 text-white px-5 py-2.5 rounded-xl font-semibold text-xs sm:text-sm transition-colors"
             >
               <span>Pilih Karier untuk Lanjut</span>
               <ArrowRight className="w-4 h-4" />
@@ -380,12 +379,10 @@ export function ResultDetailClient({
     <div className="container mx-auto px-4 sm:px-6 py-8 max-w-6xl">
       {/* Header Validasi Karier (Khusus Jalur Sudah Tahu Minat / Studi Kasus) */}
       {isValidationPath ? (
-        <div className="mb-8 bg-white/90 backdrop-blur-md rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-sm relative overflow-hidden">
-          <div className="absolute top-0 left-0 w-full h-1.5 bg-linear-to-r from-blue-600 via-indigo-500 to-cyan-400" />
-          
+        <div className="mb-8 bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-xs relative overflow-hidden">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div className="flex items-start sm:items-center gap-4">
-              <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-linear-to-br from-slate-50 to-slate-100 border border-slate-200/80 p-1 flex items-center justify-center shrink-0 shadow-xs relative">
+              <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl bg-slate-50 border border-slate-200 p-1 flex items-center justify-center shrink-0 shadow-xs relative">
                 <Image
                   src={`/${careerProfile.trait}.png`}
                   alt={careerProfile.trait}

@@ -20,23 +20,23 @@ export default function FakeCursor({
         transform: `translate3d(${x}px, ${y}px, 0) scale(${isClicking ? 0.88 : 1})`,
         transformOrigin: "3px 2px",
         opacity: visible ? 1 : 0,
-        transition: `transform 780ms cubic-bezier(0.16, 1, 0.3, 1), opacity 350ms cubic-bezier(0.16, 1, 0.3, 1), scale 200ms cubic-bezier(0.34, 1.56, 0.64, 1)`,
+        transition: `transform 780ms cubic-bezier(0.16, 1, 0.3, 1), opacity 350ms cubic-bezier(0.16, 1, 0.3, 1), scale 180ms cubic-bezier(0.16, 1, 0.3, 1)`,
         willChange: "transform, opacity",
       }}
       aria-hidden="true"
     >
       <div className="relative">
-        {/* SVG Brand Cursor (28x34) with multi-stop drop shadow */}
+        {/* SVG Brand Cursor with clean neutral drop shadow */}
         <svg
           width="28"
           height="34"
           viewBox="0 0 24 28"
           fill="none"
-          className="drop-shadow-lg filter drop-shadow-[0_4px_12px_rgba(0,102,255,0.4)] transition-transform duration-200"
+          className="filter drop-shadow-[0_2px_6px_rgba(0,0,0,0.2)] transition-transform duration-200"
         >
           <path
             d="M2.5 1.5L21.5 13.5L12 16L8 25.5L2.5 1.5Z"
-            fill="#0066FF"
+            fill="#1d4ed8"
             stroke="white"
             strokeWidth="2.2"
             strokeLinejoin="round"

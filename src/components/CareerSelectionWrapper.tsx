@@ -15,12 +15,12 @@ interface WrapperProps {
 
 function getRoleVisuals(roleName: string) {
     const name = roleName.toLowerCase();
-    if (name.includes('designer') || name.includes('creative')) return { icon: '/The Creator.png', color: 'from-violet-500 to-pink-500', shadow: 'rgba(139, 92, 246, 0.2)' };
-    if (name.includes('engineer') || name.includes('devops')) return { icon: '/The Builder.png', color: 'from-blue-500 to-cyan-500', shadow: 'rgba(59, 130, 246, 0.2)' };
-    if (name.includes('data') || name.includes('ml') || name.includes('ai')) return { icon: '/The Thinker.png', color: 'from-emerald-500 to-teal-500', shadow: 'rgba(16, 185, 129, 0.2)' };
-    if (name.includes('marketing') || name.includes('content') || name.includes('social')) return { icon: '/The Connector.png', color: 'from-amber-500 to-orange-500', shadow: 'rgba(245, 158, 11, 0.2)' };
-    if (name.includes('business') || name.includes('e-commerce') || name.includes('account')) return { icon: '/The Connector.png', color: 'from-indigo-500 to-purple-500', shadow: 'rgba(99, 102, 241, 0.2)' };
-    return { icon: '/The Thinker.png', color: 'from-gray-400 to-slate-500', shadow: 'rgba(148, 163, 184, 0.2)' }; // Default fallback
+    if (name.includes('designer') || name.includes('creative')) return { icon: '/The Creator.png' };
+    if (name.includes('engineer') || name.includes('devops')) return { icon: '/The Builder.png' };
+    if (name.includes('data') || name.includes('ml') || name.includes('ai')) return { icon: '/The Thinker.png' };
+    if (name.includes('marketing') || name.includes('content') || name.includes('social')) return { icon: '/The Connector.png' };
+    if (name.includes('business') || name.includes('e-commerce') || name.includes('account')) return { icon: '/The Connector.png' };
+    return { icon: '/The Thinker.png' };
 }
 
 export function CareerSelectionWrapper({ roles }: WrapperProps) {
@@ -34,20 +34,14 @@ export function CareerSelectionWrapper({ roles }: WrapperProps) {
     }, [reset, setQuizType]);
 
     return (
-        <div className="relative min-h-screen bg-space flex flex-col z-10 overflow-hidden">
+        <div className="relative min-h-screen bg-slate-50 flex flex-col z-10 overflow-hidden">
             <Navbar />
-            
-            {/* Ambient Background Glows */}
-            <div className="pointer-events-none fixed inset-0 overflow-hidden">
-                <div className="absolute -top-40 -left-40 w-96 h-96 rounded-full blur-3xl opacity-50" style={{ background: 'radial-gradient(circle, rgba(37,99,235,0.1), transparent 70%)' }} />
-                <div className="absolute top-1/3 -right-40 w-125 h-125 rounded-full blur-3xl opacity-50" style={{ background: 'radial-gradient(circle, rgba(34,211,238,0.1), transparent 70%)' }} />
-            </div>
 
             <div className="relative z-10 max-w-6xl mx-auto px-6 py-12 flex-1 w-full">
 
                 <div className="text-center mb-16">
                     <h1 className="text-4xl md:text-5xl font-extrabold text-slate-900 mb-4 tracking-tight">
-                        Eksplorasi <span className="gradient-text">Jalur Kariermu</span>
+                        Eksplorasi <span className="text-blue-700">Jalur Kariermu</span>
                     </h1>
                     <p className="text-gray-500 text-lg max-w-2xl mx-auto">
                         Pilih role yang paling sesuai dengan minatmu dan mulailah perjalanan belajarmu dengan panduan AI.
