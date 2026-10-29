@@ -45,7 +45,7 @@ const ResultCard = ({ title, description, result, quizType, Icon }: { title: str
 
   return (
     <div className="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-100 hover:shadow-md transition-shadow relative overflow-hidden h-full flex flex-col">
-      <div className="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-blue-500 to-cyan-400" />
+      <div className="absolute top-0 left-0 w-full h-1 bg-[#0066FF]" />
 
       <div className="flex flex-col sm:flex-row gap-6 sm:items-center justify-between mb-4">
         <div>

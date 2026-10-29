@@ -8,7 +8,6 @@ import {
   ChevronLeft,
   Loader2,
   RotateCcw,
-  Sparkles,
   CheckCircle2,
   ArrowRight,
   Clock,
@@ -541,9 +540,8 @@ export function CaseStudyQuizView() {
               {/* Progress bar */}
               <div className="w-full bg-gray-200 h-2 rounded-full mb-8 overflow-hidden">
                 <div
-                  className="h-full rounded-full transition-all duration-300"
+                  className="h-full bg-brand-primary rounded-full transition-all duration-300"
                   style={{
-                    background: 'linear-gradient(90deg, #1d4ed8, #3b82f6, #22d3ee)',
                     width: `${hardskillProgress}%`,
                   }}
                 />
@@ -629,11 +627,11 @@ export function CaseStudyQuizView() {
               key="transition"
               className="w-full max-w-xl glass-card p-8 sm:p-10 text-center relative overflow-hidden"
             >
-              <div className="w-16 h-16 rounded-3xl bg-linear-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center mx-auto mb-5 shadow-lg shadow-blue-500/25">
-                <Sparkles size={32} />
+              <div className="w-16 h-16 rounded-2xl bg-blue-50 border border-blue-200 text-[#0066FF] flex items-center justify-center mx-auto mb-5 shadow-xs">
+                <Brain size={30} />
               </div>
 
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-semibold mb-3">
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-semibold mb-3">
                 <CheckCircle2 size={13} />
                 <span>Tahap 1 Hardskill Selesai</span>
               </div>
@@ -747,9 +745,8 @@ export function CaseStudyQuizView() {
               {/* Progress bar */}
               <div className="w-full bg-gray-200 h-2 rounded-full mb-8 overflow-hidden">
                 <div
-                  className="h-full rounded-full transition-all duration-200"
+                  className="h-full bg-brand-primary rounded-full transition-all duration-200"
                   style={{
-                    background: 'linear-gradient(90deg, #2563eb, #6366f1, #a855f7)',
                     width: `${sjtProgress}%`,
                   }}
                 />

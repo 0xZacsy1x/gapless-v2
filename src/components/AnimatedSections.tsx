@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import { useState, useRef } from 'react';
-import { Sparkles, Target, Zap, Users } from 'lucide-react';
+import { Palette, Target, Zap, Users } from 'lucide-react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import dynamic from 'next/dynamic';
@@ -13,7 +13,7 @@ const RouteSelectionModal = dynamic(
 );
 
 const archetypes = [
-  { image: '/The Creator.png', name: 'The Creator', desc: 'Kamu yang membangun visual, narasi, dan estetika.', roles: ['UI/UX Designer', 'Content Creator', 'Product Designer'], icon: Sparkles },
+  { image: '/The Creator.png', name: 'The Creator', desc: 'Kamu yang membangun visual, narasi, dan estetika.', roles: ['UI/UX Designer', 'Content Creator', 'Product Designer'], icon: Palette },
   { image: '/The Builder.png', name: 'The Builder', desc: 'Kamu yang membangun sistem, aplikasi, dan infrastruktur.', roles: ['Software Engineer', 'AI Engineer', 'Cloud Engineer'], icon: Zap },
   { image: '/The Thinker.png', name: 'The Thinker', desc: 'Kamu yang menemukan pola di balik data dan riset.', roles: ['Data Analyst', 'Researcher', 'Data Scientist'], icon: Target },
   { image: '/The Connector.png', name: 'The Connector', desc: 'Kamu yang menjembatani produk, pasar, dan manusia.', roles: ['Digital Marketing', 'Bizdev', 'Product Marketing'], icon: Users },

@@ -1,5 +1,5 @@
 import React from "react";
-import { Brain, Sparkles, ChevronRight } from "lucide-react";
+import { Brain, Compass, ChevronRight } from "lucide-react";
 
 export default function HeroDemoStatic() {
   return (
@@ -83,7 +83,7 @@ export default function HeroDemoStatic() {
       <div className="mt-6 p-3.5 rounded-2xl bg-gray-50 border border-gray-100 flex items-center justify-between gap-4 relative z-10 shrink-0">
         <div className="flex items-center gap-2.5 min-w-0">
           <div className="w-7 h-7 rounded-lg bg-brand-primary/10 text-brand-primary flex items-center justify-center shrink-0">
-            <Sparkles className="w-3.5 h-3.5" />
+            <Compass className="w-3.5 h-3.5" />
           </div>
           <div className="min-w-0">
             <div className="text-[10px] font-bold uppercase tracking-wider text-brand-primary">

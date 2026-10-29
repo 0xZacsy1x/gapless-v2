@@ -37,9 +37,9 @@ export function RouteSelectionCards({ onSelect }: { onSelect?: () => void }) {
           setCurrentView('selection');
           if (onSelect) onSelect();
         }}
-        className="flex-1 flex flex-col items-center justify-center p-4 bg-white border-2 border-slate-100 hover:border-indigo-500 rounded-2xl hover:bg-indigo-50/50 transition-all group shadow-sm hover:shadow-md"
+        className="flex-1 flex flex-col items-center justify-center p-4 bg-white border-2 border-slate-100 hover:border-blue-500 rounded-2xl hover:bg-blue-50/50 transition-all group shadow-sm hover:shadow-md"
       >
-        <div className="w-12 h-12 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+        <div className="w-12 h-12 bg-blue-100 text-[#0066FF] rounded-full flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
           <Target size={24} />
         </div>
         <h3 className="font-bold text-slate-800 mb-1 text-sm sm:text-base">Sudah Tahu Minat</h3>

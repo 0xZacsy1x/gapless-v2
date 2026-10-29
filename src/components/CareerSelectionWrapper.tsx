@@ -117,17 +117,16 @@ export function CareerSelectionWrapper({ roles }: WrapperProps) {
 
                                     router.push(`/assessment?quizType=sudah_tahu_minat&role=${encodeURIComponent(roleSlug)}`);
                                 }}
-                                className="group relative w-full text-left p-8 bg-white/80 backdrop-blur-xl rounded-3xl border border-white/60 hover:border-blue-300 transition-all duration-300 cursor-pointer hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:-translate-y-1 overflow-hidden"
+                                className="group relative w-full text-left p-8 bg-white rounded-3xl border border-slate-200/90 hover:border-blue-400 transition-all duration-300 cursor-pointer hover:shadow-md hover:-translate-y-1 overflow-hidden"
                             >
-                                <div className="absolute inset-0 bg-linear-to-br from-white/40 to-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                                 <div 
-                                    className="relative w-24 h-24 mb-6 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 ease-out"
+                                    className="relative w-24 h-24 mb-6 flex items-center justify-center group-hover:scale-105 transition-transform duration-300 ease-out"
                                 >
-                                    <Image src={visuals.icon} alt={role.roleName} width={96} height={96} className="object-contain drop-shadow-md rounded-2xl" />
+                                    <Image src={visuals.icon} alt={role.roleName} width={96} height={96} className="object-contain drop-shadow-xs rounded-2xl" />
                                 </div>
                                 <h3 className="relative text-xl font-bold text-slate-900 mb-4 leading-tight group-hover:text-blue-700 transition-colors">{role.roleName}</h3>
-                                <div className="relative inline-flex items-center text-sm font-bold text-blue-600 bg-blue-50 px-4 py-2 rounded-full group-hover:bg-blue-600 group-hover:text-white transition-colors duration-300">
-                                    MULAI ASSESMEN <ArrowRight size={16} className="ml-2 transform group-hover:translate-x-1 transition-transform" />
+                                <div className="relative inline-flex items-center text-sm font-bold text-[#0066FF] bg-blue-50 px-4 py-2 rounded-xl group-hover:bg-[#0066FF] group-hover:text-white transition-colors duration-200 shadow-2xs">
+                                    MULAI ASESMEN <ArrowRight size={16} className="ml-2 transform group-hover:translate-x-1 transition-transform" />
                                 </div>
                             </button>
                         );

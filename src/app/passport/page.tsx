@@ -231,7 +231,7 @@ export default async function PassportPage() {
   const hardScore = Math.min(95, baseHard + completedMissionsCount * 1 + totalCertBoost);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/20 flex flex-col">
+    <div className="min-h-screen bg-slate-50 flex flex-col">
       <Navbar />
       <LearningTabsNav />
 

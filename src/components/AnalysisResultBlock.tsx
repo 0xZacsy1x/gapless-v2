@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from 'react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Tooltip, Radar, Legend } from 'recharts';
-import { Sparkles, CheckCircle2, AlertTriangle, Lock, Check, ShieldCheck, ArrowRight, X, FileText, Download, Loader2, ExternalLink } from 'lucide-react';
+import { Brain, CheckCircle2, AlertTriangle, Lock, Check, ShieldCheck, ArrowRight, X, FileText, Download, Loader2, ExternalLink } from 'lucide-react';
 import { GapInsight } from '@/contexts/CareerContext';
 import Link from 'next/link';
 import { downloadBlobFile } from '@/lib/download-helper';
@@ -315,17 +315,17 @@ export function AnalysisResultBlock({
           <div>
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
-                <span className="p-1.5 rounded-lg bg-indigo-50 text-indigo-600">
-                  <Sparkles className="w-4 h-4" />
+                <span className="p-1.5 rounded-lg bg-blue-50 text-[#0066FF] border border-blue-100">
+                  <Brain className="w-4 h-4 text-[#0066FF]" />
                 </span>
                 <h2 className="text-xl font-bold text-slate-900">Analisis Kesenjangan AI</h2>
               </div>
               {isPurchased ? (
-                <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+                <span className="text-[11px] font-semibold px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200">
                   Resmi Terbuka
                 </span>
               ) : (
-                <span className="inline-flex items-center gap-1 text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200">
+                <span className="inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-md bg-amber-50 text-amber-700 border border-amber-200">
                   <Lock className="w-3 h-3 text-amber-600" /> Terkunci
                 </span>
               )}
@@ -377,8 +377,8 @@ export function AnalysisResultBlock({
                 )}
 
                 {/* Callout Locked AI Narrative */}
-                <div className="p-5 rounded-2xl bg-gradient-to-br from-slate-50 to-blue-50/30 border border-slate-200 text-center relative overflow-hidden shadow-xs">
-                  <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center mx-auto mb-2 border border-blue-100 shadow-xs">
+                <div className="p-5 rounded-2xl bg-slate-50/80 border border-slate-200 text-center relative overflow-hidden shadow-xs">
+                  <div className="w-10 h-10 rounded-xl bg-blue-50 text-[#0066FF] flex items-center justify-center mx-auto mb-2 border border-blue-100 shadow-xs">
                     <Lock className="w-5 h-5" />
                   </div>
                   <h4 className="font-bold text-slate-900 text-sm mb-1">
@@ -389,9 +389,9 @@ export function AnalysisResultBlock({
                   </p>
                   <button
                     onClick={() => setShowPaymentModal(true)}
-                    className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-xs font-semibold shadow-md transition flex items-center justify-center gap-1.5 mx-auto cursor-pointer"
+                    className="btn-press px-5 py-2.5 rounded-xl bg-[#0066FF] hover:bg-[#0052cc] text-white text-xs font-semibold shadow-xs transition-colors flex items-center justify-center gap-1.5 mx-auto cursor-pointer"
                   >
-                    <Sparkles className="w-3.5 h-3.5" />
+                    <FileText className="w-3.5 h-3.5" />
                     Buka Laporan Lengkap — Rp9.900
                   </button>
                 </div>
@@ -493,8 +493,8 @@ export function AnalysisResultBlock({
             </button>
 
             <div className="text-center mb-6">
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center mx-auto mb-3 shadow-md">
-                <Sparkles className="w-7 h-7" />
+              <div className="w-14 h-14 rounded-2xl bg-blue-50 border border-blue-200 text-[#0066FF] flex items-center justify-center mx-auto mb-3 shadow-xs">
+                <FileText className="w-7 h-7 text-[#0066FF]" />
               </div>
               <h3 className="text-xl font-bold text-slate-900">Buka Laporan Analisis Gap</h3>
               <p className="text-xs text-slate-500 mt-1">
@@ -539,7 +539,7 @@ export function AnalysisResultBlock({
                 <button
                   onClick={handleMockPayment}
                   disabled={isProcessingPayment}
-                  className="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-xs font-semibold shadow-md transition disabled:opacity-50 cursor-pointer"
+                  className="btn-press flex-1 py-2.5 rounded-xl bg-[#0066FF] hover:bg-[#0052cc] text-white text-xs font-semibold shadow-xs transition-colors disabled:opacity-50 cursor-pointer"
                 >
                   {isProcessingPayment ? 'Memproses...' : 'Konfirmasi Bayar'}
                 </button>

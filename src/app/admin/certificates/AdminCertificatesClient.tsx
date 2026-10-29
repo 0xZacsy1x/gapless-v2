@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { ShieldCheck, CheckCircle2, XCircle, Clock, FileText, ExternalLink, AlertCircle, Sparkles } from 'lucide-react';
+import { ShieldCheck, CheckCircle2, XCircle, Clock, FileText, ExternalLink, AlertCircle, Brain } from 'lucide-react';
 
 interface CertificateItem {
   id: string;
@@ -194,19 +194,19 @@ export function AdminCertificatesClient({ initialCertificates }: { initialCertif
                   </div>
 
                   {cert.catatanTambahan && (
-                    <p className="text-xs text-indigo-700 bg-indigo-50/60 p-2 rounded-lg border border-indigo-100 mt-2">
+                    <p className="text-xs text-blue-900 bg-blue-50/60 p-2 rounded-lg border border-blue-100 mt-2">
                       Catatan User: {cert.catatanTambahan}
                     </p>
                   )}
 
                   {cert.aiAnalysis && (
-                    <div className="mt-2.5 p-3 rounded-xl bg-gradient-to-r from-blue-50/70 via-indigo-50/50 to-purple-50/40 border border-blue-200/80 text-xs space-y-1.5">
+                    <div className="mt-2.5 p-3 rounded-xl bg-blue-50/70 border border-blue-200/80 text-xs space-y-1.5">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-1.5 font-bold text-blue-950 text-xs">
-                          <Sparkles className="w-3.5 h-3.5 text-blue-600" />
+                          <Brain className="w-3.5 h-3.5 text-[#0066FF]" />
                           <span>Rekomendasi AI ({cert.aiAnalysis.achievementLevel}):</span>
                         </div>
-                        <span className="font-extrabold text-[11px] px-2.5 py-0.5 rounded-full bg-blue-600 text-white shadow-xs">
+                        <span className="font-extrabold text-[11px] px-2 py-0.5 rounded-md bg-[#0066FF] text-white shadow-xs font-mono tabular-nums">
                           Saran Boost: +{cert.aiAnalysis.suggestedBoost || cert.aiSuggestedBoost || 3}%
                         </span>
                       </div>
@@ -214,7 +214,7 @@ export function AdminCertificatesClient({ initialCertificates }: { initialCertif
                         {cert.aiAnalysis.aiNotes}
                       </p>
                       <div className="text-[10px] text-slate-500 flex items-center gap-3 pt-0.5">
-                        <span>Relevansi Skill: <strong className="text-indigo-700">#{cert.aiAnalysis.relevantSkill}</strong></span>
+                        <span>Relevansi Skill: <strong className="text-blue-700">#{cert.aiAnalysis.relevantSkill}</strong></span>
                         <span>Keyakinan: <strong>{cert.aiAnalysis.confidenceScore}%</strong></span>
                       </div>
                     </div>
