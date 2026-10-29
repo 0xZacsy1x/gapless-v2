@@ -184,7 +184,7 @@ export default function SimulationClient({
                 <span className="text-xs font-extrabold uppercase tracking-wider text-slate-500">
                   Virtual Job Simulation
                 </span>
-                <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+                <span className="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-800 border border-emerald-200">
                   {simulation.badgeLabel}
                 </span>
               </div>
@@ -432,8 +432,9 @@ export default function SimulationClient({
               <Award className="w-8 h-8" />
             </div>
 
-            <span className="text-[11px] font-extrabold px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 uppercase tracking-wider mb-3 inline-block">
-              Simulasi Selesai 100%
+            <span className="text-[10.5px] font-bold px-2.5 py-0.5 rounded-md bg-emerald-50 text-emerald-800 border border-emerald-200 uppercase tracking-wider mb-3 inline-flex items-center gap-1.5">
+              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+              <span>Simulasi Selesai 100%</span>
             </span>
 
             <h3 className="text-2xl font-black text-slate-900 mb-2">

@@ -203,10 +203,10 @@ export function ReportDocumentClient({ report, assessmentId }: Props) {
             </div>
 
             <div className="pt-4">
-              <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-slate-100 border border-slate-300 text-slate-800 text-sm font-bold shadow-xs">
+              <div className="flex items-center gap-2 pl-3 border-l-2 border-[#2d4a8a] text-slate-700 text-sm font-semibold">
                 <Target className="w-4 h-4 text-[#2d4a8a]" strokeWidth={1.75} />
-                <span>Target Peran:</span>
-                <span className="text-[#2d4a8a]">{report.targetRole}</span>
+                <span className="text-slate-500">Target Peran:</span>
+                <span className="text-[#2d4a8a] font-bold">{report.targetRole}</span>
               </div>
             </div>
           </div>

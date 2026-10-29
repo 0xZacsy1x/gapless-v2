@@ -246,12 +246,14 @@ export function ResultsView() {
                   >
                     {i === 0 && (
                       <span
-                        className="text-[10px] font-bold px-2 py-0.5 rounded-full mb-3 inline-block"
+                        className="text-[10px] font-bold px-2 py-0.5 rounded-md mb-3 inline-flex items-center gap-1.5 border self-start"
                         style={{
-                          background: `${meta.color}12`,
+                          background: `${meta.color}10`,
                           color: meta.color,
+                          borderColor: `${meta.color}30`,
                         }}
                       >
+                        <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: meta.color }} />
                         Pilihan Terbaik
                       </span>
                     )}
@@ -263,18 +265,12 @@ export function ResultsView() {
                       {career.description}
                     </p>
 
-                    <div className="flex items-center gap-2 flex-wrap mb-3">
-                      <span
-                        className="text-xs px-2 py-0.5 rounded-full"
-                        style={{
-                          background: 'rgba(16,185,129,0.08)',
-                          color: '#059669',
-                          border: '1px solid rgba(16,185,129,0.15)',
-                        }}
-                      >
+                    <div className="flex items-center gap-2 flex-wrap mb-3 text-xs font-mono">
+                      <span className="font-semibold text-emerald-700">
                         {career.salaryRange}
                       </span>
-                      <span className="text-xs text-gray-400">
+                      <span className="text-slate-300">·</span>
+                      <span className="text-slate-500 font-medium">
                         Pertumbuhan {career.growthOutlook}
                       </span>
                     </div>

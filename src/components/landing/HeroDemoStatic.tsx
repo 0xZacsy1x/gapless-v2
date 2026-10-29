@@ -4,12 +4,9 @@ import { Brain, Sparkles, ChevronRight } from "lucide-react";
 export default function HeroDemoStatic() {
   return (
     <div 
-      className="w-full max-w-[440px] xl:max-w-[480px] h-[620px] mx-auto rounded-[32px] bg-white border border-gray-100 shadow-2xl shadow-gray-200/50 p-6 sm:p-7 flex flex-col justify-between relative overflow-hidden select-none [contain:layout]"
+      className="w-full max-w-[440px] xl:max-w-[480px] h-[620px] mx-auto rounded-[32px] bg-white border border-slate-200/90 shadow-xl p-6 sm:p-7 flex flex-col justify-between relative overflow-hidden select-none [contain:layout]"
       aria-label="Contoh simulasi asesmen minat karier"
     >
-      {/* Decorative Brand Gradient Accent */}
-      <div className="absolute top-0 right-0 w-44 h-44 bg-brand-primary/5 blur-2xl rounded-full pointer-events-none" />
-
       {/* Top Meta Header */}
       <div className="flex items-center justify-between border-b border-gray-100 pb-3 relative z-10 shrink-0">
         <div className="flex items-center gap-2">

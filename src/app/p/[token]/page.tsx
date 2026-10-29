@@ -159,24 +159,24 @@ export default async function PublicPassportPage({
   const hardScore = latestAssessment.length ? 78 : 65;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-indigo-950 text-slate-100 flex flex-col items-center justify-center py-12 px-4">
-      <div className="max-w-3xl w-full bg-slate-900/90 backdrop-blur-xl border border-slate-700/60 rounded-3xl p-6 sm:p-10 shadow-2xl space-y-8">
+    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col items-center justify-center py-12 px-4">
+      <div className="max-w-3xl w-full bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-10 shadow-xl space-y-8">
         {/* Brand & Badge */}
         <div className="flex items-center justify-between border-b border-slate-800 pb-6">
           <Link href="/" className="text-xl font-bold text-white tracking-tight flex items-center gap-2">
-            <span className="w-8 h-8 rounded-xl bg-gradient-to-tr from-blue-500 to-indigo-600 flex items-center justify-center text-white shadow">
+            <span className="w-8 h-8 rounded-xl bg-blue-700 flex items-center justify-center text-white shadow-xs">
               G
             </span>
             Gapless Skill Passport
           </Link>
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-semibold border border-emerald-500/30">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md bg-emerald-950/60 text-emerald-400 text-xs font-semibold border border-emerald-800/60">
             <Shield className="w-3.5 h-3.5" /> Terverifikasi
           </span>
         </div>
 
         {/* User Card */}
         <div className="flex items-center gap-5">
-          <div className="w-20 h-20 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center font-bold text-3xl shadow-lg shrink-0">
+          <div className="w-20 h-20 rounded-2xl bg-slate-800 border border-slate-700 text-white flex items-center justify-center font-bold text-3xl shadow-sm shrink-0">
             {user[0].image ? (
               <img
                 src={user[0].image}
@@ -191,12 +191,12 @@ export default async function PublicPassportPage({
             <div className="flex items-center gap-2 flex-wrap">
               <h1 className="text-2xl font-bold text-white">{user[0].name}</h1>
               {isPro ? (
-                <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-linear-to-r from-blue-500 via-indigo-500 to-sky-400 text-white shadow-xs flex items-center gap-1">
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-blue-700 text-white flex items-center gap-1">
                   <Crown className="w-3 h-3" />
                   PRO
                 </span>
               ) : (
-                <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 border border-slate-700">
+                <span className="text-[10px] font-medium px-2 py-0.5 rounded-md bg-slate-800 text-slate-400 border border-slate-700">
                   FREE
                 </span>
               )}
@@ -205,8 +205,8 @@ export default async function PublicPassportPage({
             {quizType === 'belum_tahu_minat' ? (
               <div className="mt-1 space-y-1">
                 <div className="flex items-center gap-2 text-xs flex-wrap">
-                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-indigo-500/20 text-indigo-300 border border-indigo-400/30">
-                    <Compass className="w-3 h-3 text-indigo-400" />
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-semibold bg-slate-800 text-slate-200 border border-slate-700">
+                    <Compass className="w-3 h-3 text-slate-400" />
                     Jalur Eksplorasi Minat
                   </span>
                   {dominantTrait && (
@@ -218,19 +218,19 @@ export default async function PublicPassportPage({
                 <p className="text-sm text-slate-400 flex items-center gap-1.5 flex-wrap">
                   <Briefcase className="w-4 h-4 text-slate-500 shrink-0" />
                   <span>Rekomendasi Karier:</span>
-                  <strong className="text-indigo-300 font-semibold">{careerTitle}</strong>
+                  <strong className="text-white font-semibold">{careerTitle}</strong>
                 </p>
               </div>
             ) : (
               <div className="mt-1 space-y-1">
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-blue-500/20 text-blue-300 border border-blue-400/30">
-                  <Target className="w-3 h-3 text-blue-400" />
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-semibold bg-slate-800 text-slate-200 border border-slate-700">
+                  <Target className="w-3 h-3 text-slate-400" />
                   Jalur Terarah
                 </span>
                 <p className="text-sm text-slate-400 flex items-center gap-1.5 flex-wrap">
                   <Briefcase className="w-4 h-4 text-slate-500 shrink-0" />
                   <span>Target Karier:</span>
-                  <strong className="text-indigo-300 font-semibold">{careerTitle}</strong>
+                  <strong className="text-white font-semibold">{careerTitle}</strong>
                 </p>
               </div>
             )}
@@ -239,19 +239,19 @@ export default async function PublicPassportPage({
 
         {/* Readiness Badges */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="bg-slate-800/80 border border-slate-700/80 rounded-2xl p-5">
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5">
             <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
               Hard Skill Readiness
             </span>
-            <div className="text-3xl font-extrabold text-blue-400 mt-1">{hardScore}%</div>
-            <p className="text-xs text-slate-400 mt-1">Kurikulum terstruktur & standar O*NET</p>
+            <div className="text-3xl font-extrabold text-white mt-1">{hardScore}%</div>
+            <p className="text-xs text-slate-400 mt-1">Kurikulum terstruktur &amp; standar O*NET</p>
           </div>
 
-          <div className="bg-slate-800/80 border border-slate-700/80 rounded-2xl p-5">
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5">
             <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
               Soft Skill Readiness
             </span>
-            <div className="text-3xl font-extrabold text-indigo-400 mt-1">{softScore}%</div>
+            <div className="text-3xl font-extrabold text-white mt-1">{softScore}%</div>
             <p className="text-xs text-slate-400 mt-1">
               {hasVerifiedSjt ? '8 Dimensi SJT terverifikasi' : '8 Dimensi soft skill terapan'}
             </p>
@@ -283,18 +283,18 @@ export default async function PublicPassportPage({
 
               let badgeText = 'Perlu Asah';
               let badgeColor = 'text-amber-400 bg-amber-400/10 border-amber-400/20';
-              let barGradient = 'from-amber-400 to-amber-500';
+              let barColor = 'bg-amber-500';
               let scoreColor = 'text-amber-400';
 
               if (isLevel3) {
                 badgeText = 'Unggul';
                 badgeColor = 'text-emerald-400 bg-emerald-400/10 border-emerald-400/20';
-                barGradient = 'from-emerald-400 to-teal-400';
+                barColor = 'bg-emerald-500';
                 scoreColor = 'text-emerald-400';
               } else if (isLevel2) {
                 badgeText = 'Standar';
                 badgeColor = 'text-blue-400 bg-blue-400/10 border-blue-400/20';
-                barGradient = 'from-blue-400 to-indigo-500';
+                barColor = 'bg-blue-600';
                 scoreColor = 'text-blue-400';
               }
 
@@ -319,7 +319,7 @@ export default async function PublicPassportPage({
                   </div>
                   <div className="w-full h-1.5 bg-slate-700 rounded-full overflow-hidden">
                     <div
-                      className={`h-full bg-linear-to-r ${barGradient} rounded-full`}
+                      className={`h-full ${barColor} rounded-full`}
                       style={{ width: `${score}%` }}
                     />
                   </div>

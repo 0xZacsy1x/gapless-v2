@@ -105,9 +105,9 @@ export function SJTSoftSkillsCard({
   return (
     <div className="w-full bg-white/95 backdrop-blur-md rounded-3xl border border-slate-200/90 shadow-sm overflow-hidden mb-8 transition-all">
       {/* Top Banner with Tier Indicator */}
-      <div className="bg-linear-to-r from-violet-600 via-indigo-600 to-blue-600 px-6 py-3.5 text-white flex flex-wrap items-center justify-between gap-3">
+      <div className="bg-slate-900 border-b border-slate-800 px-6 py-3.5 text-white flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-2 text-xs md:text-sm font-semibold">
-          <Brain className="w-4 h-4 text-violet-200" />
+          <Brain className="w-4 h-4 text-slate-300" />
           <span>Hasil Evaluasi 8 Dimensi Soft Skill (SJT 40 Skenario)</span>
         </div>
         <div className="flex items-center gap-2">
@@ -238,11 +238,11 @@ export function SJTSoftSkillsCard({
               onClick={() => setActiveTab('in_depth')}
               className={`px-4 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer ${
                 activeTab === 'in_depth'
-                  ? 'bg-linear-to-r from-violet-600 to-indigo-600 text-white shadow-xs'
+                  ? 'bg-blue-700 text-white shadow-xs'
                   : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
               }`}
             >
-              <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+              <Sparkles className="w-3.5 h-3.5 text-white" />
               <span>Detail Analisis Mendalam (Paid Exclusive)</span>
             </button>
           </div>
@@ -430,13 +430,13 @@ export function SJTSoftSkillsCard({
                             </div>
 
                             {/* Interview Talking Points (STAR Method) */}
-                            <div className="p-3.5 rounded-xl bg-violet-50/70 border border-violet-200 text-xs space-y-2">
+                            <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 text-xs space-y-2">
                               <div className="flex items-center justify-between">
-                                <span className="font-bold text-violet-950 flex items-center gap-1.5">
-                                  <Target className="w-3.5 h-3.5 text-violet-600" />
+                                <span className="font-bold text-slate-900 flex items-center gap-1.5">
+                                  <Target className="w-3.5 h-3.5 text-slate-700" />
                                   Simulasi Wawancara Kerja (Metode STAR untuk {careerTitle}):
                                 </span>
-                                <span className="text-[10px] font-bold text-violet-700 bg-violet-100 px-2 py-0.5 rounded-full">
+                                <span className="text-[10px] font-semibold text-slate-700 bg-slate-200/80 px-2 py-0.5 rounded-md">
                                   Interview Ready
                                 </span>
                               </div>

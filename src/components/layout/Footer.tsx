@@ -107,10 +107,10 @@ export default function Footer() {
                 </li>
               </ul>
 
-              {/* System Status Pill */}
+              {/* System Status Indicator (Clean Status Chip 4px radius) */}
               <div className="pt-2">
-                <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-white border border-gray-200 text-[11px] font-medium text-gray-600 shadow-xs">
-                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-md bg-white border border-gray-200 text-[11px] font-medium text-gray-600">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
                   <span>Layanan Berjalan Normal</span>
                 </div>
               </div>

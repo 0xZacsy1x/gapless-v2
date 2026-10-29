@@ -311,7 +311,7 @@ export function MisiClient({
                     key={mission.id}
                     className={`border rounded-2xl overflow-hidden transition-shadow ${
                       isLocked
-                        ? 'bg-slate-50/70 border-slate-200/80 hover:border-indigo-300'
+                        ? 'bg-slate-50/70 border-slate-200/80 hover:border-slate-300'
                         : isCompleted
                         ? 'bg-white border-emerald-200'
                         : 'bg-white border-slate-200 hover:border-blue-200'
@@ -417,9 +417,9 @@ export function MisiClient({
 
                               {/* Feedback AI khusus Pro */}
                               {feedbacks[mission.id] ? (
-                                <div className="bg-gradient-to-br from-indigo-50/90 via-blue-50/60 to-purple-50/70 border border-indigo-200 rounded-2xl p-4 space-y-2 shadow-xs">
-                                  <div className="flex items-center gap-1.5 text-xs font-bold text-indigo-900">
-                                    <Sparkles className="w-4 h-4 text-indigo-600" />
+                                <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-2">
+                                  <div className="flex items-center gap-1.5 text-xs font-bold text-slate-900">
+                                    <Sparkles className="w-4 h-4 text-slate-700" />
                                     <span>Evaluasi & Feedback Career Coach AI</span>
                                   </div>
                                   <div className="text-xs text-slate-700 leading-relaxed">
@@ -431,19 +431,19 @@ export function MisiClient({
                                   Refleksi tersimpan secara mandiri di Skill Passport.
                                 </div>
                               ) : (
-                                <div className="bg-gradient-to-r from-slate-900 via-slate-900 to-indigo-950 text-white rounded-2xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-md border border-indigo-900/50">
+                                <div className="bg-slate-900 text-white rounded-xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border border-slate-800">
                                   <div>
-                                    <div className="flex items-center gap-1.5 text-xs font-bold text-indigo-300 mb-1">
-                                      <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
+                                    <div className="flex items-center gap-1.5 text-xs font-bold text-white mb-1">
+                                      <Sparkles className="w-3.5 h-3.5 text-slate-300" />
                                       Dapatkan Evaluasi Refleksi dari AI
                                     </div>
-                                    <p className="text-[11px] text-indigo-200/80 leading-relaxed">
+                                    <p className="text-xs text-slate-300 leading-relaxed">
                                       Upgrade ke Gapless Pro untuk mendapatkan evaluasi personal dan saran konkret dari Career Coach AI pada setiap misi.
                                     </p>
                                   </div>
                                   <Link
                                     href="/pricing"
-                                    className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs whitespace-nowrap transition shrink-0"
+                                    className="px-4 py-2 rounded-lg bg-blue-700 hover:bg-blue-800 text-white font-semibold text-xs whitespace-nowrap transition shrink-0"
                                   >
                                     Mulai Gapless Pro
                                   </Link>
@@ -530,11 +530,11 @@ export function MisiClient({
             className="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl border border-slate-100 text-center relative overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="w-14 h-14 rounded-2xl bg-linear-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center mx-auto mb-4 shadow-md">
-              <Lock className="w-7 h-7" />
+            <div className="w-12 h-12 rounded-xl bg-slate-900 text-white flex items-center justify-center mx-auto mb-4 border border-slate-800">
+              <Lock className="w-6 h-6" />
             </div>
 
-            <span className="text-[11px] font-extrabold uppercase tracking-wider text-indigo-600 bg-indigo-50 border border-indigo-100 px-3 py-1 rounded-full mb-3 inline-block">
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-700 bg-slate-100 border border-slate-200 px-2.5 py-1 rounded-md mb-3 inline-block">
               Fitur Eksklusif Pro
             </span>
 
@@ -549,13 +549,13 @@ export function MisiClient({
             <div className="flex flex-col sm:flex-row gap-3">
               <button
                 onClick={() => setLockedMissionModal(null)}
-                className="flex-1 py-3 px-4 rounded-xl border border-slate-200 text-slate-600 text-xs font-bold hover:bg-slate-50 transition cursor-pointer"
+                className="flex-1 py-2.5 px-4 rounded-xl border border-slate-200 text-slate-600 text-xs font-semibold hover:bg-slate-50 transition cursor-pointer"
               >
                 Nanti Saja
               </button>
               <Link
                 href="/pricing"
-                className="flex-1 py-3 px-4 rounded-xl bg-linear-to-r from-blue-600 via-indigo-600 to-sky-500 hover:opacity-95 text-white text-xs font-bold shadow-md transition flex items-center justify-center gap-1.5 cursor-pointer"
+                className="flex-1 py-2.5 px-4 rounded-xl bg-blue-700 hover:bg-blue-800 text-white text-xs font-semibold transition flex items-center justify-center gap-1.5 cursor-pointer"
               >
                 <span>Mulai Pro (Rp29k)</span>
               </Link>

@@ -177,16 +177,13 @@ export function SoftSkillCompetencies({
   };
 
   return (
-    <div className="bg-white rounded-3xl p-6 sm:p-7 border border-slate-200/90 shadow-sm relative overflow-hidden">
-      {/* Decorative background glow */}
-      <div className="absolute -left-12 -top-12 w-48 h-48 bg-linear-to-br from-indigo-100/40 to-blue-100/20 rounded-full blur-2xl pointer-events-none" />
-
+    <div className="bg-white rounded-2xl p-6 sm:p-7 border border-slate-200 shadow-xs relative overflow-hidden">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5 relative z-10">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <div className="w-7 h-7 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0">
-              <Brain className="w-4 h-4" />
+            <div className="w-7 h-7 rounded-lg bg-slate-100 text-slate-700 flex items-center justify-center shrink-0">
+              <Brain className="w-4 h-4 text-slate-700" />
             </div>
             <h2 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight">
               8 Dimensi Soft Skill Kesiapan Karir

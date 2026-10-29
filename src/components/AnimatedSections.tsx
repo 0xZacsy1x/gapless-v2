@@ -13,10 +13,10 @@ const RouteSelectionModal = dynamic(
 );
 
 const archetypes = [
-  { image: '/The Creator.png', name: 'The Creator', desc: 'Kamu yang membangun visual, narasi, dan estetika.', color: 'from-violet-500 to-pink-500', roles: ['UI/UX Designer', 'Content Creator', 'Product Designer'], icon: Sparkles },
-  { image: '/The Builder.png', name: 'The Builder', desc: 'Kamu yang membangun sistem, aplikasi, dan infrastruktur.', color: 'from-blue-500 to-cyan-500', roles: ['Software Engineer', 'AI Engineer', 'Cloud Engineer'], icon: Zap },
-  { image: '/The Thinker.png', name: 'The Thinker', desc: 'Kamu yang menemukan pola di balik data dan riset.', color: 'from-emerald-500 to-teal-500', roles: ['Data Analyst', 'Researcher', 'Data Scientist'], icon: Target },
-  { image: '/The Connector.png', name: 'The Connector', desc: 'Kamu yang menjembatani produk, pasar, dan manusia.', color: 'from-amber-500 to-orange-500', roles: ['Digital Marketing', 'Bizdev', 'Product Marketing'], icon: Users },
+  { image: '/The Creator.png', name: 'The Creator', desc: 'Kamu yang membangun visual, narasi, dan estetika.', roles: ['UI/UX Designer', 'Content Creator', 'Product Designer'], icon: Sparkles },
+  { image: '/The Builder.png', name: 'The Builder', desc: 'Kamu yang membangun sistem, aplikasi, dan infrastruktur.', roles: ['Software Engineer', 'AI Engineer', 'Cloud Engineer'], icon: Zap },
+  { image: '/The Thinker.png', name: 'The Thinker', desc: 'Kamu yang menemukan pola di balik data dan riset.', roles: ['Data Analyst', 'Researcher', 'Data Scientist'], icon: Target },
+  { image: '/The Connector.png', name: 'The Connector', desc: 'Kamu yang menjembatani produk, pasar, dan manusia.', roles: ['Digital Marketing', 'Bizdev', 'Product Marketing'], icon: Users },
 ];
 
 /**
