@@ -9,7 +9,7 @@ export default function HeroSection() {
   return (
     <header className="w-full max-w-7xl mx-auto px-4 sm:px-6 md:px-12 lg:px-16 pt-6 pb-12 md:pt-10 md:pb-16 lg:pt-12 lg:pb-20 grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-start font-sans">
       {/* Left Column: Hero Editorial Copy & Methodology Cards */}
-      <div className="lg:col-span-7 flex flex-col justify-between self-start text-left space-y-5 lg:space-y-6">
+      <div data-preloader-reveal className="lg:col-span-7 flex flex-col justify-between self-start text-left space-y-5 lg:space-y-6">
         <div className="space-y-5">
           {/* Eyebrow Label (Editorial accent line, sentence case, anti-slop) */}
           <div className="flex items-center gap-2 text-xs font-semibold text-slate-500 pl-2.5 border-l-2 border-brand-primary">
@@ -135,7 +135,7 @@ export default function HeroSection() {
       </div>
 
       {/* Right Column: Hero Visual Animated Demo Widget */}
-      <div className="lg:col-span-5 w-full flex justify-center lg:justify-end self-start">
+      <div data-preloader-reveal className="lg:col-span-5 w-full flex justify-center lg:justify-end self-start">
         <AssessmentDemo />
       </div>
     </header>

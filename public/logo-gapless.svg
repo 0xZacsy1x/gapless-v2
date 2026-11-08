@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none">
+  <!-- Lengkungan "C": kiri, atas, bawah -->
+  <path id="g-arc" fill="#FFFFFF" d="M100 8H32A24 24 0 0 0 8 32V88A24 24 0 0 0 32 112H60V84H44A8 8 0 0 1 36 76V44A8 8 0 0 1 44 36H100A14 14 0 0 0 100 8Z"/>
+  <!-- Blok kanan bawah yang mengunci lengkungan jadi huruf G -->
+  <path id="g-block" fill="#FFFFFF" d="M70 54H96A16 16 0 0 1 112 70V96A16 16 0 0 1 96 112H70A6 6 0 0 1 64 106V60A6 6 0 0 1 70 54Z"/>
+</svg>

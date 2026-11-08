@@ -5,12 +5,18 @@ import { Navbar } from "@/components/Navbar";
 import HeroSection from "@/components/landing/HeroSection";
 import BentoEcosystemTour from "@/components/landing/BentoEcosystemTour";
 import Footer from "@/components/Footer";
+import { Preloader } from "@/components/preloader/Preloader";
 
 export function HomePageClient() {
   return (
     <div className="w-full min-h-screen selection:bg-brand-primary/10 flex flex-col items-center overflow-x-hidden bg-white text-slate-900 font-sans">
+      {/* Preloader: overlay ter-render dari HTML awal, dibuka setelah aset siap */}
+      <Preloader />
+
       {/* Shared Navigation Component */}
-      <Navbar />
+      <div data-preloader-reveal className="w-full">
+        <Navbar />
+      </div>
 
       {/* Hero Section — 2 Columns with Left Content & Right Upward-Sliding Animated Demo */}
       <HeroSection />
