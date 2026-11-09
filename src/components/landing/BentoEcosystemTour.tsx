@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import gsap from "gsap";
-import { useGSAP } from "@gsap/react";
 import Link from "next/link";
 import {
   GraduationCap,
@@ -216,7 +215,6 @@ const FEATURE_TABS = [
 
 export default function BentoEcosystemTour() {
   const windowContainerRef = useRef<HTMLDivElement>(null);
-  const windowContentRef = useRef<HTMLDivElement>(null);
   const cursorRef = useRef<HTMLDivElement>(null);
   const clickPulseRef = useRef<HTMLSpanElement>(null);
   const tlRef = useRef<gsap.core.Timeline | null>(null);
@@ -236,17 +234,6 @@ export default function BentoEcosystemTour() {
   const [bookmarkedId, setBookmarkedId] = useState<string>("k1");
   const [isTabActive, setIsTabActive] = useState<boolean>(true);
   const [isUserInteracting, setIsUserInteracting] = useState<boolean>(false);
-
-  const [prefersReducedMotion, setPrefersReducedMotion] = useState<boolean>(false);
-
-  // Check prefers-reduced-motion
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const handleChange = () => setPrefersReducedMotion(mediaQuery.matches);
-    mediaQuery.addEventListener("change", handleChange);
-    return () => mediaQuery.removeEventListener("change", handleChange);
-  }, []);
 
   // Coordinate helper relative to window container
   const getCoords = useCallback(
@@ -277,17 +264,6 @@ export default function BentoEcosystemTour() {
       );
     }
   }, []);
-
-  // GSAP Smooth fade/slide when switching tabs
-  useGSAP(() => {
-    if (windowContentRef.current && !prefersReducedMotion) {
-      gsap.fromTo(
-        windowContentRef.current,
-        { opacity: 0.45, y: 8 },
-        { opacity: 1, y: 0, duration: 0.28, ease: "power2.out" }
-      );
-    }
-  }, [activeTab, prefersReducedMotion]);
 
   // Visibility handling (pause only when browser tab is inactive)
   useEffect(() => {
@@ -466,31 +442,22 @@ export default function BentoEcosystemTour() {
   return (
     <div
       ref={windowContainerRef}
-      className="relative w-full bg-[#1c1c1e] border border-white/[0.12] rounded-2xl sm:rounded-3xl shadow-[0_28px_70px_-15px_rgba(0,0,0,0.6),inset_0_1px_0_0_rgba(255,255,255,0.12)] overflow-hidden flex flex-col min-h-[480px] sm:min-h-[530px] text-[#f5f5f7] select-none font-sans"
+      className="relative w-full bg-surface-panel border border-border rounded-2xl shadow-[0_2px_4px_rgba(0,0,0,0.08),0_24px_56px_-12px_rgba(0,0,0,0.35)] overflow-hidden flex flex-col min-h-[480px] sm:min-h-[530px] text-ink select-none font-showcase"
     >
       {/* =========================================================================
-          MACOS TOP WINDOW CHROME (MacBook Titlebar)
+          BROWSER CHROME
       ========================================================================= */}
-      <div className="bg-[#252528] border-b border-white/[0.08] px-3.5 sm:px-6 py-2.5 sm:py-3 flex items-center justify-between gap-2.5 sm:gap-3 relative z-20 shrink-0">
-        {/* macOS 3 Window Controls */}
-        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
-          <span
-            className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-[#FF5F57] border border-[#e0443e] shadow-[inset_0_1px_1px_rgba(255,255,255,0.4)] inline-block"
-            title="Close"
-          />
-          <span
-            className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-[#FFBD2E] border border-[#dea123] shadow-[inset_0_1px_1px_rgba(255,255,255,0.4)] inline-block"
-            title="Minimize"
-          />
-          <span
-            className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-[#28C840] border border-[#1aab29] shadow-[inset_0_1px_1px_rgba(255,255,255,0.4)] inline-block"
-            title="Fullscreen"
-          />
+      <div className="bg-surface-chrome border-b border-border px-3.5 sm:px-6 py-2.5 sm:py-3 flex items-center justify-between gap-2.5 sm:gap-3 relative z-20 shrink-0">
+        {/* Window controls */}
+        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0" aria-hidden="true">
+          <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-[#FF5F57] border border-[#e0443e] inline-block" />
+          <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-[#FFBD2E] border border-[#dea123] inline-block" />
+          <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-[#28C840] border border-[#1aab29] inline-block" />
         </div>
 
-        {/* Window Subtitle / URL Address Pill */}
-        <div className="hidden sm:flex items-center gap-2 px-3 py-1 bg-[#1c1c1e] border border-white/[0.08] rounded-lg text-[11px] font-mono text-[#98989d] shadow-3xs max-w-sm w-full justify-center">
-          <Lock className="w-3 h-3 text-[#98989d] shrink-0" />
+        {/* URL pill */}
+        <div className="hidden sm:flex items-center gap-2 px-3 py-1 bg-white border border-border rounded-lg text-[11px] font-showcase-mono text-ink-body max-w-sm w-full justify-center">
+          <Lock className="w-3 h-3 text-ink-muted shrink-0" />
           <span className="truncate">
             gapless.id/app/
             {activeTab === "roadmap"
@@ -501,19 +468,22 @@ export default function BentoEcosystemTour() {
           </span>
         </div>
 
-        {/* Status Badge */}
-        <div className="flex items-center gap-1.5 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-lg bg-[#2c2c2e] border border-white/10 text-xs font-semibold text-[#f5f5f7] shadow-3xs shrink-0">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#30d158]" />
-          <span className="font-mono text-[10px] sm:text-[11px] text-[#e5e5e7]">Sistem Terkalibrasi</span>
+        {/* Status pill */}
+        <div className="flex items-center gap-1.5 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-lg bg-done-tint border border-done-tint-bd shrink-0">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#059669]" />
+          <span className="font-showcase-mono text-[10px] sm:text-[11px] font-semibold text-done-ink">Sistem Terkalibrasi</span>
         </div>
       </div>
 
       {/* =========================================================================
-          IN-WINDOW TAB NAVIGATION BAR (Tabs Inside MacBook Window)
+          TAB STRIP
       ========================================================================= */}
-      <div className="bg-[#18181b] border-b border-white/[0.08] px-3.5 sm:px-6 py-2 sm:py-2.5 flex flex-wrap sm:flex-nowrap items-center justify-between gap-2 sm:gap-3 relative z-20 shrink-0">
-        {/* Segmented Control Tabs */}
-        <div className="flex items-center gap-1 sm:gap-1.5 p-1 rounded-xl bg-[#242426] border border-white/[0.08] overflow-x-auto no-scrollbar touch-pan-x max-w-full">
+      <div className="bg-surface-muted border-b border-border-hair px-3.5 sm:px-6 py-2 sm:py-2.5 flex flex-wrap sm:flex-nowrap items-center justify-between gap-2 sm:gap-3 relative z-20 shrink-0">
+        <div
+          role="tablist"
+          aria-label="Fitur Gapless"
+          className="flex items-center gap-1 sm:gap-1.5 p-1 rounded-xl bg-[#EDF1F7] border border-[#E1E7F0] overflow-x-auto no-scrollbar touch-pan-x max-w-full"
+        >
           {FEATURE_TABS.map((tab) => {
             const isActive = activeTab === tab.id;
             const Icon = tab.icon;
@@ -528,19 +498,23 @@ export default function BentoEcosystemTour() {
               <button
                 key={tab.id}
                 ref={ref}
+                id={`tour-tab-${tab.id}`}
+                role="tab"
+                aria-selected={isActive}
+                aria-controls={`tour-panel-${tab.id}`}
                 type="button"
                 onClick={() => handleTabClick(tab.id)}
-                className={`px-3 sm:px-4 py-2 sm:py-1.5 rounded-lg text-xs font-bold transition-all duration-200 cursor-pointer min-h-[38px] sm:min-h-[40px] flex items-center gap-1.5 sm:gap-2 shrink-0 active:scale-[0.97] ${
+                className={`px-3 sm:px-4 py-2 sm:py-1.5 rounded-lg text-xs font-bold transition-colors duration-200 cursor-pointer min-h-[38px] sm:min-h-[40px] flex items-center gap-1.5 sm:gap-2 shrink-0 active:scale-[0.97] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue ${
                   isActive
-                    ? "bg-[#0066FF] text-white shadow-xs"
-                    : "text-[#98989d] hover:text-[#f5f5f7] hover:bg-white/[0.04]"
+                    ? "bg-blue text-white"
+                    : "bg-transparent text-ink-strong hover:bg-white/70"
                 }`}
               >
                 <Icon className="w-3.5 h-3.5" />
                 <span>{tab.label}</span>
                 <span
-                  className={`hidden sm:inline-block text-[10px] font-mono font-medium px-1.5 py-0.2 rounded ${
-                    isActive ? "bg-white/20 text-white" : "text-[#71717a]"
+                  className={`hidden sm:inline-block text-[10px] font-showcase-mono font-medium px-1.5 py-0.5 rounded ${
+                    isActive ? "bg-white/[0.22] text-white" : "text-ink-muted"
                   }`}
                 >
                   {tab.badge}
@@ -550,490 +524,490 @@ export default function BentoEcosystemTour() {
           })}
         </div>
 
-        {/* Live Auto-Tour Status Indicator */}
-        <div className="flex items-center gap-1.5 text-[10.5px] sm:text-[11px] font-mono text-[#98989d] shrink-0">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#0066FF] animate-pulse" />
+        {/* Auto-tour indicator */}
+        <div className="flex items-center gap-1.5 text-[10.5px] sm:text-[11px] font-showcase-mono text-ink-body shrink-0">
+          <span className="w-1.5 h-1.5 rounded-full bg-blue animate-pulse" />
           <span>Tur Otomatis</span>
-          <span className="text-[#71717a] hidden md:inline">· Klik bebas kapan saja</span>
+          <span className="text-ink-muted hidden md:inline">· Klik bebas kapan saja</span>
         </div>
       </div>
 
       {/* =========================================================================
-          DYNAMIC WINDOW CONTENT CANVAS
+          TAB PANELS — ketiganya selalu ter-render & ditumpuk di satu sel grid
+          (lihat .tab-panels di globals.css), jadi tinggi wadah tetap.
       ========================================================================= */}
-      <div
-        ref={windowContentRef}
-        className="p-3.5 sm:p-6 lg:p-7 flex-1 flex flex-col justify-between space-y-4 sm:space-y-5 relative z-10"
-      >
+      <div className="tab-panels p-3.5 sm:p-6 lg:p-7 flex-1 relative z-10">
         {/* ===================================================================
-            TAB 1: ROADMAP BELAJAR TERSTRUKTUR
+            TAB 1: ROADMAP BELAJAR
         =================================================================== */}
-        {activeTab === "roadmap" && (
-          <div className="space-y-4 sm:space-y-5 flex-1 flex flex-col justify-between">
-            {/* Header & Career Selector Bar */}
-            <div className="space-y-3">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-xl bg-white/[0.08] border border-white/10 flex items-center justify-center text-[#0066FF] shadow-3xs shrink-0">
-                    <GraduationCap className="w-5 h-5 text-[#0066FF]" />
-                  </div>
-                  <div>
-                    <h3 className="text-sm sm:text-base font-bold text-[#f5f5f7] tracking-tight leading-tight">
-                      Roadmap Belajar Terstruktur
-                    </h3>
-                    <p className="text-xs text-[#98989d] leading-tight mt-0.5">
-                      Kurikulum 4 fase progresif terkalibrasi dengan standar industri nyata.
-                    </p>
-                  </div>
+        <div
+          role="tabpanel"
+          id="tour-panel-roadmap"
+          aria-labelledby="tour-tab-roadmap"
+          data-inactive={activeTab !== "roadmap" || undefined}
+          inert={activeTab !== "roadmap"}
+          className="space-y-4 sm:space-y-5 flex flex-col justify-between"
+        >
+          <div className="space-y-3">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-blue-tint border border-blue-tint-bd flex items-center justify-center shrink-0">
+                  <GraduationCap className="w-5 h-5 text-blue-deep" />
                 </div>
-
-                <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#2c2c2e] border border-white/10 text-[#f5f5f7] text-[11px] font-mono font-medium self-start sm:self-auto">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#0066FF]" />
-                  <span>Jalur Terbuka</span>
+                <div>
+                  <h3 className="text-sm sm:text-base font-bold text-ink tracking-tight leading-tight">
+                    Roadmap Belajar Terstruktur
+                  </h3>
+                  <p className="text-xs text-ink-body leading-tight mt-0.5">
+                    Kurikulum 4 fase progresif terkalibrasi dengan standar industri nyata.
+                  </p>
                 </div>
               </div>
 
-              {/* Career Selector Tabs (Brand Blue Highlight) */}
-              <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pt-1">
-                {ROADMAP_PRESETS.map((preset, idx) => {
-                  const isSelected = idx === activeCareerIdx;
-                  return (
-                    <button
-                      key={preset.id}
-                      ref={idx === 1 ? careerDaRef : undefined}
-                      type="button"
-                      onClick={() => handleSelectCareer(idx)}
-                      className={`px-3 sm:px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer btn-press flex items-center gap-2 shrink-0 ${
-                        isSelected
-                          ? "bg-[#0066FF] text-white border border-[#0066FF] shadow-xs"
-                          : "bg-[#2c2c2e] hover:bg-[#3a3a3c] border border-white/[0.08] text-[#e5e5e7]"
+              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-blue-tint border border-blue-tint-bd text-blue-deep text-[11px] font-showcase-mono font-semibold self-start sm:self-auto">
+                <span className="w-1.5 h-1.5 rounded-full bg-blue-deep" />
+                <span>Jalur Terbuka</span>
+              </div>
+            </div>
+
+            {/* Career chips */}
+            <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pt-1">
+              {ROADMAP_PRESETS.map((preset, idx) => {
+                const isSelected = idx === activeCareerIdx;
+                return (
+                  <button
+                    key={preset.id}
+                    ref={idx === 1 ? careerDaRef : undefined}
+                    type="button"
+                    onClick={() => handleSelectCareer(idx)}
+                    className={`px-3 sm:px-3.5 py-1.5 rounded-xl text-xs font-bold transition-colors cursor-pointer btn-press flex items-center gap-2 shrink-0 border ${
+                      isSelected
+                        ? "bg-blue text-white border-blue"
+                        : "bg-white border-border text-ink-strong hover:bg-surface-muted"
+                    }`}
+                  >
+                    <span>{preset.career}</span>
+                    <span
+                      className={`text-[11px] font-showcase-mono tabular-nums font-bold ${
+                        isSelected ? "text-white/80" : "text-ink-muted"
                       }`}
                     >
-                      <span>{preset.career}</span>
-                      <span
-                        className={`text-[11px] font-mono tabular-nums font-bold ${
-                          isSelected ? "text-white/80" : "text-[#a1a1a6]"
-                        }`}
-                      >
-                        {preset.overallProgress}%
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
-
-              {/* Active Career Track Banner */}
-              <div className="bg-[#242426] border border-white/[0.08] rounded-xl px-4 py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
-                <div className="flex items-baseline gap-2 min-w-0">
-                  <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-[#a1a1a6] shrink-0">
-                    Jalur Fokus:
-                  </span>
-                  <span className="text-xs sm:text-sm font-bold text-[#f5f5f7] truncate">
-                    {currentRoadmap.track}
-                  </span>
-                </div>
-                <div className="flex items-center gap-3 shrink-0">
-                  <div className="w-24 sm:w-32 h-2 bg-[#3a3a3c] rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-[#0066FF] rounded-full transition-all duration-700 ease-out"
-                      style={{ width: `${currentRoadmap.overallProgress}%` }}
-                    />
-                  </div>
-                  <span className="text-xs font-mono font-bold text-[#f5f5f7] tabular-nums">
-                    {currentRoadmap.overallProgress}% Kesiapan
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            {/* Module Cards: 2 Columns Side-by-Side on Desktop */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
-              {/* FASE 01: MODUL SELESAI */}
-              <div className="bg-[#242426] border border-[#30d158]/30 rounded-2xl p-4 shadow-3xs space-y-2.5 flex flex-col justify-between">
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between gap-2">
-                    <div className="flex items-center gap-2 min-w-0">
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-semibold bg-[#30d158]/15 text-[#30d158] border border-[#30d158]/30 shrink-0">
-                        <Check className="w-3 h-3 text-[#30d158] stroke-[2.5]" />
-                        Selesai
-                      </span>
-                      <span className="text-xs font-bold text-[#e5e5e7] truncate">
-                        {currentRoadmap.completedModule.phase}
-                      </span>
-                    </div>
-                    <div className="shrink-0 font-mono text-xs font-bold text-[#30d158]">
-                      Skor {currentRoadmap.completedModule.score}
-                    </div>
-                  </div>
-
-                  <h4 className="text-xs sm:text-sm font-bold text-[#f5f5f7] leading-snug">
-                    {currentRoadmap.completedModule.name}
-                  </h4>
-                </div>
-
-                <div className="pt-2.5 border-t border-white/[0.08] flex flex-wrap items-center justify-between gap-2 text-[11px]">
-                  <div className="flex items-center gap-1.5 text-[#98989d] font-medium">
-                    <span className="text-[#a1a1a6] font-mono text-[11px] uppercase">Skill:</span>
-                    <span className="truncate">{currentRoadmap.completedModule.skills.join(" · ")}</span>
-                  </div>
-                  <span className="text-[#a1a1a6] font-mono text-[11px] flex items-center gap-1 shrink-0">
-                    <Clock className="w-3 h-3 text-[#a1a1a6]" />
-                    {currentRoadmap.completedModule.pace}
-                  </span>
-                </div>
-              </div>
-
-              {/* FASE 02: MODUL AKTIF (Brand Blue Highlight) */}
-              <div className="bg-[#242426] border-2 border-[#0066FF] rounded-2xl p-4 shadow-xs space-y-2.5 flex flex-col justify-between ring-2 ring-[#0066FF]/20">
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between gap-2">
-                    <div className="flex items-center gap-2 min-w-0">
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-semibold bg-[#0066FF] text-white shrink-0">
-                        <span className="w-1.5 h-1.5 rounded-full bg-white" />
-                        Modul Aktif
-                      </span>
-                      <span className="text-xs font-bold text-[#f5f5f7] truncate">
-                        {currentRoadmap.activeModule.phase}
-                      </span>
-                    </div>
-                    <span className="text-[11px] font-mono text-[#0066FF] font-bold shrink-0">
-                      Target Minggu Ini
+                      {preset.overallProgress}%
                     </span>
-                  </div>
-
-                  <h4 className="text-xs sm:text-sm font-bold text-[#f5f5f7] leading-snug">
-                    {currentRoadmap.activeModule.name}
-                  </h4>
-                </div>
-
-                <div className="pt-2.5 border-t border-white/[0.08] flex flex-wrap items-center justify-between gap-2 text-[11px]">
-                  <div className="flex items-center gap-1.5 text-[#e5e5e7] font-medium">
-                    <span className="text-[#0066FF] font-mono text-[11px] uppercase font-bold">Skill:</span>
-                    <span className="truncate">{currentRoadmap.activeModule.skills.join(" · ")}</span>
-                  </div>
-                  <span className="text-[#0066FF] font-mono text-[11px] flex items-center gap-1 shrink-0">
-                    <Clock className="w-3 h-3 text-[#0066FF]" />
-                    {currentRoadmap.activeModule.pace}
-                  </span>
-                </div>
-              </div>
+                  </button>
+                );
+              })}
             </div>
 
-            {/* 4 Phases Stepper Timeline (Spanning Full Width) */}
-            <div className="bg-[#242426] border border-white/[0.08] rounded-xl sm:rounded-2xl p-3 sm:p-5">
-              <div className="relative flex items-start justify-between px-1 sm:px-8">
-                {/* Background connecting rail */}
-                <div className="absolute left-6 right-6 sm:left-10 sm:right-10 top-3.5 h-0.5 bg-[#3a3a3c]" aria-hidden="true" />
-                {/* Completed rail */}
-                <div
-                  className="absolute left-6 sm:left-10 top-3.5 h-0.5 bg-[#30d158] transition-all duration-500"
-                  style={{ width: "33%" }}
-                  aria-hidden="true"
-                />
-
-                {currentRoadmap.phases.map((phase) => {
-                  const isCompleted = phase.status === "completed";
-                  const isInProgress = phase.status === "in_progress";
-                  const isReady = phase.status === "ready";
-
-                  return (
-                    <div key={phase.phase} className="relative z-10 flex flex-col items-center text-center">
-                      <div
-                        className={`w-6 h-6 sm:w-7 sm:h-7 rounded-full flex items-center justify-center transition-all duration-300 ${
-                          isCompleted
-                            ? "bg-[#30d158] text-black shadow-2xs"
-                            : isInProgress
-                            ? "bg-[#0066FF] text-white ring-4 ring-[#0066FF]/25 shadow-xs"
-                            : isReady
-                            ? "bg-[#2c2c2e] border-2 border-white/20 text-[#98989d]"
-                            : "bg-[#202022] border-2 border-white/10 text-white/30"
-                        }`}
-                      >
-                        {isCompleted ? (
-                          <Check className="w-3 sm:w-3.5 h-3 sm:h-3.5 text-black stroke-[3]" />
-                        ) : isInProgress ? (
-                          <span className="w-1.5 sm:w-2 h-1.5 sm:h-2 rounded-full bg-white" />
-                        ) : isReady ? (
-                          <span className="w-1.5 h-1.5 rounded-full bg-white/40" />
-                        ) : (
-                          <Lock className="w-2.5 sm:w-3 h-2.5 sm:h-3 text-white/30" />
-                        )}
-                      </div>
-
-                      <div className="mt-1.5 sm:mt-2 space-y-0.5">
-                        <span
-                          className={`text-[9.5px] sm:text-[10.5px] font-mono font-bold uppercase tracking-wider block ${
-                            isInProgress
-                              ? "text-[#0066FF]"
-                              : isCompleted
-                              ? "text-[#30d158]"
-                              : "text-[#a1a1a6]"
-                          }`}
-                        >
-                          Fase 0{phase.phase}
-                        </span>
-                        <h4 className="text-[10.5px] sm:text-xs font-bold text-[#f5f5f7] block truncate max-w-[65px] sm:max-w-[120px] leading-tight">
-                          {phase.title}
-                        </h4>
-                        <span
-                          className={`inline-block text-[9.5px] sm:text-[10.5px] font-semibold px-1.5 sm:px-2 py-0.5 rounded-md ${
-                            isCompleted
-                              ? "text-[#30d158] bg-[#30d158]/15 border border-[#30d158]/30"
-                              : isInProgress
-                              ? "text-[#0066FF] bg-[#0066FF]/15 border border-[#0066FF]/30"
-                              : isReady
-                              ? "text-[#98989d] bg-[#2c2c2e] border border-white/10"
-                              : "text-[#a1a1a6] bg-transparent"
-                          }`}
-                        >
-                          {isCompleted ? "Selesai" : isInProgress ? "Aktif" : isReady ? "Tersedia" : "Terkunci"}
-                        </span>
-                      </div>
-                    </div>
-                  );
-                })}
+            {/* Focus bar */}
+            <div className="bg-surface-muted border border-border-hair rounded-xl px-4 py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+              <div className="flex items-baseline gap-2 min-w-0">
+                <span className="text-[11px] font-showcase-mono font-bold uppercase tracking-wider text-ink-muted shrink-0">
+                  Jalur Fokus:
+                </span>
+                <span className="text-xs sm:text-sm font-bold text-ink truncate">
+                  {currentRoadmap.track}
+                </span>
+              </div>
+              <div className="flex items-center gap-3 shrink-0">
+                <div className="w-24 sm:w-32 h-2 bg-[#E2E8F0] rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-blue rounded-full transition-[width] duration-700 ease-out"
+                    style={{ width: `${currentRoadmap.overallProgress}%` }}
+                  />
+                </div>
+                <span className="text-xs font-showcase-mono font-bold text-ink tabular-nums">
+                  {currentRoadmap.overallProgress}% Kesiapan
+                </span>
               </div>
             </div>
           </div>
-        )}
+
+          {/* Module cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+            {/* FASE 01 — selesai */}
+            <div className="bg-[#F7FCFA] border border-done-tint-bd rounded-2xl p-4 space-y-2.5 flex flex-col justify-between">
+              <div className="space-y-2">
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-semibold bg-done-tint text-done-ink border border-done-tint-bd shrink-0">
+                      <Check className="w-3 h-3 stroke-[2.5]" />
+                      Selesai
+                    </span>
+                    <span className="text-xs font-bold text-ink-strong truncate">
+                      {currentRoadmap.completedModule.phase}
+                    </span>
+                  </div>
+                  <div className="shrink-0 font-showcase-mono text-xs font-bold text-done-ink tabular-nums">
+                    Skor {currentRoadmap.completedModule.score}
+                  </div>
+                </div>
+
+                <h4 className="text-xs sm:text-sm font-bold text-ink leading-snug">
+                  {currentRoadmap.completedModule.name}
+                </h4>
+              </div>
+
+              <div className="pt-2.5 border-t border-done-tint-bd flex flex-wrap items-center justify-between gap-2 text-[11px]">
+                <div className="flex items-center gap-1.5 text-ink-body font-medium min-w-0">
+                  <span className="text-ink-muted font-showcase-mono text-[11px] uppercase shrink-0">Skill:</span>
+                  <span className="truncate">{currentRoadmap.completedModule.skills.join(" · ")}</span>
+                </div>
+                <span className="text-ink-muted font-showcase-mono text-[11px] flex items-center gap-1 shrink-0">
+                  <Clock className="w-3 h-3" />
+                  {currentRoadmap.completedModule.pace}
+                </span>
+              </div>
+            </div>
+
+            {/* FASE 02 — aktif */}
+            <div className="bg-white border-2 border-blue rounded-2xl p-4 space-y-2.5 flex flex-col justify-between">
+              <div className="space-y-2">
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-semibold bg-blue text-white shrink-0">
+                      <span className="w-1.5 h-1.5 rounded-full bg-white" />
+                      Modul Aktif
+                    </span>
+                    <span className="text-xs font-bold text-ink truncate">
+                      {currentRoadmap.activeModule.phase}
+                    </span>
+                  </div>
+                  <span className="text-[11px] font-showcase-mono text-blue-deep font-bold shrink-0">
+                    Target Minggu Ini
+                  </span>
+                </div>
+
+                <h4 className="text-xs sm:text-sm font-bold text-ink leading-snug">
+                  {currentRoadmap.activeModule.name}
+                </h4>
+              </div>
+
+              <div className="pt-2.5 border-t border-border-hair flex flex-wrap items-center justify-between gap-2 text-[11px]">
+                <div className="flex items-center gap-1.5 text-ink-body font-medium min-w-0">
+                  <span className="text-blue-deep font-showcase-mono text-[11px] uppercase font-bold shrink-0">Skill:</span>
+                  <span className="truncate">{currentRoadmap.activeModule.skills.join(" · ")}</span>
+                </div>
+                <span className="text-blue-deep font-showcase-mono text-[11px] flex items-center gap-1 shrink-0">
+                  <Clock className="w-3 h-3" />
+                  {currentRoadmap.activeModule.pace}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Timeline 4 fase */}
+          <div className="bg-surface-muted border border-border-hair rounded-xl sm:rounded-2xl p-3 sm:p-5">
+            <div className="relative flex items-start justify-between px-1 sm:px-8">
+              <div className="absolute left-6 right-6 sm:left-10 sm:right-10 top-3.5 h-0.5 bg-locked" aria-hidden="true" />
+              <div
+                className="absolute left-6 sm:left-10 top-3.5 h-0.5 bg-done"
+                style={{ width: "33%" }}
+                aria-hidden="true"
+              />
+
+              {currentRoadmap.phases.map((phase) => {
+                const isCompleted = phase.status === "completed";
+                const isInProgress = phase.status === "in_progress";
+                const isReady = phase.status === "ready";
+
+                return (
+                  <div key={phase.phase} className="relative z-10 flex flex-col items-center text-center">
+                    <div
+                      className={`w-6 h-6 sm:w-7 sm:h-7 rounded-full flex items-center justify-center ${
+                        isCompleted
+                          ? "bg-done text-white"
+                          : isInProgress
+                          ? "bg-blue text-white ring-4 ring-[#D5E2FD]"
+                          : "bg-white border-2 border-locked text-ink-muted"
+                      }`}
+                    >
+                      {isCompleted ? (
+                        <Check className="w-3 sm:w-3.5 h-3 sm:h-3.5 stroke-[3]" />
+                      ) : isInProgress ? (
+                        <span className="w-1.5 sm:w-2 h-1.5 sm:h-2 rounded-full bg-white" />
+                      ) : isReady ? (
+                        <span className="w-1.5 h-1.5 rounded-full bg-locked" />
+                      ) : (
+                        <Lock className="w-2.5 sm:w-3 h-2.5 sm:h-3 text-locked" />
+                      )}
+                    </div>
+
+                    <div className="mt-1.5 sm:mt-2 space-y-0.5">
+                      <span
+                        className={`text-[9.5px] sm:text-[10.5px] font-showcase-mono font-bold uppercase tracking-wider block ${
+                          isInProgress
+                            ? "text-blue-deep"
+                            : isCompleted
+                            ? "text-done-ink"
+                            : "text-ink-muted"
+                        }`}
+                      >
+                        Fase 0{phase.phase}
+                      </span>
+                      <h4 className="text-[10.5px] sm:text-xs font-bold text-ink block truncate max-w-[65px] sm:max-w-[120px] leading-tight">
+                        {phase.title}
+                      </h4>
+                      <span
+                        className={`inline-block text-[9.5px] sm:text-[10.5px] font-semibold px-1.5 sm:px-2 py-0.5 rounded-md border ${
+                          isCompleted
+                            ? "text-done-ink bg-done-tint border-done-tint-bd"
+                            : isInProgress
+                            ? "text-blue-deep bg-blue-tint border-blue-tint-bd"
+                            : isReady
+                            ? "text-ink-body bg-white border-border"
+                            : "text-ink-muted bg-transparent border-transparent"
+                        }`}
+                      >
+                        {isCompleted ? "Selesai" : isInProgress ? "Aktif" : isReady ? "Tersedia" : "Terkunci"}
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
 
         {/* ===================================================================
             TAB 2: MISI SOFT SKILL
         =================================================================== */}
-        {activeTab === "misi" && (
-          <div className="space-y-4 sm:space-y-5 flex-1 flex flex-col justify-between">
-            {/* Header with Level & XP Counter */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/[0.08] pb-3">
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-white/[0.08] border border-white/10 flex items-center justify-center text-[#30d158] shadow-3xs shrink-0">
-                  <Target className="w-5 h-5 text-[#30d158]" />
-                </div>
-                <div>
-                  <h3 className="text-sm sm:text-base font-bold text-[#f5f5f7] tracking-tight leading-tight">
-                    Misi Soft Skill
-                  </h3>
-                  <p className="text-xs text-[#98989d] leading-tight mt-0.5">
-                    Latihan situasional harian berhadiah XP untuk mengasah keahlian kerja nyata.
-                  </p>
-                </div>
+        <div
+          role="tabpanel"
+          id="tour-panel-misi"
+          aria-labelledby="tour-tab-misi"
+          data-inactive={activeTab !== "misi" || undefined}
+          inert={activeTab !== "misi"}
+          className="space-y-4 sm:space-y-5 flex flex-col justify-between"
+        >
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-border-hair pb-3">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-done-tint border border-done-tint-bd flex items-center justify-center shrink-0">
+                <Target className="w-5 h-5 text-done-ink" />
               </div>
-
-              <div className="flex items-center gap-3 self-start sm:self-auto bg-[#242426] border border-white/[0.08] px-3 py-1.5 rounded-xl">
-                <div className="text-right">
-                  <div className="font-mono text-sm sm:text-base font-extrabold text-[#f5f5f7] tabular-nums leading-none">
-                    450 <span className="text-xs font-bold text-[#30d158]">XP</span>
-                  </div>
-                  <div className="flex items-center gap-1.5 mt-1">
-                    <div className="w-16 h-1.5 bg-[#3a3a3c] rounded-full overflow-hidden">
-                      <div className="h-full bg-[#30d158] rounded-full w-[75%]" />
-                    </div>
-                    <span className="text-[10.5px] font-mono text-[#a1a1a6] font-bold">Lv. 3</span>
-                  </div>
-                </div>
+              <div>
+                <h3 className="text-sm sm:text-base font-bold text-ink tracking-tight leading-tight">
+                  Misi Soft Skill
+                </h3>
+                <p className="text-xs text-ink-body leading-tight mt-0.5">
+                  Latihan situasional harian berhadiah XP untuk mengasah keahlian kerja nyata.
+                </p>
               </div>
             </div>
 
-            {/* 3 Situational Missions (Dark High Contrast Surface) */}
-            <div className="space-y-2.5">
-              {/* Mission 1 (Completed) */}
-              <div className="flex items-center justify-between px-4 py-3 rounded-xl border border-[#30d158]/30 bg-[#242426] shadow-3xs transition-all">
-                <div className="flex items-center gap-3 min-w-0">
-                  <div className="w-7 h-7 rounded-full bg-[#30d158]/20 flex items-center justify-center text-[#30d158] shrink-0">
-                    <Check className="w-4 h-4 stroke-[2.5]" />
-                  </div>
-                  <div className="min-w-0">
-                    <div className="font-bold text-[#f5f5f7] text-xs sm:text-sm truncate">
-                      Sampaikan Ide Tim Cross-Functional
-                    </div>
-                    <div className="text-[11px] text-[#a1a1a6] font-medium mt-0.5">
-                      Komunikasi · 15 Mnt
-                    </div>
-                  </div>
+            <div className="flex items-center gap-3 self-start sm:self-auto bg-surface-muted border border-border-hair px-3 py-1.5 rounded-xl">
+              <div className="text-right">
+                <div className="font-showcase-mono text-sm sm:text-base font-extrabold text-ink tabular-nums leading-none">
+                  450 <span className="text-xs font-bold text-done-ink">XP</span>
                 </div>
-                <div className="font-mono text-xs sm:text-sm font-bold text-[#30d158] shrink-0 tabular-nums">
-                  +150 XP
+                <div className="flex items-center gap-1.5 mt-1">
+                  <div className="w-16 h-1.5 bg-[#E2E8F0] rounded-full overflow-hidden">
+                    <div className="h-full bg-done rounded-full w-[75%]" />
+                  </div>
+                  <span className="text-[10.5px] font-showcase-mono text-ink-muted font-bold tabular-nums">Lv. 3</span>
                 </div>
               </div>
-
-              {/* Mission 2 (Active / In Progress with Brand Blue) */}
-              <div className="flex items-center justify-between px-4 py-3 rounded-xl border-2 border-[#0066FF] bg-[#242426] shadow-xs ring-2 ring-[#0066FF]/20 transition-all">
-                <div className="flex items-center gap-3 min-w-0">
-                  <div className="w-7 h-7 rounded-full bg-[#0066FF]/20 flex items-center justify-center text-[#0066FF] shrink-0">
-                    <span className="w-2.5 h-2.5 rounded-full bg-[#0066FF]" />
-                  </div>
-                  <div className="min-w-0">
-                    <div className="font-bold text-[#f5f5f7] text-xs sm:text-sm truncate">
-                      Negosiasi Prioritas Sprint Tim
-                    </div>
-                    <div className="text-[11px] text-[#0066FF] font-medium mt-0.5">
-                      Kolaborasi · 20 Mnt
-                    </div>
-                  </div>
-                </div>
-                <div className="font-mono text-xs sm:text-sm font-bold text-[#0066FF] shrink-0 tabular-nums">
-                  +200 XP
-                </div>
-              </div>
-
-              {/* Mission 3 (Locked) */}
-              <div className="flex items-center justify-between px-4 py-3 rounded-xl border border-white/[0.06] bg-[#202022] transition-all opacity-75">
-                <div className="flex items-center gap-3 min-w-0">
-                  <div className="w-7 h-7 rounded-full bg-white/[0.06] flex items-center justify-center text-[#a1a1a6] shrink-0">
-                    <Lock className="w-3.5 h-3.5 text-[#a1a1a6]" />
-                  </div>
-                  <div className="min-w-0">
-                    <div className="font-bold text-[#a1a1a6] text-xs sm:text-sm truncate">
-                      Evaluasi Risiko Rilis Aplikasi
-                    </div>
-                    <div className="text-[11px] text-[#a1a1a6]/80 font-medium mt-0.5">
-                      Tanggung Jawab · 30 Mnt
-                    </div>
-                  </div>
-                </div>
-                <div className="font-mono text-xs sm:text-sm font-bold text-[#a1a1a6] shrink-0 tabular-nums">
-                  +250 XP
-                </div>
-              </div>
-            </div>
-
-            {/* Daily Progress Meter & Action */}
-            <div className="pt-3 border-t border-white/[0.08] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-              <div className="space-y-1.5 flex-1 max-w-md">
-                <div className="flex items-center justify-between text-xs">
-                  <span className="text-[#98989d] font-medium">Progres Misi Harian</span>
-                  <span className="text-[#30d158] font-mono font-bold tabular-nums">2 / 3 Selesai (67%)</span>
-                </div>
-                <div className="w-full h-2 bg-[#3a3a3c] rounded-full overflow-hidden">
-                  <div className="h-full bg-[#30d158] rounded-full w-[67%]" />
-                </div>
-              </div>
-
-              <Link
-                href="/assessment"
-                className="btn-press inline-flex items-center justify-center gap-1.5 w-full sm:w-auto px-4 py-2.5 sm:py-2 rounded-xl bg-[#0066FF] hover:bg-[#0052cc] text-white text-xs sm:text-sm font-semibold shadow-xs transition-colors cursor-pointer group shrink-0 min-h-[44px] active:scale-[0.97]"
-              >
-                <span>Mulai Latihan Situasional</span>
-                <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" />
-              </Link>
             </div>
           </div>
-        )}
+
+          <div className="space-y-2.5">
+            {/* Misi 1 — selesai */}
+            <div className="flex items-center justify-between px-4 py-3 rounded-xl border border-done-tint-bd bg-[#F7FCFA]">
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="w-7 h-7 rounded-full bg-done flex items-center justify-center text-white shrink-0">
+                  <Check className="w-4 h-4 stroke-[2.5]" />
+                </div>
+                <div className="min-w-0">
+                  <div className="font-bold text-ink text-xs sm:text-sm truncate">
+                    Sampaikan Ide Tim Cross-Functional
+                  </div>
+                  <div className="text-[11px] text-ink-muted font-showcase-mono mt-0.5">
+                    Komunikasi · 15 Mnt
+                  </div>
+                </div>
+              </div>
+              <div className="font-showcase-mono text-xs sm:text-sm font-bold text-done-ink shrink-0 tabular-nums">
+                +150 XP
+              </div>
+            </div>
+
+            {/* Misi 2 — aktif */}
+            <div className="flex items-center justify-between px-4 py-3 rounded-xl border-2 border-blue bg-white">
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="w-7 h-7 rounded-full bg-blue-tint border border-blue-tint-bd flex items-center justify-center shrink-0">
+                  <span className="w-2.5 h-2.5 rounded-full bg-blue" />
+                </div>
+                <div className="min-w-0">
+                  <div className="font-bold text-ink text-xs sm:text-sm truncate">
+                    Negosiasi Prioritas Sprint Tim
+                  </div>
+                  <div className="text-[11px] text-blue-deep font-showcase-mono mt-0.5">
+                    Kolaborasi · 20 Mnt
+                  </div>
+                </div>
+              </div>
+              <div className="font-showcase-mono text-xs sm:text-sm font-bold text-blue-deep shrink-0 tabular-nums">
+                +200 XP
+              </div>
+            </div>
+
+            {/* Misi 3 — terkunci */}
+            <div className="flex items-center justify-between px-4 py-3 rounded-xl border border-border-hair bg-surface-muted">
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="w-7 h-7 rounded-full bg-white border-2 border-locked flex items-center justify-center shrink-0">
+                  <Lock className="w-3.5 h-3.5 text-ink-muted" />
+                </div>
+                <div className="min-w-0">
+                  <div className="font-bold text-ink-muted text-xs sm:text-sm truncate">
+                    Evaluasi Risiko Rilis Aplikasi
+                  </div>
+                  <div className="text-[11px] text-ink-muted font-showcase-mono mt-0.5">
+                    Tanggung Jawab · 30 Mnt
+                  </div>
+                </div>
+              </div>
+              <div className="font-showcase-mono text-xs sm:text-sm font-bold text-ink-muted shrink-0 tabular-nums">
+                +250 XP
+              </div>
+            </div>
+          </div>
+
+          <div className="pt-3 border-t border-border-hair flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="space-y-1.5 flex-1 max-w-md">
+              <div className="flex items-center justify-between text-xs">
+                <span className="text-ink-body font-medium">Progres Misi Harian</span>
+                <span className="text-done-ink font-showcase-mono font-bold tabular-nums">2 / 3 Selesai (67%)</span>
+              </div>
+              <div className="w-full h-2 bg-[#E2E8F0] rounded-full overflow-hidden">
+                <div className="h-full bg-done rounded-full w-[67%]" />
+              </div>
+            </div>
+
+            <Link
+              href="/assessment"
+              className="btn-press inline-flex items-center justify-center gap-1.5 w-full sm:w-auto px-4 py-2.5 sm:py-2 rounded-xl bg-blue hover:bg-blue-deep text-white text-xs sm:text-sm font-semibold transition-colors cursor-pointer group shrink-0 min-h-[44px] active:scale-[0.97] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue"
+            >
+              <span>Mulai Latihan Situasional</span>
+              <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" />
+            </Link>
+          </div>
+        </div>
 
         {/* ===================================================================
-            TAB 3: PORTOFOLIO (BANGUN PORTOFOLIO TERUJI)
+            TAB 3: PORTOFOLIO
         =================================================================== */}
-        {activeTab === "portofolio" && (
-          <div className="space-y-4 sm:space-y-5 flex-1 flex flex-col justify-between">
-            {/* Header */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/[0.08] pb-3">
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-white/[0.08] border border-white/10 flex items-center justify-center text-[#0066FF] shadow-3xs shrink-0">
-                  <Briefcase className="w-5 h-5 text-[#0066FF]" />
-                </div>
-                <div>
-                  <h3 className="text-sm sm:text-base font-bold text-[#f5f5f7] tracking-tight leading-tight">
-                    Bangun Portofolio Teruji
-                  </h3>
-                  <p className="text-xs text-[#98989d] leading-tight mt-0.5">
-                    Studi kasus riil yang dievaluasi standar industri & lowongan terkurasi.
-                  </p>
-                </div>
+        <div
+          role="tabpanel"
+          id="tour-panel-portofolio"
+          aria-labelledby="tour-tab-portofolio"
+          data-inactive={activeTab !== "portofolio" || undefined}
+          inert={activeTab !== "portofolio"}
+          className="space-y-4 sm:space-y-5 flex flex-col justify-between"
+        >
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-border-hair pb-3">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-blue-tint border border-blue-tint-bd flex items-center justify-center shrink-0">
+                <Briefcase className="w-5 h-5 text-blue-deep" />
               </div>
-
-              <div className="text-[11px] font-mono font-bold tracking-wider text-[#0066FF] uppercase self-start sm:self-auto bg-[#0066FF]/15 px-2.5 py-1 rounded-lg border border-[#0066FF]/30">
-                Simulasi Kasus Riil
-              </div>
-            </div>
-
-            {/* Curated Case Study Card (Dark Surface, Crisp Details) */}
-            <div className="p-4 sm:p-5 rounded-2xl bg-[#242426] border border-white/[0.08] flex flex-col justify-between space-y-4 shadow-3xs">
-              <div className="space-y-2.5">
-                <div className="flex items-center justify-between text-xs font-mono">
-                  <span className="text-[#a1a1a6] font-bold uppercase tracking-wider text-[11px]">
-                    Studi Kasus Rekomendasi
-                  </span>
-                  <span className="text-[#30d158] font-bold tabular-nums text-xs sm:text-sm font-mono">
-                    {currentKegiatan.match}% Cocok
-                  </span>
-                </div>
-
-                <div>
-                  <h4 className="text-sm sm:text-base font-bold text-[#f5f5f7]">
-                    {currentKegiatan.title}
-                  </h4>
-                  <div className="text-xs text-[#98989d] mt-0.5">
-                    {currentKegiatan.organizer}
-                  </div>
-                </div>
-
-                {/* Tags */}
-                <div className="flex flex-wrap items-center gap-2 pt-1">
-                  {currentKegiatan.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="text-xs px-2.5 py-1 bg-white/[0.06] border border-white/10 rounded-lg text-[#e5e5e7] font-medium shadow-3xs"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-              </div>
-
-              {/* Deadline & Bookmark Row */}
-              <div className="flex items-center justify-between pt-3 border-t border-white/[0.08] text-xs">
-                <span className="text-[#ffd60a] font-mono font-semibold flex items-center gap-1.5">
-                  <Clock className="w-3.5 h-3.5 text-[#ffd60a]" />
-                  {currentKegiatan.deadline}
-                </span>
-                <button
-                  type="button"
-                  onClick={(e) => toggleBookmark(currentKegiatan.id, e)}
-                  className="text-[#98989d] hover:text-[#f5f5f7] transition-colors cursor-pointer flex items-center gap-1.5 font-mono text-xs"
-                >
-                  <Bookmark
-                    className={`w-3.5 h-3.5 ${
-                      bookmarkedId === currentKegiatan.id ? "fill-[#0066FF] text-[#0066FF]" : ""
-                    }`}
-                  />
-                  <span>{bookmarkedId === currentKegiatan.id ? "Tersimpan" : "Simpan"}</span>
-                </button>
+              <div>
+                <h3 className="text-sm sm:text-base font-bold text-ink tracking-tight leading-tight">
+                  Bangun Portofolio Teruji
+                </h3>
+                <p className="text-xs text-ink-body leading-tight mt-0.5">
+                  Studi kasus riil yang dievaluasi standar industri & lowongan terkurasi.
+                </p>
               </div>
             </div>
 
-            {/* Case Switcher & CTA Button (Brand Blue: #0066FF) */}
-            <div className="pt-3 border-t border-white/[0.08] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-              <div className="flex items-center gap-1.5 font-mono text-xs">
-                {KEGIATAN_PRESETS.map((k, i) => (
-                  <button
-                    key={k.id}
-                    ref={i === 1 ? kegiatan2Ref : undefined}
-                    type="button"
-                    onClick={() => setActiveKegiatanIdx(i)}
-                    className={`px-3.5 py-2 sm:py-1.5 min-h-[38px] rounded-lg cursor-pointer transition-colors active:scale-[0.97] ${
-                      i === activeKegiatanIdx
-                        ? "bg-[#0066FF] text-white font-bold shadow-xs"
-                        : "bg-[#2c2c2e] hover:bg-[#3a3a3c] text-[#98989d]"
-                    }`}
-                  >
-                    Kasus {i + 1}
-                  </button>
-                ))}
-              </div>
-
-              <Link
-                href="/assessment"
-                className="btn-press inline-flex items-center justify-center gap-1.5 w-full sm:w-auto px-4 py-2.5 sm:py-2 rounded-xl bg-[#0066FF] hover:bg-[#0052cc] text-white text-xs sm:text-sm font-semibold shadow-xs transition-colors cursor-pointer group shrink-0 min-h-[44px] active:scale-[0.97]"
-              >
-                <span>Mulai Simulasi</span>
-                <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" />
-              </Link>
+            <div className="text-[11px] font-showcase-mono font-bold tracking-wider text-blue-deep uppercase self-start sm:self-auto bg-blue-tint px-2.5 py-1 rounded-lg border border-blue-tint-bd">
+              Simulasi Kasus Riil
             </div>
           </div>
-        )}
+
+          <div className="p-4 sm:p-5 rounded-2xl bg-white border border-border flex flex-col justify-between space-y-4">
+            <div className="space-y-2.5">
+              <div className="flex items-center justify-between text-xs font-showcase-mono">
+                <span className="text-ink-muted font-bold uppercase tracking-wider text-[11px]">
+                  Studi Kasus Rekomendasi
+                </span>
+                <span className="text-done-ink font-bold tabular-nums text-xs sm:text-sm">
+                  {currentKegiatan.match}% Cocok
+                </span>
+              </div>
+
+              <div>
+                <h4 className="text-sm sm:text-base font-bold text-ink">
+                  {currentKegiatan.title}
+                </h4>
+                <div className="text-xs text-ink-body mt-0.5">
+                  {currentKegiatan.organizer}
+                </div>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-2 pt-1">
+                {currentKegiatan.tags.map((tag) => (
+                  <span
+                    key={tag}
+                    className="text-xs px-2.5 py-1 bg-surface-muted border border-border-hair rounded-lg text-ink-strong font-medium"
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between pt-3 border-t border-border-hair text-xs">
+              <span className="text-[#B45309] font-showcase-mono font-semibold flex items-center gap-1.5">
+                <Clock className="w-3.5 h-3.5" />
+                {currentKegiatan.deadline}
+              </span>
+              <button
+                type="button"
+                onClick={(e) => toggleBookmark(currentKegiatan.id, e)}
+                className="text-ink-body hover:text-ink transition-colors cursor-pointer flex items-center gap-1.5 font-showcase-mono text-xs min-h-[44px] -my-3 px-1 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue rounded"
+              >
+                <Bookmark
+                  className={`w-3.5 h-3.5 ${
+                    bookmarkedId === currentKegiatan.id ? "fill-blue text-blue" : ""
+                  }`}
+                />
+                <span>{bookmarkedId === currentKegiatan.id ? "Tersimpan" : "Simpan"}</span>
+              </button>
+            </div>
+          </div>
+
+          <div className="pt-3 border-t border-border-hair flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="flex items-center gap-1.5 font-showcase-mono text-xs">
+              {KEGIATAN_PRESETS.map((k, i) => (
+                <button
+                  key={k.id}
+                  ref={i === 1 ? kegiatan2Ref : undefined}
+                  type="button"
+                  onClick={() => setActiveKegiatanIdx(i)}
+                  className={`px-3.5 py-2 sm:py-1.5 min-h-[38px] rounded-lg cursor-pointer transition-colors active:scale-[0.97] border ${
+                    i === activeKegiatanIdx
+                      ? "bg-blue text-white font-bold border-blue"
+                      : "bg-white border-border text-ink-strong hover:bg-surface-muted"
+                  }`}
+                >
+                  Kasus {i + 1}
+                </button>
+              ))}
+            </div>
+
+            <Link
+              href="/assessment"
+              className="btn-press inline-flex items-center justify-center gap-1.5 w-full sm:w-auto px-4 py-2.5 sm:py-2 rounded-xl bg-blue hover:bg-blue-deep text-white text-xs sm:text-sm font-semibold transition-colors cursor-pointer group shrink-0 min-h-[44px] active:scale-[0.97] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue"
+            >
+              <span>Mulai Simulasi</span>
+              <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" />
+            </Link>
+          </div>
+        </div>
       </div>
 
       {/* =========================================================================
-          VIRTUAL ANIMATED CURSOR (Glides & Clicks Inside MacBook Window)
+          VIRTUAL CURSOR
       ========================================================================= */}
       <div
         ref={cursorRef}
@@ -1042,22 +1016,14 @@ export default function BentoEcosystemTour() {
         aria-hidden="true"
       >
         <div className="relative">
-          {/* Click Pulse Ripple (Origin centered directly on pointer tip at x=2, y=2) */}
           <span
             ref={clickPulseRef}
-            className="absolute -top-3.5 -left-3.5 w-8 h-8 rounded-full bg-[#0066FF]/40 border-2 border-[#0066FF] pointer-events-none opacity-0 will-change-transform"
+            className="absolute -top-3.5 -left-3.5 w-8 h-8 rounded-full bg-blue/25 border-2 border-blue pointer-events-none opacity-0 will-change-transform"
           />
-
-          <svg
-            width="20"
-            height="24"
-            viewBox="0 0 20 24"
-            fill="none"
-            className="filter drop-shadow-[0_2px_8px_rgba(0,0,0,0.55)]"
-          >
+          <svg width="20" height="24" viewBox="0 0 20 24" fill="none">
             <path
               d="M2 2L18 12.5L10 14.5L6.5 22L2 2Z"
-              fill="#0066FF"
+              fill="#2A64F6"
               stroke="#FFFFFF"
               strokeWidth="1.75"
               strokeLinecap="round"
