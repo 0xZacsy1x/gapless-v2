@@ -6,6 +6,58 @@
   --color-brand-dark: #0f172a;
   --color-brand-accent: #f8fafc;
   --font-sans: var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+  /* Showcase (BentoEcosystemTour) — tema terang */
+  --font-showcase: var(--font-plus-jakarta), -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-showcase-mono: var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --color-surface-page: #EEF2F7;
+  --color-surface-panel: #FFFFFF;
+  --color-surface-muted: #F7F9FC;
+  --color-surface-chrome: #F0F3F8;
+  --color-border: #DCE3EC;
+  --color-border-hair: #E6EBF2;
+
+  --color-ink: #0F172A;
+  --color-ink-strong: #334155;
+  --color-ink-body: #475569;
+  --color-ink-muted: #64748B;
+
+  --color-blue: #2A64F6;
+  --color-blue-deep: #1D4ED8;
+  --color-blue-tint: #EDF2FE;
+  --color-blue-tint-bd: #DBE5FD;
+
+  --color-done: #10B981;
+  --color-done-ink: #046C4E;
+  --color-done-tint: #DCF3E9;
+  --color-done-tint-bd: #C8E9DA;
+  --color-locked: #CBD5E1;
+}
+
+/* Showcase tab panels: semua panel ditumpuk di satu sel grid,
+   jadi tinggi wadah = panel tertinggi dan tidak berubah saat ganti tab. */
+.tab-panels {
+  display: grid;
+}
+.tab-panels > [role="tabpanel"] {
+  grid-area: 1 / 1;
+  transition: opacity 180ms ease, transform 180ms ease, visibility 0s linear 0s;
+}
+.tab-panels > [role="tabpanel"][data-inactive] {
+  visibility: hidden;
+  opacity: 0;
+  transform: translateY(4px);
+  pointer-events: none;
+  /* tunda visibility supaya fade-out tetap terlihat */
+  transition: opacity 180ms ease, transform 180ms ease, visibility 0s linear 180ms;
+}
+@media (prefers-reduced-motion: reduce) {
+  .tab-panels > [role="tabpanel"],
+  .tab-panels > [role="tabpanel"][data-inactive] {
+    transition: none;
+    transform: none;
+  }
 }
 
 :root {

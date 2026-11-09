@@ -11,9 +11,11 @@ export default function HeroSection() {
       {/* Left Column: Hero Editorial Copy & Methodology Cards */}
       <div data-preloader-reveal className="lg:col-span-7 flex flex-col justify-between self-start text-left space-y-5 lg:space-y-6">
         <div className="space-y-5">
-          {/* Eyebrow Label (Editorial accent line, sentence case, anti-slop) */}
-          <div className="flex items-center gap-2 text-xs font-semibold text-slate-500 pl-2.5 border-l-2 border-brand-primary">
-            <span>Riset Berbasis Standar 702+ Lowongan Industri</span>
+          {/* Attribution badge */}
+          <div className="inline-flex items-center gap-2 px-[14px] py-2 rounded-[999px] border border-[#E6EBF2] bg-transparent text-[13px] font-semibold text-[#475569]">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/gemini-logo.svg"alt="" aria-hidden="true" className="h-[18px] w-auto" />
+            <span>Powered by Gemini</span>
           </div>
 
           {/* Editorial Semantic H1 */}
